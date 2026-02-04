@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  :root {
+    /* boletos.la Brand Colors - Cyan/Turquoise and Orange */
+    --background: 0 0% 100%;
+    --foreground: 220 20% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 10%;
+    --primary: 171 55% 49%; /* Cyan/Turquoise #3CBDB1 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 32 93% 54%; /* Orange #F7941D */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 210 20% 96%;
+    --muted-foreground: 220 10% 45%;
+    --accent: 32 93% 54%; /* Orange accent */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 20% 90%;
+    --input: 210 20% 90%;
+    --ring: 171 55% 49%;
+    --chart-1: 171 55% 49%;
+    --chart-2: 32 93% 54%;
+    --chart-3: 220 20% 25%;
+    --chart-4: 171 40% 65%;
+    --chart-5: 32 70% 70%;
+    --radius: 0.75rem;
+    --sidebar-background: 220 20% 8%;
+    --sidebar-foreground: 210 20% 96%;
+    --sidebar-primary: 171 55% 49%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 20% 15%;
+    --sidebar-accent-foreground: 210 20% 96%;
+    --sidebar-border: 220 15% 20%;
+    --sidebar-ring: 171 55% 49%;
+  }
+  .dark {
+    --background: 220 20% 8%;
+    --foreground: 210 20% 96%;
+    --card: 220 20% 12%;
+    --card-foreground: 210 20% 96%;
+    --popover: 220 20% 10%;
+    --popover-foreground: 210 20% 96%;
+    --primary: 171 55% 49%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 32 93% 54%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 220 15% 18%;
+    --muted-foreground: 210 15% 60%;
+    --accent: 32 93% 54%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 15% 20%;
+    --input: 220 15% 20%;
+    --ring: 171 55% 49%;
+    --chart-1: 171 55% 49%;
+    --chart-2: 32 93% 54%;
+    --chart-3: 210 20% 60%;
+    --chart-4: 171 40% 40%;
+    --chart-5: 32 70% 45%;
+    --sidebar-background: 220 20% 6%;
+    --sidebar-foreground: 210 20% 96%;
+    --sidebar-primary: 171 55% 49%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 20% 12%;
+    --sidebar-accent-foreground: 210 20% 96%;
+    --sidebar-border: 220 15% 15%;
+    --sidebar-ring: 171 55% 49%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
