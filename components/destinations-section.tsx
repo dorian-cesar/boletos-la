@@ -87,12 +87,12 @@ export function DestinationsSection() {
     <section
       ref={sectionRef}
       id="destinos"
-      className="py-24 bg-gradient-to-b from-background via-muted/30 to-background relative overflow-hidden"
+      className="py-24 bg-gradient-to-b from-[#1a2332] to-[#0f1419] relative overflow-hidden"
     >
-      {/* Decorative Background */}
+      {/* Decorative Background - Actualizado para fondo oscuro */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[150px]" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[120px]" />
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#00c7cc]/5 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#ffaa00]/5 rounded-full blur-[120px]" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -111,7 +111,7 @@ export function DestinationsSection() {
             </span>
             <h2
               className={cn(
-                "text-3xl md:text-5xl font-bold text-foreground mb-4 transition-all duration-700 delay-100",
+                "text-3xl md:text-5xl font-bold text-white mb-4 transition-all duration-700 delay-100",
                 isVisible
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-10",
@@ -122,7 +122,7 @@ export function DestinationsSection() {
             </h2>
             <p
               className={cn(
-                "text-lg text-muted-foreground max-w-xl transition-all duration-700 delay-200",
+                "text-lg text-white/70 max-w-xl transition-all duration-700 delay-200",
                 isVisible
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-10",
@@ -131,19 +131,6 @@ export function DestinationsSection() {
               Descubre los destinos más visitados y planifica tu próximo viaje.
             </p>
           </div>
-          <Button
-            variant="outline"
-            className={cn(
-              "mt-6 md:mt-0 border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground transition-all duration-500",
-              isVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-10",
-            )}
-            style={{ transitionDelay: "300ms" }}
-          >
-            Ver todos los destinos
-            <ArrowRight className="h-4 w-4 ml-2" />
-          </Button>
         </div>
 
         {/* Destinations Grid */}
@@ -166,21 +153,17 @@ export function DestinationsSection() {
                   src={destination.image}
                   alt={destination.name}
                   className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
-                  onError={(e) => {
-                    // Fallback a placeholder si la imagen local no existe
-                    e.currentTarget.src = `https://via.placeholder.com/800x600/1a2332/ffffff?text=${encodeURIComponent(destination.name)}`;
-                  }}
                 />
-                {/* Multi-layer gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1a2332] via-[#1a2332]/40 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                {/* Multi-layer gradient overlay - Mejorado para fondo oscuro */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-br from-[#00c7cc]/10 via-transparent to-[#ffaa00]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 {/* Shine effect on hover */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
               </div>
 
               {/* Popular Badge */}
               {destination.popular && (
-                <div className="absolute top-4 left-4 px-3 py-1 bg-secondary text-secondary-foreground text-xs font-bold rounded-full">
+                <div className="absolute top-4 left-4 px-3 py-1 bg-[#ffaa00] text-black text-xs font-bold rounded-full">
                   Popular
                 </div>
               )}
@@ -189,14 +172,14 @@ export function DestinationsSection() {
               <div className="absolute bottom-0 left-0 right-0 p-6">
                 <div className="flex items-start justify-between">
                   <div>
-                    <div className="flex items-center gap-2 text-background/70 text-sm mb-2">
+                    <div className="flex items-center gap-2 text-white/70 text-sm mb-2">
                       <MapPin className="h-4 w-4" />
                       {destination.region}
                     </div>
-                    <h3 className="text-2xl font-bold text-background mb-2 group-hover:text-primary transition-colors duration-300">
+                    <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-[#00c7cc] transition-colors duration-300">
                       {destination.name}
                     </h3>
-                    <div className="flex items-center gap-4 text-background/70 text-sm">
+                    <div className="flex items-center gap-4 text-white/70 text-sm">
                       <span className="flex items-center gap-1">
                         <Clock className="h-4 w-4" />
                         {destination.duration}
@@ -204,8 +187,8 @@ export function DestinationsSection() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-background/70">Desde</p>
-                    <p className="text-2xl font-bold text-secondary">
+                    <p className="text-xs text-white/70">Desde</p>
+                    <p className="text-2xl font-bold text-[#ffaa00]">
                       ₲{destination.price.toLocaleString("es-PY")}
                     </p>
                   </div>
@@ -213,7 +196,7 @@ export function DestinationsSection() {
 
                 {/* Hover Button */}
                 <div className="mt-4 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                  <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+                  <Button className="w-full bg-[#00c7cc] hover:bg-[#00c7cc]/90 text-white">
                     Ver Servicios
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
