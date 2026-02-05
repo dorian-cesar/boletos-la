@@ -6,25 +6,29 @@ import Image from "next/image";
 
 const companies = [
   {
+    name: "La Santaniana",
+    logo: "/logos/logo-la-santaniana.png",
+    alt: "Logo La Santaniana",
+    containerSize: "h-40", // Contenedor mediano
+    scale: "scale-100", // Escala inicial
+    hoverScale: "group-hover:scale-105", // Escala al hacer hover
+  },
+  {
     name: "Nuestra Señora de la Asunción",
     logo: "/logos/logo-nsa.png",
     alt: "Logo Nuestra Señora de la Asunción",
-  },
-  {
-    name: "La Santaniana",
-    logo: "/logos/logo-la-santaniana.jpg",
-    alt: "Logo La Santaniana",
+    containerSize: "h-16", // Contenedor más bajo para logo alargado
+    scale: "scale-75", // Escala inicial
+    hoverScale: "group-hover:scale-[0.8]", // Escala al hacer hover
   },
   {
     name: "Sol de Paraguay",
-    logo: "/logos/logo-sol-de-paraguay.jpg",
+    logo: "/logos/logo-sol-de-paraguay.png",
     alt: "Logo Sol de Paraguay",
+    containerSize: "h-24", // Contenedor más alto
+    scale: "scale-100", // Escala inicial
+    hoverScale: "group-hover:scale-105", // Escala al hacer hover
   },
-  // {
-  //   name: "La Encarnacena",
-  //   logo: "/logos/la-encarnacena.png",
-  //   alt: "Logo La Encarnacena",
-  // },
 ];
 
 export function CompaniesSection() {
@@ -97,29 +101,35 @@ export function CompaniesSection() {
           </p>
         </div>
 
-        {/* Companies Grid - Solo logos */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
+        {/* Companies Grid - Ajuste individual para cada logo */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 items-center">
           {companies.map((company, index) => (
             <div
               key={company.name}
               className={cn(
-                "group flex items-center justify-center",
+                "group flex items-center justify-center w-full cursor-pointer",
+                company.containerSize, // Altura específica para cada contenedor
                 isVisible
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-10",
               )}
               style={{ transitionDelay: `${(index + 3) * 100}ms` }}
             >
-              <Image
-                src={company.logo}
-                alt={company.alt || company.name}
-                width={100}
-                height={60}
-                className="object-contain w-full h-auto max-h-20 md:max-h-20 transition-all duration-300 
-                  grayscale opacity-40 
-                  group-hover:grayscale-0 group-hover:opacity-100 
-                  group-hover:scale-105"
-              />
+              <div className="relative w-full h-full flex items-center justify-center">
+                <Image
+                  src={company.logo}
+                  alt={company.alt || company.name}
+                  fill
+                  className={cn(
+                    "object-contain transition-all duration-300",
+                    "grayscale opacity-40",
+                    company.scale, // Escala inicial específica
+                    company.hoverScale, // Escala al hacer hover
+                    "group-hover:grayscale-0 group-hover:opacity-100",
+                  )}
+                  sizes="(max-width: 768px) 150px, 250px"
+                />
+              </div>
             </div>
           ))}
         </div>
