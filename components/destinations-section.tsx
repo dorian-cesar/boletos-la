@@ -1,139 +1,145 @@
-'use client'
+"use client";
 
-import { useEffect, useRef, useState } from 'react'
-import { ArrowRight, MapPin, Clock, Star } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { useEffect, useRef, useState } from "react";
+import { ArrowRight, MapPin, Clock, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const destinations = [
   {
     id: 1,
-    name: 'Santiago',
-    region: 'Metropolitana',
-    image: '/images/santiago.jpg',
-    price: 8500,
-    duration: '0h base',
-    rating: 4.9,
+    name: "Asunción",
+    region: "Capital",
+    image: "/images/asuncion.png",
+    price: 25000,
+    duration: "0h base",
     popular: true,
   },
   {
     id: 2,
-    name: 'Valparaíso',
-    region: 'Valparaíso',
-    image: '/images/valparaiso.jpg',
-    price: 5200,
-    duration: '1h 30min',
-    rating: 4.8,
+    name: "Ciudad del Este",
+    region: "Alto Paraná",
+    image: "/images/ciudad-del-este.png",
+    price: 35000,
+    duration: "4h 30min",
     popular: true,
   },
   {
     id: 3,
-    name: 'Viña del Mar',
-    region: 'Valparaíso',
-    image: '/images/vina-del-mar.jpg',
-    price: 5500,
-    duration: '1h 45min',
-    rating: 4.9,
+    name: "Encarnación",
+    region: "Itapúa",
+    image: "/images/encarnacion.png",
+    price: 40000,
+    duration: "5h",
     popular: true,
   },
   {
     id: 4,
-    name: 'Concepción',
-    region: 'Biobío',
-    image: '/images/concepcion.jpg',
-    price: 15000,
-    duration: '5h 30min',
-    rating: 4.7,
+    name: "Pedro Juan Caballero",
+    region: "Amambay",
+    image: "/images/pedro-juan-caballero.png",
+    price: 50000,
+    duration: "6h",
     popular: false,
   },
   {
     id: 5,
-    name: 'La Serena',
-    region: 'Coquimbo',
-    image: '/images/la-serena.jpg',
-    price: 12000,
-    duration: '6h',
-    rating: 4.8,
+    name: "Coronel Oviedo",
+    region: "Caaguazú",
+    image: "/images/coronel-oviedo.png",
+    price: 20000,
+    duration: "2h",
     popular: false,
   },
   {
     id: 6,
-    name: 'Puerto Montt',
-    region: 'Los Lagos',
-    image: '/images/puerto-montt.jpg',
-    price: 25000,
-    duration: '12h',
-    rating: 4.6,
+    name: "Salto del Guairá",
+    region: "Canindeyú",
+    image: "/images/salto-del-guaira.png",
+    price: 45000,
+    duration: "5h 30min",
     popular: false,
   },
-]
+];
 
 export function DestinationsSection() {
-  const [isVisible, setIsVisible] = useState(false)
-  const sectionRef = useRef<HTMLElement>(null)
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setIsVisible(true)
+          setIsVisible(true);
         }
       },
-      { threshold: 0.1 }
-    )
+      { threshold: 0.1 },
+    );
 
     if (sectionRef.current) {
-      observer.observe(sectionRef.current)
+      observer.observe(sectionRef.current);
     }
 
-    return () => observer.disconnect()
-  }, [])
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section ref={sectionRef} id="destinos" className="py-24 bg-gradient-to-b from-background via-muted/30 to-background relative overflow-hidden">
+    <section
+      ref={sectionRef}
+      id="destinos"
+      className="py-24 bg-gradient-to-b from-background via-muted/30 to-background relative overflow-hidden"
+    >
       {/* Decorative Background */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[150px]" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[120px]" />
       </div>
-      
+
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-12">
           <div>
-            <span 
+            <span
               className={cn(
                 "inline-block px-4 py-2 bg-secondary/10 text-secondary rounded-full text-sm font-medium mb-4 transition-all duration-700",
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+                isVisible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-10",
               )}
             >
               Destinos Populares
             </span>
-            <h2 
+            <h2
               className={cn(
                 "text-3xl md:text-5xl font-bold text-foreground mb-4 transition-all duration-700 delay-100",
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+                isVisible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-10",
               )}
             >
               <span className="text-balance">Explora </span>
-              <span className="text-secondary">Chile</span>
+              <span className="text-secondary">Paraguay</span>
             </h2>
-            <p 
+            <p
               className={cn(
                 "text-lg text-muted-foreground max-w-xl transition-all duration-700 delay-200",
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+                isVisible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-10",
               )}
             >
               Descubre los destinos más visitados y planifica tu próximo viaje.
             </p>
           </div>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className={cn(
               "mt-6 md:mt-0 border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground transition-all duration-500",
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-10",
             )}
-            style={{ transitionDelay: '300ms' }}
+            style={{ transitionDelay: "300ms" }}
           >
             Ver todos los destinos
             <ArrowRight className="h-4 w-4 ml-2" />
@@ -147,17 +153,23 @@ export function DestinationsSection() {
               key={destination.id}
               className={cn(
                 "group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-700",
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10",
-                index < 3 ? 'lg:h-96' : 'h-80'
+                isVisible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-10",
+                index < 3 ? "lg:h-96" : "h-80",
               )}
               style={{ transitionDelay: `${(index + 3) * 100}ms` }}
             >
               {/* Image with enhanced effects */}
               <div className="absolute inset-0">
                 <img
-                  src={destination.image || "/placeholder.svg"}
+                  src={destination.image}
                   alt={destination.name}
                   className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
+                  onError={(e) => {
+                    // Fallback a placeholder si la imagen local no existe
+                    e.currentTarget.src = `https://via.placeholder.com/800x600/1a2332/ffffff?text=${encodeURIComponent(destination.name)}`;
+                  }}
                 />
                 {/* Multi-layer gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1a2332] via-[#1a2332]/40 to-transparent" />
@@ -172,12 +184,6 @@ export function DestinationsSection() {
                   Popular
                 </div>
               )}
-
-              {/* Rating */}
-              <div className="absolute top-4 right-4 flex items-center gap-1 px-2 py-1 bg-background/90 backdrop-blur-sm rounded-full">
-                <Star className="h-4 w-4 text-secondary fill-secondary" />
-                <span className="text-sm font-medium">{destination.rating}</span>
-              </div>
 
               {/* Content */}
               <div className="absolute bottom-0 left-0 right-0 p-6">
@@ -200,7 +206,7 @@ export function DestinationsSection() {
                   <div className="text-right">
                     <p className="text-xs text-background/70">Desde</p>
                     <p className="text-2xl font-bold text-secondary">
-                      ${destination.price.toLocaleString('es-CL')}
+                      ₲{destination.price.toLocaleString("es-PY")}
                     </p>
                   </div>
                 </div>
@@ -218,5 +224,5 @@ export function DestinationsSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

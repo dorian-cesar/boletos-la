@@ -1,42 +1,42 @@
-'use client'
+"use client";
 
-import { useEffect, useRef, useState } from 'react'
-import { cn } from '@/lib/utils'
+import { useEffect, useRef, useState } from "react";
+import { cn } from "@/lib/utils";
 
 const companies = [
-  { name: 'Turbus', logo: 'TB' },
-  { name: 'Pullman Bus', logo: 'PB' },
-  { name: 'Buses JAC', logo: 'JAC' },
-  { name: 'Eme Bus', logo: 'EME' },
-  { name: 'Condor Bus', logo: 'CB' },
-  { name: 'Cruz del Sur', logo: 'CDS' },
-  { name: 'Buses Línea Azul', logo: 'LA' },
-  { name: 'Romani', logo: 'ROM' },
-]
+  { name: "Ñandutí", logo: "Ñ" },
+  { name: "Stel Turismo", logo: "ST" },
+  { name: "Nuestra Señora de la Asunción", logo: "NSA" },
+  { name: "La Encarnacena", logo: "LE" },
+];
 
 export function CompaniesSection() {
-  const [isVisible, setIsVisible] = useState(false)
-  const sectionRef = useRef<HTMLElement>(null)
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setIsVisible(true)
+          setIsVisible(true);
         }
       },
-      { threshold: 0.1 }
-    )
+      { threshold: 0.1 },
+    );
 
     if (sectionRef.current) {
-      observer.observe(sectionRef.current)
+      observer.observe(sectionRef.current);
     }
 
-    return () => observer.disconnect()
-  }, [])
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section ref={sectionRef} id="empresas" className="py-24 bg-gradient-to-br from-[#0f1419] via-[#1a2332] to-[#0f1419] relative overflow-hidden">
+    <section
+      ref={sectionRef}
+      id="empresas"
+      className="py-24 bg-gradient-to-br from-[#0f1419] via-[#1a2332] to-[#0f1419] relative overflow-hidden"
+    >
       {/* Enhanced Animated Background */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Gradient mesh */}
@@ -44,7 +44,7 @@ export function CompaniesSection() {
           <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-primary/10 to-transparent" />
           <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-secondary/10 to-transparent" />
         </div>
-        
+
         {/* Floating particles */}
         {[...Array(15)].map((_, i) => (
           <div
@@ -58,7 +58,7 @@ export function CompaniesSection() {
             }}
           />
         ))}
-        
+
         {/* Large gradient orbs */}
         <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[150px]" />
         <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-secondary/20 rounded-full blur-[150px]" />
@@ -67,30 +67,37 @@ export function CompaniesSection() {
       <div className="container mx-auto px-4 relative">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <span 
+          <span
             className={cn(
               "inline-block px-4 py-2 bg-primary/20 text-primary rounded-full text-sm font-medium mb-4 transition-all duration-700",
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-10",
             )}
           >
             Nuestros Partners
           </span>
-          <h2 
+          <h2
             className={cn(
               "text-3xl md:text-5xl font-bold text-background mb-4 transition-all duration-700 delay-100",
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-10",
             )}
           >
             <span className="text-balance">Las mejores </span>
             <span className="text-primary">empresas</span>
           </h2>
-          <p 
+          <p
             className={cn(
               "text-lg text-background/60 max-w-2xl mx-auto transition-all duration-700 delay-200",
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-10",
             )}
           >
-            Trabajamos con las empresas de transporte más reconocidas del país para ofrecerte la mejor experiencia de viaje.
+            Trabajamos con las empresas de transporte más reconocidas de
+            Paraguay para ofrecerte la mejor experiencia de viaje.
           </p>
         </div>
 
@@ -101,7 +108,9 @@ export function CompaniesSection() {
               key={company.name}
               className={cn(
                 "group relative bg-background/5 backdrop-blur-sm rounded-2xl p-8 border border-background/10 hover:border-primary/50 transition-all duration-500 hover:bg-background/10 cursor-pointer",
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+                isVisible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-10",
               )}
               style={{ transitionDelay: `${(index + 3) * 100}ms` }}
             >
@@ -124,18 +133,20 @@ export function CompaniesSection() {
         </div>
 
         {/* Stats */}
-        <div 
+        <div
           className={cn(
             "mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 transition-all duration-700",
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+            isVisible
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-10",
           )}
-          style={{ transitionDelay: '800ms' }}
+          style={{ transitionDelay: "800ms" }}
         >
           {[
-            { value: '50+', label: 'Empresas Asociadas' },
-            { value: '10K+', label: 'Viajes Diarios' },
-            { value: '500+', label: 'Rutas Disponibles' },
-            { value: '98%', label: 'Satisfacción' },
+            { value: "40+", label: "Empresas Asociadas" },
+            { value: "8K+", label: "Viajes Diarios" },
+            { value: "200+", label: "Rutas Disponibles" },
+            { value: "97%", label: "Satisfacción" },
           ].map((stat, index) => (
             <div key={index} className="text-center">
               <p className="text-4xl md:text-5xl font-bold text-primary mb-2">
@@ -147,5 +158,5 @@ export function CompaniesSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

@@ -1,18 +1,18 @@
-'use client'
+"use client";
 
-import { useBookingStore } from '@/lib/booking-store'
-import { cn } from '@/lib/utils'
-import { Check, Bus, Users, CreditCard, Ticket } from 'lucide-react'
+import { useBookingStore } from "@/lib/booking-store";
+import { cn } from "@/lib/utils";
+import { Check, Bus, Users, CreditCard, Ticket } from "lucide-react";
 
 const steps = [
-  { id: 1, name: 'Seleccionar Servicio', icon: Bus },
-  { id: 2, name: 'Elegir Asientos', icon: Users },
-  { id: 3, name: 'Datos y Pago', icon: CreditCard },
-  { id: 4, name: 'Confirmación', icon: Ticket },
-]
+  { id: 1, name: "Seleccionar Servicio", icon: Bus },
+  { id: 2, name: "Elegir Asientos", icon: Users },
+  { id: 3, name: "Datos y Pago", icon: CreditCard },
+  { id: 4, name: "Confirmación", icon: Ticket },
+];
 
 export function BookingProgress() {
-  const { step } = useBookingStore()
+  const { step } = useBookingStore();
 
   return (
     <div className="bg-background border-b border-border sticky top-0 z-40">
@@ -24,12 +24,12 @@ export function BookingProgress() {
               <div className="flex flex-col items-center">
                 <div
                   className={cn(
-                    'w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500',
+                    "w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500",
                     step > s.id
-                      ? 'bg-primary text-primary-foreground'
+                      ? "bg-primary text-primary-foreground"
                       : step === s.id
-                      ? 'bg-secondary text-secondary-foreground animate-pulse-glow'
-                      : 'bg-muted text-muted-foreground'
+                        ? "bg-secondary text-secondary-foreground animate-pulse-glow"
+                        : "bg-muted text-muted-foreground",
                   )}
                 >
                   {step > s.id ? (
@@ -40,8 +40,8 @@ export function BookingProgress() {
                 </div>
                 <span
                   className={cn(
-                    'mt-2 text-xs font-medium text-center hidden sm:block transition-colors duration-300',
-                    step >= s.id ? 'text-foreground' : 'text-muted-foreground'
+                    "mt-2 text-xs font-medium text-center hidden sm:block transition-colors duration-300",
+                    step >= s.id ? "text-foreground" : "text-muted-foreground",
                   )}
                 >
                   {s.name}
@@ -53,8 +53,8 @@ export function BookingProgress() {
                 <div className="w-12 sm:w-24 lg:w-32 h-1 mx-2 rounded-full overflow-hidden bg-muted">
                   <div
                     className={cn(
-                      'h-full bg-primary transition-all duration-700 ease-out',
-                      step > s.id ? 'w-full' : 'w-0'
+                      "h-full bg-primary transition-all duration-700 ease-out",
+                      step > s.id ? "w-full" : "w-0",
                     )}
                   />
                 </div>
@@ -64,5 +64,5 @@ export function BookingProgress() {
         </div>
       </div>
     </div>
-  )
+  );
 }

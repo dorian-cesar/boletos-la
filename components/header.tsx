@@ -1,45 +1,50 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { Menu, X, Phone, Mail, MapPin } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { Menu, X, Phone, Mail, MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export function Header() {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <>
       {/* Top Bar */}
-      <div className="hidden lg:block bg-foreground text-background py-2">
+      <div className="hidden lg:block bg-black text-white py-2">
         <div className="container mx-auto px-4 flex items-center justify-between text-sm">
           <div className="flex items-center gap-6">
             <span className="flex items-center gap-2">
-              <Phone className="h-4 w-4 text-secondary" />
-              +56 2 2345 6789
+              <Phone className="h-4 w-4 text-[#00c7cc]" />
+              +595 21 123 4567
             </span>
             <span className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-secondary" />
+              <Mail className="h-4 w-4 text-[#00c7cc]" />
               contacto@boletos.la
             </span>
             <span className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-secondary" />
-              Santiago, Chile
+              <MapPin className="h-4 w-4 text-[#00c7cc]" />
+              Asunción, Paraguay
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="#" className="hover:text-primary transition-colors">Ayuda</Link>
-            <Link href="#" className="hover:text-primary transition-colors">Mis Reservas</Link>
+            <Link href="#" className="hover:text-[#00c7cc] transition-colors">
+              Ayuda
+            </Link>
+            <Link href="#" className="hover:text-[#00c7cc] transition-colors">
+              Mis Reservas
+            </Link>
           </div>
         </div>
       </div>
@@ -47,53 +52,58 @@ export function Header() {
       {/* Main Header */}
       <header
         className={cn(
-          'sticky top-0 z-50 w-full transition-all duration-500',
-          isScrolled 
-            ? 'bg-background/95 backdrop-blur-md shadow-lg' 
-            : 'bg-transparent'
+          "sticky top-0 z-50 w-full transition-all duration-500 bg-black",
+          isScrolled ? "shadow-lg" : "",
         )}
       >
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 group">
-              <span className="text-3xl font-bold tracking-tight">
-                <span className="text-primary transition-all duration-300 group-hover:text-primary/80">bol</span>
-                <span className="text-secondary transition-all duration-300 group-hover:text-secondary/80">e</span>
-                <span className="text-primary transition-all duration-300 group-hover:text-primary/80">tos</span>
-                <span className="text-secondary transition-all duration-300 group-hover:text-secondary/80">.la</span>
-              </span>
+              <Image
+                src="/logo-boletos.png"
+                alt="Boletos.la Logo"
+                width={140}
+                height={80}
+                className="transition-transform duration-300 group-hover:scale-105 mb-1"
+              />
             </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-8">
-              <Link 
-                href="/" 
-                className="text-foreground hover:text-primary transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
+              <Link
+                href="/"
+                className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
               >
                 Inicio
               </Link>
-              <Link 
-                href="#destinos" 
-                className="text-foreground hover:text-primary transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
+              <Link
+                href="#destinos"
+                className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
               >
                 Destinos
               </Link>
-              <Link 
-                href="#servicios" 
-                className="text-foreground hover:text-primary transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
+              <Link
+                href="#servicios"
+                className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
               >
                 Servicios
               </Link>
-              <Link 
-                href="#empresas" 
-                className="text-foreground hover:text-primary transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
+              <Link
+                href="#empresas"
+                className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
               >
                 Empresas
               </Link>
-              <Link 
-                href="#contacto" 
-                className="text-foreground hover:text-primary transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
+              <Link
+                href="#promociones"
+                className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
+              >
+                Promociones
+              </Link>
+              <Link
+                href="#contacto"
+                className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
               >
                 Contacto
               </Link>
@@ -101,25 +111,27 @@ export function Header() {
 
             {/* CTA Button */}
             <div className="hidden lg:flex items-center gap-4">
-              <Button 
-                variant="outline" 
-                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 bg-transparent"
+              <Button
+                variant="outline"
+                className="border-[#00c7cc] text-[#00c7cc] hover:bg-[#00c7cc] hover:text-white transition-all duration-300 bg-transparent"
               >
                 Mis Viajes
               </Button>
-              <Button 
-                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground transition-all duration-300 transform hover:scale-105"
-              >
-                Reservar Ahora
+              <Button className="bg-[#ffaa00] hover:bg-[#ffaa00]/90 text-black transition-all duration-300 transform hover:scale-105">
+                Reservar Pasaje
               </Button>
             </div>
 
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-foreground hover:text-primary transition-colors"
+              className="lg:hidden p-2 text-white hover:text-[#00c7cc] transition-colors"
             >
-              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isMobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>
@@ -127,37 +139,61 @@ export function Header() {
         {/* Mobile Menu */}
         <div
           className={cn(
-            'lg:hidden overflow-hidden transition-all duration-500 ease-in-out bg-background',
-            isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+            "lg:hidden overflow-hidden transition-all duration-500 ease-in-out bg-black",
+            isMobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0",
           )}
         >
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-4">
-            <Link href="/" className="text-foreground hover:text-primary transition-colors font-medium py-2">
+            <Link
+              href="/"
+              className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
+            >
               Inicio
             </Link>
-            <Link href="#destinos" className="text-foreground hover:text-primary transition-colors font-medium py-2">
+            <Link
+              href="#destinos"
+              className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
+            >
               Destinos
             </Link>
-            <Link href="#servicios" className="text-foreground hover:text-primary transition-colors font-medium py-2">
+            <Link
+              href="#servicios"
+              className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
+            >
               Servicios
             </Link>
-            <Link href="#empresas" className="text-foreground hover:text-primary transition-colors font-medium py-2">
+            <Link
+              href="#empresas"
+              className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
+            >
               Empresas
             </Link>
-            <Link href="#contacto" className="text-foreground hover:text-primary transition-colors font-medium py-2">
+            <Link
+              href="#promociones"
+              className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
+            >
+              Promociones
+            </Link>
+            <Link
+              href="#contacto"
+              className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
+            >
               Contacto
             </Link>
-            <div className="flex flex-col gap-2 pt-4 border-t border-border">
-              <Button variant="outline" className="w-full border-primary text-primary bg-transparent">
+            <div className="flex flex-col gap-2 pt-4 border-t border-white/20">
+              <Button
+                variant="outline"
+                className="w-full border-[#00c7cc] text-[#00c7cc] bg-transparent"
+              >
                 Mis Viajes
               </Button>
-              <Button className="w-full bg-secondary text-secondary-foreground">
-                Reservar Ahora
+              <Button className="w-full bg-[#ffaa00] text-black">
+                Reservar Pasaje
               </Button>
             </div>
           </nav>
         </div>
       </header>
     </>
-  )
+  );
 }

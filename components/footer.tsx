@@ -1,19 +1,32 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { Facebook, Twitter, Instagram, Youtube, MapPin, Phone, Mail, ArrowRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import Link from "next/link";
+import {
+  Facebook,
+  Twitter,
+  Instagram,
+  Youtube,
+  MapPin,
+  Phone,
+  Mail,
+  ArrowRight,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import Image from "next/image";
 
 export function Footer() {
   return (
-    <footer id="contacto" className="bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background relative overflow-hidden">
+    <footer
+      id="contacto"
+      className="bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background relative overflow-hidden"
+    >
       {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-secondary/10 rounded-full blur-[100px]" />
       </div>
-      
+
       {/* Newsletter Section */}
       <div className="border-b border-background/10 relative z-10">
         <div className="container mx-auto px-4 py-12">
@@ -47,15 +60,17 @@ export function Footer() {
           {/* Brand */}
           <div>
             <Link href="/" className="inline-block mb-6">
-              <span className="text-3xl font-bold">
-                <span className="text-primary">bol</span>
-                <span className="text-secondary">e</span>
-                <span className="text-primary">tos</span>
-                <span className="text-secondary">.la</span>
-              </span>
+              <Image
+                src="/logo-boletos.png"
+                alt="Boletos.la Logo"
+                width={140}
+                height={80}
+                className="transition-transform duration-300 hover:scale-105"
+              />
             </Link>
             <p className="text-background/60 mb-6 leading-relaxed">
-              Tu plataforma de confianza para reservar pasajes de bus en todo Chile. Viaja seguro, viaja con nosotros.
+              Tu plataforma de confianza para reservar pasajes de bus en todo
+              Paraguay. Viaja seguro, viaja con nosotros.
             </p>
             <div className="flex items-center gap-4">
               {[Facebook, Twitter, Instagram, Youtube].map((Icon, index) => (
@@ -72,9 +87,18 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-bold mb-6 text-background">Enlaces Rápidos</h4>
+            <h4 className="text-lg font-bold mb-6 text-background">
+              Enlaces Rápidos
+            </h4>
             <ul className="space-y-4">
-              {['Inicio', 'Destinos', 'Servicios', 'Empresas', 'Ofertas', 'Blog'].map((link) => (
+              {[
+                "Inicio",
+                "Destinos",
+                "Servicios",
+                "Empresas",
+                "Ofertas",
+                "Blog",
+              ].map((link) => (
                 <li key={link}>
                   <a
                     href="#"
@@ -90,9 +114,18 @@ export function Footer() {
 
           {/* Destinos */}
           <div>
-            <h4 className="text-lg font-bold mb-6 text-background">Destinos Populares</h4>
+            <h4 className="text-lg font-bold mb-6 text-background">
+              Destinos Populares
+            </h4>
             <ul className="space-y-4">
-              {['Santiago', 'Valparaíso', 'Viña del Mar', 'Concepción', 'La Serena', 'Puerto Montt'].map((city) => (
+              {[
+                "Asunción",
+                "Ciudad del Este",
+                "Encarnación",
+                "Pedro Juan Caballero",
+                "Coronel Oviedo",
+                "Salto del Guairá",
+              ].map((city) => (
                 <li key={city}>
                   <a
                     href="#"
@@ -113,19 +146,26 @@ export function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-primary mt-0.5" />
                 <span className="text-background/60">
-                  Av. Libertador Bernardo O'Higgins 1234<br />
-                  Santiago, Chile
+                  Av. Mariscal López 1234
+                  <br />
+                  Asunción, Paraguay
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-primary" />
-                <a href="tel:+56223456789" className="text-background/60 hover:text-primary transition-colors">
-                  +56 2 2345 6789
+                <a
+                  href="tel:+595212345678"
+                  className="text-background/60 hover:text-primary transition-colors"
+                >
+                  +595 21 234 5678
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-primary" />
-                <a href="mailto:contacto@boletos.la" className="text-background/60 hover:text-primary transition-colors">
+                <a
+                  href="mailto:contacto@boletos.la"
+                  className="text-background/60 hover:text-primary transition-colors"
+                >
                   contacto@boletos.la
                 </a>
               </li>
@@ -133,11 +173,19 @@ export function Footer() {
 
             {/* Payment Methods */}
             <div className="mt-8">
-              <h5 className="text-sm font-medium mb-3 text-background/80">Medios de Pago</h5>
+              <h5 className="text-sm font-medium mb-3 text-background/80">
+                Medios de Pago
+              </h5>
               <div className="flex items-center gap-2">
-                <div className="px-3 py-2 bg-background/10 rounded text-xs font-medium">Webpay</div>
-                <div className="px-3 py-2 bg-background/10 rounded text-xs font-medium">Visa</div>
-                <div className="px-3 py-2 bg-background/10 rounded text-xs font-medium">Mastercard</div>
+                <div className="px-3 py-2 bg-background/10 rounded text-xs font-medium">
+                  Pagopar
+                </div>
+                <div className="px-3 py-2 bg-background/10 rounded text-xs font-medium">
+                  Visa
+                </div>
+                <div className="px-3 py-2 bg-background/10 rounded text-xs font-medium">
+                  Mastercard
+                </div>
               </div>
             </div>
           </div>
@@ -149,16 +197,26 @@ export function Footer() {
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-background/50 text-sm text-center md:text-left">
-              2024 boletos.la. Todos los derechos reservados.
+              {new Date().getFullYear()} boletos.la. Todos los derechos
+              reservados.
             </p>
             <div className="flex items-center gap-6 text-sm">
-              <a href="#" className="text-background/50 hover:text-primary transition-colors">
+              <a
+                href="#"
+                className="text-background/50 hover:text-primary transition-colors"
+              >
                 Términos y Condiciones
               </a>
-              <a href="#" className="text-background/50 hover:text-primary transition-colors">
+              <a
+                href="#"
+                className="text-background/50 hover:text-primary transition-colors"
+              >
                 Política de Privacidad
               </a>
-              <a href="#" className="text-background/50 hover:text-primary transition-colors">
+              <a
+                href="#"
+                className="text-background/50 hover:text-primary transition-colors"
+              >
                 Ayuda
               </a>
             </div>
@@ -166,5 +224,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

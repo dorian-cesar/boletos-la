@@ -1,36 +1,36 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { format } from 'date-fns'
-import { es } from 'date-fns/locale'
-import { 
-  ArrowRight, 
-  Bus, 
-  MapPin, 
-  User, 
-  Mail, 
-  Phone, 
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import {
+  ArrowRight,
+  Bus,
+  MapPin,
+  User,
+  Mail,
+  Phone,
   CreditCard,
   Shield,
   Lock,
   CheckCircle2,
-  Loader2
-} from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { BookingProgress } from '@/components/booking-progress'
-import { useBookingStore, cities, Passenger } from '@/lib/booking-store'
-import { cn } from '@/lib/utils'
+  Loader2,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { BookingProgress } from "@/components/booking-progress";
+import { useBookingStore, cities, Passenger } from "@/lib/booking-store";
+import { cn } from "@/lib/utils";
 
 export default function CheckoutPage() {
-  const router = useRouter()
-  const [mounted, setMounted] = useState(false)
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [showPaymentModal, setShowPaymentModal] = useState(false)
-  
+  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
   const {
     tripType,
     passengers,
@@ -47,69 +47,72 @@ export default function CheckoutPage() {
     setStep,
     setBookingReference,
     setPaymentStatus,
-  } = useBookingStore()
+  } = useBookingStore();
 
-  const originCity = cities.find(c => c.id === selectedOutboundTrip?.origin)
-  const destinationCity = cities.find(c => c.id === selectedOutboundTrip?.destination)
+  const originCity = cities.find((c) => c.id === selectedOutboundTrip?.origin);
+  const destinationCity = cities.find(
+    (c) => c.id === selectedOutboundTrip?.destination,
+  );
 
   useEffect(() => {
-    setMounted(true)
-    setStep(3)
+    setMounted(true);
+    setStep(3);
 
     // Initialize passenger details
     if (passengerDetails.length === 0) {
-      const allSeats = [...selectedSeats, ...selectedReturnSeats]
-      const uniqueSeats = selectedSeats.slice(0, passengers)
-      const initialPassengers: Passenger[] = uniqueSeats.map(seat => ({
+      const allSeats = [...selectedSeats, ...selectedReturnSeats];
+      const uniqueSeats = selectedSeats.slice(0, passengers);
+      const initialPassengers: Passenger[] = uniqueSeats.map((seat) => ({
         seatId: seat.id,
         seatNumber: seat.number,
-        firstName: '',
-        lastName: '',
-        rut: '',
-        email: '',
-        phone: '',
-      }))
-      setPassengerDetails(initialPassengers)
+        firstName: "",
+        lastName: "",
+        rut: "",
+        email: "",
+        phone: "",
+      }));
+      setPassengerDetails(initialPassengers);
     }
-  }, [])
+  }, []);
 
   const validateRut = (rut: string) => {
     // Basic RUT validation (Chilean ID)
-    const rutClean = rut.replace(/[.-]/g, '')
-    return rutClean.length >= 8
-  }
+    const rutClean = rut.replace(/[.-]/g, "");
+    return rutClean.length >= 8;
+  };
 
   const validateEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-  }
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
 
-  const isFormValid = passengerDetails.every(p => 
-    p.firstName.trim() !== '' &&
-    p.lastName.trim() !== '' &&
-    validateRut(p.rut) &&
-    validateEmail(p.email) &&
-    p.phone.trim() !== ''
-  )
+  const isFormValid = passengerDetails.every(
+    (p) =>
+      p.firstName.trim() !== "" &&
+      p.lastName.trim() !== "" &&
+      validateRut(p.rut) &&
+      validateEmail(p.email) &&
+      p.phone.trim() !== "",
+  );
 
   const handlePayment = async () => {
-    if (!isFormValid) return
+    if (!isFormValid) return;
 
-    setShowPaymentModal(true)
-  }
+    setShowPaymentModal(true);
+  };
 
   const processPayment = async () => {
-    setIsProcessing(true)
-    
+    setIsProcessing(true);
+
     // Simulate Webpay Plus payment processing
-    await new Promise(resolve => setTimeout(resolve, 3000))
-    
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
     // Generate booking reference
-    const reference = `BL-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`
-    setBookingReference(reference)
-    setPaymentStatus('completed')
-    
-    router.push('/booking/confirmation')
-  }
+    const reference = `BL-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+    setBookingReference(reference);
+    setPaymentStatus("completed");
+
+    router.push("/booking/confirmation");
+  };
 
   if (!mounted) {
     return (
@@ -119,7 +122,7 @@ export default function CheckoutPage() {
           <p className="text-muted-foreground">Cargando checkout...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!selectedOutboundTrip || selectedSeats.length === 0) {
@@ -128,13 +131,18 @@ export default function CheckoutPage() {
         <div className="text-center">
           <Bus className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
           <p className="text-xl font-semibold mb-2">No hay reserva activa</p>
-          <p className="text-muted-foreground mb-4">Por favor, inicia una nueva reserva</p>
-          <Button onClick={() => router.push('/')} className="bg-primary hover:bg-primary/90">
+          <p className="text-muted-foreground mb-4">
+            Por favor, inicia una nueva reserva
+          </p>
+          <Button
+            onClick={() => router.push("/")}
+            className="bg-primary hover:bg-primary/90"
+          >
             Volver al inicio
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -150,8 +158,8 @@ export default function CheckoutPage() {
             </h2>
 
             {passengerDetails.map((passenger, index) => (
-              <Card 
-                key={index} 
+              <Card
+                key={index}
                 className="p-6 animate-fade-in"
                 style={{ animationDelay: `${index * 150}ms` }}
               >
@@ -162,7 +170,8 @@ export default function CheckoutPage() {
                   <div>
                     <h3 className="font-semibold">Pasajero {index + 1}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Asiento {selectedSeats[index]?.number || passenger.seatNumber}
+                      Asiento{" "}
+                      {selectedSeats[index]?.number || passenger.seatNumber}
                     </p>
                   </div>
                 </div>
@@ -174,7 +183,9 @@ export default function CheckoutPage() {
                       id={`firstName-${index}`}
                       placeholder="Ingresa el nombre"
                       value={passenger.firstName}
-                      onChange={(e) => updatePassenger(index, { firstName: e.target.value })}
+                      onChange={(e) =>
+                        updatePassenger(index, { firstName: e.target.value })
+                      }
                       className="h-12"
                     />
                   </div>
@@ -185,7 +196,9 @@ export default function CheckoutPage() {
                       id={`lastName-${index}`}
                       placeholder="Ingresa el apellido"
                       value={passenger.lastName}
-                      onChange={(e) => updatePassenger(index, { lastName: e.target.value })}
+                      onChange={(e) =>
+                        updatePassenger(index, { lastName: e.target.value })
+                      }
                       className="h-12"
                     />
                   </div>
@@ -196,7 +209,9 @@ export default function CheckoutPage() {
                       id={`rut-${index}`}
                       placeholder="12.345.678-9"
                       value={passenger.rut}
-                      onChange={(e) => updatePassenger(index, { rut: e.target.value })}
+                      onChange={(e) =>
+                        updatePassenger(index, { rut: e.target.value })
+                      }
                       className="h-12"
                     />
                   </div>
@@ -209,7 +224,9 @@ export default function CheckoutPage() {
                         id={`phone-${index}`}
                         placeholder="+56 9 1234 5678"
                         value={passenger.phone}
-                        onChange={(e) => updatePassenger(index, { phone: e.target.value })}
+                        onChange={(e) =>
+                          updatePassenger(index, { phone: e.target.value })
+                        }
                         className="h-12 pl-10"
                       />
                     </div>
@@ -224,7 +241,9 @@ export default function CheckoutPage() {
                         type="email"
                         placeholder="correo@ejemplo.com"
                         value={passenger.email}
-                        onChange={(e) => updatePassenger(index, { email: e.target.value })}
+                        onChange={(e) =>
+                          updatePassenger(index, { email: e.target.value })
+                        }
                         className="h-12 pl-10"
                       />
                     </div>
@@ -239,14 +258,19 @@ export default function CheckoutPage() {
             ))}
 
             {/* Payment Section */}
-            <Card className="p-6 animate-fade-in" style={{ animationDelay: `${passengers * 150}ms` }}>
+            <Card
+              className="p-6 animate-fade-in"
+              style={{ animationDelay: `${passengers * 150}ms` }}
+            >
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center">
                   <CreditCard className="h-5 w-5 text-secondary" />
                 </div>
                 <div>
                   <h3 className="font-semibold">Método de Pago</h3>
-                  <p className="text-sm text-muted-foreground">Pago seguro con Webpay Plus</p>
+                  <p className="text-sm text-muted-foreground">
+                    Pago seguro con Webpay Plus
+                  </p>
                 </div>
               </div>
 
@@ -254,22 +278,31 @@ export default function CheckoutPage() {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className="w-16 h-10 bg-background rounded flex items-center justify-center border border-border">
-                      <span className="text-xs font-bold text-foreground">Webpay</span>
+                      <span className="text-xs font-bold text-foreground">
+                        Webpay
+                      </span>
                     </div>
                     <div>
                       <p className="font-medium">Webpay Plus</p>
-                      <p className="text-xs text-muted-foreground">Tarjeta de crédito o débito</p>
+                      <p className="text-xs text-muted-foreground">
+                        Tarjeta de crédito o débito
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <Shield className="h-5 w-5 text-primary" />
-                    <span className="text-xs text-muted-foreground">Pago Seguro</span>
+                    <span className="text-xs text-muted-foreground">
+                      Pago Seguro
+                    </span>
                   </div>
                 </div>
 
                 <div className="flex flex-wrap gap-3">
-                  {['Visa', 'Mastercard', 'Redcompra', 'Amex'].map((card) => (
-                    <div key={card} className="px-3 py-2 bg-background rounded border border-border text-xs font-medium">
+                  {["Visa", "Mastercard", "Redcompra", "Amex"].map((card) => (
+                    <div
+                      key={card}
+                      className="px-3 py-2 bg-background rounded border border-border text-xs font-medium"
+                    >
                       {card}
                     </div>
                   ))}
@@ -279,9 +312,11 @@ export default function CheckoutPage() {
               <div className="mt-6 flex items-start gap-3 p-4 bg-primary/5 rounded-xl">
                 <Lock className="h-5 w-5 text-primary mt-0.5" />
                 <div className="text-sm">
-                  <p className="font-medium text-foreground">Transacción Segura</p>
+                  <p className="font-medium text-foreground">
+                    Transacción Segura
+                  </p>
                   <p className="text-muted-foreground">
-                    Tus datos están protegidos con encriptación SSL de 256 bits. 
+                    Tus datos están protegidos con encriptación SSL de 256 bits.
                     Serás redirigido a Webpay Plus para completar el pago.
                   </p>
                 </div>
@@ -296,61 +331,93 @@ export default function CheckoutPage() {
 
               {/* Outbound Trip */}
               <div className="mb-6 pb-6 border-b border-border">
-                <p className="text-sm font-medium text-primary mb-3">Viaje de Ida</p>
+                <p className="text-sm font-medium text-primary mb-3">
+                  Viaje de Ida
+                </p>
                 <div className="flex items-center gap-3 mb-3">
                   <Bus className="h-5 w-5 text-muted-foreground" />
                   <div>
-                    <p className="font-medium">{selectedOutboundTrip.company}</p>
-                    <p className="text-sm text-muted-foreground">{selectedOutboundTrip.busType}</p>
+                    <p className="font-medium">
+                      {selectedOutboundTrip.company}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {selectedOutboundTrip.busType}
+                    </p>
                   </div>
                 </div>
                 <div className="space-y-2 text-sm">
                   <p className="flex justify-between">
                     <span className="text-muted-foreground">Fecha</span>
-                    <span>{format(new Date(departureDate || ''), "dd MMM yyyy", { locale: es })}</span>
+                    <span>
+                      {format(new Date(departureDate || ""), "dd MMM yyyy", {
+                        locale: es,
+                      })}
+                    </span>
                   </p>
                   <p className="flex justify-between">
                     <span className="text-muted-foreground">Ruta</span>
-                    <span>{originCity?.name} - {destinationCity?.name}</span>
+                    <span>
+                      {originCity?.name} - {destinationCity?.name}
+                    </span>
                   </p>
                   <p className="flex justify-between">
                     <span className="text-muted-foreground">Horario</span>
-                    <span>{selectedOutboundTrip.departureTime} - {selectedOutboundTrip.arrivalTime}</span>
+                    <span>
+                      {selectedOutboundTrip.departureTime} -{" "}
+                      {selectedOutboundTrip.arrivalTime}
+                    </span>
                   </p>
                   <p className="flex justify-between">
                     <span className="text-muted-foreground">Asientos</span>
-                    <span>{selectedSeats.map(s => s.number).join(', ')}</span>
+                    <span>{selectedSeats.map((s) => s.number).join(", ")}</span>
                   </p>
                 </div>
               </div>
 
               {/* Return Trip */}
-              {tripType === 'round-trip' && selectedReturnTrip && (
+              {tripType === "round-trip" && selectedReturnTrip && (
                 <div className="mb-6 pb-6 border-b border-border">
-                  <p className="text-sm font-medium text-secondary mb-3">Viaje de Vuelta</p>
+                  <p className="text-sm font-medium text-secondary mb-3">
+                    Viaje de Vuelta
+                  </p>
                   <div className="flex items-center gap-3 mb-3">
                     <Bus className="h-5 w-5 text-muted-foreground" />
                     <div>
-                      <p className="font-medium">{selectedReturnTrip.company}</p>
-                      <p className="text-sm text-muted-foreground">{selectedReturnTrip.busType}</p>
+                      <p className="font-medium">
+                        {selectedReturnTrip.company}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {selectedReturnTrip.busType}
+                      </p>
                     </div>
                   </div>
                   <div className="space-y-2 text-sm">
                     <p className="flex justify-between">
                       <span className="text-muted-foreground">Fecha</span>
-                      <span>{format(new Date(returnDate || ''), "dd MMM yyyy", { locale: es })}</span>
+                      <span>
+                        {format(new Date(returnDate || ""), "dd MMM yyyy", {
+                          locale: es,
+                        })}
+                      </span>
                     </p>
                     <p className="flex justify-between">
                       <span className="text-muted-foreground">Ruta</span>
-                      <span>{destinationCity?.name} - {originCity?.name}</span>
+                      <span>
+                        {destinationCity?.name} - {originCity?.name}
+                      </span>
                     </p>
                     <p className="flex justify-between">
                       <span className="text-muted-foreground">Horario</span>
-                      <span>{selectedReturnTrip.departureTime} - {selectedReturnTrip.arrivalTime}</span>
+                      <span>
+                        {selectedReturnTrip.departureTime} -{" "}
+                        {selectedReturnTrip.arrivalTime}
+                      </span>
                     </p>
                     <p className="flex justify-between">
                       <span className="text-muted-foreground">Asientos</span>
-                      <span>{selectedReturnSeats.map(s => s.number).join(', ')}</span>
+                      <span>
+                        {selectedReturnSeats.map((s) => s.number).join(", ")}
+                      </span>
                     </p>
                   </div>
                 </div>
@@ -359,12 +426,18 @@ export default function CheckoutPage() {
               {/* Price Breakdown */}
               <div className="space-y-3 mb-6 pb-6 border-b border-border">
                 <p className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Subtotal ({passengers} pasajero{passengers > 1 ? 's' : ''})</span>
-                  <span>${Math.round(totalPrice * 0.81).toLocaleString('es-CL')}</span>
+                  <span className="text-muted-foreground">
+                    Subtotal ({passengers} pasajero{passengers > 1 ? "s" : ""})
+                  </span>
+                  <span>
+                    ${Math.round(totalPrice * 0.81).toLocaleString("es-CL")}
+                  </span>
                 </p>
                 <p className="flex justify-between text-sm">
                   <span className="text-muted-foreground">IVA (19%)</span>
-                  <span>${Math.round(totalPrice * 0.19).toLocaleString('es-CL')}</span>
+                  <span>
+                    ${Math.round(totalPrice * 0.19).toLocaleString("es-CL")}
+                  </span>
                 </p>
               </div>
 
@@ -373,7 +446,7 @@ export default function CheckoutPage() {
                 <div className="flex items-center justify-between">
                   <span className="text-lg font-medium">Total a Pagar</span>
                   <span className="text-3xl font-bold text-secondary">
-                    ${totalPrice.toLocaleString('es-CL')}
+                    ${totalPrice.toLocaleString("es-CL")}
                   </span>
                 </div>
               </div>
@@ -405,7 +478,7 @@ export default function CheckoutPage() {
       {/* Webpay Payment Modal */}
       {showPaymentModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div 
+          <div
             className="absolute inset-0 bg-foreground/80 backdrop-blur-sm"
             onClick={() => !isProcessing && setShowPaymentModal(false)}
           />
@@ -426,7 +499,7 @@ export default function CheckoutPage() {
                   <div className="flex justify-between items-center">
                     <span className="text-muted-foreground">Monto a pagar</span>
                     <span className="text-2xl font-bold text-secondary">
-                      ${totalPrice.toLocaleString('es-CL')}
+                      ${totalPrice.toLocaleString("es-CL")}
                     </span>
                   </div>
                 </div>
@@ -461,5 +534,5 @@ export default function CheckoutPage() {
         </div>
       )}
     </div>
-  )
+  );
 }
