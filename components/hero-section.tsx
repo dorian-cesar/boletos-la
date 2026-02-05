@@ -52,7 +52,7 @@ export function HeroSection() {
         {!isVideoLoaded && (
           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-black/70 to-secondary/20">
             <img
-              src="/images/hero-bus.jpg"
+              src="/placeholder-video.png"
               alt="Bus viajando por Paraguay"
               className="w-full h-full object-cover opacity-50"
               loading="eager"
@@ -86,7 +86,7 @@ export function HeroSection() {
 
           {/* Fallback image si el video no carga */}
           <img
-            src="/images/hero-bus.jpg"
+            src="/placeholder-video.png"
             alt="Bus viajando por Paraguay"
             className="w-full h-full object-cover"
           />
