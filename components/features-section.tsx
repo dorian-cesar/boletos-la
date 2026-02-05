@@ -13,38 +13,34 @@ const features = [
     icon: Shield,
     title: "Pago 100% Seguro",
     description: "Transacciones protegidas con Pagopar y encriptación SSL.",
-    image:
-      "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=300&fit=crop",
+    image: "/images/1.jpg",
   },
   {
     icon: CreditCard,
     title: "Múltiples Medios de Pago",
     description:
       "Paga con tarjeta de crédito, débito, transferencia bancaria o en efectivo.",
-    image:
-      "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&h=300&fit=crop",
+    image: "/images/2.jpg",
   },
   {
     icon: Clock,
     title: "Reserva Instantánea",
     description:
       "Confirma tu viaje en segundos y recibe tu boleto al instante.",
-    image:
-      "https://images.unsplash.com/photo-1530789253388-582c481c54b0?w=400&h=300&fit=crop",
+    image: "/images/3.jpg",
   },
   {
     icon: Headphones,
     title: "Soporte 24/7",
     description: "Atención al cliente disponible todo el día, todos los días.",
-    image:
-      "https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=400&h=300&fit=crop",
+    image: "/images/4.jpg",
   },
 ];
 
 const testimonialAvatars = [
-  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face",
-  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face",
-  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face",
+  "/images/avatar1.jpg",
+  "/images/avatar2.jpg",
+  "/images/avatar3.jpg",
 ];
 
 export function FeaturesSection() {
@@ -108,7 +104,7 @@ export function FeaturesSection() {
             </h2>
             <Button
               className={cn(
-                "w-fit bg-[#00c7cc] text-white hover:bg-[#00c7cc]/90 rounded-full px-8 py-6 font-semibold text-base transition-all duration-700 delay-200 hover:scale-105 hover:shadow-lg hover:shadow-[#00c7cc]/30",
+                "w-fit bg-secondary text-white hover:bg-secondary/90 rounded-full px-8 py-6 font-semibold text-base transition-all duration-700 delay-200 hover:scale-105 hover:shadow-lg hover:shadow-secondary/30",
                 isVisible
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-10",
@@ -147,7 +143,7 @@ export function FeaturesSection() {
           {/* Testimonial Card */}
           <div
             className={cn(
-              "relative bg-[#00c7cc] rounded-2xl p-8 overflow-hidden transition-all duration-700 hover:shadow-2xl hover:shadow-[#00c7cc]/20 group",
+              "relative rounded-2xl p-8 overflow-hidden transition-all duration-700 group",
               isVisible
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-10",
@@ -247,28 +243,29 @@ function FeatureCard({
   return (
     <div
       className={cn(
-        "group relativ backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-700 hover:shadow-2xl hover:-translate-y-2 border border-white/10",
+        "group relative bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-700 hover:shadow-2xl hover:-translate-y-2 border border-white/10",
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10",
       )}
       style={{ transitionDelay: `${(index + 3) * 100}ms` }}
     >
       {/* Icon Badge - Ahora arriba de la imagen */}
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
-        <div className="w-16 h-16 rounded-full bg-[#ffaa00] border-4 border-black/10 flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-12 group-hover:shadow-lg group-hover:shadow-[#ffaa00]/50">
+        <div className="w-16 h-16 rounded-full bg-[#ffaa00] border-4 border-white/20 flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-[#ffaa00]/50">
           <feature.icon className="w-7 h-7 text-black" />
         </div>
       </div>
 
-      {/* Image */}
-      <div className="relative h-48 overflow-hidden">
+      {/* Image - Altura aumentada con contenedor flexible */}
+      <div className="relative h-[280px] overflow-hidden">
         <Image
-          src={feature.image || "/placeholder.svg"}
+          src={feature.image}
           alt={feature.title}
           fill
           className="object-cover transition-transform duration-700 group-hover:scale-110"
+          style={{ objectPosition: "50% 20%" }}
         />
         {/* Overlay oscuro para mejor contraste */}
-        <div className="absolute inset-0 bg-black/20" />
+        <div className="absolute inset-0 bg-black/10" />
       </div>
 
       {/* Content */}
