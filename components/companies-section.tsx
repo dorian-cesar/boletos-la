@@ -2,12 +2,29 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 const companies = [
-  { name: "Ñandutí", logo: "Ñ" },
-  { name: "Stel Turismo", logo: "ST" },
-  { name: "Nuestra Señora de la Asunción", logo: "NSA" },
-  { name: "La Encarnacena", logo: "LE" },
+  {
+    name: "Nuestra Señora de la Asunción",
+    logo: "/logos/logo-nsa.png",
+    alt: "Logo Nuestra Señora de la Asunción",
+  },
+  {
+    name: "La Santaniana",
+    logo: "/logos/logo-la-santaniana.jpg",
+    alt: "Logo La Santaniana",
+  },
+  {
+    name: "Sol de Paraguay",
+    logo: "/logos/logo-sol-de-paraguay.jpg",
+    alt: "Logo Sol de Paraguay",
+  },
+  {
+    name: "La Encarnacena",
+    logo: "/logos/la-encarnacena.png",
+    alt: "Logo La Encarnacena",
+  },
 ];
 
 export function CompaniesSection() {
@@ -35,36 +52,15 @@ export function CompaniesSection() {
     <section
       ref={sectionRef}
       id="empresas"
-      className="py-24 bg-gradient-to-br from-[#0f1419] via-[#1a2332] to-[#0f1419] relative overflow-hidden"
+      className="py-24 bg-gradient-to-b from-[#1a2332] to-[#0f1419] relative overflow-hidden"
     >
-      {/* Enhanced Animated Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Gradient mesh */}
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-primary/10 to-transparent" />
-          <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-secondary/10 to-transparent" />
-        </div>
-
-        {/* Floating particles */}
-        {[...Array(15)].map((_, i) => (
-          <div
-            key={`particle-${i}`}
-            className="absolute w-1 h-1 bg-primary/20 rounded-full animate-float"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${i * 0.2}s`,
-              animationDuration: `${3 + Math.random() * 2}s`,
-            }}
-          />
-        ))}
-
-        {/* Large gradient orbs */}
-        <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[150px]" />
-        <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-secondary/20 rounded-full blur-[150px]" />
+      {/* Background Effects - Simple como el FeaturesSection */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-secondary/10 rounded-full blur-[100px]" />
       </div>
 
-      <div className="container mx-auto px-4 relative">
+      <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
           <span
@@ -79,7 +75,7 @@ export function CompaniesSection() {
           </span>
           <h2
             className={cn(
-              "text-3xl md:text-5xl font-bold text-background mb-4 transition-all duration-700 delay-100",
+              "text-3xl md:text-5xl font-bold text-white mb-4 transition-all duration-700 delay-100",
               isVisible
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-10",
@@ -90,7 +86,7 @@ export function CompaniesSection() {
           </h2>
           <p
             className={cn(
-              "text-lg text-background/60 max-w-2xl mx-auto transition-all duration-700 delay-200",
+              "text-lg text-white/60 max-w-2xl mx-auto transition-all duration-700 delay-200",
               isVisible
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-10",
@@ -100,36 +96,34 @@ export function CompaniesSection() {
             Paraguay para ofrecerte la mejor experiencia de viaje.
           </p>
         </div>
-        {/* Companies Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+
+        {/* Companies Grid - Solo logos */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
           {companies.map((company, index) => (
             <div
               key={company.name}
               className={cn(
-                "group relative bg-background/5 backdrop-blur-sm rounded-2xl p-8 border border-background/10 hover:border-primary/50 transition-all duration-500 hover:bg-background/10 cursor-pointer",
+                "group flex items-center justify-center",
                 isVisible
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-10",
               )}
               style={{ transitionDelay: `${(index + 3) * 100}ms` }}
             >
-              {/* Logo Placeholder */}
-              <div className="flex flex-col items-center justify-center">
-                <div className="w-20 h-20 rounded-2xl bg-background/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-all duration-500 group-hover:scale-110">
-                  <span className="text-2xl font-bold text-background/80 group-hover:text-primary transition-colors duration-300">
-                    {company.logo}
-                  </span>
-                </div>
-                <h3 className="text-background/80 font-medium text-center group-hover:text-background transition-colors duration-300">
-                  {company.name}
-                </h3>
-              </div>
-
-              {/* Glow Effect */}
-              <div className="absolute inset-0 rounded-2xl bg-primary/20 opacity-0 blur-xl group-hover:opacity-50 transition-opacity duration-500" />
+              <Image
+                src={company.logo}
+                alt={company.alt || company.name}
+                width={140}
+                height={90}
+                className="object-contain w-full h-auto max-h-24 md:max-h-32 transition-all duration-500 
+                  grayscale opacity-40 
+                  group-hover:grayscale-0 group-hover:opacity-100 
+                  group-hover:scale-105"
+              />
             </div>
           ))}
         </div>
+
         {/* Stats */}
         <div
           className={cn(
@@ -150,7 +144,7 @@ export function CompaniesSection() {
               <p className="text-4xl md:text-5xl font-bold text-primary mb-2">
                 {stat.value}
               </p>
-              <p className="text-background/60">{stat.label}</p>
+              <p className="text-white/60">{stat.label}</p>
             </div>
           ))}
         </div>

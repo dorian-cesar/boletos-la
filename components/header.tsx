@@ -61,7 +61,7 @@ export function Header() {
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 group">
               <Image
-                src="/logo-boletos.png"
+                src="/logos/logo-boletos.png"
                 alt="Boletos.la Logo"
                 width={140}
                 height={80}

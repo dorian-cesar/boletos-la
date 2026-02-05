@@ -61,7 +61,7 @@ export function Footer() {
           <div>
             <Link href="/" className="inline-block mb-6">
               <Image
-                src="/logo-boletos.png"
+                src="/logos/logo-boletos.png"
                 alt="Boletos.la Logo"
                 width={140}
                 height={80}
