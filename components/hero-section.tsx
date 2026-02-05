@@ -96,14 +96,6 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-black/60" />
       </div>
 
-      {/* Preload hidden para asegurar caché */}
-      <link
-        rel="preload"
-        href="/videos/banner-boletos.mp4"
-        as="video"
-        type="video/mp4"
-      />
-
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 py-20 lg:py-32">
         <div className="text-center mb-12 animate-fade-in">
