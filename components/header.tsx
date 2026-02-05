@@ -65,7 +65,8 @@ export function Header() {
                 alt="Boletos.la Logo"
                 width={140}
                 height={80}
-                className="transition-transform duration-300 group-hover:scale-105 mb-1"
+                className="h-auto transition-transform duration-300 group-hover:scale-105 mb-1"
+                loading="eager"
               />
             </Link>
 

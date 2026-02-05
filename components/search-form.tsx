@@ -66,6 +66,10 @@ export function SearchForm() {
     setDestination(temp);
   };
 
+  const resetBooking = () => {
+    localStorage.removeItem("booking-store");
+  };
+
   return (
     <div
       className="max-w-5xl mx-auto animate-scale-in"

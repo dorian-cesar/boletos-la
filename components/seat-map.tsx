@@ -33,16 +33,27 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
   }, [tripId]);
 
   const handleSeatClick = (seat: Seat) => {
-    if (seat.status === "occupied") return;
+    console.log("Seat clicked:", seat.number, "Status:", seat.status);
+
+    if (seat.status === "occupied") {
+      console.log("Seat is occupied");
+      return;
+    }
 
     const isSelected = currentSelectedSeats.some((s) => s.id === seat.id);
+    console.log("Is already selected?", isSelected);
 
     if (isSelected) {
+      console.log("Removing seat:", seat.id);
       isReturn ? removeReturnSeat(seat.id) : removeSeat(seat.id);
     } else {
+      console.log("Attempting to add seat");
       if (currentSelectedSeats.length < passengers) {
-        const updatedSeat = { ...seat, status: "selected" as const };
-        isReturn ? addReturnSeat(updatedSeat) : addSeat(updatedSeat);
+        console.log("Adding seat:", seat.id);
+        isReturn ? addReturnSeat(seat) : addSeat(seat);
+      } else {
+        console.log("Max capacity reached");
+        alert(`Máximo ${passengers} asiento(s) para ${passengers} pasajero(s)`);
       }
     }
   };

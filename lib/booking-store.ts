@@ -22,7 +22,7 @@ export interface Seat {
   row: number;
   column: number;
   floor: number;
-  type: "normal" | "premium" | "vip";
+  type: "standard" | "premium" | "vip";
   status: "available" | "occupied" | "selected";
   price: number;
 }
@@ -267,8 +267,7 @@ export const generateSeats = (tripId: string, floor: number = 1): Seat[] => {
 
   for (let row = 1; row <= rows; row++) {
     for (let col = 1; col <= columns; col++) {
-      // Skip aisle (between columns 2 and 3)
-      const isOccupied = Math.random() > 0.7;
+      const isOccupied = Math.random() < 0.3; // 30% ocupados
       const isPremium = row <= 3;
       const isVip = floor === 2 && row <= 2;
 
@@ -278,9 +277,9 @@ export const generateSeats = (tripId: string, floor: number = 1): Seat[] => {
         row,
         column: col,
         floor,
-        type: isVip ? "vip" : isPremium ? "premium" : "normal",
+        type: isVip ? "vip" : isPremium ? "premium" : "standard", // Cambia aquí
         status: isOccupied ? "occupied" : "available",
-        price: isVip ? 15000 : isPremium ? 12000 : 10000,
+        price: isVip ? 25000 : isPremium ? 18000 : 15000,
       });
     }
   }

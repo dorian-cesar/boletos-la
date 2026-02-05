@@ -66,6 +66,7 @@ export function Footer() {
                 width={140}
                 height={80}
                 className="transition-transform duration-300 hover:scale-105"
+                loading="eager"
               />
             </Link>
             <p className="text-background/60 mb-6 leading-relaxed">
