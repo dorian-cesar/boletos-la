@@ -198,8 +198,6 @@ export const cities = [
   { id: "cor", name: "Coronel Oviedo", department: "Caaguazú" },
   { id: "sal", name: "Salto del Guairá", department: "Canindeyú" },
   { id: "pil", name: "Pilar", department: "Ñeembucú" },
-  { id: "con", name: "Concepción", department: "Concepción" },
-  { id: "vill", name: "Villarrica", department: "Guairá" },
 ];
 
 export const generateTrips = (
