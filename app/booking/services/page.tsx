@@ -53,7 +53,6 @@ export default function ServicesPage() {
     departureDate,
     returnDate,
     tripType,
-    passengers,
     selectedOutboundTrip,
     setSelectedOutboundTrip,
     selectedReturnTrip,
@@ -153,8 +152,7 @@ export default function ServicesPage() {
                     new Date(showingReturn ? returnDate : departureDate),
                     "EEEE d 'de' MMMM, yyyy",
                     { locale: es },
-                  )}{" "}
-                  - {passengers} {passengers === 1 ? "pasajero" : "pasajeros"}
+                  )}
                 </p>
               </div>
             </div>
@@ -299,7 +297,7 @@ export default function ServicesPage() {
                         ${trip.price.toLocaleString("es-CL")}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        por persona
+                        por asiento
                       </p>
                     </div>
                     <Button

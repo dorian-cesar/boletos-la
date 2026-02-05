@@ -15,7 +15,6 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
   const [activeFloor, setActiveFloor] = useState(1);
 
   const {
-    passengers,
     selectedSeats,
     selectedReturnSeats,
     addSeat,
@@ -47,14 +46,9 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
       console.log("Removing seat:", seat.id);
       isReturn ? removeReturnSeat(seat.id) : removeSeat(seat.id);
     } else {
-      console.log("Attempting to add seat");
-      if (currentSelectedSeats.length < passengers) {
-        console.log("Adding seat:", seat.id);
-        isReturn ? addReturnSeat(seat) : addSeat(seat);
-      } else {
-        console.log("Max capacity reached");
-        alert(`Máximo ${passengers} asiento(s) para ${passengers} pasajero(s)`);
-      }
+      console.log("Adding seat:", seat.id);
+      // SIN LÍMITE - puede seleccionar todos los asientos que quiera
+      isReturn ? addReturnSeat(seat) : addSeat(seat);
     }
   };
 
@@ -183,7 +177,7 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
               Asientos seleccionados
             </p>
             <p className="font-semibold text-foreground">
-              {currentSelectedSeats.length} de {passengers}
+              {currentSelectedSeats.length}
             </p>
           </div>
           <div className="flex flex-wrap gap-2">

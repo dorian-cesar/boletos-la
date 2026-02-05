@@ -2,14 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Calendar,
-  MapPin,
-  Users,
-  ArrowRight,
-  Bus,
-  ChevronDown,
-} from "lucide-react";
+import { Calendar, MapPin, ArrowRight, Bus, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -37,7 +30,6 @@ export function SearchForm() {
   const [destinationOpen, setDestinationOpen] = useState(false);
   const [departureDateOpen, setDepartureDateOpen] = useState(false);
   const [returnDateOpen, setReturnDateOpen] = useState(false);
-  const [passengersOpen, setPassengersOpen] = useState(false);
 
   const {
     tripType,
@@ -45,13 +37,11 @@ export function SearchForm() {
     destination,
     departureDate,
     returnDate,
-    passengers,
     setTripType,
     setOrigin,
     setDestination,
     setDepartureDate,
     setReturnDate,
-    setPassengers,
   } = useBookingStore();
 
   const handleSearch = () => {
@@ -64,10 +54,6 @@ export function SearchForm() {
     const temp = origin;
     setOrigin(destination);
     setDestination(temp);
-  };
-
-  const resetBooking = () => {
-    localStorage.removeItem("booking-store");
   };
 
   return (
@@ -105,7 +91,7 @@ export function SearchForm() {
         </div>
 
         {/* Search Fields */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
           {/* Origin */}
           <div className="relative group">
             <Label className="text-sm font-medium text-muted-foreground mb-2 block">
@@ -164,7 +150,7 @@ export function SearchForm() {
           {/* Swap Button - Floating */}
           <button
             onClick={swapCities}
-            className="hidden lg:flex absolute left-[calc(25%-12px)] top-[calc(50%+16px)] z-20 w-10 h-10 items-center justify-center bg-secondary text-secondary-foreground rounded-full shadow-lg hover:scale-110 transition-transform duration-300"
+            className="hidden lg:flex absolute left-[calc(33.33%-12px)] top-[calc(50%+16px)] z-20 w-10 h-10 items-center justify-center bg-secondary text-secondary-foreground rounded-full shadow-lg hover:scale-110 transition-transform duration-300"
           >
             <ArrowRight className="h-5 w-5 rotate-90 lg:rotate-0" />
           </button>
@@ -273,8 +259,8 @@ export function SearchForm() {
             </Popover>
           </div>
 
-          {/* Return Date or Passengers */}
-          {tripType === "round-trip" ? (
+          {/* Return Date (solo para round-trip) */}
+          {tripType === "round-trip" && (
             <div className="relative group">
               <Label className="text-sm font-medium text-muted-foreground mb-2 block">
                 Fecha de Vuelta
@@ -317,117 +303,10 @@ export function SearchForm() {
                 </PopoverContent>
               </Popover>
             </div>
-          ) : (
-            <div className="relative group">
-              <Label className="text-sm font-medium text-muted-foreground mb-2 block">
-                Pasajeros
-              </Label>
-              <Popover open={passengersOpen} onOpenChange={setPassengersOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-between h-14 text-left font-normal bg-muted/50 border-border hover:border-primary hover:bg-muted transition-all duration-300 group-hover:shadow-md"
-                  >
-                    <div className="flex items-center gap-3">
-                      <Users className="h-5 w-5 text-primary" />
-                      <span>
-                        {passengers}{" "}
-                        {passengers === 1 ? "Pasajero" : "Pasajeros"}
-                      </span>
-                    </div>
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-48" align="start">
-                  <div className="flex items-center justify-between py-2">
-                    <span className="font-medium">Pasajeros</span>
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() =>
-                          setPassengers(Math.max(1, passengers - 1))
-                        }
-                        className="w-8 h-8 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-colors flex items-center justify-center"
-                      >
-                        -
-                      </button>
-                      <span className="w-8 text-center font-semibold">
-                        {passengers}
-                      </span>
-                      <button
-                        onClick={() =>
-                          setPassengers(Math.min(4, passengers + 1))
-                        }
-                        className="w-8 h-8 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-colors flex items-center justify-center"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Máximo 4 pasajeros por reserva
-                  </p>
-                </PopoverContent>
-              </Popover>
-            </div>
           )}
         </div>
 
-        {/* Passengers for Round Trip */}
-        {tripType === "round-trip" && (
-          <div className="mt-4 flex justify-center">
-            <div className="relative group w-full max-w-xs">
-              <Label className="text-sm font-medium text-muted-foreground mb-2 block">
-                Pasajeros
-              </Label>
-              <Popover open={passengersOpen} onOpenChange={setPassengersOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-between h-14 text-left font-normal bg-muted/50 border-border hover:border-primary hover:bg-muted transition-all duration-300 group-hover:shadow-md"
-                  >
-                    <div className="flex items-center gap-3">
-                      <Users className="h-5 w-5 text-primary" />
-                      <span>
-                        {passengers}{" "}
-                        {passengers === 1 ? "Pasajero" : "Pasajeros"}
-                      </span>
-                    </div>
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-48" align="center">
-                  <div className="flex items-center justify-between py-2">
-                    <span className="font-medium">Pasajeros</span>
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() =>
-                          setPassengers(Math.max(1, passengers - 1))
-                        }
-                        className="w-8 h-8 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-colors flex items-center justify-center"
-                      >
-                        -
-                      </button>
-                      <span className="w-8 text-center font-semibold">
-                        {passengers}
-                      </span>
-                      <button
-                        onClick={() =>
-                          setPassengers(Math.min(4, passengers + 1))
-                        }
-                        className="w-8 h-8 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-colors flex items-center justify-center"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Máximo 4 pasajeros
-                  </p>
-                </PopoverContent>
-              </Popover>
-            </div>
-          </div>
-        )}
+        {/* ELIMINADO: Sección completa de Passengers for Round Trip */}
 
         {/* Search Button */}
         <div className="mt-8 flex justify-center">

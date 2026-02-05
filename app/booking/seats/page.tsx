@@ -1,25 +1,32 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { format } from 'date-fns'
-import { es } from 'date-fns/locale'
-import { ArrowRight, Bus, MapPin, Clock, Users, ChevronLeft, ChevronRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { BookingProgress } from '@/components/booking-progress'
-import { SeatMap } from '@/components/seat-map'
-import { useBookingStore, cities } from '@/lib/booking-store'
-import { cn } from '@/lib/utils'
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import {
+  ArrowRight,
+  Bus,
+  MapPin,
+  Clock,
+  Users,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { BookingProgress } from "@/components/booking-progress";
+import { SeatMap } from "@/components/seat-map";
+import { useBookingStore, cities } from "@/lib/booking-store";
+import { cn } from "@/lib/utils";
 
 export default function SeatsPage() {
-  const router = useRouter()
-  const [mounted, setMounted] = useState(false)
-  const [selectingReturn, setSelectingReturn] = useState(false)
-  
+  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+  const [selectingReturn, setSelectingReturn] = useState(false);
+
   const {
     tripType,
-    passengers,
     departureDate,
     returnDate,
     selectedOutboundTrip,
@@ -29,46 +36,54 @@ export default function SeatsPage() {
     setStep,
     calculateTotal,
     totalPrice,
-  } = useBookingStore()
+  } = useBookingStore();
 
   useEffect(() => {
-    setMounted(true)
-    setStep(2)
-    calculateTotal()
-  }, [setStep, calculateTotal])
+    setMounted(true);
+    setStep(2);
+    calculateTotal();
+  }, [setStep, calculateTotal]);
 
   useEffect(() => {
-    calculateTotal()
-  }, [selectedSeats, selectedReturnSeats, calculateTotal])
+    calculateTotal();
+  }, [selectedSeats, selectedReturnSeats, calculateTotal]);
 
   const handleContinue = () => {
-    if (tripType === 'round-trip' && !selectingReturn && selectedReturnTrip) {
-      setSelectingReturn(true)
+    if (tripType === "round-trip" && !selectingReturn && selectedReturnTrip) {
+      setSelectingReturn(true);
     } else {
-      router.push('/booking/checkout')
+      router.push("/booking/checkout");
     }
-  }
+  };
 
-  const canContinue = selectingReturn 
-    ? selectedReturnSeats.length === passengers
-    : selectedSeats.length === passengers
+  const canContinue = selectingReturn
+    ? selectedReturnSeats.length > 0 // Al menos 1 asiento seleccionado
+    : selectedSeats.length > 0; // Al menos 1 asiento seleccionado
 
-  const currentTrip = selectingReturn ? selectedReturnTrip : selectedOutboundTrip
-  const currentDate = selectingReturn ? returnDate : departureDate
-  const origin = selectingReturn ? selectedReturnTrip?.origin : selectedOutboundTrip?.origin
-  const destination = selectingReturn ? selectedReturnTrip?.destination : selectedOutboundTrip?.destination
-  const originCity = cities.find(c => c.id === origin)
-  const destinationCity = cities.find(c => c.id === destination)
+  const currentTrip = selectingReturn
+    ? selectedReturnTrip
+    : selectedOutboundTrip;
+  const currentDate = selectingReturn ? returnDate : departureDate;
+  const origin = selectingReturn
+    ? selectedReturnTrip?.origin
+    : selectedOutboundTrip?.origin;
+  const destination = selectingReturn
+    ? selectedReturnTrip?.destination
+    : selectedOutboundTrip?.destination;
+  const originCity = cities.find((c) => c.id === origin);
+  const destinationCity = cities.find((c) => c.id === destination);
 
   if (!mounted) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Bus className="h-16 w-16 text-primary mx-auto mb-4 animate-bounce" />
-          <p className="text-muted-foreground">Cargando selección de asientos...</p>
+          <p className="text-muted-foreground">
+            Cargando selección de asientos...
+          </p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!selectedOutboundTrip) {
@@ -76,14 +91,21 @@ export default function SeatsPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Bus className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-          <p className="text-xl font-semibold mb-2">No hay viaje seleccionado</p>
-          <p className="text-muted-foreground mb-4">Por favor, selecciona un servicio primero</p>
-          <Button onClick={() => router.push('/')} className="bg-primary hover:bg-primary/90">
+          <p className="text-xl font-semibold mb-2">
+            No hay viaje seleccionado
+          </p>
+          <p className="text-muted-foreground mb-4">
+            Por favor, selecciona un servicio primero
+          </p>
+          <Button
+            onClick={() => router.push("/")}
+            className="bg-primary hover:bg-primary/90"
+          >
             Volver al inicio
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -99,21 +121,31 @@ export default function SeatsPage() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Bus className="h-6 w-6 text-primary" />
-                  <span className="font-bold text-lg">{currentTrip?.company}</span>
-                  <span className="text-muted-foreground">- {currentTrip?.busType}</span>
+                  <span className="font-bold text-lg">
+                    {currentTrip?.company}
+                  </span>
+                  <span className="text-muted-foreground">
+                    - {currentTrip?.busType}
+                  </span>
                 </div>
-                <span className={cn(
-                  'px-3 py-1 rounded-full text-sm font-medium',
-                  selectingReturn ? 'bg-secondary/10 text-secondary' : 'bg-primary/10 text-primary'
-                )}>
-                  {selectingReturn ? 'Viaje de Vuelta' : 'Viaje de Ida'}
+                <span
+                  className={cn(
+                    "px-3 py-1 rounded-full text-sm font-medium",
+                    selectingReturn
+                      ? "bg-secondary/10 text-secondary"
+                      : "bg-primary/10 text-primary",
+                  )}
+                >
+                  {selectingReturn ? "Viaje de Vuelta" : "Viaje de Ida"}
                 </span>
               </div>
 
               <div className="flex items-center gap-8">
                 <div className="flex items-center gap-4">
                   <div>
-                    <p className="text-2xl font-bold">{currentTrip?.departureTime}</p>
+                    <p className="text-2xl font-bold">
+                      {currentTrip?.departureTime}
+                    </p>
                     <p className="text-sm text-muted-foreground flex items-center gap-1">
                       <MapPin className="h-4 w-4" />
                       {originCity?.name}
@@ -122,11 +154,15 @@ export default function SeatsPage() {
                   <div className="flex items-center gap-2">
                     <div className="w-16 h-0.5 bg-border" />
                     <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-xs text-muted-foreground">{currentTrip?.duration}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {currentTrip?.duration}
+                    </span>
                     <div className="w-16 h-0.5 bg-border" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold">{currentTrip?.arrivalTime}</p>
+                    <p className="text-2xl font-bold">
+                      {currentTrip?.arrivalTime}
+                    </p>
                     <p className="text-sm text-muted-foreground flex items-center gap-1">
                       <MapPin className="h-4 w-4" />
                       {destinationCity?.name}
@@ -135,31 +171,33 @@ export default function SeatsPage() {
                 </div>
                 <div className="ml-auto text-right">
                   <p className="text-sm text-muted-foreground">
-                    {format(new Date(currentDate || ''), "EEE d MMM", { locale: es })}
+                    {format(new Date(currentDate || ""), "EEE d MMM", {
+                      locale: es,
+                    })}
                   </p>
                   <p className="text-xl font-bold text-secondary">
-                    ${currentTrip?.price.toLocaleString('es-CL')}
+                    ${currentTrip?.price.toLocaleString("es-CL")}
                   </p>
                 </div>
               </div>
             </Card>
 
             {/* Seat Map */}
-            <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              <SeatMap 
-                tripId={currentTrip?.id || ''} 
+            <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
+              <SeatMap
+                tripId={currentTrip?.id || ""}
                 isReturn={selectingReturn}
               />
             </div>
 
             {/* Navigation for Return */}
-            {tripType === 'round-trip' && selectedReturnTrip && (
+            {tripType === "round-trip" && selectedReturnTrip && (
               <div className="flex justify-between mt-6">
                 <Button
                   variant="outline"
                   onClick={() => setSelectingReturn(false)}
                   disabled={!selectingReturn}
-                  className={cn(!selectingReturn && 'opacity-50')}
+                  className={cn(!selectingReturn && "opacity-50")}
                 >
                   <ChevronLeft className="h-4 w-4 mr-2" />
                   Asientos de Ida
@@ -167,8 +205,11 @@ export default function SeatsPage() {
                 <Button
                   variant="outline"
                   onClick={() => setSelectingReturn(true)}
-                  disabled={selectingReturn || selectedSeats.length < passengers}
-                  className={cn((selectingReturn || selectedSeats.length < passengers) && 'opacity-50')}
+                  disabled={selectingReturn || selectedSeats.length === 0}
+                  className={cn(
+                    (selectingReturn || selectedSeats.length === 0) &&
+                      "opacity-50",
+                  )}
                 >
                   Asientos de Vuelta
                   <ChevronRight className="h-4 w-4 ml-2" />
@@ -192,27 +233,33 @@ export default function SeatsPage() {
                 </div>
                 <div className="pl-10 space-y-2">
                   <p className="text-sm">
-                    <span className="text-muted-foreground">Fecha:</span>{' '}
-                    {format(new Date(departureDate || ''), "dd MMM yyyy", { locale: es })}
+                    <span className="text-muted-foreground">Fecha:</span>{" "}
+                    {format(new Date(departureDate || ""), "dd MMM yyyy", {
+                      locale: es,
+                    })}
                   </p>
                   <p className="text-sm">
-                    <span className="text-muted-foreground">Horario:</span>{' '}
-                    {selectedOutboundTrip?.departureTime} - {selectedOutboundTrip?.arrivalTime}
+                    <span className="text-muted-foreground">Horario:</span>{" "}
+                    {selectedOutboundTrip?.departureTime} -{" "}
+                    {selectedOutboundTrip?.arrivalTime}
                   </p>
                   <p className="text-sm">
-                    <span className="text-muted-foreground">Asientos:</span>{' '}
-                    {selectedSeats.length > 0 
-                      ? selectedSeats.map(s => s.number).join(', ')
-                      : 'Sin seleccionar'}
+                    <span className="text-muted-foreground">Asientos:</span>{" "}
+                    {selectedSeats.length > 0
+                      ? selectedSeats.map((s) => s.number).join(", ")
+                      : "Sin seleccionar"}
                   </p>
                   <p className="text-sm font-medium text-secondary">
-                    ${selectedSeats.reduce((acc, s) => acc + s.price, 0).toLocaleString('es-CL')}
+                    $
+                    {selectedSeats
+                      .reduce((acc, s) => acc + s.price, 0)
+                      .toLocaleString("es-CL")}
                   </p>
                 </div>
               </div>
 
               {/* Return Trip */}
-              {tripType === 'round-trip' && selectedReturnTrip && (
+              {tripType === "round-trip" && selectedReturnTrip && (
                 <div className="mb-6 pb-6 border-b border-border">
                   <div className="flex items-center gap-2 mb-3">
                     <div className="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center">
@@ -222,31 +269,40 @@ export default function SeatsPage() {
                   </div>
                   <div className="pl-10 space-y-2">
                     <p className="text-sm">
-                      <span className="text-muted-foreground">Fecha:</span>{' '}
-                      {format(new Date(returnDate || ''), "dd MMM yyyy", { locale: es })}
+                      <span className="text-muted-foreground">Fecha:</span>{" "}
+                      {format(new Date(returnDate || ""), "dd MMM yyyy", {
+                        locale: es,
+                      })}
                     </p>
                     <p className="text-sm">
-                      <span className="text-muted-foreground">Horario:</span>{' '}
-                      {selectedReturnTrip?.departureTime} - {selectedReturnTrip?.arrivalTime}
+                      <span className="text-muted-foreground">Horario:</span>{" "}
+                      {selectedReturnTrip?.departureTime} -{" "}
+                      {selectedReturnTrip?.arrivalTime}
                     </p>
                     <p className="text-sm">
-                      <span className="text-muted-foreground">Asientos:</span>{' '}
-                      {selectedReturnSeats.length > 0 
-                        ? selectedReturnSeats.map(s => s.number).join(', ')
-                        : 'Sin seleccionar'}
+                      <span className="text-muted-foreground">Asientos:</span>{" "}
+                      {selectedReturnSeats.length > 0
+                        ? selectedReturnSeats.map((s) => s.number).join(", ")
+                        : "Sin seleccionar"}
                     </p>
                     <p className="text-sm font-medium text-secondary">
-                      ${selectedReturnSeats.reduce((acc, s) => acc + s.price, 0).toLocaleString('es-CL')}
+                      $
+                      {selectedReturnSeats
+                        .reduce((acc, s) => acc + s.price, 0)
+                        .toLocaleString("es-CL")}
                     </p>
                   </div>
                 </div>
               )}
 
-              {/* Passengers */}
+              {/* Passengers - Basado en asientos seleccionados */}
               <div className="mb-6 pb-6 border-b border-border">
                 <div className="flex items-center gap-2 mb-2">
                   <Users className="h-5 w-5 text-muted-foreground" />
-                  <span className="font-medium">{passengers} {passengers === 1 ? 'Pasajero' : 'Pasajeros'}</span>
+                  <span className="font-medium">
+                    {selectedSeats.length + selectedReturnSeats.length}{" "}
+                    Pasajeros
+                  </span>
                 </div>
               </div>
 
@@ -255,10 +311,12 @@ export default function SeatsPage() {
                 <div className="flex items-center justify-between">
                   <span className="text-lg font-medium">Total</span>
                   <span className="text-3xl font-bold text-secondary">
-                    ${totalPrice.toLocaleString('es-CL')}
+                    ${totalPrice.toLocaleString("es-CL")}
                   </span>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">Impuestos incluidos</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Impuestos incluidos
+                </p>
               </div>
 
               {/* Continue Button */}
@@ -267,15 +325,17 @@ export default function SeatsPage() {
                 disabled={!canContinue}
                 className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground h-14 text-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
               >
-                {tripType === 'round-trip' && !selectingReturn && selectedReturnTrip
-                  ? 'Seleccionar Asientos de Vuelta'
-                  : 'Continuar al Pago'}
+                {tripType === "round-trip" &&
+                !selectingReturn &&
+                selectedReturnTrip
+                  ? "Seleccionar Asientos de Vuelta"
+                  : "Continuar al Pago"}
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Button>
 
               {!canContinue && (
                 <p className="text-sm text-destructive mt-3 text-center animate-pulse">
-                  Selecciona {passengers} asiento{passengers > 1 ? 's' : ''} para continuar
+                  Selecciona al menos 1 asiento para continuar
                 </p>
               )}
             </Card>
@@ -283,5 +343,5 @@ export default function SeatsPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -33,7 +33,6 @@ export default function CheckoutPage() {
 
   const {
     tripType,
-    passengers,
     departureDate,
     returnDate,
     selectedOutboundTrip,
@@ -54,15 +53,16 @@ export default function CheckoutPage() {
     (c) => c.id === selectedOutboundTrip?.destination,
   );
 
+  const totalPassengers = selectedSeats.length + selectedReturnSeats.length;
+
   useEffect(() => {
     setMounted(true);
     setStep(3);
 
-    // Initialize passenger details
+    // Initialize passenger details based on selected seats
     if (passengerDetails.length === 0) {
       const allSeats = [...selectedSeats, ...selectedReturnSeats];
-      const uniqueSeats = selectedSeats.slice(0, passengers);
-      const initialPassengers: Passenger[] = uniqueSeats.map((seat) => ({
+      const initialPassengers: Passenger[] = allSeats.map((seat, index) => ({
         seatId: seat.id,
         seatNumber: seat.number,
         firstName: "",
@@ -76,7 +76,6 @@ export default function CheckoutPage() {
   }, []);
 
   const validateRut = (rut: string) => {
-    // Basic RUT validation (Chilean ID)
     const rutClean = rut.replace(/[.-]/g, "");
     return rutClean.length >= 8;
   };
@@ -103,10 +102,8 @@ export default function CheckoutPage() {
   const processPayment = async () => {
     setIsProcessing(true);
 
-    // Simulate Webpay Plus payment processing
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
-    // Generate booking reference
     const reference = `BL-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
     setBookingReference(reference);
     setPaymentStatus("completed");
@@ -154,7 +151,7 @@ export default function CheckoutPage() {
           {/* Passenger Forms */}
           <div className="lg:col-span-2 space-y-6">
             <h2 className="text-2xl font-bold animate-fade-in">
-              Datos de los Pasajeros
+              Datos de los Pasajeros ({totalPassengers})
             </h2>
 
             {passengerDetails.map((passenger, index) => (
@@ -170,8 +167,7 @@ export default function CheckoutPage() {
                   <div>
                     <h3 className="font-semibold">Pasajero {index + 1}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Asiento{" "}
-                      {selectedSeats[index]?.number || passenger.seatNumber}
+                      Asiento {passenger.seatNumber}
                     </p>
                   </div>
                 </div>
@@ -260,7 +256,7 @@ export default function CheckoutPage() {
             {/* Payment Section */}
             <Card
               className="p-6 animate-fade-in"
-              style={{ animationDelay: `${passengers * 150}ms` }}
+              style={{ animationDelay: `${totalPassengers * 150}ms` }}
             >
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center">
@@ -427,7 +423,8 @@ export default function CheckoutPage() {
               <div className="space-y-3 mb-6 pb-6 border-b border-border">
                 <p className="flex justify-between text-sm">
                   <span className="text-muted-foreground">
-                    Subtotal ({passengers} pasajero{passengers > 1 ? "s" : ""})
+                    Subtotal ({totalPassengers} asiento
+                    {totalPassengers > 1 ? "s" : ""})
                   </span>
                   <span>
                     ${Math.round(totalPrice * 0.81).toLocaleString("es-CL")}

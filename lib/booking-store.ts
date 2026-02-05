@@ -1,3 +1,4 @@
+// lib/booking-store.ts
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
@@ -44,7 +45,7 @@ export interface BookingState {
   destination: string;
   departureDate: string;
   returnDate: string;
-  passengers: number;
+  // ELIMINAR: passengers: number; ← Remover esta línea
   selectedOutboundTrip: Trip | null;
   selectedReturnTrip: Trip | null;
   selectedSeats: Seat[];
@@ -60,7 +61,7 @@ export interface BookingState {
   setDestination: (destination: string) => void;
   setDepartureDate: (date: string) => void;
   setReturnDate: (date: string) => void;
-  setPassengers: (count: number) => void;
+  // ELIMINAR: setPassengers: (count: number) => void; ← Remover esta línea
   setSelectedOutboundTrip: (trip: Trip | null) => void;
   setSelectedReturnTrip: (trip: Trip | null) => void;
   addSeat: (seat: Seat) => void;
@@ -84,7 +85,7 @@ const initialState = {
   destination: "",
   departureDate: "",
   returnDate: "",
-  passengers: 1,
+  // ELIMINAR: passengers: 1, ← Remover esta línea
   selectedOutboundTrip: null,
   selectedReturnTrip: null,
   selectedSeats: [],
@@ -106,18 +107,18 @@ export const useBookingStore = create<BookingState>()(
       setDestination: (destination) => set({ destination }),
       setDepartureDate: (departureDate) => set({ departureDate }),
       setReturnDate: (returnDate) => set({ returnDate }),
-      setPassengers: (passengers) => set({ passengers }),
+      // ELIMINAR: setPassengers: (passengers) => set({ passengers }), ← Remover esta línea
       setSelectedOutboundTrip: (selectedOutboundTrip) =>
         set({ selectedOutboundTrip }),
       setSelectedReturnTrip: (selectedReturnTrip) =>
         set({ selectedReturnTrip }),
 
+      // MODIFICAR: Eliminar la verificación de límite de pasajeros
       addSeat: (seat) => {
-        const { selectedSeats, passengers } = get();
-        if (selectedSeats.length < passengers) {
-          set({ selectedSeats: [...selectedSeats, seat] });
-          get().calculateTotal();
-        }
+        const { selectedSeats } = get(); // ← Solo obtener selectedSeats
+        // SIN LÍMITE - puede seleccionar todos los asientos que quiera
+        set({ selectedSeats: [...selectedSeats, seat] });
+        get().calculateTotal();
       },
 
       removeSeat: (seatId) => {
@@ -126,12 +127,12 @@ export const useBookingStore = create<BookingState>()(
         get().calculateTotal();
       },
 
+      // MODIFICAR: Eliminar la verificación de límite de pasajeros
       addReturnSeat: (seat) => {
-        const { selectedReturnSeats, passengers } = get();
-        if (selectedReturnSeats.length < passengers) {
-          set({ selectedReturnSeats: [...selectedReturnSeats, seat] });
-          get().calculateTotal();
-        }
+        const { selectedReturnSeats } = get(); // ← Solo obtener selectedReturnSeats
+        // SIN LÍMITE
+        set({ selectedReturnSeats: [...selectedReturnSeats, seat] });
+        get().calculateTotal();
       },
 
       removeReturnSeat: (seatId) => {
@@ -188,7 +189,7 @@ export const useBookingStore = create<BookingState>()(
   ),
 );
 
-// Sample data
+// Sample data - SIN CAMBIOS
 export const cities = [
   { id: "asu", name: "Asunción", department: "Capital" },
   { id: "cde", name: "Ciudad del Este", department: "Alto Paraná" },
@@ -277,7 +278,7 @@ export const generateSeats = (tripId: string, floor: number = 1): Seat[] => {
         row,
         column: col,
         floor,
-        type: isVip ? "vip" : isPremium ? "premium" : "standard", // Cambia aquí
+        type: isVip ? "vip" : isPremium ? "premium" : "standard",
         status: isOccupied ? "occupied" : "available",
         price: isVip ? 25000 : isPremium ? 18000 : 15000,
       });
