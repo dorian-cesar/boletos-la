@@ -20,11 +20,11 @@ const companies = [
     logo: "/logos/logo-sol-de-paraguay.jpg",
     alt: "Logo Sol de Paraguay",
   },
-  {
-    name: "La Encarnacena",
-    logo: "/logos/la-encarnacena.png",
-    alt: "Logo La Encarnacena",
-  },
+  // {
+  //   name: "La Encarnacena",
+  //   logo: "/logos/la-encarnacena.png",
+  //   alt: "Logo La Encarnacena",
+  // },
 ];
 
 export function CompaniesSection() {
@@ -98,7 +98,7 @@ export function CompaniesSection() {
         </div>
 
         {/* Companies Grid - Solo logos */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
           {companies.map((company, index) => (
             <div
               key={company.name}
@@ -113,9 +113,9 @@ export function CompaniesSection() {
               <Image
                 src={company.logo}
                 alt={company.alt || company.name}
-                width={140}
-                height={90}
-                className="object-contain w-full h-auto max-h-24 md:max-h-32 transition-all duration-500 
+                width={100}
+                height={60}
+                className="object-contain w-full h-auto max-h-20 md:max-h-20 transition-all duration-300 
                   grayscale opacity-40 
                   group-hover:grayscale-0 group-hover:opacity-100 
                   group-hover:scale-105"
