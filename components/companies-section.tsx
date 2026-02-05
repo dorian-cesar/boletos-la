@@ -100,7 +100,6 @@ export function CompaniesSection() {
             Paraguay para ofrecerte la mejor experiencia de viaje.
           </p>
         </div>
-
         {/* Companies Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {companies.map((company, index) => (
@@ -131,7 +130,6 @@ export function CompaniesSection() {
             </div>
           ))}
         </div>
-
         {/* Stats */}
         <div
           className={cn(
