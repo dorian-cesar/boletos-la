@@ -96,12 +96,6 @@ export function Header() {
                 Empresas
               </Link>
               <Link
-                href="#promociones"
-                className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
-              >
-                Promociones
-              </Link>
-              <Link
                 href="#contacto"
                 className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
               >
@@ -167,12 +161,6 @@ export function Header() {
               className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
             >
               Empresas
-            </Link>
-            <Link
-              href="#promociones"
-              className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
-            >
-              Promociones
             </Link>
             <Link
               href="#contacto"
