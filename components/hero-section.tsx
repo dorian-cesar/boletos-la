@@ -1,51 +1,108 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { ChevronDown } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { ChevronDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SearchForm } from "@/components/search-form";
 
 export function HeroSection() {
   const [mounted, setMounted] = useState(false);
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     setMounted(true);
+
+    // Precarga del video
+    const preloadVideo = () => {
+      const video = document.createElement("video");
+      video.preload = "auto";
+      video.src = "/videos/banner-boletos.mp4";
+
+      video.onloadeddata = () => {
+        setIsVideoLoaded(true);
+
+        // Intenta reproducir el video principal
+        setTimeout(() => {
+          if (videoRef.current) {
+            const playPromise = videoRef.current.play();
+            if (playPromise !== undefined) {
+              playPromise.catch(() => {
+                // Si falla el autoplay, intentamos con user gesture más tarde
+                console.log(
+                  "Autoplay bloqueado, se necesitará interacción del usuario",
+                );
+              });
+            }
+          }
+        }, 500);
+      };
+    };
+
+    preloadVideo();
   }, []);
 
   if (!mounted) return null;
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* YouTube Video Background con mejor calidad */}
+      {/* Video Background optimizado */}
       <div className="absolute inset-0">
-        <div className="relative w-full h-full">
-          {/* Contenedor para centrar y ajustar el video */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <iframe
-              src="https://www.youtube.com/embed/3Bl3auoqSu8?autoplay=1&mute=1&loop=1&playlist=3Bl3auoqSu8&controls=0&showinfo=0&rel=0&modestbranding=0&iv_load_policy=3&disablekb=1&fs=0&playsinline=1&enablejsapi=1&origin=https://boletos.la"
-              title="Viaja por Paraguay"
-              className="absolute w-[177.77777778vh] min-w-full min-h-full max-w-none"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-              style={{
-                width: "177.77777778vh" /* 16:9 ratio */,
-                minWidth: "100%",
-                minHeight: "100%",
-                left: "50%",
-                top: "50%",
-                transform: "translate(-50%, -50%)",
-                border: "none",
-              }}
+        {/* Placeholder mientras carga */}
+        {!isVideoLoaded && (
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-black/70 to-secondary/20">
+            <img
+              src="/images/hero-bus.jpg"
+              alt="Bus viajando por Paraguay"
+              className="w-full h-full object-cover opacity-50"
+              loading="eager"
             />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Loader2 className="h-12 w-12 text-white animate-spin" />
+            </div>
           </div>
+        )}
 
-          {/* Overlay de degradado para ocultar bordes y marca de agua */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/60 to-black/70" />
+        {/* Video optimizado */}
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          className={cn(
+            "w-full h-full object-cover transition-opacity duration-1000",
+            isVideoLoaded ? "opacity-100" : "opacity-0",
+          )}
+          onCanPlayThrough={() => {
+            // Backup para asegurar que se marque como cargado
+            if (!isVideoLoaded) {
+              setIsVideoLoaded(true);
+            }
+          }}
+        >
+          <source src="/videos/banner-boletos.mp4" type="video/mp4" />
 
-          {/* Overlay oscuro adicional para mejor legibilidad */}
-          <div className="absolute inset-0 bg-black/40" />
-        </div>
+          {/* Fallback image si el video no carga */}
+          <img
+            src="/images/hero-bus.jpg"
+            alt="Bus viajando por Paraguay"
+            className="w-full h-full object-cover"
+          />
+        </video>
+
+        {/* Overlay oscuro para mejor legibilidad */}
+        <div className="absolute inset-0 bg-black/60" />
       </div>
+
+      {/* Preload hidden para asegurar caché */}
+      <link
+        rel="preload"
+        href="/videos/banner-boletos.mp4"
+        as="video"
+        type="video/mp4"
+      />
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 py-20 lg:py-32">
