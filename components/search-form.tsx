@@ -58,7 +58,7 @@ export function SearchForm() {
 
   return (
     <div
-      className="max-w-5xl mx-auto animate-scale-in"
+      className="max-w-7xl mx-auto animate-scale-in"
       style={{ animationDelay: "0.6s" }}
     >
       <div className="bg-background/95 backdrop-blur-xl rounded-3xl shadow-2xl p-6 lg:p-8 border border-border/50">

@@ -107,7 +107,7 @@ export function CompaniesSection() {
             <div
               key={company.name}
               className={cn(
-                "group flex items-center justify-center w-full cursor-pointer",
+                "group flex items-center justify-center w-full",
                 company.containerSize, // Altura específica para cada contenedor
                 isVisible
                   ? "opacity-100 translate-y-0"
