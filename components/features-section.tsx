@@ -1,57 +1,50 @@
 "use client";
 
+import React from "react";
+
 import { useEffect, useRef, useState } from "react";
-import {
-  Shield,
-  CreditCard,
-  Clock,
-  Headphones,
-  MapPin,
-  Ticket,
-} from "lucide-react";
+import { Shield, CreditCard, Clock, Headphones, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 const features = [
   {
     icon: Shield,
     title: "Pago 100% Seguro",
     description: "Transacciones protegidas con Pagopar y encriptación SSL.",
-    color: "primary",
+    image:
+      "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=300&fit=crop",
   },
   {
     icon: CreditCard,
     title: "Múltiples Medios de Pago",
     description:
       "Paga con tarjeta de crédito, débito, transferencia bancaria o en efectivo.",
-    color: "secondary",
+    image:
+      "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&h=300&fit=crop",
   },
   {
     icon: Clock,
     title: "Reserva Instantánea",
     description:
       "Confirma tu viaje en segundos y recibe tu boleto al instante.",
-    color: "primary",
+    image:
+      "https://images.unsplash.com/photo-1530789253388-582c481c54b0?w=400&h=300&fit=crop",
   },
   {
     icon: Headphones,
     title: "Soporte 24/7",
     description: "Atención al cliente disponible todo el día, todos los días.",
-    color: "secondary",
+    image:
+      "https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=400&h=300&fit=crop",
   },
-  {
-    icon: MapPin,
-    title: "Cobertura Nacional",
-    description:
-      "Más de 200 destinos en todo Paraguay para que viajes donde quieras.",
-    color: "primary",
-  },
-  {
-    icon: Ticket,
-    title: "Boleto Digital",
-    description:
-      "Recibe tu boleto en PDF por correo electrónico inmediatamente.",
-    color: "secondary",
-  },
+];
+
+const testimonialAvatars = [
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face",
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face",
+  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face",
 ];
 
 export function FeaturesSection() {
@@ -79,114 +72,219 @@ export function FeaturesSection() {
     <section
       ref={sectionRef}
       id="servicios"
-      className="py-24 bg-gradient-to-br from-muted/50 via-background to-muted/30 relative overflow-hidden"
+      className="py-24 bg-gradient-to-b from-[#1a2332] to-[#0f1419] relative overflow-hidden"
     >
-      {/* Animated Background Elements */}
+      {/* Background Effects - Mismo que el footer */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Gradient orbs */}
-        <div
-          className="absolute top-20 left-10 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[100px] animate-pulse"
-          style={{ animationDuration: "5s" }}
-        />
-        <div
-          className="absolute bottom-20 right-10 w-[350px] h-[350px] bg-secondary/10 rounded-full blur-[80px] animate-pulse"
-          style={{ animationDuration: "6s", animationDelay: "1s" }}
-        />
-
-        {/* Subtle grid pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fillRule='evenodd'%3E%3Cg fill='%23000000' fillOpacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }}
-        />
+        <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-[#00c7cc]/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-[#ffaa00]/10 rounded-full blur-[100px]" />
       </div>
 
-      <div className="container mx-auto px-4 relative">
-        {/* Section Header */}
-        <div className="text-center mb-16">
-          <span
-            className={cn(
-              "inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4 transition-all duration-700",
-              isVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-10",
-            )}
-          >
-            Por qué elegirnos
-          </span>
-          <h2
-            className={cn(
-              "text-3xl md:text-5xl font-bold text-foreground mb-4 transition-all duration-700 delay-100",
-              isVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-10",
-            )}
-          >
-            <span className="text-balance">Viaja con </span>
-            <span className="text-primary">confianza</span>
-          </h2>
-          <p
-            className={cn(
-              "text-lg text-muted-foreground max-w-2xl mx-auto transition-all duration-700 delay-200",
-              isVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-10",
-            )}
-          >
-            Ofrecemos la mejor experiencia en reserva de pasajes de bus con
-            todas las garantías que necesitas.
-          </p>
-        </div>
-
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <div
-              key={index}
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Left Column - Header */}
+          <div className="lg:col-span-4 flex flex-col justify-start">
+            <span
               className={cn(
-                "group relative bg-background rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-border/50",
+                "inline-block text-[#00c7cc] font-semibold uppercase tracking-wider text-sm mb-4 transition-all duration-700",
                 isVisible
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-10",
               )}
-              style={{ transitionDelay: `${(index + 3) * 100}ms` }}
             >
-              {/* Hover Effect */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              Nuestros Servicios
+            </span>
+            <h2
+              className={cn(
+                "text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight transition-all duration-700 delay-100",
+                isVisible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-10",
+              )}
+            >
+              <span className="text-balance">Es Hora de </span>
+              <span className="text-[#00c7cc]">Viajar</span>
+              <span className="text-balance"> Con Nosotros</span>
+            </h2>
+            <Button
+              className={cn(
+                "w-fit bg-[#00c7cc] text-white hover:bg-[#00c7cc]/90 rounded-full px-8 py-6 font-semibold text-base transition-all duration-700 delay-200 hover:scale-105 hover:shadow-lg hover:shadow-[#00c7cc]/30",
+                isVisible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-10",
+              )}
+            >
+              Ver Servicios
+            </Button>
+          </div>
 
-              {/* Icon */}
-              <div
-                className={cn(
-                  "relative w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 group-hover:scale-110 group-hover:rotate-3",
-                  feature.color === "primary"
-                    ? "bg-primary/10 text-primary"
-                    : "bg-secondary/10 text-secondary",
-                )}
-              >
-                <feature.icon className="h-8 w-8" />
-              </div>
-
-              {/* Content */}
-              <h3 className="relative text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
-                {feature.title}
-              </h3>
-              <p className="relative text-muted-foreground leading-relaxed">
-                {feature.description}
-              </p>
-
-              {/* Bottom Line */}
-              <div
-                className={cn(
-                  "absolute bottom-0 left-8 right-8 h-1 rounded-full transition-all duration-500 group-hover:left-0 group-hover:right-0",
-                  feature.color === "primary" ? "bg-primary" : "bg-secondary",
-                  "opacity-0 group-hover:opacity-100",
-                )}
-              />
+          {/* Right Column - Top Cards */}
+          <div className="lg:col-span-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {features.slice(0, 2).map((feature, index) => (
+                <FeatureCard
+                  key={feature.title}
+                  feature={feature}
+                  index={index}
+                  isVisible={isVisible}
+                />
+              ))}
             </div>
+          </div>
+        </div>
+
+        {/* Bottom Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          {features.slice(2, 4).map((feature, index) => (
+            <FeatureCard
+              key={feature.title}
+              feature={feature}
+              index={index + 2}
+              isVisible={isVisible}
+            />
           ))}
+
+          {/* Testimonial Card */}
+          <div
+            className={cn(
+              "relative bg-[#00c7cc] rounded-2xl p-8 overflow-hidden transition-all duration-700 hover:shadow-2xl hover:shadow-[#00c7cc]/20 group",
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-10",
+            )}
+            style={{ transitionDelay: "600ms" }}
+          >
+            <span className="text-white/80 text-xs font-semibold uppercase tracking-wider">
+              Feedback de Clientes
+            </span>
+            <h3 className="text-2xl md:text-3xl font-bold text-white mt-3 mb-6 leading-tight relative z-10">
+              Es Hora de Viajar Con Nosotros
+            </h3>
+
+            <div className="flex items-center gap-4 relative z-10">
+              <div className="flex -space-x-3">
+                {testimonialAvatars.map((avatar, i) => (
+                  <div
+                    key={i}
+                    className={cn(
+                      "w-12 h-12 rounded-full border-2 border-white overflow-hidden transition-all duration-500",
+                      isVisible
+                        ? "opacity-100 scale-100"
+                        : "opacity-0 scale-50",
+                    )}
+                    style={{ transitionDelay: `${700 + i * 100}ms` }}
+                  >
+                    <Image
+                      src={avatar || "/placeholder.svg"}
+                      alt={`Cliente ${i + 1}`}
+                      width={48}
+                      height={48}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                ))}
+              </div>
+              <div>
+                <span className="text-white/80 text-xs font-medium uppercase tracking-wider block">
+                  Clientes Satisfechos
+                </span>
+                <div className="flex gap-0.5 mt-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={cn(
+                        "w-4 h-4 fill-white text-white transition-all duration-300",
+                        isVisible
+                          ? "opacity-100 scale-100"
+                          : "opacity-0 scale-50",
+                      )}
+                      style={{ transitionDelay: `${900 + i * 50}ms` }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Scroll to Top Button */}
+      <button
+        className={cn(
+          "fixed bottom-8 right-8 w-14 h-14 rounded-full border-2 border-[#00c7cc] text-[#00c7cc] flex items-center justify-center transition-all duration-500 hover:bg-[#00c7cc] hover:text-white hover:scale-110 z-50",
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10",
+        )}
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        aria-label="Volver arriba"
+      >
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M5 10l7-7m0 0l7 7m-7-7v18"
+          />
+        </svg>
+      </button>
     </section>
+  );
+}
+
+function FeatureCard({
+  feature,
+  index,
+  isVisible,
+}: {
+  feature: (typeof features)[0];
+  index: number;
+  isVisible: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        "group relativ backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-700 hover:shadow-2xl hover:-translate-y-2 border border-white/10",
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10",
+      )}
+      style={{ transitionDelay: `${(index + 3) * 100}ms` }}
+    >
+      {/* Icon Badge - Ahora arriba de la imagen */}
+      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
+        <div className="w-16 h-16 rounded-full bg-[#ffaa00] border-4 border-black/10 flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-12 group-hover:shadow-lg group-hover:shadow-[#ffaa00]/50">
+          <feature.icon className="w-7 h-7 text-black" />
+        </div>
+      </div>
+
+      {/* Image */}
+      <div className="relative h-48 overflow-hidden">
+        <Image
+          src={feature.image || "/placeholder.svg"}
+          alt={feature.title}
+          fill
+          className="object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+        {/* Overlay oscuro para mejor contraste */}
+        <div className="absolute inset-0 bg-black/20" />
+      </div>
+
+      {/* Content */}
+      <div className="p-6 pt-4 text-center">
+        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#00c7cc] transition-colors duration-300">
+          {feature.title}
+        </h3>
+        <p className="text-white/70 text-sm leading-relaxed">
+          {feature.description}
+        </p>
+
+        {/* Bottom accent line */}
+        <div className="mt-4 flex justify-center">
+          <div className="h-1 w-12 bg-[#ffaa00] rounded-full transition-all duration-500 group-hover:w-24 group-hover:bg-[#00c7cc]" />
+        </div>
+      </div>
+    </div>
   );
 }
