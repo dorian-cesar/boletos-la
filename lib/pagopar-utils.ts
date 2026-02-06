@@ -2,8 +2,10 @@
 import crypto from "crypto";
 
 export class PagoparUtils {
-  private static privateKey: string = process.env.PAGOPAR_PRIVATE_KEY || "";
-  private static publicKey: string = process.env.PAGOPAR_PUBLIC_KEY || "";
+  private static privateKey: string =
+    process.env.NEXT_PUBLIC_PAGOPAR_PRIVATE_KEY || "";
+  private static publicKey: string =
+    process.env.NEXT_PUBLIC_PAGOPAR_PUBLIC_KEY || "";
 
   // Generar token para crear pedido
   static generateTransactionToken(

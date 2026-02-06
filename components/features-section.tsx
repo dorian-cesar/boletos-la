@@ -69,58 +69,54 @@ export function FeaturesSection() {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Left Column - Header */}
-          <div className="lg:col-span-4 flex flex-col justify-start">
-            <span
-              className={cn(
-                "inline-block text-[#00c7cc] font-semibold uppercase tracking-wider text-sm mb-4 transition-all duration-700",
-                isVisible
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-10",
-              )}
-            >
-              Nuestros Servicios
-            </span>
+        {/* Centered Header */}
+        <div className="max-w-3xl mx-auto text-center mb-16">
+          <span
+            className={cn(
+              "inline-block text-[#00c7cc] font-semibold uppercase tracking-wider text-sm mb-4 transition-all duration-700",
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-10",
+            )}
+          >
+            Nuestros Servicios
+          </span>
 
-            <h2
-              className={cn(
-                "text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight transition-all duration-700 delay-100",
-                isVisible
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-10",
-              )}
-            >
-              <span className="text-balance">Es Hora de </span>
-              <span className="text-[#00c7cc]">Viajar</span>
-              <span className="text-balance"> Con Nosotros</span>
-            </h2>
+          <h2
+            className={cn(
+              "text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight transition-all duration-700 delay-100",
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-10",
+            )}
+          >
+            <span className="text-balance">Es Hora de </span>
+            <span className="text-[#00c7cc]">Viajar</span>
+            <span className="text-balance"> Con Nosotros</span>
+          </h2>
 
-            <Button
-              className={cn(
-                "w-fit bg-secondary text-white hover:bg-secondary/90 rounded-full px-8 py-6 font-semibold text-base transition-all duration-700 delay-200 hover:scale-105 hover:shadow-lg hover:shadow-secondary/30",
-                isVisible
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-10",
-              )}
-            >
-              Ver Servicios
-            </Button>
-          </div>
+          {/* <Button
+            className={cn(
+              "bg-secondary text-white hover:bg-secondary/90 rounded-full px-8 py-6 font-semibold text-base transition-all duration-700 delay-200 hover:scale-105 hover:shadow-lg hover:shadow-secondary/30",
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-10",
+            )}
+          >
+            Ver Servicios
+          </Button> */}
+        </div>
 
-          {/* Right Column - ALL Cards */}
-          <div className="lg:col-span-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {features.map((feature, index) => (
-                <FeatureCard
-                  key={feature.title}
-                  feature={feature}
-                  index={index}
-                  isVisible={isVisible}
-                />
-              ))}
-            </div>
-          </div>
+        {/* Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {features.map((feature, index) => (
+            <FeatureCard
+              key={feature.title}
+              feature={feature}
+              index={index}
+              isVisible={isVisible}
+            />
+          ))}
         </div>
       </div>
 

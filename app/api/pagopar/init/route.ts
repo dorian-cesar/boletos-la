@@ -18,11 +18,13 @@ export async function POST(request: NextRequest) {
     const serviceRequest = JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
 
     // 2. OBTENER CLAVES (tus claves de 32 chars están bien)
-    const publicKey = process.env.PAGOPAR_PUBLIC_KEY;
-    const privateKey = process.env.PAGOPAR_PRIVATE_KEY;
+    const publicKey = process.env.NEXT_PUBLIC_PAGOPAR_PUBLIC_KEY;
+    const privateKey = process.env.NEXT_PUBLIC_PAGOPAR_PRIVATE_KEY;
 
-    if (!publicKey) throw new Error("PAGOPAR_PUBLIC_KEY no configurada");
-    if (!privateKey) throw new Error("PAGOPAR_PRIVATE_KEY no configurada");
+    if (!publicKey)
+      throw new Error("NEXT_PUBLIC_PAGOPAR_PUBLIC_KEY no configurada");
+    if (!privateKey)
+      throw new Error("NEXT_PUBLIC_PAGOPAR_PRIVATE_KEY no configurada");
 
     // 3. GENERAR ID ÚNICO
     const productId = `TB${Date.now()}${Math.floor(Math.random() * 1000)}`;

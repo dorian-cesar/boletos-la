@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     } = notification;
 
     // Validar con tu clave privada
-    const privateKey = process.env.PAGOPAR_PRIVATE_KEY;
+    const privateKey = process.env.NEXT_PUBLIC_PAGOPAR_PRIVATE_KEY;
     if (!privateKey) {
       throw new Error("Clave privada no configurada");
     }

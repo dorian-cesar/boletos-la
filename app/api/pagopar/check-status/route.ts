@@ -12,8 +12,8 @@ export async function POST(request: NextRequest) {
     console.log("Hash pedido:", hash_pedido);
 
     // Obtener claves
-    const publicKey = process.env.PAGOPAR_PUBLIC_KEY;
-    const privateKey = process.env.PAGOPAR_PRIVATE_KEY;
+    const publicKey = process.env.NEXT_PUBLIC_PAGOPAR_PUBLIC_KEY;
+    const privateKey = process.env.NEXT_PUBLIC_PAGOPAR_PRIVATE_KEY;
 
     if (!publicKey || !privateKey) {
       throw new Error("Claves Pagopar no configuradas");
