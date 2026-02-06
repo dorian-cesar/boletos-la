@@ -121,6 +121,7 @@ export default function ConfirmationPageContent() {
       console.log("🔄 Consultando estado en Pagopar...");
 
       // Llamar a la API para verificar estado
+      // MODIFICAR HASH PARA SIMULAR PAGO
       const response = await fetch("/api/pagopar/check-status", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
