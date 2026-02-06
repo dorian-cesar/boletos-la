@@ -1,54 +1,74 @@
-// app/api/pagopar/check-status/route.ts
+// app/api/pagopar/callback/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import axios from "axios";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { hash_pedido } = body;
+    console.log("🔄 Webhook Pagopar recibido:", body);
 
-    console.log("🔍 Consultando estado para hash:", hash_pedido);
-
-    const privateKey = process.env.PAGOPAR_PRIVATE_KEY;
-    const publicKey = process.env.PAGOPAR_PUBLIC_KEY;
-
-    if (!privateKey || !publicKey) {
-      throw new Error("Claves Pagopar no configuradas");
+    // Verificar que sea de Pagopar
+    if (!body.resultado || !Array.isArray(body.resultado)) {
+      return NextResponse.json({ error: "Formato inválido" }, { status: 400 });
     }
 
-    // Token para consulta: sha1(private_key + "CONSULTA")
-    const token = crypto
+    const notification = body.resultado[0];
+    const {
+      hash_pedido,
+      token,
+      pagado,
+      cancelado,
+      forma_pago,
+      fecha_pago,
+      monto,
+      numero_pedido,
+    } = notification;
+
+    // Validar con tu clave privada
+    const privateKey = process.env.PAGOPAR_PRIVATE_KEY;
+    if (!privateKey) {
+      throw new Error("Clave privada no configurada");
+    }
+
+    // Verificar token (IMPORTANTE para seguridad)
+    const expectedToken = crypto
       .createHash("sha1")
-      .update(privateKey + "CONSULTA")
+      .update(privateKey + hash_pedido)
       .digest("hex");
 
-    // Consultar a Pagopar
-    const response = await axios.post(
-      "https://api.pagopar.com/api/pedidos/1.1/traer",
-      {
-        hash_pedido: hash_pedido,
-        token: token,
-        token_publico: publicKey,
-      },
-      {
-        headers: { "Content-Type": "application/json" },
-        timeout: 10000,
-      },
-    );
+    if (token !== expectedToken) {
+      console.error("❌ Token inválido en webhook");
+      return NextResponse.json({ error: "Token inválido" }, { status: 401 });
+    }
 
-    console.log("📊 Estado recibido:", response.data);
+    console.log("✅ Webhook válido recibido");
+    console.log(`Hash: ${hash_pedido}`);
+    console.log(`Pagado: ${pagado}`);
+    console.log(`Monto: ${monto}`);
+    console.log(`Método: ${forma_pago}`);
 
-    return NextResponse.json(response.data);
+    // AQUÍ GUARDAS EN TU BASE DE DATOS
+    if (pagado === true) {
+      // Buscar o crear la reserva en tu sistema
+      // await db.reservation.create({
+      //   data: {
+      //     pagoparHash: hash_pedido,
+      //     pagoparOrderId: numero_pedido,
+      //     status: "paid",
+      //     paymentMethod: forma_pago,
+      //     paymentDate: new Date(fecha_pago),
+      //     amount: parseFloat(monto),
+      //     // ...otros datos
+      //   }
+      // });
+
+      console.log("💾 Guardando pago confirmado en BD...");
+    }
+
+    // Pagopar espera que devuelvas exactamente lo mismo
+    return NextResponse.json(body.resultado, { status: 200 });
   } catch (error: any) {
-    console.error("❌ Error consultando estado:", error);
-
-    return NextResponse.json(
-      {
-        error: "Error consultando estado",
-        message: error.message,
-      },
-      { status: 500 },
-    );
+    console.error("💥 Error en webhook:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
