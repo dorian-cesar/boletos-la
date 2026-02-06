@@ -17,10 +17,11 @@ import {
   CheckCircle2,
   Loader2,
   AlertCircle,
-  Eye,
-  EyeOff,
   Check,
   X,
+  Wallet,
+  Building,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -37,16 +38,50 @@ import { BookingProgress } from "@/components/booking-progress";
 import { useBookingStore, cities, Passenger } from "@/lib/booking-store";
 import { cn } from "@/lib/utils";
 
+// Tipos para Pagopar
+interface PagoparPaymentData {
+  token: string;
+  monto_total: number;
+  comprador: {
+    nombre: string;
+    apellido: string;
+    email: string;
+    telefono: string;
+    ciudad: string;
+    direccion: string;
+    documento: string;
+    tipo_documento: string;
+    ruc?: string;
+    razon_social?: string;
+  };
+  public_key: string;
+  pagos: Array<{
+    concepto: string;
+    monto: number;
+    cantidad: number;
+  }>;
+}
+
 export default function CheckoutPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [showRutHelp, setShowRutHelp] = useState(false);
+  const [showDocumentHelp, setShowDocumentHelp] = useState(false);
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>(
     {},
   );
   const [formInitialized, setFormInitialized] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
+    "tarjeta" | "pagopar" | null
+  >("pagopar");
+  const [pagoparScriptLoaded, setPagoparScriptLoaded] = useState(false);
+  const [additionalData, setAdditionalData] = useState({
+    address: "",
+    city: "",
+    ruc: "",
+    companyName: "",
+  });
 
   const {
     tripType,
@@ -72,11 +107,27 @@ export default function CheckoutPage() {
 
   const totalPassengers = selectedSeats.length + selectedReturnSeats.length;
 
+  // Cargar script de Pagopar
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://static.pagopar.com/comercios.js";
+    script.async = true;
+    script.onload = () => {
+      setPagoparScriptLoaded(true);
+    };
+    document.head.appendChild(script);
+
+    return () => {
+      if (document.head.contains(script)) {
+        document.head.removeChild(script);
+      }
+    };
+  }, []);
+
   useEffect(() => {
     setMounted(true);
     setStep(3);
 
-    // Solo inicializar si no hay pasajeros y hay asientos seleccionados
     if (
       selectedSeats.length > 0 &&
       passengerDetails.length === 0 &&
@@ -88,7 +139,7 @@ export default function CheckoutPage() {
         seatNumber: seat.number,
         firstName: "",
         lastName: "",
-        rut: "",
+        documentNumber: "",
         email: "",
         phone: "",
       }));
@@ -104,47 +155,46 @@ export default function CheckoutPage() {
     setStep,
   ]);
 
-  const validateRut = (rut: string) => {
-    const rutClean = rut.replace(/[.-]/g, "").toUpperCase();
-    if (rutClean.length < 8) return false;
+  const validateDocument = (doc: string) => {
+    const clean = doc.replace(/[.-]/g, "").toUpperCase();
+    if (clean.length < 6 || clean.length > 12) return false;
 
-    const rutDigits = rutClean.slice(0, -1);
-    const verifier = rutClean.slice(-1);
-
-    if (!/^\d+$/.test(rutDigits)) return false;
-
-    let sum = 0;
-    let multiplier = 2;
-
-    for (let i = rutDigits.length - 1; i >= 0; i--) {
-      sum += parseInt(rutDigits.charAt(i)) * multiplier;
-      multiplier = multiplier === 7 ? 2 : multiplier + 1;
+    // Validación para Paraguay (Cédula/RUC)
+    // RUC: formato 80012345-0
+    // Cédula: formato 1234567
+    if (clean.includes("-")) {
+      const [ruc, dv] = clean.split("-");
+      if (!/^\d+$/.test(ruc) || ruc.length < 6 || ruc.length > 9) return false;
+      if (!/^[\dK]$/.test(dv)) return false;
+      return true;
     }
 
-    const calculatedVerifier = 11 - (sum % 11);
-    let expectedVerifier =
-      calculatedVerifier === 11
-        ? "0"
-        : calculatedVerifier === 10
-          ? "K"
-          : calculatedVerifier.toString();
-
-    return expectedVerifier === verifier;
+    // Cédula simple
+    return /^\d{6,9}$/.test(clean);
   };
 
-  const formatRut = (rut: string) => {
-    const clean = rut.replace(/[^0-9kK]/g, "");
-    if (clean.length <= 1) return clean;
+  const formatDocument = (doc: string) => {
+    const clean = doc.replace(/[^0-9kK-]/g, "");
 
-    let formatted = "";
-    const body = clean.slice(0, -1);
-    const verifier = clean.slice(-1);
-
-    if (body.length > 0) {
-      formatted = body.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "-" + verifier;
+    // Si ya tiene formato RUC (con guión)
+    if (clean.includes("-")) {
+      const parts = clean.split("-");
+      if (parts.length === 2) {
+        const [ruc, dv] = parts;
+        return `${ruc.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}-${dv}`;
+      }
     }
 
-    return formatted;
+    // Para cédulas largas (más de 6 dígitos)
+    if (clean.length > 6) {
+      const body = clean.slice(0, -1);
+      const dv = clean.slice(-1);
+      if (body.length > 0) {
+        return `${body.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}-${dv}`;
+      }
+    }
+
+    return clean;
   };
 
   const validateEmail = (email: string) => {
@@ -153,7 +203,7 @@ export default function CheckoutPage() {
 
   const validatePhone = (phone: string) => {
     const clean = phone.replace(/\D/g, "");
-    return clean.length >= 9;
+    return clean.length >= 9 && clean.length <= 12;
   };
 
   const validateName = (name: string) => {
@@ -169,14 +219,14 @@ export default function CheckoutPage() {
       case "lastName":
         if (!validateName(value)) return "Mínimo 2 caracteres";
         break;
-      case "rut":
-        if (!validateRut(value)) return "RUT inválido";
+      case "documentNumber":
+        if (!validateDocument(value)) return "Documento inválido";
         break;
       case "email":
         if (!validateEmail(value)) return "Email inválido";
         break;
       case "phone":
-        if (!validatePhone(value)) return "Teléfono inválido";
+        if (!validatePhone(value)) return "Teléfono inválido (9-12 dígitos)";
         break;
     }
     return null;
@@ -188,12 +238,12 @@ export default function CheckoutPage() {
       (p, index) =>
         validateName(p.firstName) &&
         validateName(p.lastName) &&
-        validateRut(p.rut) &&
+        validateDocument(p.documentNumber) &&
         validateEmail(p.email) &&
         validatePhone(p.phone) &&
         !getFieldError("firstName", p.firstName, index) &&
         !getFieldError("lastName", p.lastName, index) &&
-        !getFieldError("rut", p.rut, index) &&
+        !getFieldError("documentNumber", p.documentNumber, index) &&
         !getFieldError("email", p.email, index) &&
         !getFieldError("phone", p.phone, index),
     );
@@ -203,20 +253,24 @@ export default function CheckoutPage() {
     setTouchedFields((prev) => ({ ...prev, [fieldId]: true }));
   };
 
-  const handlePayment = async () => {
-    if (passengerDetails.length === 0) return;
+  const handlePaymentMethodSelect = (method: "tarjeta" | "pagopar") => {
+    setSelectedPaymentMethod(method);
+  };
 
-    // Marcar todos los campos como tocados para mostrar errores
+  const handlePayment = async () => {
+    if (passengerDetails.length === 0 || !selectedPaymentMethod) return;
+
     const newTouched: Record<string, boolean> = {};
     passengerDetails.forEach((_, index) => {
-      ["firstName", "lastName", "rut", "email", "phone"].forEach((field) => {
-        newTouched[`${field}-${index}`] = true;
-      });
+      ["firstName", "lastName", "documentNumber", "email", "phone"].forEach(
+        (field) => {
+          newTouched[`${field}-${index}`] = true;
+        },
+      );
     });
     setTouchedFields(newTouched);
 
     if (!isFormValid) {
-      // Scroll al primer error
       const firstError = document.querySelector('[data-error="true"]');
       if (firstError) {
         firstError.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -227,16 +281,90 @@ export default function CheckoutPage() {
     setShowPaymentModal(true);
   };
 
+  const preparePagoparData = (): PagoparPaymentData => {
+    const primaryPassenger = passengerDetails[0];
+    const token =
+      process.env.NEXT_PUBLIC_PAGOPAR_PUBLIC_TOKEN || "YOUR_PUBLIC_TOKEN";
+
+    return {
+      token: token,
+      monto_total: totalPrice, // En guaraníes
+      comprador: {
+        nombre: primaryPassenger.firstName,
+        apellido: primaryPassenger.lastName,
+        email: primaryPassenger.email,
+        telefono: primaryPassenger.phone.replace(/\D/g, ""),
+        ciudad: additionalData.city || "Asunción",
+        direccion: additionalData.address || "No especificada",
+        documento: primaryPassenger.documentNumber.replace(/[.-]/g, ""),
+        tipo_documento: "CI",
+        ...(additionalData.ruc && {
+          ruc: additionalData.ruc,
+          razon_social:
+            additionalData.companyName ||
+            `${primaryPassenger.firstName} ${primaryPassenger.lastName}`,
+        }),
+      },
+      public_key:
+        process.env.NEXT_PUBLIC_PAGOPAR_PUBLIC_KEY || "YOUR_PUBLIC_KEY",
+      pagos: [
+        {
+          concepto: `Pasaje de bus ${originCity?.name} - ${destinationCity?.name}`,
+          monto: totalPrice,
+          cantidad: 1,
+        },
+      ],
+    };
+  };
+
   const processPayment = async () => {
+    if (!selectedPaymentMethod) return;
+
     setIsProcessing(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    try {
+      if (selectedPaymentMethod === "tarjeta") {
+        // Lógica para tarjeta de crédito local
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+        const reference = `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+        setBookingReference(reference);
+        setPaymentStatus("completed");
+        router.push("/booking/confirmation");
+      } else if (selectedPaymentMethod === "pagopar") {
+        // Integración con Pagopar
+        if (!pagoparScriptLoaded) {
+          throw new Error("Script de Pagopar no cargado");
+        }
 
-    const reference = `BL-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-    setBookingReference(reference);
-    setPaymentStatus("completed");
+        const pagoparData = preparePagoparData();
 
-    router.push("/booking/confirmation");
+        if (window.Pagopar) {
+          window.Pagopar.setConfig(pagoparData);
+          window.Pagopar.pagar();
+
+          window.Pagopar.onSuccess = function (response: any) {
+            const reference = `PP-${response.transaccion_id || Date.now().toString(36).toUpperCase()}`;
+            setBookingReference(reference);
+            setPaymentStatus("completed");
+            router.push("/booking/confirmation");
+          };
+
+          window.Pagopar.onError = function (error: any) {
+            console.error("Error en pago Pagopar:", error);
+            setIsProcessing(false);
+            setShowPaymentModal(false);
+            alert("Error en el pago. Por favor intenta nuevamente.");
+          };
+        } else {
+          throw new Error("Pagopar no está disponible");
+        }
+      }
+    } catch (error) {
+      console.error("Error procesando pago:", error);
+      setIsProcessing(false);
+      setShowPaymentModal(false);
+      alert("Error procesando el pago. Por favor intenta nuevamente.");
+    }
   };
 
   if (!mounted) {
@@ -309,7 +437,11 @@ export default function CheckoutPage() {
                   passenger.lastName,
                   index,
                 );
-                const rutError = getFieldError("rut", passenger.rut, index);
+                const documentError = getFieldError(
+                  "documentNumber",
+                  passenger.documentNumber,
+                  index,
+                );
                 const emailError = getFieldError(
                   "email",
                   passenger.email,
@@ -339,12 +471,12 @@ export default function CheckoutPage() {
                       </div>
                       {!firstNameError &&
                         !lastNameError &&
-                        !rutError &&
+                        !documentError &&
                         !emailError &&
                         !phoneError &&
                         passenger.firstName &&
                         passenger.lastName &&
-                        passenger.rut &&
+                        passenger.documentNumber &&
                         passenger.email &&
                         passenger.phone && (
                           <Badge variant="secondary" className="ml-auto">
@@ -449,11 +581,11 @@ export default function CheckoutPage() {
                         )}
                       </div>
 
-                      {/* RUT */}
+                      {/* Document Number */}
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <Label htmlFor={`rut-${index}`}>
-                            RUT
+                          <Label htmlFor={`document-${index}`}>
+                            Cédula/RUC
                             <span className="text-destructive ml-1">*</span>
                           </Label>
                           <TooltipProvider>
@@ -464,39 +596,50 @@ export default function CheckoutPage() {
                                   variant="ghost"
                                   size="sm"
                                   className="h-6 px-2 text-xs text-muted-foreground"
-                                  onClick={() => setShowRutHelp(!showRutHelp)}
+                                  onClick={() =>
+                                    setShowDocumentHelp(!showDocumentHelp)
+                                  }
                                 >
                                   <AlertCircle className="h-3 w-3 mr-1" />
                                   Formato
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>Ejemplo: 12.345.678-9</p>
+                                <div className="text-sm">
+                                  <p>Ejemplos válidos:</p>
+                                  <p>• Cédula: 4.123.456</p>
+                                  <p>• RUC: 80.012.345-0</p>
+                                </div>
                               </TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
                         </div>
                         <div className="relative">
+                          <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                           <Input
-                            id={`rut-${index}`}
-                            placeholder="12.345.678-9 o 12345678-9"
-                            value={passenger.rut}
+                            id={`document-${index}`}
+                            placeholder="4.123.456 o 80.012.345-0"
+                            value={passenger.documentNumber}
                             onChange={(e) =>
                               updatePassenger(index, {
-                                rut: formatRut(e.target.value),
+                                documentNumber: formatDocument(e.target.value),
                               })
                             }
-                            onBlur={() => handleFieldBlur("rut", index)}
+                            onBlur={() =>
+                              handleFieldBlur("documentNumber", index)
+                            }
                             className={cn(
-                              "h-12 pr-10",
-                              rutError && "border-destructive",
-                              !rutError && passenger.rut && "border-green-500",
+                              "h-12 pl-10 pr-10",
+                              documentError && "border-destructive",
+                              !documentError &&
+                                passenger.documentNumber &&
+                                "border-green-500",
                             )}
-                            data-error={!!rutError}
+                            data-error={!!documentError}
                           />
-                          {passenger.rut && (
+                          {passenger.documentNumber && (
                             <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                              {rutError ? (
+                              {documentError ? (
                                 <X className="h-5 w-5 text-destructive" />
                               ) : (
                                 <Check className="h-5 w-5 text-green-500" />
@@ -504,16 +647,19 @@ export default function CheckoutPage() {
                             </div>
                           )}
                         </div>
-                        {rutError && (
+                        {documentError && (
                           <p className="text-sm text-destructive flex items-center gap-1">
                             <AlertCircle className="h-4 w-4" />
-                            {rutError}
+                            {documentError}
                           </p>
                         )}
-                        {showRutHelp && !rutError && (
+                        {showDocumentHelp && !documentError && (
                           <div className="text-xs text-muted-foreground p-2 bg-muted rounded">
-                            <p>Formato aceptado: 12.345.678-9 o 12345678-9</p>
-                            <p>El dígito verificador puede ser 0-9 o K</p>
+                            <p>
+                              Formato aceptado: 4.123.456 (cédula) o
+                              80.012.345-0 (RUC)
+                            </p>
+                            <p>Para RUC, el dígito verificador puede ser 0-9</p>
                           </div>
                         )}
                       </div>
@@ -528,13 +674,11 @@ export default function CheckoutPage() {
                           <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                           <Input
                             id={`phone-${index}`}
-                            placeholder="+56 9 1234 5678"
+                            placeholder="0981 123 456"
                             value={passenger.phone}
                             onChange={(e) =>
                               updatePassenger(index, {
-                                phone: e.target.value
-                                  .replace(/\D/g, "")
-                                  .slice(0, 12),
+                                phone: e.target.value,
                               })
                             }
                             onBlur={() => handleFieldBlur("phone", index)}
@@ -565,7 +709,7 @@ export default function CheckoutPage() {
                         )}
                         {!phoneError && passenger.phone && (
                           <p className="text-sm text-muted-foreground">
-                            Se aceptan números móviles y fijos
+                            Formato: 0981 123 456 o 021 123 456
                           </p>
                         )}
                       </div>
@@ -624,6 +768,102 @@ export default function CheckoutPage() {
               })
             )}
 
+            {/* Datos adicionales para facturación */}
+            {selectedPaymentMethod === "pagopar" && (
+              <Card className="p-6 animate-fade-in">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center">
+                    <Building className="h-5 w-5 text-purple-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">
+                      Datos adicionales para facturación
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Información requerida para Pagopar
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="address">
+                      Dirección
+                      <span className="text-destructive ml-1">*</span>
+                    </Label>
+                    <Input
+                      id="address"
+                      placeholder="Ingresa tu dirección en Paraguay"
+                      value={additionalData.address}
+                      onChange={(e) =>
+                        setAdditionalData((prev) => ({
+                          ...prev,
+                          address: e.target.value,
+                        }))
+                      }
+                      className="h-12"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="city">
+                      Ciudad
+                      <span className="text-destructive ml-1">*</span>
+                    </Label>
+                    <Input
+                      id="city"
+                      placeholder="Ej: Asunción, Ciudad del Este, etc."
+                      value={additionalData.city}
+                      onChange={(e) =>
+                        setAdditionalData((prev) => ({
+                          ...prev,
+                          city: e.target.value,
+                        }))
+                      }
+                      className="h-12"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="ruc">RUC (opcional para factura)</Label>
+                    <Input
+                      id="ruc"
+                      placeholder="RUC con formato 80.012.345-0"
+                      value={additionalData.ruc}
+                      onChange={(e) =>
+                        setAdditionalData((prev) => ({
+                          ...prev,
+                          ruc: e.target.value,
+                        }))
+                      }
+                      className="h-12"
+                    />
+                  </div>
+
+                  {additionalData.ruc && (
+                    <div className="space-y-2">
+                      <Label htmlFor="companyName">
+                        Razón Social
+                        <span className="text-destructive ml-1">*</span>
+                      </Label>
+                      <Input
+                        id="companyName"
+                        placeholder="Nombre de la empresa"
+                        value={additionalData.companyName}
+                        onChange={(e) =>
+                          setAdditionalData((prev) => ({
+                            ...prev,
+                            companyName: e.target.value,
+                          }))
+                        }
+                        className="h-12"
+                      />
+                    </div>
+                  )}
+                </div>
+              </Card>
+            )}
+
             {/* Payment Section */}
             <Card
               className="p-6 animate-fade-in"
@@ -636,45 +876,131 @@ export default function CheckoutPage() {
                 <div>
                   <h3 className="font-semibold">Método de Pago</h3>
                   <p className="text-sm text-muted-foreground">
-                    Pago seguro con Webpay Plus
+                    Selecciona tu método de pago preferido
                   </p>
                 </div>
               </div>
 
-              <div className="bg-muted/50 rounded-xl p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-16 h-10 bg-background rounded flex items-center justify-center border border-border">
-                      <span className="text-xs font-bold text-foreground">
-                        Webpay
-                      </span>
+              {/* Payment Methods Selection */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <Card
+                  className={cn(
+                    "p-4 cursor-pointer transition-all duration-200 border-2 hover:border-blue-500",
+                    selectedPaymentMethod === "tarjeta"
+                      ? "border-blue-500 bg-blue-500/5"
+                      : "border-border",
+                  )}
+                  onClick={() => handlePaymentMethodSelect("tarjeta")}
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-8 bg-blue-600 rounded flex items-center justify-center">
+                      <CreditCard className="h-4 w-4 text-white" />
                     </div>
-                    <div>
-                      <p className="font-medium">Webpay Plus</p>
+                    <div className="flex-1">
+                      <p className="font-medium">Tarjeta de Crédito</p>
                       <p className="text-xs text-muted-foreground">
-                        Tarjeta de crédito o débito
+                        Visa, Mastercard, Amex
                       </p>
                     </div>
+                    {selectedPaymentMethod === "tarjeta" && (
+                      <CheckCircle2 className="h-5 w-5 text-green-500" />
+                    )}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Shield className="h-5 w-5 text-primary" />
-                    <span className="text-xs text-muted-foreground">
-                      Pago Seguro
-                    </span>
+                  <div className="flex flex-wrap gap-1">
+                    {["Visa", "Mastercard", "Amex"].map((card) => (
+                      <span
+                        key={card}
+                        className="text-xs px-2 py-1 bg-muted rounded"
+                      >
+                        {card}
+                      </span>
+                    ))}
                   </div>
-                </div>
+                </Card>
 
-                <div className="flex flex-wrap gap-3">
-                  {["Visa", "Mastercard", "Redcompra", "Amex"].map((card) => (
-                    <div
-                      key={card}
-                      className="px-3 py-2 bg-background rounded border border-border text-xs font-medium flex items-center gap-2"
-                    >
-                      <CheckCircle2 className="h-3 w-3 text-green-500" />
-                      {card}
+                <Card
+                  className={cn(
+                    "p-4 cursor-pointer transition-all duration-200 border-2 hover:border-purple-500",
+                    selectedPaymentMethod === "pagopar"
+                      ? "border-purple-500 bg-purple-500/5"
+                      : "border-border",
+                  )}
+                  onClick={() => handlePaymentMethodSelect("pagopar")}
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-8 bg-purple-600 rounded flex items-center justify-center">
+                      <Wallet className="h-4 w-4 text-white" />
                     </div>
-                  ))}
-                </div>
+                    <div className="flex-1">
+                      <p className="font-medium">Pagopar</p>
+                      <p className="text-xs text-muted-foreground">
+                        Pago en efectivo y múltiples opciones
+                      </p>
+                    </div>
+                    {selectedPaymentMethod === "pagopar" && (
+                      <CheckCircle2 className="h-5 w-5 text-green-500" />
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {["Efectivo", "Tarjetas", "Transferencia", "Billetera"].map(
+                      (option) => (
+                        <span
+                          key={option}
+                          className="text-xs px-2 py-1 bg-muted rounded"
+                        >
+                          {option}
+                        </span>
+                      ),
+                    )}
+                  </div>
+                </Card>
+              </div>
+
+              {/* Payment Method Details */}
+              <div className="bg-muted/50 rounded-xl p-4 mb-6">
+                {selectedPaymentMethod === "tarjeta" ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Shield className="h-5 w-5 text-blue-500" />
+                        <span className="text-sm font-medium">
+                          Pago con Tarjeta
+                        </span>
+                      </div>
+                      <Badge variant="outline" className="bg-background">
+                        Pago Seguro
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Aceptamos tarjetas Visa, Mastercard y American Express con
+                      seguridad SSL.
+                    </p>
+                  </div>
+                ) : (
+                  selectedPaymentMethod === "pagopar" && (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Wallet className="h-5 w-5 text-purple-500" />
+                          <span className="text-sm font-medium">Pagopar</span>
+                        </div>
+                        <Badge variant="outline" className="bg-background">
+                          Múltiples Opciones
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Pagá en efectivo, con tarjeta, transferencia o billetera
+                        electrónica desde Paraguay.
+                      </p>
+                      <ul className="text-xs text-muted-foreground space-y-1 pl-4 list-disc">
+                        <li>Pago en supermercados, farmacias y agencias</li>
+                        <li>Tarjetas de crédito y débito</li>
+                        <li>Transferencia bancaria</li>
+                        <li>Billeteras electrónicas</li>
+                      </ul>
+                    </div>
+                  )
+                )}
               </div>
 
               <div className="mt-6 flex items-start gap-3 p-4 bg-primary/5 rounded-xl">
@@ -684,8 +1010,9 @@ export default function CheckoutPage() {
                     Transacción Segura
                   </p>
                   <p className="text-muted-foreground">
-                    Tus datos están protegidos con encriptación SSL de 256 bits.
-                    Serás redirigido a Webpay Plus para completar el pago.
+                    Tu información está protegida con encriptación SSL. Los
+                    datos sensibles nunca son almacenados en nuestros
+                    servidores.
                   </p>
                 </div>
               </div>
@@ -746,7 +1073,7 @@ export default function CheckoutPage() {
               {tripType === "round-trip" && selectedReturnTrip && (
                 <div className="mb-6 pb-6 border-b border-border">
                   <p className="text-sm font-medium text-secondary mb-3">
-                    Viaje de Vuelta
+                    Viaje de Regreso
                   </p>
                   <div className="flex items-center gap-3 mb-3">
                     <Bus className="h-5 w-5 text-muted-foreground" />
@@ -799,13 +1126,19 @@ export default function CheckoutPage() {
                     {totalPassengers > 1 ? "s" : ""})
                   </span>
                   <span>
-                    ${Math.round(totalPrice * 0.81).toLocaleString("es-CL")}
+                    Gs. {Math.round(totalPrice * 0.82).toLocaleString("es-PY")}
                   </span>
                 </p>
                 <p className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">IVA (19%)</span>
+                  <span className="text-muted-foreground">IVA (10%)</span>
                   <span>
-                    ${Math.round(totalPrice * 0.19).toLocaleString("es-CL")}
+                    Gs. {Math.round(totalPrice * 0.1).toLocaleString("es-PY")}
+                  </span>
+                </p>
+                <p className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Servicio (8%)</span>
+                  <span>
+                    Gs. {Math.round(totalPrice * 0.08).toLocaleString("es-PY")}
                   </span>
                 </p>
               </div>
@@ -815,9 +1148,14 @@ export default function CheckoutPage() {
                 <div className="flex items-center justify-between">
                   <span className="text-lg font-medium">Total a Pagar</span>
                   <span className="text-3xl font-bold text-secondary">
-                    ${totalPrice.toLocaleString("es-CL")}
+                    Gs. {totalPrice.toLocaleString("es-PY")}
                   </span>
                 </div>
+                {selectedPaymentMethod === "tarjeta" && (
+                  <div className="mt-2 text-sm text-muted-foreground">
+                    <p>Posible cobro en dólares según tu banco</p>
+                  </div>
+                )}
               </div>
 
               {/* Validation Summary */}
@@ -857,14 +1195,18 @@ export default function CheckoutPage() {
               {/* Pay Button */}
               <Button
                 onClick={handlePayment}
-                disabled={!isFormValid || passengerDetails.length === 0}
+                disabled={
+                  !isFormValid ||
+                  passengerDetails.length === 0 ||
+                  !selectedPaymentMethod
+                }
                 className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground h-14 text-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
               >
                 <Lock className="h-5 w-5 mr-2" />
                 {passengerDetails.length === 0
                   ? "Cargando..."
-                  : isFormValid
-                    ? "Pagar con Webpay Plus"
+                  : isFormValid && selectedPaymentMethod
+                    ? `Pagar con ${selectedPaymentMethod === "tarjeta" ? "Tarjeta" : "Pagopar"}`
                     : "Completa los datos"}
               </Button>
 
@@ -876,8 +1218,8 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      {/* Webpay Payment Modal */}
-      {showPaymentModal && (
+      {/* Payment Modal */}
+      {showPaymentModal && selectedPaymentMethod && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div
             className="absolute inset-0 bg-foreground/80 backdrop-blur-sm"
@@ -888,11 +1230,21 @@ export default function CheckoutPage() {
               <>
                 <div className="text-center mb-8">
                   <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <CreditCard className="h-10 w-10 text-primary" />
+                    {selectedPaymentMethod === "tarjeta" ? (
+                      <CreditCard className="h-10 w-10 text-blue-500" />
+                    ) : (
+                      <Wallet className="h-10 w-10 text-purple-500" />
+                    )}
                   </div>
-                  <h3 className="text-2xl font-bold mb-2">Webpay Plus</h3>
+                  <h3 className="text-2xl font-bold mb-2">
+                    {selectedPaymentMethod === "tarjeta"
+                      ? "Pago con Tarjeta"
+                      : "Pagopar"}
+                  </h3>
                   <p className="text-muted-foreground">
-                    Serás redirigido al portal de pago seguro de Transbank
+                    {selectedPaymentMethod === "tarjeta"
+                      ? "Serás redirigido al portal de pago seguro"
+                      : "Serás redirigido al portal de pago de Pagopar"}
                   </p>
                 </div>
 
@@ -900,7 +1252,7 @@ export default function CheckoutPage() {
                   <div className="flex justify-between items-center">
                     <span className="text-muted-foreground">Monto a pagar</span>
                     <span className="text-2xl font-bold text-secondary">
-                      ${totalPrice.toLocaleString("es-CL")}
+                      Gs. {totalPrice.toLocaleString("es-PY")}
                     </span>
                   </div>
                 </div>
@@ -915,9 +1267,14 @@ export default function CheckoutPage() {
                   </Button>
                   <Button
                     onClick={processPayment}
-                    className="flex-1 bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+                    className={cn(
+                      "flex-1 text-secondary-foreground",
+                      selectedPaymentMethod === "tarjeta"
+                        ? "bg-blue-600 hover:bg-blue-700"
+                        : "bg-purple-600 hover:bg-purple-700",
+                    )}
                   >
-                    Continuar
+                    Confirmar Pago
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
                 </div>
@@ -936,4 +1293,16 @@ export default function CheckoutPage() {
       )}
     </div>
   );
+}
+
+// Extender la interfaz de window para Pagopar
+declare global {
+  interface Window {
+    Pagopar: {
+      setConfig: (data: PagoparPaymentData) => void;
+      pagar: () => void;
+      onSuccess: (response: any) => void;
+      onError: (error: any) => void;
+    };
+  }
 }

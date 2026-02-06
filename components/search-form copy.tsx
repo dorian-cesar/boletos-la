@@ -2,14 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Calendar,
-  MapPin,
-  ArrowRight,
-  Bus,
-  ChevronDown,
-  ArrowRightLeft,
-} from "lucide-react";
+import { Calendar, MapPin, ArrowRight, Bus, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -68,20 +61,17 @@ export function SearchForm() {
       className="max-w-7xl mx-auto animate-scale-in"
       style={{ animationDelay: "0.6s" }}
     >
-      <div className="bg-white/20 backdrop-blur-md rounded-3xl shadow-2xl p-6 lg:p-8 border border-white/30 relative overflow-hidden">
-        {/* Efecto de vidrio con gradiente sutil */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl pointer-events-none" />
-
-        {/* Trip Type Toggle - ARRIBA como originalmente */}
-        <div className="flex justify-center mb-8 relative z-10">
-          <div className="inline-flex bg-black/20 backdrop-blur-sm rounded-full p-1 border border-white/10">
+      <div className="bg-background/95 backdrop-blur-xl rounded-3xl shadow-2xl p-6 lg:p-8 border border-border/50">
+        {/* Trip Type Toggle */}
+        <div className="flex justify-center mb-8">
+          <div className="inline-flex bg-muted rounded-full p-1">
             <button
               onClick={() => setTripType("one-way")}
               className={cn(
-                "px-6 py-2 rounded-full font-medium transition-all duration-300 relative",
+                "px-6 py-2 rounded-full font-medium transition-all duration-300",
                 tripType === "one-way"
-                  ? "bg-white/20 text-white shadow-lg"
-                  : "text-white/80 hover:text-white hover:bg-white/5",
+                  ? "bg-primary text-primary-foreground shadow-lg transform scale-105"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               Solo Ida
@@ -89,10 +79,10 @@ export function SearchForm() {
             <button
               onClick={() => setTripType("round-trip")}
               className={cn(
-                "px-6 py-2 rounded-full font-medium transition-all duration-300 relative",
+                "px-6 py-2 rounded-full font-medium transition-all duration-300",
                 tripType === "round-trip"
-                  ? "bg-white/20 text-white shadow-lg"
-                  : "text-white/80 hover:text-white hover:bg-white/5",
+                  ? "bg-primary text-primary-foreground shadow-lg transform scale-105"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               Ida y Vuelta
@@ -100,11 +90,11 @@ export function SearchForm() {
           </div>
         </div>
 
-        {/* Search Fields - EN UNA FILA con swap siempre visible */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-3 relative z-10">
+        {/* Search Fields */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
           {/* Origin */}
-          <div className="lg:col-span-3 relative group">
-            <Label className="text-sm font-medium text-white/90 mb-2 block">
+          <div className="relative group">
+            <Label className="text-sm font-medium text-muted-foreground mb-2 block">
               Origen
             </Label>
             <Popover open={originOpen} onOpenChange={setOriginOpen}>
@@ -112,35 +102,28 @@ export function SearchForm() {
                 <Button
                   variant="outline"
                   role="combobox"
-                  className="w-full justify-between h-14 text-left font-normal bg-white/30 border-white/40 hover:border-white/60 hover:bg-white/40 transition-all duration-300 backdrop-blur-sm"
+                  className="w-full justify-between h-14 text-left font-normal bg-muted/50 border-border hover:border-primary hover:bg-muted transition-all duration-300 group-hover:shadow-md"
                 >
                   <div className="flex items-center gap-3">
-                    <MapPin className="h-5 w-5 text-white" />
-                    <span
-                      className={cn(!origin && "text-white/70", "text-white")}
-                    >
+                    <MapPin className="h-5 w-5 text-primary" />
+                    <span className={cn(!origin && "text-muted-foreground")}>
                       {origin
                         ? cities.find((c) => c.id === origin)?.name
                         : "Seleccionar ciudad"}
                     </span>
                   </div>
-                  <ChevronDown className="h-4 w-4 text-white/70" />
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent
-                className="w-full p-0 backdrop-blur-md bg-white/30 border-white/40"
-                align="start"
-              >
-                <Command className="bg-transparent">
+              <PopoverContent className="w-full p-0" align="start">
+                <Command>
                   <CommandInput
                     placeholder="Buscar ciudad..."
-                    className="h-12 bg-transparent border-b border-white/40 text-white placeholder:text-white/70"
+                    className="h-12"
                   />
                   <CommandList>
-                    <CommandEmpty className="text-white/70">
-                      No se encontró la ciudad.
-                    </CommandEmpty>
-                    <CommandGroup className="bg-transparent">
+                    <CommandEmpty>No se encontró la ciudad.</CommandEmpty>
+                    <CommandGroup>
                       {cities.map((city) => (
                         <CommandItem
                           key={city.id}
@@ -149,9 +132,9 @@ export function SearchForm() {
                             setOrigin(city.id);
                             setOriginOpen(false);
                           }}
-                          className="cursor-pointer py-3 text-white hover:bg-white/20"
+                          className="cursor-pointer py-3"
                         >
-                          <MapPin className="h-4 w-4 mr-2 text-white" />
+                          <MapPin className="h-4 w-4 mr-2 text-primary" />
                           <div>
                             <p className="font-medium">{city.name}</p>
                           </div>
@@ -164,20 +147,17 @@ export function SearchForm() {
             </Popover>
           </div>
 
-          {/* Swap Button - SIEMPRE VISIBLE, mismo estilo */}
-          <div className="lg:flex items-end justify-center lg:col-span-1 mb-2.5 hidden">
-            <button
-              onClick={swapCities}
-              className="w-10 h-10 flex items-center justify-center bg-white/30 text-white rounded-full shadow-lg hover:scale-110 transition-transform duration-300 backdrop-blur-sm border border-white/40 hover:bg-white/40"
-              aria-label="Intercambiar origen y destino"
-            >
-              <ArrowRightLeft className="h-5 w-5" />
-            </button>
-          </div>
+          {/* Swap Button - Floating */}
+          <button
+            onClick={swapCities}
+            className="hidden lg:flex absolute left-[calc(33.33%-12px)] top-[calc(50%+16px)] z-20 w-10 h-10 items-center justify-center bg-secondary text-secondary-foreground rounded-full shadow-lg hover:scale-110 transition-transform duration-300"
+          >
+            <ArrowRight className="h-5 w-5 rotate-90 lg:rotate-0" />
+          </button>
 
           {/* Destination */}
-          <div className="lg:col-span-3 relative group">
-            <Label className="text-sm font-medium text-white/90 mb-2 block">
+          <div className="relative group">
+            <Label className="text-sm font-medium text-muted-foreground mb-2 block">
               Destino
             </Label>
             <Popover open={destinationOpen} onOpenChange={setDestinationOpen}>
@@ -185,38 +165,30 @@ export function SearchForm() {
                 <Button
                   variant="outline"
                   role="combobox"
-                  className="w-full justify-between h-14 text-left font-normal bg-white/30 border-white/40 hover:border-white/60 hover:bg-white/40 transition-all duration-300 backdrop-blur-sm"
+                  className="w-full justify-between h-14 text-left font-normal bg-muted/50 border-border hover:border-primary hover:bg-muted transition-all duration-300 group-hover:shadow-md"
                 >
                   <div className="flex items-center gap-3">
-                    <MapPin className="h-5 w-5 text-white" />
+                    <MapPin className="h-5 w-5 text-secondary" />
                     <span
-                      className={cn(
-                        !destination && "text-white/70",
-                        "text-white",
-                      )}
+                      className={cn(!destination && "text-muted-foreground")}
                     >
                       {destination
                         ? cities.find((c) => c.id === destination)?.name
                         : "Seleccionar ciudad"}
                     </span>
                   </div>
-                  <ChevronDown className="h-4 w-4 text-white/70" />
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent
-                className="w-full p-0 backdrop-blur-md bg-white/30 border-white/40"
-                align="start"
-              >
-                <Command className="bg-transparent">
+              <PopoverContent className="w-full p-0" align="start">
+                <Command>
                   <CommandInput
                     placeholder="Buscar ciudad..."
-                    className="h-12 bg-transparent border-b border-white/40 text-white placeholder:text-white/70"
+                    className="h-12"
                   />
                   <CommandList>
-                    <CommandEmpty className="text-white/70">
-                      No se encontró la ciudad.
-                    </CommandEmpty>
-                    <CommandGroup className="bg-transparent">
+                    <CommandEmpty>No se encontró la ciudad.</CommandEmpty>
+                    <CommandGroup>
                       {cities
                         .filter((c) => c.id !== origin)
                         .map((city) => (
@@ -227,9 +199,9 @@ export function SearchForm() {
                               setDestination(city.id);
                               setDestinationOpen(false);
                             }}
-                            className="cursor-pointer py-3 text-white hover:bg-white/20"
+                            className="cursor-pointer py-3"
                           >
-                            <MapPin className="h-4 w-4 mr-2 text-white" />
+                            <MapPin className="h-4 w-4 mr-2 text-secondary" />
                             <div>
                               <p className="font-medium">{city.name}</p>
                             </div>
@@ -243,8 +215,8 @@ export function SearchForm() {
           </div>
 
           {/* Departure Date */}
-          <div className="lg:col-span-2 relative group">
-            <Label className="text-sm font-medium text-white/90 mb-2 block">
+          <div className="relative group">
+            <Label className="text-sm font-medium text-muted-foreground mb-2 block">
               Fecha de Ida
             </Label>
             <Popover
@@ -254,15 +226,12 @@ export function SearchForm() {
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className="w-full justify-between h-14 text-left font-normal bg-white/30 border-white/40 hover:border-white/60 hover:bg-white/40 transition-all duration-300 backdrop-blur-sm"
+                  className="w-full justify-between h-14 text-left font-normal bg-muted/50 border-border hover:border-primary hover:bg-muted transition-all duration-300 group-hover:shadow-md"
                 >
                   <div className="flex items-center gap-3">
-                    <Calendar className="h-5 w-5 text-white" />
+                    <Calendar className="h-5 w-5 text-primary" />
                     <span
-                      className={cn(
-                        !departureDate && "text-white/70",
-                        "text-white",
-                      )}
+                      className={cn(!departureDate && "text-muted-foreground")}
                     >
                       {departureDate
                         ? format(new Date(departureDate), "dd MMM yyyy", {
@@ -273,10 +242,7 @@ export function SearchForm() {
                   </div>
                 </Button>
               </PopoverTrigger>
-              <PopoverContent
-                className="w-auto p-0 backdrop-blur-md bg-white/30 border-white/40"
-                align="start"
-              >
+              <PopoverContent className="w-auto p-0" align="start">
                 <CalendarComponent
                   mode="single"
                   selected={departureDate ? new Date(departureDate) : undefined}
@@ -288,45 +254,38 @@ export function SearchForm() {
                   }}
                   disabled={(date) => date < new Date()}
                   initialFocus
-                  className="bg-transparent"
                 />
               </PopoverContent>
             </Popover>
           </div>
 
-          {/* Return Date */}
+          {/* Return Date (solo para round-trip) */}
           {tripType === "round-trip" && (
-            <div className="lg:col-span-2 relative group">
-              <Label className="text-sm font-medium text-white/90 mb-2 block">
+            <div className="relative group">
+              <Label className="text-sm font-medium text-muted-foreground mb-2 block">
                 Fecha de Vuelta
               </Label>
               <Popover open={returnDateOpen} onOpenChange={setReturnDateOpen}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className="w-full justify-between h-14 text-left font-normal bg-white/30 border-white/40 hover:border-white/60 hover:bg-white/40 transition-all duration-300 backdrop-blur-sm"
+                    className="w-full justify-between h-14 text-left font-normal bg-muted/50 border-border hover:border-primary hover:bg-muted transition-all duration-300 group-hover:shadow-md"
                   >
                     <div className="flex items-center gap-3">
-                      <Calendar className="h-5 w-5 text-white" />
+                      <Calendar className="h-5 w-5 text-secondary" />
                       <span
-                        className={cn(
-                          !returnDate && "text-white/70",
-                          "text-white",
-                        )}
+                        className={cn(!returnDate && "text-muted-foreground")}
                       >
                         {returnDate
-                          ? format(new Date(returnDate), "dd MMM", {
+                          ? format(new Date(returnDate), "dd MMM yyyy", {
                               locale: es,
                             })
-                          : "Seleccionar"}
+                          : "Seleccionar fecha"}
                       </span>
                     </div>
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent
-                  className="w-auto p-0 backdrop-blur-md bg-white/30 border-white/40"
-                  align="start"
-                >
+                <PopoverContent className="w-auto p-0" align="start">
                   <CalendarComponent
                     mode="single"
                     selected={returnDate ? new Date(returnDate) : undefined}
@@ -340,7 +299,6 @@ export function SearchForm() {
                       date < new Date(departureDate || new Date())
                     }
                     initialFocus
-                    className="bg-transparent"
                   />
                 </PopoverContent>
               </Popover>
@@ -348,23 +306,14 @@ export function SearchForm() {
           )}
         </div>
 
-        {/* Swap Button para móvil */}
-        <div className="lg:hidden flex items-center justify-center my-4 relative z-10">
-          <button
-            onClick={swapCities}
-            className="w-10 h-10 flex items-center justify-center bg-white/30 text-white rounded-full shadow-lg hover:scale-110 transition-transform duration-300 backdrop-blur-sm border border-white/40 hover:bg-white/40"
-            aria-label="Intercambiar origen y destino"
-          >
-            <ArrowRightLeft className="h-5 w-5 rotate-90" />
-          </button>
-        </div>
+        {/* ELIMINADO: Sección completa de Passengers for Round Trip */}
 
-        {/* Search Button - ABAJO como original */}
-        <div className="mt-8 flex justify-center relative z-10">
+        {/* Search Button */}
+        <div className="mt-8 flex justify-center">
           <Button
             onClick={handleSearch}
             disabled={!origin || !destination || !departureDate}
-            className="bg-white/30 hover:bg-white/40 text-white h-14 px-12 text-lg font-semibold rounded-full shadow-lg transition-all duration-300 backdrop-blur-sm border border-white/40 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:transform-none disabled:hover:bg-white/30"
+            className="bg-secondary hover:bg-secondary/90 text-secondary-foreground h-14 px-12 text-lg font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:transform-none animate-pulse-glow"
           >
             <Bus className="h-5 w-5 mr-2" />
             Buscar Pasajes

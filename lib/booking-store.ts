@@ -33,7 +33,7 @@ export interface Passenger {
   seatNumber: string;
   firstName: string;
   lastName: string;
-  rut: string;
+  documentNumber: string;
   email: string;
   phone: string;
 }
@@ -45,7 +45,6 @@ export interface BookingState {
   destination: string;
   departureDate: string;
   returnDate: string;
-  // ELIMINAR: passengers: number; ← Remover esta línea
   selectedOutboundTrip: Trip | null;
   selectedReturnTrip: Trip | null;
   selectedSeats: Seat[];
@@ -61,7 +60,6 @@ export interface BookingState {
   setDestination: (destination: string) => void;
   setDepartureDate: (date: string) => void;
   setReturnDate: (date: string) => void;
-  // ELIMINAR: setPassengers: (count: number) => void; ← Remover esta línea
   setSelectedOutboundTrip: (trip: Trip | null) => void;
   setSelectedReturnTrip: (trip: Trip | null) => void;
   addSeat: (seat: Seat) => void;
@@ -85,7 +83,6 @@ const initialState = {
   destination: "",
   departureDate: "",
   returnDate: "",
-  // ELIMINAR: passengers: 1, ← Remover esta línea
   selectedOutboundTrip: null,
   selectedReturnTrip: null,
   selectedSeats: [],
@@ -107,16 +104,13 @@ export const useBookingStore = create<BookingState>()(
       setDestination: (destination) => set({ destination }),
       setDepartureDate: (departureDate) => set({ departureDate }),
       setReturnDate: (returnDate) => set({ returnDate }),
-      // ELIMINAR: setPassengers: (passengers) => set({ passengers }), ← Remover esta línea
       setSelectedOutboundTrip: (selectedOutboundTrip) =>
         set({ selectedOutboundTrip }),
       setSelectedReturnTrip: (selectedReturnTrip) =>
         set({ selectedReturnTrip }),
 
-      // MODIFICAR: Eliminar la verificación de límite de pasajeros
       addSeat: (seat) => {
-        const { selectedSeats } = get(); // ← Solo obtener selectedSeats
-        // SIN LÍMITE - puede seleccionar todos los asientos que quiera
+        const { selectedSeats } = get();
         set({ selectedSeats: [...selectedSeats, seat] });
         get().calculateTotal();
       },
@@ -127,10 +121,8 @@ export const useBookingStore = create<BookingState>()(
         get().calculateTotal();
       },
 
-      // MODIFICAR: Eliminar la verificación de límite de pasajeros
       addReturnSeat: (seat) => {
-        const { selectedReturnSeats } = get(); // ← Solo obtener selectedReturnSeats
-        // SIN LÍMITE
+        const { selectedReturnSeats } = get();
         set({ selectedReturnSeats: [...selectedReturnSeats, seat] });
         get().calculateTotal();
       },
@@ -189,7 +181,7 @@ export const useBookingStore = create<BookingState>()(
   ),
 );
 
-// Sample data - SIN CAMBIOS
+// Datos para Paraguay
 export const cities = [
   { id: "asu", name: "Asunción", department: "Capital" },
   { id: "cde", name: "Ciudad del Este", department: "Alto Paraná" },
@@ -199,6 +191,10 @@ export const cities = [
   { id: "cor", name: "Coronel Oviedo", department: "Caaguazú" },
   { id: "sal", name: "Salto del Guairá", department: "Canindeyú" },
   { id: "pil", name: "Pilar", department: "Ñeembucú" },
+  { id: "con", name: "Concepción", department: "Concepción" },
+  { id: "vde", name: "Villa del Rosario", department: "San Pedro" },
+  { id: "may", name: "Mayor Otaño", department: "Itapúa" },
+  { id: "her", name: "Hernandarias", department: "Alto Paraná" },
 ];
 
 export const generateTrips = (
@@ -207,23 +203,24 @@ export const generateTrips = (
   date: string,
 ): Trip[] => {
   const times = [
-    "06:00",
-    "08:30",
-    "10:00",
-    "12:30",
-    "15:00",
-    "18:00",
-    "21:00",
-    "23:30",
+    "05:00",
+    "07:30",
+    "09:00",
+    "11:30",
+    "14:00",
+    "17:00",
+    "20:00",
+    "22:30",
   ];
   const companies = [
-    "Turbus",
-    "Pullman Bus",
-    "Buses JAC",
-    "Eme Bus",
-    "Condor Bus",
+    "Nuestra Señora de la Asunción",
+    "Stel Turismo",
+    "Rysa",
+    "Sol del Paraguay",
+    "La Encarnacena",
+    "Catedral Turismo",
   ];
-  const busTypes = ["Semi Cama", "Salón Cama", "Premium", "Clásico"];
+  const busTypes = ["Semi Cama", "Cama Ejecutivo", "Premium", "Clásico"];
   const amenities = [
     ["WiFi", "TV", "Baño", "Aire Acondicionado"],
     ["WiFi", "TV", "Baño", "Aire Acondicionado", "Enchufes USB"],
@@ -233,14 +230,14 @@ export const generateTrips = (
       "Baño",
       "Aire Acondicionado",
       "Enchufes USB",
-      "Comida incluida",
+      "Refrigeración",
     ],
-    ["TV", "Baño"],
+    ["TV", "Baño", "Aire Acondicionado"],
   ];
 
   return times.map((time, index) => {
     const departureHour = parseInt(time.split(":")[0]);
-    const duration = Math.floor(Math.random() * 4) + 4;
+    const duration = Math.floor(Math.random() * 6) + 3; // 3-9 horas para viajes en Paraguay
     const arrivalHour = (departureHour + duration) % 24;
     const arrivalMinute = Math.random() > 0.5 ? "30" : "00";
 
@@ -252,11 +249,11 @@ export const generateTrips = (
       departureTime: time,
       arrivalTime: `${arrivalHour.toString().padStart(2, "0")}:${arrivalMinute}`,
       duration: `${duration}h ${Math.random() > 0.5 ? "30" : "00"}min`,
-      price: Math.floor(Math.random() * 20000) + 8000,
+      price: Math.floor(Math.random() * 150000) + 50000, // En guaraníes (Gs. 50,000 - 200,000)
       busType: busTypes[index % busTypes.length],
       company: companies[index % companies.length],
       amenities: amenities[index % amenities.length],
-      availableSeats: Math.floor(Math.random() * 30) + 5,
+      availableSeats: Math.floor(Math.random() * 25) + 5,
     };
   });
 };
@@ -280,7 +277,7 @@ export const generateSeats = (tripId: string, floor: number = 1): Seat[] => {
         floor,
         type: isVip ? "vip" : isPremium ? "premium" : "standard",
         status: isOccupied ? "occupied" : "available",
-        price: isVip ? 25000 : isPremium ? 18000 : 15000,
+        price: isVip ? 250000 : isPremium ? 180000 : 150000, // En guaraníes
       });
     }
   }

@@ -38,8 +38,10 @@ const amenityIcons: Record<
 > = {
   WiFi: Wifi,
   TV: Tv,
-  "Comida incluida": Coffee,
+  Refrigeración: Coffee,
   "Enchufes USB": Plug,
+  Baño: Coffee,
+  "Aire Acondicionado": Coffee,
 };
 
 export default function ServicesPage() {
@@ -130,13 +132,13 @@ export default function ServicesPage() {
       <BookingProgress />
 
       {/* Search Summary */}
-      <div className="bg-foreground text-background py-8">
+      {/* <div className="bg-foreground text-background py-8">
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-4 text-center lg:text-left">
               <div>
                 <p className="text-sm text-background/60">
-                  {showingReturn ? "Viaje de Vuelta" : "Viaje de Ida"}
+                  {showingReturn ? "Viaje de Regreso" : "Viaje de Ida"}
                 </p>
                 <div className="flex items-center gap-3 text-2xl font-bold">
                   <span>
@@ -173,14 +175,14 @@ export default function ServicesPage() {
                     className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
                     onClick={() => setShowingReturn(true)}
                   >
-                    Continuar a Vuelta
+                    Continuar al Regreso
                   </Button>
                 )}
               </div>
             )}
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Trips List */}
       <div className="container mx-auto px-4 py-8">
@@ -228,7 +230,7 @@ export default function ServicesPage() {
                       <div className="flex items-center gap-1 mt-1">
                         <Star className="h-3 w-3 text-secondary fill-secondary" />
                         <span className="text-xs text-muted-foreground">
-                          4.8
+                          4.5
                         </span>
                       </div>
                     </div>
@@ -291,10 +293,10 @@ export default function ServicesPage() {
                   <div className="flex items-center justify-between lg:flex-col lg:items-end gap-4 lg:w-40">
                     <div className="text-right">
                       <p className="text-sm text-muted-foreground line-through">
-                        ${(trip.price * 1.2).toLocaleString("es-CL")}
+                        Gs. {(trip.price * 1.2).toLocaleString("es-PY")}
                       </p>
                       <p className="text-2xl font-bold text-secondary">
-                        ${trip.price.toLocaleString("es-CL")}
+                        Gs. {trip.price.toLocaleString("es-PY")}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         por asiento

@@ -136,7 +136,7 @@ export default function SeatsPage() {
                       : "bg-primary/10 text-primary",
                   )}
                 >
-                  {selectingReturn ? "Viaje de Vuelta" : "Viaje de Ida"}
+                  {selectingReturn ? "Viaje de Regreso" : "Viaje de Ida"}
                 </span>
               </div>
 
@@ -176,7 +176,7 @@ export default function SeatsPage() {
                     })}
                   </p>
                   <p className="text-xl font-bold text-secondary">
-                    ${currentTrip?.price.toLocaleString("es-CL")}
+                    Gs. {currentTrip?.price.toLocaleString("es-PY")}
                   </p>
                 </div>
               </div>
@@ -211,7 +211,7 @@ export default function SeatsPage() {
                       "opacity-50",
                   )}
                 >
-                  Asientos de Vuelta
+                  Asientos de Regreso
                   <ChevronRight className="h-4 w-4 ml-2" />
                 </Button>
               </div>
@@ -250,10 +250,10 @@ export default function SeatsPage() {
                       : "Sin seleccionar"}
                   </p>
                   <p className="text-sm font-medium text-secondary">
-                    $
+                    Gs.{" "}
                     {selectedSeats
                       .reduce((acc, s) => acc + s.price, 0)
-                      .toLocaleString("es-CL")}
+                      .toLocaleString("es-PY")}
                   </p>
                 </div>
               </div>
@@ -265,7 +265,7 @@ export default function SeatsPage() {
                     <div className="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center">
                       <ArrowRight className="h-4 w-4 text-secondary rotate-180" />
                     </div>
-                    <span className="font-medium">Viaje de Vuelta</span>
+                    <span className="font-medium">Viaje de Regreso</span>
                   </div>
                   <div className="pl-10 space-y-2">
                     <p className="text-sm">
@@ -286,10 +286,10 @@ export default function SeatsPage() {
                         : "Sin seleccionar"}
                     </p>
                     <p className="text-sm font-medium text-secondary">
-                      $
+                      Gs.{" "}
                       {selectedReturnSeats
                         .reduce((acc, s) => acc + s.price, 0)
-                        .toLocaleString("es-CL")}
+                        .toLocaleString("es-PY")}
                     </p>
                   </div>
                 </div>
@@ -311,7 +311,7 @@ export default function SeatsPage() {
                 <div className="flex items-center justify-between">
                   <span className="text-lg font-medium">Total</span>
                   <span className="text-3xl font-bold text-secondary">
-                    ${totalPrice.toLocaleString("es-CL")}
+                    Gs. {totalPrice.toLocaleString("es-PY")}
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
@@ -328,7 +328,7 @@ export default function SeatsPage() {
                 {tripType === "round-trip" &&
                 !selectingReturn &&
                 selectedReturnTrip
-                  ? "Seleccionar Asientos de Vuelta"
+                  ? "Seleccionar Asientos de Regreso"
                   : "Continuar al Pago"}
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Button>

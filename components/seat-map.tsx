@@ -32,21 +32,21 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
   }, [tripId]);
 
   const handleSeatClick = (seat: Seat) => {
-    console.log("Seat clicked:", seat.number, "Status:", seat.status);
+    console.log("Asiento clickeado:", seat.number, "Estado:", seat.status);
 
     if (seat.status === "occupied") {
-      console.log("Seat is occupied");
+      console.log("Asiento está ocupado");
       return;
     }
 
     const isSelected = currentSelectedSeats.some((s) => s.id === seat.id);
-    console.log("Is already selected?", isSelected);
+    console.log("¿Ya está seleccionado?", isSelected);
 
     if (isSelected) {
-      console.log("Removing seat:", seat.id);
+      console.log("Removiendo asiento:", seat.id);
       isReturn ? removeReturnSeat(seat.id) : removeSeat(seat.id);
     } else {
-      console.log("Adding seat:", seat.id);
+      console.log("Agregando asiento:", seat.id);
       // SIN LÍMITE - puede seleccionar todos los asientos que quiera
       isReturn ? addReturnSeat(seat) : addSeat(seat);
     }
@@ -91,11 +91,15 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
         </div>
         <div className="flex items-center gap-2">
           <Crown className="h-5 w-5 text-secondary" />
-          <span className="text-sm text-muted-foreground">VIP</span>
+          <span className="text-sm text-muted-foreground">Ejecutivo VIP</span>
         </div>
         <div className="flex items-center gap-2">
           <Star className="h-5 w-5 text-primary" />
-          <span className="text-sm text-muted-foreground">Premium</span>
+          <span className="text-sm text-muted-foreground">Cama Ejecutivo</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-muted/80 border-2 border-muted-foreground/30" />
+          <span className="text-sm text-muted-foreground">Semi Cama</span>
         </div>
       </div>
 
@@ -112,6 +116,17 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
 
         {/* Seats Grid */}
         <div className="bg-muted/50 rounded-3xl p-6 border-4 border-foreground/20">
+          {/* Row Numbers on Left */}
+          <div className="absolute left-4 top-6 flex flex-col gap-3">
+            {rows.map((row) => (
+              <div key={row} className="h-12 flex items-center">
+                <span className="text-xs text-muted-foreground font-medium">
+                  Fila {row}
+                </span>
+              </div>
+            ))}
+          </div>
+
           {rows.map((row) => {
             const rowSeats = floorSeats
               .filter((s) => s.row === row)
@@ -140,7 +155,7 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
 
                 {/* Aisle */}
                 <div className="w-8 flex items-center justify-center">
-                  <span className="text-xs text-muted-foreground">{row}</span>
+                  <div className="w-full h-1 bg-muted-foreground/20 rounded" />
                 </div>
 
                 {/* Right Side */}
@@ -186,10 +201,19 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
                 key={seat.id}
                 className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-sm font-medium animate-scale-in"
               >
-                {seat.number}
+                {seat.number} - Gs. {seat.price.toLocaleString("es-PY")}
               </span>
             ))}
           </div>
+        </div>
+        <div className="mt-3 pt-3 border-t border-border">
+          <p className="text-sm text-muted-foreground">Total seleccionado:</p>
+          <p className="font-bold text-lg text-secondary">
+            Gs.{" "}
+            {currentSelectedSeats
+              .reduce((acc, seat) => acc + seat.price, 0)
+              .toLocaleString("es-PY")}
+          </p>
         </div>
       </div>
     </div>
@@ -210,19 +234,31 @@ function SeatButton({ seat, isSelected, onClick }: SeatButtonProps) {
       onClick={onClick}
       disabled={isOccupied}
       className={cn(
-        "relative w-12 h-12 rounded-lg font-medium text-sm transition-all duration-300 flex items-center justify-center",
+        "relative w-12 h-12 rounded-lg font-medium text-sm transition-all duration-300 flex items-center justify-center group",
         isOccupied && "bg-foreground/20 cursor-not-allowed",
         !isOccupied &&
           !isSelected &&
+          seat.type === "vip" &&
+          "bg-gradient-to-br from-secondary/10 to-secondary/5 border-2 border-secondary/50 hover:border-secondary hover:bg-secondary/20",
+        !isOccupied &&
+          !isSelected &&
+          seat.type === "premium" &&
+          "bg-gradient-to-br from-primary/10 to-primary/5 border-2 border-primary/50 hover:border-primary hover:bg-primary/20",
+        !isOccupied &&
+          !isSelected &&
+          seat.type === "standard" &&
           "bg-muted border-2 border-border hover:border-primary hover:bg-primary/10",
         isSelected &&
+          seat.type === "vip" &&
+          "bg-gradient-to-br from-secondary to-secondary/80 text-secondary-foreground shadow-lg shadow-secondary/30 transform scale-110",
+        isSelected &&
+          seat.type === "premium" &&
+          "bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/30 transform scale-110",
+        isSelected &&
+          seat.type === "standard" &&
           "bg-primary text-primary-foreground shadow-lg transform scale-110",
-        seat.type === "vip" && !isOccupied && !isSelected && "border-secondary",
-        seat.type === "premium" &&
-          !isOccupied &&
-          !isSelected &&
-          "border-primary/50",
       )}
+      title={`Asiento ${seat.number} - ${seat.type === "vip" ? "Ejecutivo VIP" : seat.type === "premium" ? "Cama Ejecutivo" : "Semi Cama"} - Gs. ${seat.price.toLocaleString("es-PY")}`}
     >
       {isOccupied ? (
         <User className="h-5 w-5 text-muted-foreground" />
@@ -235,6 +271,13 @@ function SeatButton({ seat, isSelected, onClick }: SeatButtonProps) {
           {seat.type === "premium" && !isSelected && (
             <Star className="absolute -top-1 -right-1 h-3 w-3 text-primary" />
           )}
+          {/* Price tooltip on hover */}
+          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <div className="bg-foreground text-background text-xs px-2 py-1 rounded whitespace-nowrap">
+              Gs. {seat.price.toLocaleString("es-PY")}
+            </div>
+            <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-foreground mx-auto"></div>
+          </div>
         </>
       )}
     </button>
