@@ -230,7 +230,7 @@ export default function CheckoutPage() {
             apellido: primaryPassenger.lastName,
             email: primaryPassenger.email,
             telefono: primaryPassenger.phone.replace(/\D/g, ""), // Solo números
-            rut: primaryPassenger.documentNumber,
+            ruc: primaryPassenger.documentNumber,
           },
         };
 

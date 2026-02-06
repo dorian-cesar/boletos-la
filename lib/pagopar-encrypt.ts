@@ -8,7 +8,7 @@ export interface PagoparPaymentData {
     apellido: string;
     email: string;
     telefono: string;
-    rut?: string;
+    ruc?: string;
     // NO agregar direccion ni ciudad - tu código las deja vacías
   };
 }
