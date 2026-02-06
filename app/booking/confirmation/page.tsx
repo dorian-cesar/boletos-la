@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import {
@@ -20,6 +19,9 @@ import {
   Copy,
   Check,
   FileText,
+  Loader2,
+  AlertCircle,
+  Wallet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -30,12 +32,22 @@ import { cn } from "@/lib/utils";
 
 export default function ConfirmationPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [mounted, setMounted] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showConfetti, setShowConfetti] = useState(true);
+
+  // ESTADOS PARA PAGOPAR
+  const [pagoparHash, setPagoparHash] = useState<string | null>(null);
+  const [pagoparStatus, setPagoparStatus] = useState<
+    "checking" | "paid" | "pending" | "failed"
+  >("checking");
+  const [pagoparDetails, setPagoparDetails] = useState<any>(null);
+  const [savingToDB, setSavingToDB] = useState(false);
+  const [showPaymentStatus, setShowPaymentStatus] = useState(true);
 
   const {
     tripType,
@@ -50,6 +62,8 @@ export default function ConfirmationPage() {
     bookingReference,
     setStep,
     resetBooking,
+    setBookingReference,
+    setPaymentStatus,
   } = useBookingStore();
 
   const originCity = cities.find((c) => c.id === selectedOutboundTrip?.origin);
@@ -57,17 +71,149 @@ export default function ConfirmationPage() {
     (c) => c.id === selectedOutboundTrip?.destination,
   );
 
+  // 1. AL CARGAR LA PÁGINA - Verificar si viene de Pagopar
   useEffect(() => {
     setMounted(true);
     setStep(4);
+
+    // Obtener hash de la URL de Pagopar
+    const hashFromUrl = searchParams.get("hash");
+
+    // También verificar localStorage por si acaso
+    const savedHash = localStorage.getItem("pagopar_last_hash");
+
+    const hash = hashFromUrl || savedHash;
+
+    if (hash) {
+      console.log("🔍 Hash de Pagopar encontrado:", hash);
+      setPagoparHash(hash);
+
+      // Limpiar localStorage
+      if (savedHash) localStorage.removeItem("pagopar_last_hash");
+
+      // Verificar el pago con Pagopar
+      verifyPagoparPayment(hash);
+    } else {
+      // Si no hay hash, asumir que ya pagó de otra forma
+      setPagoparStatus("paid");
+      setShowPaymentStatus(false);
+    }
 
     // Hide confetti after 5 seconds
     const timer = setTimeout(() => setShowConfetti(false), 5000);
     return () => clearTimeout(timer);
   }, [setStep]);
 
+  // 2. FUNCIÓN PRINCIPAL PARA VERIFICAR PAGO CON PAGOPAR
+  const verifyPagoparPayment = async (hash: string) => {
+    try {
+      console.log("🔄 Iniciando verificación de Pagopar...");
+
+      // Llamar a TU API que consulta el estado en Pagopar
+      const response = await fetch("/api/pagopar/check-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ hash_pedido: hash }),
+      });
+
+      const data = await response.json();
+      console.log("📊 Respuesta de Pagopar:", data);
+
+      if (data.respuesta === true && data.resultado?.[0]) {
+        const payment = data.resultado[0];
+        setPagoparDetails(payment);
+
+        if (payment.pagado === true) {
+          // ✅ PAGO EXITOSO
+          console.log("✅ PAGO CONFIRMADO POR PAGOPAR");
+          setPagoparStatus("paid");
+
+          // Crear referencia de reserva si no existe
+          if (!bookingReference) {
+            const newReference = `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+            setBookingReference(newReference);
+            setPaymentStatus("completed");
+          }
+
+          // Guardar en base de datos
+          await saveBookingToDatabase(payment, hash);
+        } else if (payment.cancelado === true) {
+          // ❌ PAGO CANCELADO
+          console.log("❌ PAGO CANCELADO");
+          setPagoparStatus("failed");
+        } else {
+          // ⏳ PAGO PENDIENTE
+          console.log("⏳ PAGO PENDIENTE");
+          setPagoparStatus("pending");
+        }
+      } else {
+        console.log("⚠️ No se pudo verificar el pago");
+        setPagoparStatus("failed");
+      }
+    } catch (error: any) {
+      console.error("💥 Error verificando pago:", error);
+      setPagoparStatus("failed");
+    }
+  };
+
+  // 3. GUARDAR RESERVA EN BASE DE DATOS
+  const saveBookingToDatabase = async (payment: any, hash: string) => {
+    try {
+      setSavingToDB(true);
+
+      const bookingData = {
+        reference: bookingReference,
+        pagoparHash: hash,
+        pagoparOrderId: payment.numero_pedido,
+        status: "paid",
+        paymentMethod: payment.forma_pago,
+        paymentDate: payment.fecha_pago,
+        amount: payment.monto,
+        passengerCount: passengerDetails.length,
+        totalPrice,
+        departureDate,
+        returnDate,
+        passengerDetails,
+        tripDetails: {
+          outbound: selectedOutboundTrip,
+          return: selectedReturnTrip,
+          seats: selectedSeats,
+          returnSeats: selectedReturnSeats,
+        },
+      };
+
+      console.log("💾 Guardando reserva en BD:", bookingData);
+
+      // Llamar a TU API para guardar la reserva
+      const response = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bookingData),
+      });
+
+      if (response.ok) {
+        console.log("✅ Reserva guardada exitosamente");
+      } else {
+        console.error("❌ Error guardando reserva");
+      }
+    } catch (error) {
+      console.error("💥 Error guardando reserva:", error);
+    } finally {
+      setSavingToDB(false);
+    }
+  };
+
+  // 4. REINTENTAR VERIFICACIÓN
+  const handleRetryVerification = () => {
+    if (pagoparHash) {
+      setPagoparStatus("checking");
+      verifyPagoparPayment(pagoparHash);
+    }
+  };
+
+  // 5. FUNCIONES EXISTENTES (sin cambios)
   const handleDownloadPDF = async () => {
-    if (!selectedOutboundTrip) return;
+    if (!selectedOutboundTrip || !bookingReference) return;
 
     setIsGeneratingPDF(true);
     try {
@@ -128,6 +274,7 @@ export default function ConfirmationPage() {
   }
 
   const primaryPassenger = passengerDetails[0];
+  const canShowActions = bookingReference && pagoparStatus === "paid";
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -136,39 +283,211 @@ export default function ConfirmationPage() {
       {/* Confetti Animation */}
       {showConfetti && (
         <div className="fixed inset-0 pointer-events-none z-50">
-          {[...Array(50)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute animate-fade-in"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `-20px`,
-                width: `${Math.random() * 10 + 5}px`,
-                height: `${Math.random() * 10 + 5}px`,
-                backgroundColor: ["#3CBDB1", "#F7941D", "#FFD700", "#FF6B6B"][
-                  Math.floor(Math.random() * 4)
-                ],
-                borderRadius: Math.random() > 0.5 ? "50%" : "0",
-                animation: `confetti-fall ${Math.random() * 3 + 2}s linear forwards`,
-                animationDelay: `${Math.random() * 2}s`,
-              }}
-            />
-          ))}
+          {[...Array(50)].map((_, i) => {
+            const colors = ["#3CBDB1", "#F7941D", "#FFD700", "#FF6B6B"];
+            const randomColor =
+              colors[Math.floor(Math.random() * colors.length)];
+
+            return (
+              <div
+                key={i}
+                className="absolute animate-fade-in"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `-20px`,
+                  width: `${Math.random() * 10 + 5}px`,
+                  height: `${Math.random() * 10 + 5}px`,
+                  backgroundColor: randomColor,
+                  borderRadius: Math.random() > 0.5 ? "50%" : "0",
+                  animation: `confetti-fall ${Math.random() * 3 + 2}s linear forwards`,
+                  animationDelay: `${Math.random() * 2}s`,
+                }}
+              />
+            );
+          })}
         </div>
       )}
 
       <div className="container mx-auto px-4 py-8">
+        {/* BANNER DE ESTADO DE PAGOPAR */}
+        {showPaymentStatus && (
+          <div className="mb-6 animate-fade-in">
+            {pagoparStatus === "checking" && (
+              <Card className="p-6 bg-blue-50 border-blue-200">
+                <div className="flex items-center gap-4">
+                  <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-blue-800">
+                      Verificando pago con Pagopar...
+                    </h3>
+                    <p className="text-sm text-blue-600">
+                      Estamos confirmando tu transacción con Pagopar.
+                      {savingToDB && " Guardando información de tu reserva..."}
+                    </p>
+                    {pagoparHash && (
+                      <p className="text-xs text-blue-500 mt-2">
+                        ID: {pagoparHash.substring(0, 20)}...
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {pagoparStatus === "paid" && (
+              <Card className="p-6 bg-green-50 border-green-200">
+                <div className="flex items-start gap-4">
+                  <CheckCircle2 className="h-8 w-8 text-green-600 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-green-800 mb-2">
+                      ¡Pago confirmado con Pagopar!
+                    </h3>
+                    {pagoparDetails && (
+                      <div className="grid grid-cols-2 gap-4 text-sm mb-3">
+                        <div>
+                          <p className="text-green-700">
+                            <span className="font-medium">Método:</span>{" "}
+                            {pagoparDetails.forma_pago}
+                          </p>
+                          <p className="text-green-700">
+                            <span className="font-medium">Fecha:</span>{" "}
+                            {pagoparDetails.fecha_pago
+                              ? format(
+                                  new Date(pagoparDetails.fecha_pago),
+                                  "dd/MM/yyyy HH:mm",
+                                )
+                              : "N/A"}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-green-700">
+                            <span className="font-medium">N° Pedido:</span>{" "}
+                            {pagoparDetails.numero_pedido}
+                          </p>
+                          <p className="text-green-700">
+                            <span className="font-medium">Monto:</span> Gs.{" "}
+                            {parseFloat(pagoparDetails.monto).toLocaleString(
+                              "es-PY",
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    <Button
+                      onClick={() => setShowPaymentStatus(false)}
+                      variant="ghost"
+                      size="sm"
+                      className="text-green-700 hover:text-green-800 hover:bg-green-100"
+                    >
+                      Ocultar detalles
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {pagoparStatus === "pending" && (
+              <Card className="p-6 bg-yellow-50 border-yellow-200">
+                <div className="flex items-start gap-4">
+                  <AlertCircle className="h-8 w-8 text-yellow-600 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-yellow-800 mb-2">
+                      Pago pendiente de confirmación
+                    </h3>
+                    <p className="text-sm text-yellow-600 mb-4">
+                      Tu pago está siendo procesado por Pagopar. Si ya
+                      realizaste el pago, recarga esta página en unos minutos.
+                    </p>
+                    <div className="flex gap-3">
+                      <Button
+                        onClick={handleRetryVerification}
+                        variant="outline"
+                        size="sm"
+                        className="border-yellow-300 text-yellow-700 hover:bg-yellow-100"
+                      >
+                        <Loader2 className="h-3 w-3 mr-2" />
+                        Reintentar verificación
+                      </Button>
+                      <Button
+                        onClick={() => router.push("/booking/checkout")}
+                        variant="outline"
+                        size="sm"
+                      >
+                        Volver al checkout
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {pagoparStatus === "failed" && (
+              <Card className="p-6 bg-red-50 border-red-200">
+                <div className="flex items-start gap-4">
+                  <AlertCircle className="h-8 w-8 text-red-600 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-red-800 mb-2">
+                      Error en el pago
+                    </h3>
+                    <p className="text-sm text-red-600 mb-4">
+                      Hubo un problema con tu pago en Pagopar. El pago fue
+                      cancelado, expiró o no se pudo procesar.
+                    </p>
+                    <div className="flex gap-3">
+                      <Button
+                        onClick={handleRetryVerification}
+                        variant="outline"
+                        size="sm"
+                        className="border-red-300 text-red-700 hover:bg-red-100"
+                      >
+                        Reintentar verificación
+                      </Button>
+                      <Button
+                        onClick={() => router.push("/booking/checkout")}
+                        variant="outline"
+                        size="sm"
+                      >
+                        Volver al checkout
+                      </Button>
+                      <Button
+                        onClick={() => router.push("/")}
+                        variant="ghost"
+                        size="sm"
+                      >
+                        Ir al inicio
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            )}
+          </div>
+        )}
+
         {/* Success Header */}
         <div className="text-center mb-12 animate-bounce-in">
           <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle2 className="h-14 w-14 text-primary" />
+            {pagoparStatus === "paid" ? (
+              <CheckCircle2 className="h-14 w-14 text-green-500" />
+            ) : pagoparStatus === "pending" ? (
+              <Loader2 className="h-14 w-14 text-yellow-500 animate-spin" />
+            ) : (
+              <CheckCircle2 className="h-14 w-14 text-primary" />
+            )}
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            ¡Reserva Confirmada!
+            {pagoparStatus === "paid"
+              ? "¡Reserva Confirmada!"
+              : pagoparStatus === "pending"
+                ? "Pago en Proceso"
+                : "¡Reserva Confirmada!"}
           </h1>
           <p className="text-lg text-muted-foreground mb-6">
-            Tu pago ha sido procesado exitosamente. Tu boleto electrónico está
-            listo.
+            {pagoparStatus === "paid"
+              ? "Tu pago ha sido procesado exitosamente. Tu boleto electrónico está listo."
+              : pagoparStatus === "pending"
+                ? "Esperando confirmación de tu pago. Por favor, recarga la página en unos minutos."
+                : "Tu pago ha sido procesado exitosamente. Tu boleto electrónico está listo."}
           </p>
 
           {/* Booking Reference */}
@@ -176,19 +495,22 @@ export default function ConfirmationPage() {
             <FileText className="h-5 w-5 text-primary" />
             <span className="text-muted-foreground">Código de reserva:</span>
             <span className="font-bold text-xl text-primary">
-              {bookingReference}
+              {bookingReference || "Generando..."}
             </span>
-            <button
-              onClick={handleCopyReference}
-              className="p-1 hover:bg-background rounded transition-colors"
-              title="Copiar código"
-            >
-              {copied ? (
-                <Check className="h-5 w-5 text-green-500" />
-              ) : (
-                <Copy className="h-5 w-5 text-muted-foreground" />
-              )}
-            </button>
+            {bookingReference && (
+              <button
+                onClick={handleCopyReference}
+                className="p-1 hover:bg-background rounded transition-colors"
+                title="Copiar código"
+                disabled={!bookingReference}
+              >
+                {copied ? (
+                  <Check className="h-5 w-5 text-green-500" />
+                ) : (
+                  <Copy className="h-5 w-5 text-muted-foreground" />
+                )}
+              </button>
+            )}
           </div>
 
           {/* Passenger Info */}
@@ -476,12 +798,18 @@ export default function ConfirmationPage() {
                     Gs. {totalPrice.toLocaleString("es-PY")}
                   </span>
                 </div>
-                <div className="text-xs text-muted-foreground mt-2">
-                  <p>
-                    Pago realizado con éxito el{" "}
-                    {format(new Date(), "dd/MM/yyyy 'a las' HH:mm")}
-                  </p>
-                </div>
+                {pagoparDetails?.fecha_pago && (
+                  <div className="text-xs text-muted-foreground mt-2">
+                    <p>
+                      Pago realizado el{" "}
+                      {format(
+                        new Date(pagoparDetails.fecha_pago),
+                        "dd/MM/yyyy 'a las' HH:mm",
+                      )}
+                    </p>
+                    <p className="mt-1">Método: {pagoparDetails.forma_pago}</p>
+                  </div>
+                )}
               </div>
             </Card>
           </div>
@@ -494,8 +822,8 @@ export default function ConfirmationPage() {
               <div className="space-y-4">
                 <Button
                   onClick={handleDownloadPDF}
-                  disabled={isGeneratingPDF}
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-lg font-semibold transition-all duration-300 transform hover:scale-105"
+                  disabled={isGeneratingPDF || !canShowActions}
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isGeneratingPDF ? (
                     <span className="animate-pulse">Generando PDF...</span>
@@ -509,9 +837,9 @@ export default function ConfirmationPage() {
 
                 <Button
                   onClick={handleSendEmail}
-                  disabled={isSendingEmail || emailSent}
+                  disabled={isSendingEmail || emailSent || !canShowActions}
                   variant="outline"
-                  className="w-full h-14 text-lg font-semibold border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
+                  className="w-full h-14 text-lg font-semibold border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {emailSent ? (
                     <>
@@ -531,25 +859,40 @@ export default function ConfirmationPage() {
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
-                    className="flex-1 bg-transparent"
+                    className="flex-1 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={() => window.print()}
+                    disabled={!canShowActions}
                   >
                     <Printer className="h-4 w-4 mr-2" />
                     Imprimir
                   </Button>
                   <Button
                     variant="outline"
-                    className="flex-1 bg-transparent"
+                    className="flex-1 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={() => {
                       const text = `Mi reserva de bus: ${bookingReference}. ${originCity?.name} → ${destinationCity?.name} ${format(new Date(departureDate || ""), "dd/MM")} @${selectedOutboundTrip.departureTime}`;
                       navigator.share?.({ text }) ||
                         navigator.clipboard.writeText(text);
                     }}
+                    disabled={!canShowActions}
                   >
                     <Share2 className="h-4 w-4 mr-2" />
                     Compartir
                   </Button>
                 </div>
+
+                {/* Mostrar botón de Pagopar si el pago está pendiente */}
+                {pagoparStatus === "pending" && pagoparHash && (
+                  <Button
+                    onClick={() =>
+                      (window.location.href = `https://www.pagopar.com/pagos/${pagoparHash}`)
+                    }
+                    className="w-full bg-purple-600 hover:bg-purple-700 text-white h-12"
+                  >
+                    <Wallet className="h-4 w-4 mr-2" />
+                    Completar pago en Pagopar
+                  </Button>
+                )}
 
                 <div className="pt-4 border-t border-border">
                   <Button
@@ -582,7 +925,7 @@ export default function ConfirmationPage() {
                     <span>
                       Guarda este código:{" "}
                       <strong className="text-foreground">
-                        {bookingReference}
+                        {bookingReference || "---"}
                       </strong>
                     </span>
                   </li>
@@ -603,6 +946,25 @@ export default function ConfirmationPage() {
                     </span>
                   </li>
                 </ul>
+
+                {/* Info adicional de Pagopar */}
+                {pagoparDetails && (
+                  <div className="mt-4 pt-4 border-t border-border">
+                    <h5 className="font-medium mb-2">Información de Pago</h5>
+                    <p className="text-xs text-muted-foreground">
+                      <strong>Transacción Pagopar:</strong>{" "}
+                      {pagoparDetails.numero_pedido}
+                      <br />
+                      <strong>Método:</strong> {pagoparDetails.forma_pago}
+                      <br />
+                      {pagoparHash && (
+                        <>
+                          <strong>ID:</strong> {pagoparHash.substring(0, 20)}...
+                        </>
+                      )}
+                    </p>
+                  </div>
+                )}
 
                 <div className="mt-4 pt-4 border-t border-border">
                   <h5 className="font-medium mb-2">¿Necesitas ayuda?</h5>

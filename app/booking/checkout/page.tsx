@@ -208,36 +208,31 @@ export default function CheckoutPage() {
     setIsProcessing(true);
 
     try {
-      if (selectedPaymentMethod === "tarjeta") {
-        // Lógica para tarjeta de crédito local
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-        const reference = `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-        setBookingReference(reference);
-        setPaymentStatus("completed");
-        router.push("/booking/confirmation");
-      } else if (selectedPaymentMethod === "pagopar") {
-        // Datos para PagoPar
+      if (selectedPaymentMethod === "pagopar") {
+        // 1. Verificar que todos los datos estén completos
         const primaryPassenger = passengerDetails[0];
+        if (!primaryPassenger) {
+          throw new Error("No hay datos del pasajero");
+        }
 
+        // 2. Preparar datos EXACTAMENTE como los necesita Pagopar
         const paymentData = {
           montoTotal: totalPrice,
           datosComprador: {
             nombre: primaryPassenger.firstName,
             apellido: primaryPassenger.lastName,
             email: primaryPassenger.email,
-            telefono: primaryPassenger.phone.replace(/\D/g, ""),
+            telefono: primaryPassenger.phone.replace(/\D/g, ""), // Solo números
             rut: primaryPassenger.documentNumber,
           },
         };
 
-        console.log("Datos para PagoPar:", paymentData);
+        console.log("📤 Enviando a Pagopar:", paymentData);
 
-        // Encriptar
+        // 3. Encriptar (como ya tienes)
         const encryptedData = encryptData(paymentData);
 
-        console.log("Datos encriptados:", encryptedData);
-
-        // Llamar a la API
+        // 4. Llamar a TU API para crear el pedido en Pagopar
         const response = await fetch("/api/pagopar/init", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -245,19 +240,21 @@ export default function CheckoutPage() {
         });
 
         const result = await response.json();
+        console.log("📥 Respuesta Pagopar:", result);
 
-        console.log("Respuesta de API:", result);
+        // 5. Si es exitoso, redirigir a Pagopar para pagar
+        if (result.success === true && result.hash) {
+          // IMPORTANTE: Guardar temporalmente el hash para después
+          localStorage.setItem("pagopar_last_hash", result.hash);
 
-        // Manejar respuesta
-        if (result.success === true && result.enlace_pago) {
-          // Redirigir al enlace de pago de Pagopar
-          window.location.href = result.enlace_pago;
+          // Redirigir a Pagopar para que el usuario pague
+          window.location.href = `https://www.pagopar.com/pagos/${result.hash}`;
         } else {
           throw new Error(result.message || "Error al crear pago en Pagopar");
         }
       }
     } catch (error: any) {
-      console.error("Error procesando pago:", error);
+      console.error("❌ Error procesando pago:", error);
       setIsProcessing(false);
       setShowPaymentModal(false);
       alert(`Error: ${error.message || "Por favor intenta nuevamente."}`);
