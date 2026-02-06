@@ -20,7 +20,6 @@ import {
   Check,
   X,
   Wallet,
-  Building,
   FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -37,30 +36,7 @@ import { Badge } from "@/components/ui/badge";
 import { BookingProgress } from "@/components/booking-progress";
 import { useBookingStore, cities, Passenger } from "@/lib/booking-store";
 import { cn } from "@/lib/utils";
-
-// Tipos para Pagopar
-interface PagoparPaymentData {
-  token: string;
-  monto_total: number;
-  comprador: {
-    nombre: string;
-    apellido: string;
-    email: string;
-    telefono: string;
-    ciudad: string;
-    direccion: string;
-    documento: string;
-    tipo_documento: string;
-    ruc?: string;
-    razon_social?: string;
-  };
-  public_key: string;
-  pagos: Array<{
-    concepto: string;
-    monto: number;
-    cantidad: number;
-  }>;
-}
+import { encryptData } from "@/lib/pagopar-encrypt";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -75,13 +51,6 @@ export default function CheckoutPage() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
     "tarjeta" | "pagopar" | null
   >("pagopar");
-  const [pagoparScriptLoaded, setPagoparScriptLoaded] = useState(false);
-  const [additionalData, setAdditionalData] = useState({
-    address: "",
-    city: "",
-    ruc: "",
-    companyName: "",
-  });
 
   const {
     tripType,
@@ -107,61 +76,11 @@ export default function CheckoutPage() {
 
   const totalPassengers = selectedSeats.length + selectedReturnSeats.length;
 
-  // Cargar script de Pagopar
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://static.pagopar.com/comercios.js";
-    script.async = true;
-    script.onload = () => {
-      setPagoparScriptLoaded(true);
-    };
-    document.head.appendChild(script);
-
-    return () => {
-      if (document.head.contains(script)) {
-        document.head.removeChild(script);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    setMounted(true);
-    setStep(3);
-
-    if (
-      selectedSeats.length > 0 &&
-      passengerDetails.length === 0 &&
-      !formInitialized
-    ) {
-      const allSeats = [...selectedSeats, ...selectedReturnSeats];
-      const initialPassengers: Passenger[] = allSeats.map((seat, index) => ({
-        seatId: seat.id,
-        seatNumber: seat.number,
-        firstName: "",
-        lastName: "",
-        documentNumber: "",
-        email: "",
-        phone: "",
-      }));
-      setPassengerDetails(initialPassengers);
-      setFormInitialized(true);
-    }
-  }, [
-    selectedSeats,
-    selectedReturnSeats,
-    passengerDetails.length,
-    formInitialized,
-    setPassengerDetails,
-    setStep,
-  ]);
-
+  // Validaciones
   const validateDocument = (doc: string) => {
     const clean = doc.replace(/[.-]/g, "").toUpperCase();
     if (clean.length < 6 || clean.length > 12) return false;
 
-    // Validación para Paraguay (Cédula/RUC)
-    // RUC: formato 80012345-0
-    // Cédula: formato 1234567
     if (clean.includes("-")) {
       const [ruc, dv] = clean.split("-");
       if (!/^\d+$/.test(ruc) || ruc.length < 6 || ruc.length > 9) return false;
@@ -169,14 +88,12 @@ export default function CheckoutPage() {
       return true;
     }
 
-    // Cédula simple
     return /^\d{6,9}$/.test(clean);
   };
 
   const formatDocument = (doc: string) => {
     const clean = doc.replace(/[^0-9kK-]/g, "");
 
-    // Si ya tiene formato RUC (con guión)
     if (clean.includes("-")) {
       const parts = clean.split("-");
       if (parts.length === 2) {
@@ -185,7 +102,6 @@ export default function CheckoutPage() {
       }
     }
 
-    // Para cédulas largas (más de 6 dígitos)
     if (clean.length > 6) {
       const body = clean.slice(0, -1);
       const dv = clean.slice(-1);
@@ -260,6 +176,11 @@ export default function CheckoutPage() {
   const handlePayment = async () => {
     if (passengerDetails.length === 0 || !selectedPaymentMethod) return;
 
+    if (!passengerDetails[0]) {
+      alert("Por favor completa los datos del primer pasajero");
+      return;
+    }
+
     const newTouched: Record<string, boolean> = {};
     passengerDetails.forEach((_, index) => {
       ["firstName", "lastName", "documentNumber", "email", "phone"].forEach(
@@ -281,42 +202,6 @@ export default function CheckoutPage() {
     setShowPaymentModal(true);
   };
 
-  const preparePagoparData = (): PagoparPaymentData => {
-    const primaryPassenger = passengerDetails[0];
-    const token =
-      process.env.NEXT_PUBLIC_PAGOPAR_PUBLIC_TOKEN || "YOUR_PUBLIC_TOKEN";
-
-    return {
-      token: token,
-      monto_total: totalPrice, // En guaraníes
-      comprador: {
-        nombre: primaryPassenger.firstName,
-        apellido: primaryPassenger.lastName,
-        email: primaryPassenger.email,
-        telefono: primaryPassenger.phone.replace(/\D/g, ""),
-        ciudad: additionalData.city || "Asunción",
-        direccion: additionalData.address || "No especificada",
-        documento: primaryPassenger.documentNumber.replace(/[.-]/g, ""),
-        tipo_documento: "CI",
-        ...(additionalData.ruc && {
-          ruc: additionalData.ruc,
-          razon_social:
-            additionalData.companyName ||
-            `${primaryPassenger.firstName} ${primaryPassenger.lastName}`,
-        }),
-      },
-      public_key:
-        process.env.NEXT_PUBLIC_PAGOPAR_PUBLIC_KEY || "YOUR_PUBLIC_KEY",
-      pagos: [
-        {
-          concepto: `Pasaje de bus ${originCity?.name} - ${destinationCity?.name}`,
-          monto: totalPrice,
-          cantidad: 1,
-        },
-      ],
-    };
-  };
-
   const processPayment = async () => {
     if (!selectedPaymentMethod) return;
 
@@ -331,41 +216,85 @@ export default function CheckoutPage() {
         setPaymentStatus("completed");
         router.push("/booking/confirmation");
       } else if (selectedPaymentMethod === "pagopar") {
-        // Integración con Pagopar
-        if (!pagoparScriptLoaded) {
-          throw new Error("Script de Pagopar no cargado");
-        }
+        // Datos para PagoPar
+        const primaryPassenger = passengerDetails[0];
 
-        const pagoparData = preparePagoparData();
+        const paymentData = {
+          montoTotal: totalPrice,
+          datosComprador: {
+            nombre: primaryPassenger.firstName,
+            apellido: primaryPassenger.lastName,
+            email: primaryPassenger.email,
+            telefono: primaryPassenger.phone.replace(/\D/g, ""),
+            rut: primaryPassenger.documentNumber,
+          },
+        };
 
-        if (window.Pagopar) {
-          window.Pagopar.setConfig(pagoparData);
-          window.Pagopar.pagar();
+        console.log("Datos para PagoPar:", paymentData);
 
-          window.Pagopar.onSuccess = function (response: any) {
-            const reference = `PP-${response.transaccion_id || Date.now().toString(36).toUpperCase()}`;
-            setBookingReference(reference);
-            setPaymentStatus("completed");
-            router.push("/booking/confirmation");
-          };
+        // Encriptar
+        const encryptedData = encryptData(paymentData);
 
-          window.Pagopar.onError = function (error: any) {
-            console.error("Error en pago Pagopar:", error);
-            setIsProcessing(false);
-            setShowPaymentModal(false);
-            alert("Error en el pago. Por favor intenta nuevamente.");
-          };
+        console.log("Datos encriptados:", encryptedData);
+
+        // Llamar a la API
+        const response = await fetch("/api/pagopar/init", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ data: encryptedData }),
+        });
+
+        const result = await response.json();
+
+        console.log("Respuesta de API:", result);
+
+        // Manejar respuesta
+        if (result.success === true && result.enlace_pago) {
+          // Redirigir al enlace de pago de Pagopar
+          window.location.href = result.enlace_pago;
         } else {
-          throw new Error("Pagopar no está disponible");
+          throw new Error(result.message || "Error al crear pago en Pagopar");
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error procesando pago:", error);
       setIsProcessing(false);
       setShowPaymentModal(false);
-      alert("Error procesando el pago. Por favor intenta nuevamente.");
+      alert(`Error: ${error.message || "Por favor intenta nuevamente."}`);
     }
   };
+
+  // Effects
+  useEffect(() => {
+    setMounted(true);
+    setStep(3);
+
+    if (
+      selectedSeats.length > 0 &&
+      passengerDetails.length === 0 &&
+      !formInitialized
+    ) {
+      const allSeats = [...selectedSeats, ...selectedReturnSeats];
+      const initialPassengers: Passenger[] = allSeats.map((seat, index) => ({
+        seatId: seat.id,
+        seatNumber: seat.number,
+        firstName: "",
+        lastName: "",
+        documentNumber: "",
+        email: "",
+        phone: "",
+      }));
+      setPassengerDetails(initialPassengers);
+      setFormInitialized(true);
+    }
+  }, [
+    selectedSeats,
+    selectedReturnSeats,
+    passengerDetails.length,
+    formInitialized,
+    setPassengerDetails,
+    setStep,
+  ]);
 
   if (!mounted) {
     return (
@@ -766,102 +695,6 @@ export default function CheckoutPage() {
                   </Card>
                 );
               })
-            )}
-
-            {/* Datos adicionales para facturación */}
-            {selectedPaymentMethod === "pagopar" && (
-              <Card className="p-6 animate-fade-in">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center">
-                    <Building className="h-5 w-5 text-purple-500" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">
-                      Datos adicionales para facturación
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Información requerida para Pagopar
-                    </p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="address">
-                      Dirección
-                      <span className="text-destructive ml-1">*</span>
-                    </Label>
-                    <Input
-                      id="address"
-                      placeholder="Ingresa tu dirección en Paraguay"
-                      value={additionalData.address}
-                      onChange={(e) =>
-                        setAdditionalData((prev) => ({
-                          ...prev,
-                          address: e.target.value,
-                        }))
-                      }
-                      className="h-12"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="city">
-                      Ciudad
-                      <span className="text-destructive ml-1">*</span>
-                    </Label>
-                    <Input
-                      id="city"
-                      placeholder="Ej: Asunción, Ciudad del Este, etc."
-                      value={additionalData.city}
-                      onChange={(e) =>
-                        setAdditionalData((prev) => ({
-                          ...prev,
-                          city: e.target.value,
-                        }))
-                      }
-                      className="h-12"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="ruc">RUC (opcional para factura)</Label>
-                    <Input
-                      id="ruc"
-                      placeholder="RUC con formato 80.012.345-0"
-                      value={additionalData.ruc}
-                      onChange={(e) =>
-                        setAdditionalData((prev) => ({
-                          ...prev,
-                          ruc: e.target.value,
-                        }))
-                      }
-                      className="h-12"
-                    />
-                  </div>
-
-                  {additionalData.ruc && (
-                    <div className="space-y-2">
-                      <Label htmlFor="companyName">
-                        Razón Social
-                        <span className="text-destructive ml-1">*</span>
-                      </Label>
-                      <Input
-                        id="companyName"
-                        placeholder="Nombre de la empresa"
-                        value={additionalData.companyName}
-                        onChange={(e) =>
-                          setAdditionalData((prev) => ({
-                            ...prev,
-                            companyName: e.target.value,
-                          }))
-                        }
-                        className="h-12"
-                      />
-                    </div>
-                  )}
-                </div>
-              </Card>
             )}
 
             {/* Payment Section */}
@@ -1293,16 +1126,4 @@ export default function CheckoutPage() {
       )}
     </div>
   );
-}
-
-// Extender la interfaz de window para Pagopar
-declare global {
-  interface Window {
-    Pagopar: {
-      setConfig: (data: PagoparPaymentData) => void;
-      pagar: () => void;
-      onSuccess: (response: any) => void;
-      onError: (error: any) => void;
-    };
-  }
 }
