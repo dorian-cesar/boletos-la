@@ -23,6 +23,7 @@ import {
   Loader2,
   AlertCircle,
   Wallet,
+  ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -39,12 +40,12 @@ export default function ConfirmationPageContent() {
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [showConfetti, setShowConfetti] = useState(true);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   // ESTADOS PARA PAGOPAR
   const [pagoparHash, setPagoparHash] = useState<string | null>(null);
   const [pagoparStatus, setPagoparStatus] = useState<
-    "checking" | "paid" | "pending" | "failed"
+    "checking" | "paid" | "pending" | "failed" | "cancelled"
   >("checking");
   const [pagoparDetails, setPagoparDetails] = useState<any>(null);
   const [savingToDB, setSavingToDB] = useState(false);
@@ -72,53 +73,62 @@ export default function ConfirmationPageContent() {
     (c) => c.id === selectedOutboundTrip?.destination,
   );
 
-  // 1. AL CARGAR LA PÁGINA - Verificar si viene de Pagopar
+  // 1. AL CARGAR LA PÁGINA - Verificar si viene de Pagopar (PASO #4)
   useEffect(() => {
     setMounted(true);
     setStep(4);
 
-    // Obtener hash de la URL de Pagopar
+    // Obtener hash de la URL de Pagopar (redirección)
     const hashFromUrl = searchParams.get("hash");
 
-    // También verificar localStorage por si acaso
-    const savedHash = localStorage.getItem("pagopar_last_hash");
+    if (hashFromUrl) {
+      console.log("🔗 Hash recibido de Pagopar:", hashFromUrl);
+      setPagoparHash(hashFromUrl);
 
-    const hash = hashFromUrl || savedHash;
+      // Verificar estado del pedido con Pagopar (CONSULTA)
+      verifyPagoparPayment(hashFromUrl);
 
-    if (hash) {
-      console.log("🔍 Hash de Pagopar encontrado:", hash);
-      setPagoparHash(hash);
-
-      // Limpiar localStorage
-      if (savedHash) localStorage.removeItem("pagopar_last_hash");
-
-      // Verificar el pago con Pagopar
-      verifyPagoparPayment(hash);
+      // Limpiar localStorage si existe
+      localStorage.removeItem("pagopar_last_hash");
     } else {
-      // Si no hay hash, asumir que ya pagó de otra forma
-      setPagoparStatus("paid");
-      setShowPaymentStatus(false);
+      // Si no viene de Pagopar, verificar si hay hash guardado
+      const savedHash = localStorage.getItem("pagopar_last_hash");
+
+      if (savedHash) {
+        console.log("🔍 Hash encontrado en localStorage:", savedHash);
+        setPagoparHash(savedHash);
+        verifyPagoparPayment(savedHash);
+        localStorage.removeItem("pagopar_last_hash");
+      } else {
+        // Si no hay hash, podría ser un pago con tarjeta o una recarga
+        console.log("⚠️ No se encontró hash de Pagopar");
+        setPagoparStatus("paid"); // Asumir que ya pagó
+        setShowPaymentStatus(false);
+      }
     }
 
-    // Hide confetti after 5 seconds
-    const timer = setTimeout(() => setShowConfetti(false), 5000);
-    return () => clearTimeout(timer);
+    // Mostrar confetti solo si ya está pagado
+    if (pagoparStatus === "paid") {
+      setShowConfetti(true);
+      const timer = setTimeout(() => setShowConfetti(false), 5000);
+      return () => clearTimeout(timer);
+    }
   }, [setStep]);
 
-  // 2. FUNCIÓN PRINCIPAL PARA VERIFICAR PAGO CON PAGOPAR
+  // 2. FUNCIÓN PARA VERIFICAR ESTADO CON PAGOPAR (PASO #4 - CONSULTA)
   const verifyPagoparPayment = async (hash: string) => {
     try {
-      console.log("🔄 Iniciando verificación de Pagopar...");
+      console.log("🔄 Consultando estado en Pagopar...");
 
-      // Llamar a TU API que consulta el estado en Pagopar
-      const response = await fetch("/api/pagopar/check-status", {
+      // Llamar a la API para verificar estado
+      const response = await fetch("/api/pagopar/verificar-estado", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ hash_pedido: hash }),
       });
 
       const data = await response.json();
-      console.log("📊 Respuesta de Pagopar:", data);
+      console.log("📊 Respuesta de consulta Pagopar:", data);
 
       if (data.respuesta === true && data.resultado?.[0]) {
         const payment = data.resultado[0];
@@ -128,6 +138,8 @@ export default function ConfirmationPageContent() {
           // ✅ PAGO EXITOSO
           console.log("✅ PAGO CONFIRMADO POR PAGOPAR");
           setPagoparStatus("paid");
+          setShowConfetti(true);
+          setTimeout(() => setShowConfetti(false), 5000);
 
           // Crear referencia de reserva si no existe
           if (!bookingReference) {
@@ -141,7 +153,7 @@ export default function ConfirmationPageContent() {
         } else if (payment.cancelado === true) {
           // ❌ PAGO CANCELADO
           console.log("❌ PAGO CANCELADO");
-          setPagoparStatus("failed");
+          setPagoparStatus("cancelled");
         } else {
           // ⏳ PAGO PENDIENTE
           console.log("⏳ PAGO PENDIENTE");
@@ -212,7 +224,7 @@ export default function ConfirmationPageContent() {
     }
   };
 
-  // 5. FUNCIONES EXISTENTES (sin cambios)
+  // 5. FUNCIONES EXISTENTES
   const handleDownloadPDF = async () => {
     if (!selectedOutboundTrip || !bookingReference) return;
 
@@ -263,6 +275,13 @@ export default function ConfirmationPageContent() {
     router.push("/");
   };
 
+  // 6. COMPLETAR PAGO EN PAGOPAR
+  const handleCompletePayment = () => {
+    if (pagoparHash) {
+      window.location.href = `https://www.pagopar.com/pagos/${pagoparHash}`;
+    }
+  };
+
   if (!mounted || !selectedOutboundTrip) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -277,6 +296,257 @@ export default function ConfirmationPageContent() {
   const primaryPassenger = passengerDetails[0];
   const canShowActions = bookingReference && pagoparStatus === "paid";
 
+  // Renderizar contenido según estado de Pagopar
+  const renderPagoparStatus = () => {
+    switch (pagoparStatus) {
+      case "checking":
+        return (
+          <div className="mb-6 animate-fade-in">
+            <Card className="p-6 bg-blue-50 border-blue-200">
+              <div className="flex items-center gap-4">
+                <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-blue-800">
+                    Verificando estado del pago...
+                  </h3>
+                  <p className="text-sm text-blue-600">
+                    Estamos consultando el estado de tu transacción con Pagopar.
+                  </p>
+                  {pagoparHash && (
+                    <p className="text-xs text-blue-500 mt-2">
+                      ID de transacción: {pagoparHash.substring(0, 20)}...
+                    </p>
+                  )}
+                </div>
+              </div>
+            </Card>
+          </div>
+        );
+
+      case "paid":
+        return (
+          <div className="mb-6 animate-fade-in">
+            <Card className="p-6 bg-green-50 border-green-200">
+              <div className="flex items-start gap-4">
+                <CheckCircle2 className="h-8 w-8 text-green-600 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-green-800 mb-2">
+                    ¡Pago confirmado con Pagopar!
+                  </h3>
+                  {pagoparDetails && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-3">
+                      <div>
+                        <p className="text-green-700">
+                          <span className="font-medium">Método:</span>{" "}
+                          {pagoparDetails.forma_pago}
+                        </p>
+                        <p className="text-green-700">
+                          <span className="font-medium">Fecha:</span>{" "}
+                          {pagoparDetails.fecha_pago
+                            ? format(
+                                new Date(pagoparDetails.fecha_pago),
+                                "dd/MM/yyyy HH:mm",
+                              )
+                            : "N/A"}
+                        </p>
+                        <p className="text-green-700">
+                          <span className="font-medium">N° Pedido:</span>{" "}
+                          {pagoparDetails.numero_pedido}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-green-700">
+                          <span className="font-medium">Monto:</span> Gs.{" "}
+                          {parseFloat(pagoparDetails.monto).toLocaleString(
+                            "es-PY",
+                          )}
+                        </p>
+                        <p className="text-green-700">
+                          <span className="font-medium">Estado:</span>{" "}
+                          <span className="font-bold">Pagado</span>
+                        </p>
+                        {pagoparHash && (
+                          <p className="text-xs text-green-600 mt-2">
+                            ID: {pagoparHash.substring(0, 20)}...
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  <Button
+                    onClick={() => setShowPaymentStatus(false)}
+                    variant="ghost"
+                    size="sm"
+                    className="text-green-700 hover:text-green-800 hover:bg-green-100"
+                  >
+                    Ocultar detalles
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          </div>
+        );
+
+      case "pending":
+        return (
+          <div className="mb-6 animate-fade-in">
+            <Card className="p-6 bg-yellow-50 border-yellow-200">
+              <div className="flex items-start gap-4">
+                <AlertCircle className="h-8 w-8 text-yellow-600 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-yellow-800 mb-2">
+                    Pago pendiente
+                  </h3>
+                  {pagoparDetails?.fecha_maxima_pago && (
+                    <p className="text-sm text-yellow-700 mb-3">
+                      Tienes hasta el{" "}
+                      {format(
+                        new Date(pagoparDetails.fecha_maxima_pago),
+                        "dd/MM/yyyy HH:mm",
+                      )}{" "}
+                      para completar el pago.
+                    </p>
+                  )}
+                  {pagoparDetails?.mensaje_resultado_pago?.descripcion ? (
+                    <div
+                      className="mb-4 p-3 bg-yellow-100/50 rounded-lg"
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          pagoparDetails.mensaje_resultado_pago.descripcion,
+                      }}
+                    />
+                  ) : (
+                    <p className="text-sm text-yellow-600 mb-4">
+                      Tu pedido está esperando el pago. Por favor, completa el
+                      pago en Pagopar para confirmar tu reserva.
+                    </p>
+                  )}
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button
+                      onClick={handleCompletePayment}
+                      className="bg-purple-600 hover:bg-purple-700"
+                    >
+                      <Wallet className="h-4 w-4 mr-2" />
+                      Completar pago en Pagopar
+                    </Button>
+                    <Button
+                      onClick={handleRetryVerification}
+                      variant="outline"
+                      className="border-yellow-300 text-yellow-700 hover:bg-yellow-100"
+                    >
+                      <Loader2 className="h-3 w-3 mr-2" />
+                      Reintentar verificación
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </div>
+        );
+
+      case "cancelled":
+        return (
+          <div className="mb-6 animate-fade-in">
+            <Card className="p-6 bg-red-50 border-red-200">
+              <div className="flex items-start gap-4">
+                <AlertCircle className="h-8 w-8 text-red-600 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-red-800 mb-2">
+                    Pago cancelado
+                  </h3>
+                  <p className="text-sm text-red-600 mb-4">
+                    El pago ha sido cancelado. Si deseas realizar la reserva,
+                    por favor inicia un nuevo proceso de pago.
+                  </p>
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={() => router.push("/booking/checkout")}
+                      className="bg-red-600 hover:bg-red-700"
+                    >
+                      Volver al checkout
+                    </Button>
+                    <Button variant="outline" onClick={() => router.push("/")}>
+                      Ir al inicio
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </div>
+        );
+
+      case "failed":
+        return (
+          <div className="mb-6 animate-fade-in">
+            <Card className="p-6 bg-red-50 border-red-200">
+              <div className="flex items-start gap-4">
+                <AlertCircle className="h-8 w-8 text-red-600 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-red-800 mb-2">
+                    Error en el pago
+                  </h3>
+                  <p className="text-sm text-red-600 mb-4">
+                    Hubo un problema con tu transacción. Por favor, intenta
+                    nuevamente o contacta con soporte.
+                  </p>
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={() => router.push("/booking/checkout")}
+                      className="bg-primary"
+                    >
+                      Intentar nuevamente
+                    </Button>
+                    <Button variant="outline" onClick={() => router.push("/")}>
+                      Ir al inicio
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  // Si el pago no está confirmado, mostrar solo el estado
+  if (pagoparStatus !== "paid") {
+    return (
+      <div className="min-h-screen">
+        <BookingProgress />
+        <div className="container mx-auto px-4 py-8">
+          {renderPagoparStatus()}
+
+          {/* Mostrar información de la reserva aunque no esté pagada */}
+          <Card className="p-6 mb-6">
+            <h3 className="text-xl font-bold mb-4">Detalles de tu reserva</h3>
+            <div className="space-y-3">
+              <p>
+                <span className="font-medium">Ruta:</span> {originCity?.name} →{" "}
+                {destinationCity?.name}
+              </p>
+              <p>
+                <span className="font-medium">Fecha:</span>{" "}
+                {format(new Date(departureDate || ""), "dd/MM/yyyy")}
+              </p>
+              <p>
+                <span className="font-medium">Pasajeros:</span>{" "}
+                {passengerDetails.length}
+              </p>
+              <p>
+                <span className="font-medium">Total:</span> Gs.{" "}
+                {totalPrice.toLocaleString("es-PY")}
+              </p>
+            </div>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Si el pago está confirmado, mostrar la página completa
   return (
     <div className="min-h-screen relative overflow-hidden">
       <BookingProgress />
@@ -310,185 +580,20 @@ export default function ConfirmationPageContent() {
       )}
 
       <div className="container mx-auto px-4 py-8">
-        {/* BANNER DE ESTADO DE PAGOPAR */}
-        {showPaymentStatus && (
-          <div className="mb-6 animate-fade-in">
-            {pagoparStatus === "checking" && (
-              <Card className="p-6 bg-blue-50 border-blue-200">
-                <div className="flex items-center gap-4">
-                  <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-blue-800">
-                      Verificando pago con Pagopar...
-                    </h3>
-                    <p className="text-sm text-blue-600">
-                      Estamos confirmando tu transacción con Pagopar.
-                      {savingToDB && " Guardando información de tu reserva..."}
-                    </p>
-                    {pagoparHash && (
-                      <p className="text-xs text-blue-500 mt-2">
-                        ID: {pagoparHash.substring(0, 20)}...
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </Card>
-            )}
-
-            {pagoparStatus === "paid" && (
-              <Card className="p-6 bg-green-50 border-green-200">
-                <div className="flex items-start gap-4">
-                  <CheckCircle2 className="h-8 w-8 text-green-600 mt-0.5 flex-shrink-0" />
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-green-800 mb-2">
-                      ¡Pago confirmado con Pagopar!
-                    </h3>
-                    {pagoparDetails && (
-                      <div className="grid grid-cols-2 gap-4 text-sm mb-3">
-                        <div>
-                          <p className="text-green-700">
-                            <span className="font-medium">Método:</span>{" "}
-                            {pagoparDetails.forma_pago}
-                          </p>
-                          <p className="text-green-700">
-                            <span className="font-medium">Fecha:</span>{" "}
-                            {pagoparDetails.fecha_pago
-                              ? format(
-                                  new Date(pagoparDetails.fecha_pago),
-                                  "dd/MM/yyyy HH:mm",
-                                )
-                              : "N/A"}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-green-700">
-                            <span className="font-medium">N° Pedido:</span>{" "}
-                            {pagoparDetails.numero_pedido}
-                          </p>
-                          <p className="text-green-700">
-                            <span className="font-medium">Monto:</span> Gs.{" "}
-                            {parseFloat(pagoparDetails.monto).toLocaleString(
-                              "es-PY",
-                            )}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                    <Button
-                      onClick={() => setShowPaymentStatus(false)}
-                      variant="ghost"
-                      size="sm"
-                      className="text-green-700 hover:text-green-800 hover:bg-green-100"
-                    >
-                      Ocultar detalles
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            )}
-
-            {pagoparStatus === "pending" && (
-              <Card className="p-6 bg-yellow-50 border-yellow-200">
-                <div className="flex items-start gap-4">
-                  <AlertCircle className="h-8 w-8 text-yellow-600 mt-0.5 flex-shrink-0" />
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-yellow-800 mb-2">
-                      Pago pendiente de confirmación
-                    </h3>
-                    <p className="text-sm text-yellow-600 mb-4">
-                      Tu pago está siendo procesado por Pagopar. Si ya
-                      realizaste el pago, recarga esta página en unos minutos.
-                    </p>
-                    <div className="flex gap-3">
-                      <Button
-                        onClick={handleRetryVerification}
-                        variant="outline"
-                        size="sm"
-                        className="border-yellow-300 text-yellow-700 hover:bg-yellow-100"
-                      >
-                        <Loader2 className="h-3 w-3 mr-2" />
-                        Reintentar verificación
-                      </Button>
-                      <Button
-                        onClick={() => router.push("/booking/checkout")}
-                        variant="outline"
-                        size="sm"
-                      >
-                        Volver al checkout
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            )}
-
-            {pagoparStatus === "failed" && (
-              <Card className="p-6 bg-red-50 border-red-200">
-                <div className="flex items-start gap-4">
-                  <AlertCircle className="h-8 w-8 text-red-600 mt-0.5 flex-shrink-0" />
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-red-800 mb-2">
-                      Error en el pago
-                    </h3>
-                    <p className="text-sm text-red-600 mb-4">
-                      Hubo un problema con tu pago en Pagopar. El pago fue
-                      cancelado, expiró o no se pudo procesar.
-                    </p>
-                    <div className="flex gap-3">
-                      <Button
-                        onClick={handleRetryVerification}
-                        variant="outline"
-                        size="sm"
-                        className="border-red-300 text-red-700 hover:bg-red-100"
-                      >
-                        Reintentar verificación
-                      </Button>
-                      <Button
-                        onClick={() => router.push("/booking/checkout")}
-                        variant="outline"
-                        size="sm"
-                      >
-                        Volver al checkout
-                      </Button>
-                      <Button
-                        onClick={() => router.push("/")}
-                        variant="ghost"
-                        size="sm"
-                      >
-                        Ir al inicio
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            )}
-          </div>
-        )}
+        {/* Mostrar estado de Pagopar */}
+        {showPaymentStatus && renderPagoparStatus()}
 
         {/* Success Header */}
         <div className="text-center mb-12 animate-bounce-in">
           <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            {pagoparStatus === "paid" ? (
-              <CheckCircle2 className="h-14 w-14 text-green-500" />
-            ) : pagoparStatus === "pending" ? (
-              <Loader2 className="h-14 w-14 text-yellow-500 animate-spin" />
-            ) : (
-              <CheckCircle2 className="h-14 w-14 text-primary" />
-            )}
+            <CheckCircle2 className="h-14 w-14 text-green-500" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            {pagoparStatus === "paid"
-              ? "¡Reserva Confirmada!"
-              : pagoparStatus === "pending"
-                ? "Pago en Proceso"
-                : "¡Reserva Confirmada!"}
+            ¡Reserva Confirmada!
           </h1>
           <p className="text-lg text-muted-foreground mb-6">
-            {pagoparStatus === "paid"
-              ? "Tu pago ha sido procesado exitosamente. Tu boleto electrónico está listo."
-              : pagoparStatus === "pending"
-                ? "Esperando confirmación de tu pago. Por favor, recarga la página en unos minutos."
-                : "Tu pago ha sido procesado exitosamente. Tu boleto electrónico está listo."}
+            Tu pago ha sido procesado exitosamente. Tu boleto electrónico está
+            listo.
           </p>
 
           {/* Booking Reference */}
@@ -533,6 +638,7 @@ export default function ConfirmationPageContent() {
           )}
         </div>
 
+        {/* Resto del contenido (igual que antes) */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {/* Trip Details */}
           <div className="lg:col-span-2 space-y-6">
@@ -882,19 +988,6 @@ export default function ConfirmationPageContent() {
                   </Button>
                 </div>
 
-                {/* Mostrar botón de Pagopar si el pago está pendiente */}
-                {pagoparStatus === "pending" && pagoparHash && (
-                  <Button
-                    onClick={() =>
-                      (window.location.href = `https://www.pagopar.com/pagos/${pagoparHash}`)
-                    }
-                    className="w-full bg-purple-600 hover:bg-purple-700 text-white h-12"
-                  >
-                    <Wallet className="h-4 w-4 mr-2" />
-                    Completar pago en Pagopar
-                  </Button>
-                )}
-
                 <div className="pt-4 border-t border-border">
                   <Button
                     onClick={handleNewBooking}
@@ -958,8 +1051,10 @@ export default function ConfirmationPageContent() {
                       <br />
                       <strong>Método:</strong> {pagoparDetails.forma_pago}
                       <br />
+                      <strong>Estado:</strong> Confirmado
                       {pagoparHash && (
                         <>
+                          <br />
                           <strong>ID:</strong> {pagoparHash.substring(0, 20)}...
                         </>
                       )}

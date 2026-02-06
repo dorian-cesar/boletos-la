@@ -7,132 +7,89 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     console.log("🔄 Webhook Pagopar recibido:", JSON.stringify(body, null, 2));
 
-    // Verificar que sea de Pagopar
-    if (!body.resultado || !Array.isArray(body.resultado)) {
-      console.error("❌ Formato inválido: falta resultado array");
-      return NextResponse.json({ error: "Formato inválido" }, { status: 400 });
+    // 1. VALIDAR ESTRUCTURA
+    if (
+      !body.resultado ||
+      !Array.isArray(body.resultado) ||
+      body.resultado.length === 0
+    ) {
+      console.error("Estructura inválida");
+      return NextResponse.json([{ error: "Estructura inválida" }], {
+        status: 400,
+      });
     }
 
-    const notification = body.resultado[0];
-    const {
-      hash_pedido,
-      token,
-      pagado,
-      cancelado,
-      forma_pago,
-      fecha_pago,
-      monto,
-      numero_pedido,
-      numero_comprobante_interno,
-      fecha_maxima_pago,
-      forma_pago_identificador,
-      documento,
-      entorno,
-    } = notification;
+    const resultado = body.resultado[0];
+    const { hash_pedido, token } = resultado;
 
-    console.log("📋 Datos recibidos:");
-    console.log("- Número de pedido:", numero_pedido);
-    console.log("- Hash:", hash_pedido);
-    console.log("- Pagado:", pagado);
-    console.log("- Monto:", monto);
-    console.log("- Forma de pago:", forma_pago);
-    console.log("- Comprobante interno:", numero_comprobante_interno);
-
-    // Validar con tu clave privada (IMPORTANTE para seguridad)
+    // 2. VALIDAR TOKEN (OBLIGATORIO según documentación)
     const privateKey = process.env.NEXT_PUBLIC_PAGOPAR_PRIVATE_KEY;
     if (!privateKey) {
-      console.error("❌ Clave privada no configurada");
-      throw new Error("Clave privada de Pagopar no configurada");
+      console.error("Private key no configurada");
+      return NextResponse.json([{ error: "Configuración incompleta" }], {
+        status: 500,
+      });
     }
 
-    // Verificar token - esto es crucial para seguridad
-    const expectedToken = crypto
+    // Generar token esperado: sha1(private_key + hash_pedido)
+    const tokenEsperado = crypto
       .createHash("sha1")
       .update(privateKey + hash_pedido)
       .digest("hex");
 
-    if (token !== expectedToken) {
-      console.error("❌ Token inválido en webhook");
-      console.log("Token recibido:", token);
-      console.log("Token esperado:", expectedToken);
-      return NextResponse.json({ error: "Token inválido" }, { status: 401 });
+    console.log("Token recibido:", token);
+    console.log("Token esperado:", tokenEsperado);
+
+    if (token !== tokenEsperado) {
+      console.error("Token no coincide - Posible ataque");
+      return NextResponse.json([{ error: "Token no coincide" }], {
+        status: 401,
+      });
     }
 
-    console.log("✅ Webhook válido recibido - Token verificado");
+    // 3. ACTUALIZAR ESTADO EN TU BASE DE DATOS
+    console.log("✅ Token válido. Actualizando estado...");
 
-    // AQUÍ PROCESAS EL PAGO EN TU SISTEMA
-    if (pagado === true) {
-      console.log("💰 PAGO CONFIRMADO - Actualizando sistema...");
+    // Aquí debes buscar en tu BD por hash_pedido y actualizar
+    const pedidoPagado = resultado.pagado === true;
+    const pedidoCancelado = resultado.cancelado === true;
 
-      // Ejemplo: Actualizar en tu base de datos
-      // await db.reservation.update({
-      //   where: { pagoparHash: hash_pedido },
-      //   data: {
-      //     status: "paid",
-      //     paymentMethod: forma_pago,
-      //     paymentDate: fecha_pago ? new Date(fecha_pago) : new Date(),
-      //     paymentConfirmed: true,
-      //     internalReceipt: numero_comprobante_interno,
-      //     updatedAt: new Date()
-      //   }
-      // });
+    if (pedidoPagado) {
+      console.log(`✅ Pedido ${hash_pedido} PAGADO`);
+      console.log("Forma pago:", resultado.forma_pago);
+      console.log("Monto:", resultado.monto);
+      console.log("Fecha pago:", resultado.fecha_pago);
 
-      // También puedes enviar email de confirmación, notificaciones, etc.
-      // await sendConfirmationEmail(numero_pedido);
-
-      console.log("✅ Sistema actualizado para pedido:", numero_pedido);
-    } else if (cancelado === true) {
-      console.log("❌ PAGO CANCELADO - Actualizando sistema...");
-
-      // await db.reservation.update({
-      //   where: { pagoparHash: hash_pedido },
-      //   data: {
-      //     status: "cancelled",
-      //     paymentConfirmed: false,
-      //     updatedAt: new Date()
-      //   }
-      // });
-
-      console.log("✅ Sistema actualizado (cancelado):", numero_pedido);
+      // TODO: Actualizar en tu base de datos
+      // - Marcar como pagado
+      // - Generar boleto
+      // - Enviar email de confirmación
+    } else if (pedidoCancelado) {
+      console.log(`❌ Pedido ${hash_pedido} CANCELADO`);
+      // TODO: Actualizar en tu base de datos
+      // - Marcar como cancelado
+      // - Liberar asientos
     } else {
-      console.log("⏳ Pago pendiente o en proceso");
+      console.log(`⏳ Pedido ${hash_pedido} PENDIENTE`);
     }
 
-    // PAGOPAR ESPERA ESTA RESPUESTA EXACTA:
-    // Solo el array resultado, NO el objeto completo
-    const responseData = body.resultado;
-
-    console.log(
-      "📤 Enviando respuesta a Pagopar:",
-      JSON.stringify(responseData, null, 2),
-    );
-
-    return NextResponse.json(responseData, {
+    // 4. RESPONDER EXACTAMENTE como Pagopar espera
+    // Devolver solo el array 'resultado'
+    return NextResponse.json(body.resultado, {
       status: 200,
       headers: {
         "Content-Type": "application/json",
       },
     });
   } catch (error: any) {
-    console.error("💥 Error en webhook Pagopar:", error);
+    console.error("💥 Error en webhook:", error);
 
-    // En caso de error, aún así devolver algo que Pagopar pueda entender
+    // Enviar error en formato que Pagopar entienda
     const errorResponse = [
       {
         pagado: false,
-        numero_comprobante_interno: "ERROR",
-        ultimo_mensaje_error: error.message,
-        forma_pago: null,
-        fecha_pago: null,
-        monto: null,
-        fecha_maxima_pago: null,
-        hash_pedido: null,
-        numero_pedido: null,
-        cancelado: false,
-        forma_pago_identificador: null,
-        token: null,
-        documento: null,
-        entorno: null,
+        ultimo_mensaje_error: error.message || "Error interno",
+        // ... otros campos requeridos
       },
     ];
 
