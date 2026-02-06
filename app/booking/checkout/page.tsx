@@ -208,7 +208,14 @@ export default function CheckoutPage() {
     setIsProcessing(true);
 
     try {
-      if (selectedPaymentMethod === "pagopar") {
+      if (selectedPaymentMethod === "tarjeta") {
+        // Lógica existente para Webpay
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+        const reference = `BL-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+        setBookingReference(reference);
+        setPaymentStatus("completed");
+        router.push("/booking/confirmation");
+      } else if (selectedPaymentMethod === "pagopar") {
         // 1. Verificar que todos los datos estén completos
         const primaryPassenger = passengerDetails[0];
         if (!primaryPassenger) {
@@ -764,7 +771,7 @@ export default function CheckoutPage() {
                     <div className="flex-1">
                       <p className="font-medium">Pagopar</p>
                       <p className="text-xs text-muted-foreground">
-                        Pago en efectivo y múltiples opciones
+                        Pago con tarjeta, transferencia o billetera electrónica
                       </p>
                     </div>
                     {selectedPaymentMethod === "pagopar" && (
@@ -772,7 +779,7 @@ export default function CheckoutPage() {
                     )}
                   </div>
                   <div className="flex flex-wrap gap-1">
-                    {["Efectivo", "Tarjetas", "Transferencia", "Billetera"].map(
+                    {["Tarjetas", "Transferencia", "Billetera"].map(
                       (option) => (
                         <span
                           key={option}
@@ -819,8 +826,8 @@ export default function CheckoutPage() {
                         </Badge>
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        Pagá en efectivo, con tarjeta, transferencia o billetera
-                        electrónica desde Paraguay.
+                        Pagá con tarjeta, transferencia o billetera electrónica
+                        desde Paraguay.
                       </p>
                       <ul className="text-xs text-muted-foreground space-y-1 pl-4 list-disc">
                         <li>Pago en supermercados, farmacias y agencias</li>

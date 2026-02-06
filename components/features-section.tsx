@@ -17,7 +17,7 @@ const features = [
     icon: CreditCard,
     title: "Múltiples Medios de Pago",
     description:
-      "Paga con tarjeta de crédito, débito, transferencia bancaria o en efectivo.",
+      "Paga con tarjeta de crédito, débito o transferencia bancaria.",
     image: "/images/2.jpg",
   },
   {
