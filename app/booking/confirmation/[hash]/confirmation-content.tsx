@@ -588,36 +588,35 @@ export default function ConfirmationPageContent({
         <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-secondary/10 rounded-full blur-[100px]" />
       </div>
 
+      {showConfetti && (
+        <div className="fixed inset-0 pointer-events-none z-[9999]">
+          {[...Array(150)].map((_, i) => {
+            const colors = ["#3CBDB1", "#F7941D", "#FFD700", "#FF6B6B"];
+            const randomColor =
+              colors[Math.floor(Math.random() * colors.length)];
+
+            return (
+              <div
+                key={i}
+                className="absolute animate-fade-in"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `-20px`,
+                  width: `${Math.random() * 10 + 5}px`,
+                  height: `${Math.random() * 10 + 5}px`,
+                  backgroundColor: randomColor,
+                  borderRadius: Math.random() > 0.5 ? "50%" : "0",
+                  animation: `confetti-fall ${Math.random() * 3 + 2}s linear forwards`,
+                  animationDelay: `${Math.random() * 2}s`,
+                }}
+              />
+            );
+          })}
+        </div>
+      )}
+
       <div className="relative z-10">
         <BookingProgress />
-
-        {/* Confetti Animation */}
-        {showConfetti && (
-          <div className="fixed inset-0 pointer-events-none z-50">
-            {[...Array(150)].map((_, i) => {
-              const colors = ["#3CBDB1", "#F7941D", "#FFD700", "#FF6B6B"];
-              const randomColor =
-                colors[Math.floor(Math.random() * colors.length)];
-
-              return (
-                <div
-                  key={i}
-                  className="absolute animate-fade-in"
-                  style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `-20px`,
-                    width: `${Math.random() * 10 + 5}px`,
-                    height: `${Math.random() * 10 + 5}px`,
-                    backgroundColor: randomColor,
-                    borderRadius: Math.random() > 0.5 ? "50%" : "0",
-                    animation: `confetti-fall ${Math.random() * 3 + 2}s linear forwards`,
-                    animationDelay: `${Math.random() * 2}s`,
-                  }}
-                />
-              );
-            })}
-          </div>
-        )}
 
         <div className="container mx-auto px-4 py-8">
           {/* Mostrar estado de pago */}
