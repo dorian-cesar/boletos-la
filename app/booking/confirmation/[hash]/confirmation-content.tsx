@@ -1,8 +1,7 @@
-// /booking/confirmation/confirmation-content.tsx
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import {
@@ -23,18 +22,21 @@ import {
   Loader2,
   AlertCircle,
   Wallet,
-  ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { BookingProgress } from "@/components/booking-progress";
 import { useBookingStore, cities } from "@/lib/booking-store";
 import { generateTicketPDF, downloadPDF } from "@/lib/generate-ticket-pdf";
-import { cn } from "@/lib/utils";
 
-export default function ConfirmationPageContent() {
+interface ConfirmationPageContentProps {
+  hash: string;
+}
+
+export default function ConfirmationPageContent({
+  hash,
+}: ConfirmationPageContentProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [mounted, setMounted] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
@@ -43,7 +45,7 @@ export default function ConfirmationPageContent() {
   const [showConfetti, setShowConfetti] = useState(false);
 
   // ESTADOS PARA PAGOPAR
-  const [pagoparHash, setPagoparHash] = useState<string | null>(null);
+  const [pagoparHash, setPagoparHash] = useState<string | null>(hash);
   const [pagoparStatus, setPagoparStatus] = useState<
     "checking" | "paid" | "pending" | "failed" | "cancelled"
   >("checking");
@@ -73,55 +75,45 @@ export default function ConfirmationPageContent() {
     (c) => c.id === selectedOutboundTrip?.destination,
   );
 
-  // 1. AL CARGAR LA PÁGINA - Verificar si viene de Pagopar (PASO #4)
+  // 1. AL CARGAR LA PÁGINA - Verificar si viene de Pagopar
   useEffect(() => {
+    console.log("🔗 Hash recibido en la URL:", hash);
+
     setMounted(true);
     setStep(4);
 
-    // Obtener hash de la URL de Pagopar (redirección)
-    const hashFromUrl = searchParams.get("hash");
+    if (hash && hash !== "undefined" && hash !== "null") {
+      console.log("✅ Hash válido recibido de Pagopar:", hash);
+      setPagoparHash(hash);
 
-    if (hashFromUrl) {
-      console.log("🔗 Hash recibido de Pagopar:", hashFromUrl);
-      setPagoparHash(hashFromUrl);
-
-      // Verificar estado del pedido con Pagopar (CONSULTA)
-      verifyPagoparPayment(hashFromUrl);
+      // Verificar estado del pedido con Pagopar
+      verifyPagoparPayment(hash);
 
       // Limpiar localStorage si existe
       localStorage.removeItem("pagopar_last_hash");
     } else {
-      // Si no viene de Pagopar, verificar si hay hash guardado
+      // Si no hay hash en la URL, verificar localStorage
       const savedHash = localStorage.getItem("pagopar_last_hash");
-
       if (savedHash) {
         console.log("🔍 Hash encontrado en localStorage:", savedHash);
         setPagoparHash(savedHash);
         verifyPagoparPayment(savedHash);
         localStorage.removeItem("pagopar_last_hash");
       } else {
-        // Si no hay hash, podría ser un pago con tarjeta o una recarga
-        console.log("⚠️ No se encontró hash de Pagopar");
-        setPagoparStatus("paid"); // Asumir que ya pagó
+        console.log("⚠️ No se encontró hash de Pagopar en URL ni localStorage");
+        // Asumir que ya pagó con tarjeta
+        setPagoparStatus("paid");
         setShowPaymentStatus(false);
       }
     }
+  }, [setStep, hash]);
 
-    // Mostrar confetti solo si ya está pagado
-    if (pagoparStatus === "paid") {
-      setShowConfetti(true);
-      const timer = setTimeout(() => setShowConfetti(false), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [setStep]);
-
-  // 2. FUNCIÓN PARA VERIFICAR ESTADO CON PAGOPAR (PASO #4 - CONSULTA)
+  // 2. FUNCIÓN PARA VERIFICAR ESTADO CON PAGOPAR
   const verifyPagoparPayment = async (hash: string) => {
     try {
-      console.log("🔄 Consultando estado en Pagopar...");
+      console.log("🔄 Consultando estado en Pagopar con hash:", hash);
 
       // Llamar a la API para verificar estado
-      // MODIFICAR HASH PARA SIMULAR PAGO
       const response = await fetch("/api/pagopar/check-status", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -266,9 +258,11 @@ export default function ConfirmationPageContent() {
   };
 
   const handleCopyReference = () => {
-    navigator.clipboard.writeText(bookingReference);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (bookingReference) {
+      navigator.clipboard.writeText(bookingReference);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   const handleNewBooking = () => {
@@ -287,7 +281,7 @@ export default function ConfirmationPageContent() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <Bus className="h-16 w-16 text-primary mx-auto mb-4 animate-bounce" />
+          <Loader2 className="h-16 w-16 text-primary mx-auto mb-4 animate-spin" />
           <p className="text-muted-foreground">Cargando confirmación...</p>
         </div>
       </div>
@@ -540,6 +534,9 @@ export default function ConfirmationPageContent() {
                 <span className="font-medium">Total:</span> Gs.{" "}
                 {totalPrice.toLocaleString("es-PY")}
               </p>
+              <p className="text-sm text-muted-foreground pt-2 border-t">
+                Hash de transacción: {pagoparHash?.substring(0, 30)}...
+              </p>
             </div>
           </Card>
         </div>
@@ -639,7 +636,7 @@ export default function ConfirmationPageContent() {
           )}
         </div>
 
-        {/* Resto del contenido (igual que antes) */}
+        {/* Resto del contenido */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {/* Trip Details */}
           <div className="lg:col-span-2 space-y-6">

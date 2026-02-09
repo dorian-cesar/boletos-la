@@ -6,7 +6,7 @@ const BACKEND_URL =
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { data } = body; // data ya está encriptada desde el frontend
+    const { data } = body;
 
     if (!data) {
       return NextResponse.json(
