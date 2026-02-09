@@ -1063,28 +1063,31 @@ export default function CheckoutPage() {
 
       {/* Overlay de procesamiento */}
       {isProcessing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-          <div className="text-center max-w-md p-8 bg-background/5 backdrop-blur-sm rounded-2xl border border-background/20">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-xl">
+          <div className="text-center max-w-md p-8 bg-[#0f1419] border border-gray-700 rounded-2xl shadow-2xl">
             <div
-              className={`w-24 h-24 ${selectedPaymentMethod === "tarjeta" ? "bg-blue-500/10" : "bg-purple-500/10"} rounded-full flex items-center justify-center mx-auto mb-6 border ${selectedPaymentMethod === "tarjeta" ? "border-blue-500/30" : "border-purple-500/30"}`}
+              className={`w-24 h-24 ${selectedPaymentMethod === "tarjeta" ? "bg-blue-500/20" : "bg-purple-500/20"} rounded-full flex items-center justify-center mx-auto mb-6 border-4 ${selectedPaymentMethod === "tarjeta" ? "border-blue-500/40" : "border-purple-500/40"}`}
             >
               {selectedPaymentMethod === "tarjeta" ? (
-                <CreditCard className="h-12 w-12 text-blue-500" />
+                <CreditCard className="h-12 w-12 text-blue-300" />
               ) : (
-                <Wallet className="h-12 w-12 text-purple-500" />
+                <Wallet className="h-12 w-12 text-purple-300" />
               )}
             </div>
-            <h3 className="text-2xl font-bold mb-2 text-background">
+            <h3 className="text-2xl font-bold mb-2 text-white">
               {selectedPaymentMethod === "tarjeta"
                 ? "Procesando pago con Tarjeta"
                 : "Redirigiendo a Pagopar"}
             </h3>
-            <p className="text-background/60 mb-4">
+            <p className="text-gray-300 mb-4">
               {selectedPaymentMethod === "tarjeta"
                 ? "Tu reserva se confirmará en instantes..."
                 : "Estamos preparando tu pago seguro. Serás redirigido automáticamente."}
             </p>
-            <Loader2 className="h-12 w-12 text-primary mx-auto mb-4 animate-spin" />
+            <Loader2 className="h-12 w-12 text-blue-400 mx-auto mb-4 animate-spin" />
+            <div className="text-xs text-gray-400 mt-4">
+              No cierres esta ventana
+            </div>
           </div>
         </div>
       )}
