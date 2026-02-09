@@ -159,30 +159,36 @@ export default function ConfirmationPageContent({
         const payment = data.resultado[0];
         setPaymentDetails(payment);
 
+        // ✅ LÓGICA CORREGIDA:
         if (payment.pagado === true) {
-          // ✅ PAGO EXITOSO
+          // PAGO EXITOSO
           console.log("✅ PAGO CONFIRMADO POR PAGOPAR");
           setPaymentStatus("paid");
           setShowConfetti(true);
           setTimeout(() => setShowConfetti(false), 5000);
 
-          // Crear referencia de reserva si no existe
           if (!bookingReference) {
             const newReference = `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
             setBookingReference(newReference);
             setStorePaymentStatus("completed");
           }
 
-          // Guardar en base de datos
           await saveBookingToDatabase(payment, hash);
         } else if (payment.cancelado === true) {
-          // ❌ PAGO CANCELADO
+          // PAGO CANCELADO
           console.log("❌ PAGO CANCELADO");
           setPaymentStatus("cancelled");
+        } else if (payment.fecha_pago === null && payment.pagado === false) {
+          // ✅ ESTADO CORRECTO: NO HAY PAGO (no "pending")
+          console.log("🚫 PAGO NO REALIZADO - Usuario no completó el pago");
+          setPaymentStatus("failed");
+
+          // Opcional: mostrar botón para reintentar pago
+          // O redirigir al checkout nuevamente
         } else {
-          // ⏳ PAGO PENDIENTE
-          console.log("⏳ PAGO PENDIENTE");
-          setPaymentStatus("pending");
+          // Caso inesperado
+          console.log("⚠️ Estado desconocido del pago");
+          setPaymentStatus("failed");
         }
       } else {
         console.log("⚠️ No se pudo verificar el pago");
@@ -341,6 +347,7 @@ export default function ConfirmationPageContent({
   // 7. COMPLETAR PAGO EN PAGOPAR
   const handleCompletePayment = () => {
     if (pagoparHash) {
+      localStorage.removeItem("pagopar_last_hash");
       window.location.href = `https://www.pagopar.com/pagos/${pagoparHash}`;
     }
   };
@@ -517,29 +524,24 @@ export default function ConfirmationPageContent({
       case "failed":
         return (
           <div className="mb-6 animate-fade-in">
-            <Card className="p-6 bg-red-50 border-red-200">
+            <Card className="p-6 bg-amber-50 border-amber-200">
               <div className="flex items-start gap-4">
-                <AlertCircle className="h-8 w-8 text-red-600 mt-0.5 flex-shrink-0" />
+                <AlertCircle className="h-8 w-8 text-amber-600 mt-0.5 flex-shrink-0" />
                 <div className="flex-1">
-                  <h3 className="font-semibold text-red-800 mb-2">
-                    {paymentStatus === "cancelled"
-                      ? "Pago cancelado"
-                      : "Error en el pago"}
+                  <h3 className="font-semibold text-amber-800 mb-2">
+                    Pago no completado
                   </h3>
-                  <p className="text-sm text-red-600 mb-4">
-                    {paymentStatus === "cancelled"
-                      ? "El pago ha sido cancelado. Si deseas realizar la reserva, por favor inicia un nuevo proceso de pago."
-                      : "Hubo un problema con tu transacción. Por favor, intenta nuevamente o contacta con soporte."}
+                  <p className="text-sm text-amber-600 mb-4">
+                    No detectamos un pago exitoso para esta reserva. El pedido
+                    en Pagopar está pendiente pero no se realizó el pago.
                   </p>
-                  <div className="flex gap-3">
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <Button
                       onClick={() => router.push("/booking/checkout")}
-                      className="bg-primary"
+                      className="bg-purple-600 hover:bg-purple-700"
                     >
-                      Intentar nuevamente
-                    </Button>
-                    <Button variant="outline" onClick={() => router.push("/")}>
-                      Ir al inicio
+                      <Wallet className="h-4 w-4" />
+                      Intentar pago nuevamente
                     </Button>
                   </div>
                 </div>
