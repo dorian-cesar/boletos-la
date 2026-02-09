@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import {
-  ArrowRight,
   Bus,
   MapPin,
   User,
@@ -42,7 +41,6 @@ export default function CheckoutPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showDocumentHelp, setShowDocumentHelp] = useState(false);
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>(
     {},
@@ -174,6 +172,7 @@ export default function CheckoutPage() {
     setSelectedPaymentMethod(method);
   };
 
+  // ✅ FUNCIÓN ÚNICA DE PAGO - SIN MODALES
   const handlePayment = async () => {
     if (passengerDetails.length === 0 || !selectedPaymentMethod) return;
 
@@ -182,6 +181,7 @@ export default function CheckoutPage() {
       return;
     }
 
+    // Marcar todos los campos como tocados para mostrar errores
     const newTouched: Record<string, boolean> = {};
     passengerDetails.forEach((_, index) => {
       ["firstName", "lastName", "documentNumber", "email", "phone"].forEach(
@@ -200,30 +200,24 @@ export default function CheckoutPage() {
       return;
     }
 
-    setShowPaymentModal(true);
-  };
-
-  const processPayment = async () => {
-    if (!selectedPaymentMethod) return;
-
+    // ✅ PROCESAR PAGO DIRECTAMENTE
     setIsProcessing(true);
 
     try {
       if (selectedPaymentMethod === "tarjeta") {
-        // ✅ PAGO CON TARJETA - SIMULACIÓN EXITOSA
-        console.log("💳 Procesando pago con tarjeta (simulación)");
+        // PAGO CON TARJETA - SIMULACIÓN
+        console.log("💳 Procesando pago con tarjeta");
 
-        // 1. Generar referencia única
         const reference = `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-
-        // 2. Actualizar store
         setBookingReference(reference);
         setPaymentStatus("completed");
 
-        // 3. Redirigir a confirmación con hash "tarjeta"
+        // Pequeña pausa para mostrar el estado "procesando"
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
         router.push("/booking/confirmation/tarjeta");
       } else if (selectedPaymentMethod === "pagopar") {
-        // Lógica existente de Pagopar...
+        // PAGOPAR
         const primaryPassenger = passengerDetails[0];
         if (!primaryPassenger) {
           throw new Error("No hay datos del pasajero");
@@ -262,7 +256,6 @@ export default function CheckoutPage() {
     } catch (error: any) {
       console.error("❌ Error procesando pago:", error);
       setIsProcessing(false);
-      setShowPaymentModal(false);
       alert(`Error: ${error.message || "Por favor intenta nuevamente."}`);
     }
   };
@@ -989,90 +982,55 @@ export default function CheckoutPage() {
                 disabled={
                   !isFormValid ||
                   passengerDetails.length === 0 ||
-                  !selectedPaymentMethod
+                  !selectedPaymentMethod ||
+                  isProcessing
                 }
                 className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground h-14 text-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
               >
-                <Lock className="h-5 w-5 mr-2" />
-                {passengerDetails.length === 0
-                  ? "Cargando..."
-                  : isFormValid && selectedPaymentMethod
-                    ? `Pagar con ${selectedPaymentMethod === "tarjeta" ? "Tarjeta" : "Pagopar"}`
-                    : "Completa los datos"}
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                    {selectedPaymentMethod === "tarjeta"
+                      ? "Procesando pago..."
+                      : "Redirigiendo a Pagopar..."}
+                  </>
+                ) : passengerDetails.length === 0 ? (
+                  "Cargando..."
+                ) : isFormValid && selectedPaymentMethod ? (
+                  `Pagar con ${selectedPaymentMethod === "tarjeta" ? "Tarjeta" : "Pagopar"}`
+                ) : (
+                  "Completa los datos"
+                )}
               </Button>
             </Card>
           </div>
         </div>
       </div>
 
-      {/* Payment Modal */}
-      {showPaymentModal && selectedPaymentMethod && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div
-            className="absolute inset-0 bg-foreground/80 backdrop-blur-sm"
-            onClick={() => !isProcessing && setShowPaymentModal(false)}
-          />
-          <div className="relative bg-background rounded-2xl p-8 max-w-md w-full mx-4 animate-scale-in shadow-2xl">
-            {!isProcessing ? (
-              <>
-                <div className="text-center mb-8">
-                  <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    {selectedPaymentMethod === "tarjeta" ? (
-                      <CreditCard className="h-10 w-10 text-blue-500" />
-                    ) : (
-                      <Wallet className="h-10 w-10 text-purple-500" />
-                    )}
-                  </div>
-                  <h3 className="text-2xl font-bold mb-2">
-                    {selectedPaymentMethod === "tarjeta"
-                      ? "Confirmar Pago con Tarjeta"
-                      : "Redirigiendo a Pagopar"}
-                  </h3>
-                </div>
-
-                <div className="bg-muted/50 rounded-xl p-4 mb-6">
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Monto a pagar</span>
-                    <span className="text-2xl font-bold text-secondary">
-                      Gs. {totalPrice.toLocaleString("es-PY")}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowPaymentModal(false)}
-                    className="flex-1"
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    onClick={processPayment}
-                    className={cn(
-                      "flex-1 text-secondary-foreground",
-                      selectedPaymentMethod === "tarjeta"
-                        ? "bg-blue-600 hover:bg-blue-700"
-                        : "bg-purple-600 hover:bg-purple-700",
-                    )}
-                  >
-                    {selectedPaymentMethod === "tarjeta"
-                      ? "Confirmar Pago"
-                      : "Ir a Pagopar"}
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Button>
-                </div>
-              </>
-            ) : (
-              <div className="text-center py-8">
-                <Loader2 className="h-16 w-16 text-primary mx-auto mb-4 animate-spin" />
-                <h3 className="text-xl font-bold mb-2">
-                  {selectedPaymentMethod === "tarjeta"
-                    ? "Procesando pago..."
-                    : "Redirigiendo a Pagopar..."}
-                </h3>
-              </div>
-            )}
+      {/* Overlay de procesamiento */}
+      {isProcessing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+          <div className="text-center max-w-md p-8">
+            <div
+              className={`w-24 h-24 ${selectedPaymentMethod === "tarjeta" ? "bg-blue-500/10" : "bg-purple-500/10"} rounded-full flex items-center justify-center mx-auto mb-6`}
+            >
+              {selectedPaymentMethod === "tarjeta" ? (
+                <CreditCard className="h-12 w-12 text-blue-500" />
+              ) : (
+                <Wallet className="h-12 w-12 text-purple-500" />
+              )}
+            </div>
+            <h3 className="text-2xl font-bold mb-2">
+              {selectedPaymentMethod === "tarjeta"
+                ? "Procesando pago con Tarjeta"
+                : "Redirigiendo a Pagopar"}
+            </h3>
+            <p className="text-muted-foreground mb-4">
+              {selectedPaymentMethod === "tarjeta"
+                ? "Tu reserva se confirmará en instantes..."
+                : "Estamos preparando tu pago seguro. Serás redirigido automáticamente."}
+            </p>
+            <Loader2 className="h-12 w-12 text-primary mx-auto mb-4 animate-spin" />
           </div>
         </div>
       )}
