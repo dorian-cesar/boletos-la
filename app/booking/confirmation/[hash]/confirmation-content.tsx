@@ -396,7 +396,6 @@ export default function ConfirmationPageContent({
                 </p>
                 <ul className="text-sm text-amber-600 mb-4 list-disc pl-4">
                   <li>La sesión expiró</li>
-                  <li>Limpiaste el caché del navegador</li>
                   <li>El pago no se completó correctamente</li>
                 </ul>
 
