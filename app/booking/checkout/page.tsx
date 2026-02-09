@@ -172,7 +172,6 @@ export default function CheckoutPage() {
     setSelectedPaymentMethod(method);
   };
 
-  // ✅ FUNCIÓN ÚNICA DE PAGO - SIN MODALES
   const handlePayment = async () => {
     if (passengerDetails.length === 0 || !selectedPaymentMethod) return;
 
@@ -205,19 +204,14 @@ export default function CheckoutPage() {
 
     try {
       if (selectedPaymentMethod === "tarjeta") {
-        // PAGO CON TARJETA - SIMULACIÓN
-        console.log("💳 Procesando pago con tarjeta");
-
         const reference = `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
         setBookingReference(reference);
         setPaymentStatus("completed");
 
-        // Pequeña pausa para mostrar el estado "procesando"
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
         router.push("/booking/confirmation/tarjeta");
       } else if (selectedPaymentMethod === "pagopar") {
-        // PAGOPAR
         const primaryPassenger = passengerDetails[0];
         if (!primaryPassenger) {
           throw new Error("No hay datos del pasajero");
@@ -260,7 +254,6 @@ export default function CheckoutPage() {
     }
   };
 
-  // Effects
   useEffect(() => {
     setMounted(true);
     setStep(3);
@@ -294,8 +287,8 @@ export default function CheckoutPage() {
 
   if (!mounted) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#1a2332] to-[#0f1419]">
+        <div className="text-center text-background">
           <Bus className="h-16 w-16 text-primary mx-auto mb-4 animate-bounce" />
           <p className="text-muted-foreground">Cargando checkout...</p>
         </div>
@@ -305,8 +298,8 @@ export default function CheckoutPage() {
 
   if (!selectedOutboundTrip || selectedSeats.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#1a2332] to-[#0f1419]">
+        <div className="text-center text-background">
           <Bus className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
           <p className="text-xl font-semibold mb-2">No hay reserva activa</p>
           <p className="text-muted-foreground mb-4">
@@ -324,685 +317,746 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen">
-      <BookingProgress />
+    <div className="min-h-screen bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background">
+      {/* Background Effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-secondary/10 rounded-full blur-[100px]" />
+      </div>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Passenger Forms */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold animate-fade-in">
-                Datos de los Pasajeros ({totalPassengers})
-              </h2>
-              <Badge variant="outline" className="animate-fade-in">
-                <CheckCircle2 className="h-3 w-3 mr-1" />
-                Todos los campos son obligatorios
-              </Badge>
-            </div>
+      <div className="relative z-10">
+        <BookingProgress />
 
-            {passengerDetails.length === 0 ? (
-              <Card className="p-6 animate-fade-in">
-                <div className="text-center py-8">
-                  <Loader2 className="h-8 w-8 text-primary mx-auto mb-4 animate-spin" />
-                  <p className="text-muted-foreground">
-                    Inicializando formulario de pasajeros...
-                  </p>
-                </div>
-              </Card>
-            ) : (
-              passengerDetails.map((passenger, index) => {
-                const firstNameError = getFieldError(
-                  "firstName",
-                  passenger.firstName,
-                  index,
-                );
-                const lastNameError = getFieldError(
-                  "lastName",
-                  passenger.lastName,
-                  index,
-                );
-                const documentError = getFieldError(
-                  "documentNumber",
-                  passenger.documentNumber,
-                  index,
-                );
-                const emailError = getFieldError(
-                  "email",
-                  passenger.email,
-                  index,
-                );
-                const phoneError = getFieldError(
-                  "phone",
-                  passenger.phone,
-                  index,
-                );
-
-                return (
-                  <Card
-                    key={`${passenger.seatId}-${index}`}
-                    className="p-6 animate-fade-in relative overflow-visible"
-                    style={{ animationDelay: `${index * 150}ms` }}
-                  >
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                        <User className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold">Pasajero {index + 1}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          Asiento {passenger.seatNumber}
-                        </p>
-                      </div>
-                      {!firstNameError &&
-                        !lastNameError &&
-                        !documentError &&
-                        !emailError &&
-                        !phoneError &&
-                        passenger.firstName &&
-                        passenger.lastName &&
-                        passenger.documentNumber &&
-                        passenger.email &&
-                        passenger.phone && (
-                          <Badge variant="secondary" className="ml-auto">
-                            <Check className="h-3 w-3 mr-1" />
-                            Completo
-                          </Badge>
-                        )}
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* First Name */}
-                      <div className="space-y-2">
-                        <Label htmlFor={`firstName-${index}`}>
-                          Nombre
-                          <span className="text-destructive ml-1">*</span>
-                        </Label>
-                        <div className="relative">
-                          <Input
-                            id={`firstName-${index}`}
-                            placeholder="Ingresa el nombre (ej: Juan)"
-                            value={passenger.firstName}
-                            onChange={(e) =>
-                              updatePassenger(index, {
-                                firstName: e.target.value,
-                              })
-                            }
-                            onBlur={() => handleFieldBlur("firstName", index)}
-                            className={cn(
-                              "h-12 pr-10",
-                              firstNameError && "border-destructive",
-                              !firstNameError &&
-                                passenger.firstName &&
-                                "border-green-500",
-                            )}
-                            data-error={!!firstNameError}
-                          />
-                          {passenger.firstName && (
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                              {firstNameError ? (
-                                <X className="h-5 w-5 text-destructive" />
-                              ) : (
-                                <Check className="h-5 w-5 text-green-500" />
-                              )}
-                            </div>
-                          )}
-                        </div>
-                        {firstNameError && (
-                          <p className="text-sm text-destructive flex items-center gap-1">
-                            <AlertCircle className="h-4 w-4" />
-                            {firstNameError}
-                          </p>
-                        )}
-                        {!firstNameError && passenger.firstName && (
-                          <p className="text-sm text-green-600 flex items-center gap-1">
-                            <Check className="h-4 w-4" />
-                            Nombre válido
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Last Name */}
-                      <div className="space-y-2">
-                        <Label htmlFor={`lastName-${index}`}>
-                          Apellido
-                          <span className="text-destructive ml-1">*</span>
-                        </Label>
-                        <div className="relative">
-                          <Input
-                            id={`lastName-${index}`}
-                            placeholder="Ingresa el apellido (ej: Pérez)"
-                            value={passenger.lastName}
-                            onChange={(e) =>
-                              updatePassenger(index, {
-                                lastName: e.target.value,
-                              })
-                            }
-                            onBlur={() => handleFieldBlur("lastName", index)}
-                            className={cn(
-                              "h-12 pr-10",
-                              lastNameError && "border-destructive",
-                              !lastNameError &&
-                                passenger.lastName &&
-                                "border-green-500",
-                            )}
-                            data-error={!!lastNameError}
-                          />
-                          {passenger.lastName && (
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                              {lastNameError ? (
-                                <X className="h-5 w-5 text-destructive" />
-                              ) : (
-                                <Check className="h-5 w-5 text-green-500" />
-                              )}
-                            </div>
-                          )}
-                        </div>
-                        {lastNameError && (
-                          <p className="text-sm text-destructive flex items-center gap-1">
-                            <AlertCircle className="h-4 w-4" />
-                            {lastNameError}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Document Number */}
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <Label htmlFor={`document-${index}`}>
-                            Cédula/RUC
-                            <span className="text-destructive ml-1">*</span>
-                          </Label>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-6 px-2 text-xs text-muted-foreground"
-                                  onClick={() =>
-                                    setShowDocumentHelp(!showDocumentHelp)
-                                  }
-                                >
-                                  <AlertCircle className="h-3 w-3 mr-1" />
-                                  Formato
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <div className="text-sm">
-                                  <p>Ejemplos válidos:</p>
-                                  <p>• Cédula: 4.123.456</p>
-                                  <p>• RUC: 80.012.345-0</p>
-                                </div>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </div>
-                        <div className="relative">
-                          <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                          <Input
-                            id={`document-${index}`}
-                            placeholder="4.123.456 o 80.012.345-0"
-                            value={passenger.documentNumber}
-                            onChange={(e) =>
-                              updatePassenger(index, {
-                                documentNumber: formatDocument(e.target.value),
-                              })
-                            }
-                            onBlur={() =>
-                              handleFieldBlur("documentNumber", index)
-                            }
-                            className={cn(
-                              "h-12 pl-10 pr-10",
-                              documentError && "border-destructive",
-                              !documentError &&
-                                passenger.documentNumber &&
-                                "border-green-500",
-                            )}
-                            data-error={!!documentError}
-                          />
-                          {passenger.documentNumber && (
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                              {documentError ? (
-                                <X className="h-5 w-5 text-destructive" />
-                              ) : (
-                                <Check className="h-5 w-5 text-green-500" />
-                              )}
-                            </div>
-                          )}
-                        </div>
-                        {documentError && (
-                          <p className="text-sm text-destructive flex items-center gap-1">
-                            <AlertCircle className="h-4 w-4" />
-                            {documentError}
-                          </p>
-                        )}
-                        {showDocumentHelp && !documentError && (
-                          <div className="text-xs text-muted-foreground p-2 bg-muted rounded">
-                            <p>
-                              Formato aceptado: 4.123.456 (cédula) o
-                              80.012.345-0 (RUC)
-                            </p>
-                            <p>Para RUC, el dígito verificador puede ser 0-9</p>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Phone */}
-                      <div className="space-y-2">
-                        <Label htmlFor={`phone-${index}`}>
-                          Teléfono
-                          <span className="text-destructive ml-1">*</span>
-                        </Label>
-                        <div className="relative">
-                          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                          <Input
-                            id={`phone-${index}`}
-                            placeholder="0981 123 456"
-                            value={passenger.phone}
-                            onChange={(e) =>
-                              updatePassenger(index, {
-                                phone: e.target.value,
-                              })
-                            }
-                            onBlur={() => handleFieldBlur("phone", index)}
-                            className={cn(
-                              "h-12 pl-10 pr-10",
-                              phoneError && "border-destructive",
-                              !phoneError &&
-                                passenger.phone &&
-                                "border-green-500",
-                            )}
-                            data-error={!!phoneError}
-                          />
-                          {passenger.phone && (
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                              {phoneError ? (
-                                <X className="h-5 w-5 text-destructive" />
-                              ) : (
-                                <Check className="h-5 w-5 text-green-500" />
-                              )}
-                            </div>
-                          )}
-                        </div>
-                        {phoneError && (
-                          <p className="text-sm text-destructive flex items-center gap-1">
-                            <AlertCircle className="h-4 w-4" />
-                            {phoneError}
-                          </p>
-                        )}
-                        {!phoneError && passenger.phone && (
-                          <p className="text-sm text-muted-foreground">
-                            Formato: 0981 123 456 o 021 123 456
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Email */}
-                      <div className="space-y-2 md:col-span-2">
-                        <Label htmlFor={`email-${index}`}>
-                          Correo Electrónico
-                          <span className="text-destructive ml-1">*</span>
-                        </Label>
-                        <div className="relative">
-                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                          <Input
-                            id={`email-${index}`}
-                            type="email"
-                            placeholder="correo@ejemplo.com"
-                            value={passenger.email}
-                            onChange={(e) =>
-                              updatePassenger(index, { email: e.target.value })
-                            }
-                            onBlur={() => handleFieldBlur("email", index)}
-                            className={cn(
-                              "h-12 pl-10 pr-10",
-                              emailError && "border-destructive",
-                              !emailError &&
-                                passenger.email &&
-                                "border-green-500",
-                            )}
-                            data-error={!!emailError}
-                          />
-                          {passenger.email && (
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                              {emailError ? (
-                                <X className="h-5 w-5 text-destructive" />
-                              ) : (
-                                <Check className="h-5 w-5 text-green-500" />
-                              )}
-                            </div>
-                          )}
-                        </div>
-                        {emailError && (
-                          <p className="text-sm text-destructive flex items-center gap-1">
-                            <AlertCircle className="h-4 w-4" />
-                            {emailError}
-                          </p>
-                        )}
-                        {index === 0 && (
-                          <p className="text-xs text-muted-foreground">
-                            El boleto electrónico será enviado a este correo
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </Card>
-                );
-              })
-            )}
-
-            {/* Payment Section */}
-            <Card
-              className="p-6 animate-fade-in"
-              style={{ animationDelay: `${totalPassengers * 150}ms` }}
-            >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center">
-                  <CreditCard className="h-5 w-5 text-secondary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold">Método de Pago</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Selecciona tu método de pago preferido
-                  </p>
-                </div>
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Passenger Forms */}
+            <div className="lg:col-span-2 space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold animate-fade-in text-background">
+                  Datos de los Pasajeros ({totalPassengers})
+                </h2>
+                <Badge
+                  variant="outline"
+                  className="animate-fade-in border-background/30 text-background/80"
+                >
+                  <CheckCircle2 className="h-3 w-3 mr-1" />
+                  Todos los campos son obligatorios
+                </Badge>
               </div>
 
-              {/* Payment Methods Selection */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <Card
-                  className={cn(
-                    "p-4 cursor-pointer transition-all duration-200 border-2 hover:border-blue-500",
-                    selectedPaymentMethod === "tarjeta"
-                      ? "border-blue-500 bg-blue-500/5"
-                      : "border-border",
-                  )}
-                  onClick={() => handlePaymentMethodSelect("tarjeta")}
-                >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-12 h-8 bg-blue-600 rounded flex items-center justify-center">
-                      <CreditCard className="h-4 w-4 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-medium">Pago con Tarjeta</p>
-                      <p className="text-xs text-muted-foreground">
-                        Simulación de pago inmediato
-                      </p>
-                    </div>
-                    {selectedPaymentMethod === "tarjeta" && (
-                      <CheckCircle2 className="h-5 w-5 text-green-500" />
-                    )}
+              {passengerDetails.length === 0 ? (
+                <Card className="p-6 animate-fade-in bg-background/5 backdrop-blur-sm border-background/20">
+                  <div className="text-center py-8">
+                    <Loader2 className="h-8 w-8 text-primary mx-auto mb-4 animate-spin" />
+                    <p className="text-background/60">
+                      Inicializando formulario de pasajeros...
+                    </p>
                   </div>
-                  <div className="flex flex-wrap gap-1">
-                    {["Pago instantáneo", "Sin redirección", "Simulación"].map(
-                      (card) => (
+                </Card>
+              ) : (
+                passengerDetails.map((passenger, index) => {
+                  const firstNameError = getFieldError(
+                    "firstName",
+                    passenger.firstName,
+                    index,
+                  );
+                  const lastNameError = getFieldError(
+                    "lastName",
+                    passenger.lastName,
+                    index,
+                  );
+                  const documentError = getFieldError(
+                    "documentNumber",
+                    passenger.documentNumber,
+                    index,
+                  );
+                  const emailError = getFieldError(
+                    "email",
+                    passenger.email,
+                    index,
+                  );
+                  const phoneError = getFieldError(
+                    "phone",
+                    passenger.phone,
+                    index,
+                  );
+
+                  return (
+                    <Card
+                      key={`${passenger.seatId}-${index}`}
+                      className="p-6 animate-fade-in relative overflow-visible bg-background/5 backdrop-blur-sm border-background/20"
+                      style={{ animationDelay: `${index * 150}ms` }}
+                    >
+                      <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/30">
+                          <User className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-background">
+                            Pasajero {index + 1}
+                          </h3>
+                          <p className="text-sm text-background/60">
+                            Asiento {passenger.seatNumber}
+                          </p>
+                        </div>
+                        {!firstNameError &&
+                          !lastNameError &&
+                          !documentError &&
+                          !emailError &&
+                          !phoneError &&
+                          passenger.firstName &&
+                          passenger.lastName &&
+                          passenger.documentNumber &&
+                          passenger.email &&
+                          passenger.phone && (
+                            <Badge
+                              variant="secondary"
+                              className="ml-auto bg-green-500/10 text-green-500 border-green-500/30"
+                            >
+                              <Check className="h-3 w-3 mr-1" />
+                              Completo
+                            </Badge>
+                          )}
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* First Name */}
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor={`firstName-${index}`}
+                            className="text-background"
+                          >
+                            Nombre
+                            <span className="text-destructive ml-1">*</span>
+                          </Label>
+                          <div className="relative">
+                            <Input
+                              id={`firstName-${index}`}
+                              placeholder="Ingresa el nombre (ej: Juan)"
+                              value={passenger.firstName}
+                              onChange={(e) =>
+                                updatePassenger(index, {
+                                  firstName: e.target.value,
+                                })
+                              }
+                              onBlur={() => handleFieldBlur("firstName", index)}
+                              className={cn(
+                                "h-12 pr-10 bg-background/10 border-background/30 text-background placeholder:text-background/40",
+                                firstNameError && "border-destructive",
+                                !firstNameError &&
+                                  passenger.firstName &&
+                                  "border-green-500",
+                              )}
+                              data-error={!!firstNameError}
+                            />
+                            {passenger.firstName && (
+                              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                {firstNameError ? (
+                                  <X className="h-5 w-5 text-destructive" />
+                                ) : (
+                                  <Check className="h-5 w-5 text-green-500" />
+                                )}
+                              </div>
+                            )}
+                          </div>
+                          {firstNameError && (
+                            <p className="text-sm text-destructive flex items-center gap-1">
+                              <AlertCircle className="h-4 w-4" />
+                              {firstNameError}
+                            </p>
+                          )}
+                          {!firstNameError && passenger.firstName && (
+                            <p className="text-sm text-green-500 flex items-center gap-1">
+                              <Check className="h-4 w-4" />
+                              Nombre válido
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Last Name */}
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor={`lastName-${index}`}
+                            className="text-background"
+                          >
+                            Apellido
+                            <span className="text-destructive ml-1">*</span>
+                          </Label>
+                          <div className="relative">
+                            <Input
+                              id={`lastName-${index}`}
+                              placeholder="Ingresa el apellido (ej: Pérez)"
+                              value={passenger.lastName}
+                              onChange={(e) =>
+                                updatePassenger(index, {
+                                  lastName: e.target.value,
+                                })
+                              }
+                              onBlur={() => handleFieldBlur("lastName", index)}
+                              className={cn(
+                                "h-12 pr-10 bg-background/10 border-background/30 text-background placeholder:text-background/40",
+                                lastNameError && "border-destructive",
+                                !lastNameError &&
+                                  passenger.lastName &&
+                                  "border-green-500",
+                              )}
+                              data-error={!!lastNameError}
+                            />
+                            {passenger.lastName && (
+                              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                {lastNameError ? (
+                                  <X className="h-5 w-5 text-destructive" />
+                                ) : (
+                                  <Check className="h-5 w-5 text-green-500" />
+                                )}
+                              </div>
+                            )}
+                          </div>
+                          {lastNameError && (
+                            <p className="text-sm text-destructive flex items-center gap-1">
+                              <AlertCircle className="h-4 w-4" />
+                              {lastNameError}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Document Number */}
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <Label
+                              htmlFor={`document-${index}`}
+                              className="text-background"
+                            >
+                              Cédula/RUC
+                              <span className="text-destructive ml-1">*</span>
+                            </Label>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-6 px-2 text-xs text-background/60 hover:text-background hover:bg-background/20"
+                                    onClick={() =>
+                                      setShowDocumentHelp(!showDocumentHelp)
+                                    }
+                                  >
+                                    <AlertCircle className="h-3 w-3 mr-1" />
+                                    Formato
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent className="bg-background/95 backdrop-blur-sm border-background/20">
+                                  <div className="text-sm">
+                                    <p>Ejemplos válidos:</p>
+                                    <p>• Cédula: 4.123.456</p>
+                                    <p>• RUC: 80.012.345-0</p>
+                                  </div>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
+                          <div className="relative">
+                            <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-background/60" />
+                            <Input
+                              id={`document-${index}`}
+                              placeholder="4.123.456 o 80.012.345-0"
+                              value={passenger.documentNumber}
+                              onChange={(e) =>
+                                updatePassenger(index, {
+                                  documentNumber: formatDocument(
+                                    e.target.value,
+                                  ),
+                                })
+                              }
+                              onBlur={() =>
+                                handleFieldBlur("documentNumber", index)
+                              }
+                              className={cn(
+                                "h-12 pl-10 pr-10 bg-background/10 border-background/30 text-background placeholder:text-background/40",
+                                documentError && "border-destructive",
+                                !documentError &&
+                                  passenger.documentNumber &&
+                                  "border-green-500",
+                              )}
+                              data-error={!!documentError}
+                            />
+                            {passenger.documentNumber && (
+                              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                {documentError ? (
+                                  <X className="h-5 w-5 text-destructive" />
+                                ) : (
+                                  <Check className="h-5 w-5 text-green-500" />
+                                )}
+                              </div>
+                            )}
+                          </div>
+                          {documentError && (
+                            <p className="text-sm text-destructive flex items-center gap-1">
+                              <AlertCircle className="h-4 w-4" />
+                              {documentError}
+                            </p>
+                          )}
+                          {showDocumentHelp && !documentError && (
+                            <div className="text-xs text-background/60 p-2 bg-background/10 rounded">
+                              <p>
+                                Formato aceptado: 4.123.456 (cédula) o
+                                80.012.345-0 (RUC)
+                              </p>
+                              <p>
+                                Para RUC, el dígito verificador puede ser 0-9
+                              </p>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Phone */}
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor={`phone-${index}`}
+                            className="text-background"
+                          >
+                            Teléfono
+                            <span className="text-destructive ml-1">*</span>
+                          </Label>
+                          <div className="relative">
+                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-background/60" />
+                            <Input
+                              id={`phone-${index}`}
+                              placeholder="0981 123 456"
+                              value={passenger.phone}
+                              onChange={(e) =>
+                                updatePassenger(index, {
+                                  phone: e.target.value,
+                                })
+                              }
+                              onBlur={() => handleFieldBlur("phone", index)}
+                              className={cn(
+                                "h-12 pl-10 pr-10 bg-background/10 border-background/30 text-background placeholder:text-background/40",
+                                phoneError && "border-destructive",
+                                !phoneError &&
+                                  passenger.phone &&
+                                  "border-green-500",
+                              )}
+                              data-error={!!phoneError}
+                            />
+                            {passenger.phone && (
+                              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                {phoneError ? (
+                                  <X className="h-5 w-5 text-destructive" />
+                                ) : (
+                                  <Check className="h-5 w-5 text-green-500" />
+                                )}
+                              </div>
+                            )}
+                          </div>
+                          {phoneError && (
+                            <p className="text-sm text-destructive flex items-center gap-1">
+                              <AlertCircle className="h-4 w-4" />
+                              {phoneError}
+                            </p>
+                          )}
+                          {!phoneError && passenger.phone && (
+                            <p className="text-sm text-background/60">
+                              Formato: 0981 123 456 o 021 123 456
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Email */}
+                        <div className="space-y-2 md:col-span-2">
+                          <Label
+                            htmlFor={`email-${index}`}
+                            className="text-background"
+                          >
+                            Correo Electrónico
+                            <span className="text-destructive ml-1">*</span>
+                          </Label>
+                          <div className="relative">
+                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-background/60" />
+                            <Input
+                              id={`email-${index}`}
+                              type="email"
+                              placeholder="correo@ejemplo.com"
+                              value={passenger.email}
+                              onChange={(e) =>
+                                updatePassenger(index, {
+                                  email: e.target.value,
+                                })
+                              }
+                              onBlur={() => handleFieldBlur("email", index)}
+                              className={cn(
+                                "h-12 pl-10 pr-10 bg-background/10 border-background/30 text-background placeholder:text-background/40",
+                                emailError && "border-destructive",
+                                !emailError &&
+                                  passenger.email &&
+                                  "border-green-500",
+                              )}
+                              data-error={!!emailError}
+                            />
+                            {passenger.email && (
+                              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                {emailError ? (
+                                  <X className="h-5 w-5 text-destructive" />
+                                ) : (
+                                  <Check className="h-5 w-5 text-green-500" />
+                                )}
+                              </div>
+                            )}
+                          </div>
+                          {emailError && (
+                            <p className="text-sm text-destructive flex items-center gap-1">
+                              <AlertCircle className="h-4 w-4" />
+                              {emailError}
+                            </p>
+                          )}
+                          {index === 0 && (
+                            <p className="text-xs text-background/60">
+                              El boleto electrónico será enviado a este correo
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </Card>
+                  );
+                })
+              )}
+
+              {/* Payment Section */}
+              <Card
+                className="p-6 animate-fade-in bg-background/5 backdrop-blur-sm border-background/20"
+                style={{ animationDelay: `${totalPassengers * 150}ms` }}
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center border border-secondary/30">
+                    <CreditCard className="h-5 w-5 text-secondary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-background">
+                      Método de Pago
+                    </h3>
+                    <p className="text-sm text-background/60">
+                      Selecciona tu método de pago preferido
+                    </p>
+                  </div>
+                </div>
+
+                {/* Payment Methods Selection */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <Card
+                    className={cn(
+                      "p-4 cursor-pointer transition-all duration-200 border-2 bg-background/5 backdrop-blur-sm",
+                      selectedPaymentMethod === "tarjeta"
+                        ? "border-blue-500 bg-blue-500/10"
+                        : "border-background/30 hover:border-blue-500",
+                    )}
+                    onClick={() => handlePaymentMethodSelect("tarjeta")}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-12 h-8 bg-blue-500 rounded flex items-center justify-center">
+                        <CreditCard className="h-4 w-4 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-background">
+                          Pago con Tarjeta
+                        </p>
+                        <p className="text-xs text-background/60">
+                          Simulación de pago inmediato
+                        </p>
+                      </div>
+                      {selectedPaymentMethod === "tarjeta" && (
+                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      )}
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {[
+                        "Pago instantáneo",
+                        "Sin redirección",
+                        "Simulación",
+                      ].map((card) => (
                         <span
                           key={card}
-                          className="text-xs px-2 py-1 bg-muted rounded"
+                          className="text-xs px-2 py-1 bg-background/10 rounded text-background/80"
                         >
                           {card}
                         </span>
-                      ),
-                    )}
-                  </div>
-                </Card>
-
-                <Card
-                  className={cn(
-                    "p-4 cursor-pointer transition-all duration-200 border-2 hover:border-purple-500",
-                    selectedPaymentMethod === "pagopar"
-                      ? "border-purple-500 bg-purple-500/5"
-                      : "border-border",
-                  )}
-                  onClick={() => handlePaymentMethodSelect("pagopar")}
-                >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-12 h-8 bg-purple-600 rounded flex items-center justify-center">
-                      <Wallet className="h-4 w-4 text-white" />
+                      ))}
                     </div>
-                    <div className="flex-1">
-                      <p className="font-medium">Pagopar</p>
-                      <p className="text-xs text-muted-foreground">
-                        Pago con tarjeta, transferencia o billetera electrónica
-                      </p>
-                    </div>
-                    {selectedPaymentMethod === "pagopar" && (
-                      <CheckCircle2 className="h-5 w-5 text-green-500" />
-                    )}
-                  </div>
-                  <div className="flex flex-wrap gap-1">
-                    {["Tarjetas", "Transferencia", "Billetera"].map(
-                      (option) => (
-                        <span
-                          key={option}
-                          className="text-xs px-2 py-1 bg-muted rounded"
-                        >
-                          {option}
-                        </span>
-                      ),
-                    )}
-                  </div>
-                </Card>
-              </div>
+                  </Card>
 
-              {/* Payment Method Details */}
-              <div className="bg-muted/50 rounded-xl p-4 mb-6">
-                {selectedPaymentMethod === "tarjeta" ? (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Shield className="h-5 w-5 text-blue-500" />
-                        <span className="text-sm font-medium">
-                          Pago con Tarjeta (Simulación)
-                        </span>
+                  <Card
+                    className={cn(
+                      "p-4 cursor-pointer transition-all duration-200 border-2 bg-background/5 backdrop-blur-sm",
+                      selectedPaymentMethod === "pagopar"
+                        ? "border-purple-500 bg-purple-500/10"
+                        : "border-background/30 hover:border-purple-500",
+                    )}
+                    onClick={() => handlePaymentMethodSelect("pagopar")}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-12 h-8 bg-purple-600 rounded flex items-center justify-center">
+                        <Wallet className="h-4 w-4 text-white" />
                       </div>
-                      <Badge variant="outline" className="bg-background">
-                        Pago Inmediato
-                      </Badge>
+                      <div className="flex-1">
+                        <p className="font-medium text-background">Pagopar</p>
+                        <p className="text-xs text-background/60">
+                          Pago con tarjeta, transferencia o billetera
+                          electrónica
+                        </p>
+                      </div>
+                      {selectedPaymentMethod === "pagopar" && (
+                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      )}
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                      Esta es una simulación de pago exitoso. Tu reserva se
-                      confirmará inmediatamente sin necesidad de redirección.
-                    </p>
-                  </div>
-                ) : (
-                  selectedPaymentMethod === "pagopar" && (
+                    <div className="flex flex-wrap gap-1">
+                      {["Tarjetas", "Transferencia", "Billetera"].map(
+                        (option) => (
+                          <span
+                            key={option}
+                            className="text-xs px-2 py-1 bg-background/10 rounded text-background/80"
+                          >
+                            {option}
+                          </span>
+                        ),
+                      )}
+                    </div>
+                  </Card>
+                </div>
+
+                {/* Payment Method Details */}
+                <div className="bg-background/10 rounded-xl p-4 mb-6 border border-background/20">
+                  {selectedPaymentMethod === "tarjeta" ? (
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <Wallet className="h-5 w-5 text-purple-500" />
-                          <span className="text-sm font-medium">Pagopar</span>
+                          <Shield className="h-5 w-5 text-blue-500" />
+                          <span className="text-sm font-medium text-background">
+                            Pago con Tarjeta (Simulación)
+                          </span>
                         </div>
-                        <Badge variant="outline" className="bg-background">
-                          Múltiples Opciones
+                        <Badge
+                          variant="outline"
+                          className="bg-background/10 border-background/30 text-background/80"
+                        >
+                          Pago Inmediato
                         </Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        Pagá con tarjeta, transferencia o billetera electrónica
-                        desde Paraguay. Serás redirigido al portal de Pagopar.
+                      <p className="text-sm text-background/60">
+                        Esta es una simulación de pago exitoso. Tu reserva se
+                        confirmará inmediatamente sin necesidad de redirección.
                       </p>
                     </div>
-                  )
-                )}
-              </div>
-
-              <div className="mt-6 flex items-start gap-3 p-4 bg-primary/5 rounded-xl">
-                <Lock className="h-5 w-5 text-primary mt-0.5" />
-                <div className="text-sm">
-                  <p className="font-medium text-foreground">
-                    Transacción Segura
-                  </p>
-                  <p className="text-muted-foreground">
-                    Tu información está protegida con encriptación SSL.
-                  </p>
+                  ) : (
+                    selectedPaymentMethod === "pagopar" && (
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Wallet className="h-5 w-5 text-purple-500" />
+                            <span className="text-sm font-medium text-background">
+                              Pagopar
+                            </span>
+                          </div>
+                          <Badge
+                            variant="outline"
+                            className="bg-background/10 border-background/30 text-background/80"
+                          >
+                            Múltiples Opciones
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-background/60">
+                          Pagá con tarjeta, transferencia o billetera
+                          electrónica desde Paraguay. Serás redirigido al portal
+                          de Pagopar.
+                        </p>
+                      </div>
+                    )
+                  )}
                 </div>
-              </div>
-            </Card>
-          </div>
 
-          {/* Order Summary */}
-          <div className="lg:col-span-1">
-            <Card className="p-6 sticky top-24 animate-slide-in-right">
-              <h3 className="text-xl font-bold mb-6">Resumen de Compra</h3>
-
-              {/* Outbound Trip */}
-              <div className="mb-6 pb-6 border-b border-border">
-                <p className="text-sm font-medium text-primary mb-3">
-                  Viaje de Ida
-                </p>
-                <div className="flex items-center gap-3 mb-3">
-                  <Bus className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium">
-                      {selectedOutboundTrip.company}
+                <div className="mt-6 flex items-start gap-3 p-4 bg-primary/10 rounded-xl border border-primary/20">
+                  <Lock className="h-5 w-5 text-primary mt-0.5" />
+                  <div className="text-sm">
+                    <p className="font-medium text-background">
+                      Transacción Segura
                     </p>
-                    <p className="text-sm text-muted-foreground">
-                      {selectedOutboundTrip.busType}
+                    <p className="text-background/60">
+                      Tu información está protegida con encriptación SSL.
                     </p>
                   </div>
                 </div>
-                <div className="space-y-2 text-sm">
-                  <p className="flex justify-between">
-                    <span className="text-muted-foreground">Fecha</span>
-                    <span>
-                      {format(new Date(departureDate || ""), "dd MMM yyyy", {
-                        locale: es,
-                      })}
-                    </span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="text-muted-foreground">Ruta</span>
-                    <span>
-                      {originCity?.name} - {destinationCity?.name}
-                    </span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="text-muted-foreground">Horario</span>
-                    <span>
-                      {selectedOutboundTrip.departureTime} -{" "}
-                      {selectedOutboundTrip.arrivalTime}
-                    </span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="text-muted-foreground">Asientos</span>
-                    <span>{selectedSeats.map((s) => s.number).join(", ")}</span>
-                  </p>
-                </div>
-              </div>
+              </Card>
+            </div>
 
-              {/* Return Trip */}
-              {tripType === "round-trip" && selectedReturnTrip && (
-                <div className="mb-6 pb-6 border-b border-border">
-                  <p className="text-sm font-medium text-secondary mb-3">
-                    Viaje de Regreso
+            {/* Order Summary */}
+            <div className="lg:col-span-1">
+              <Card className="p-6 sticky top-24 animate-slide-in-right bg-background/5 backdrop-blur-sm border-background/20">
+                <h3 className="text-xl font-bold mb-6 text-background">
+                  Resumen de Compra
+                </h3>
+
+                {/* Outbound Trip */}
+                <div className="mb-6 pb-6 border-b border-background/20">
+                  <p className="text-sm font-medium text-primary mb-3">
+                    Viaje de Ida
                   </p>
                   <div className="flex items-center gap-3 mb-3">
-                    <Bus className="h-5 w-5 text-muted-foreground" />
+                    <Bus className="h-5 w-5 text-background/60" />
                     <div>
-                      <p className="font-medium">
-                        {selectedReturnTrip.company}
+                      <p className="font-medium text-background">
+                        {selectedOutboundTrip.company}
                       </p>
-                      <p className="text-sm text-muted-foreground">
-                        {selectedReturnTrip.busType}
+                      <p className="text-sm text-background/60">
+                        {selectedOutboundTrip.busType}
                       </p>
                     </div>
                   </div>
                   <div className="space-y-2 text-sm">
                     <p className="flex justify-between">
-                      <span className="text-muted-foreground">Fecha</span>
-                      <span>
-                        {format(new Date(returnDate || ""), "dd MMM yyyy", {
+                      <span className="text-background/60">Fecha</span>
+                      <span className="text-background">
+                        {format(new Date(departureDate || ""), "dd MMM yyyy", {
                           locale: es,
                         })}
                       </span>
                     </p>
                     <p className="flex justify-between">
-                      <span className="text-muted-foreground">Ruta</span>
-                      <span>
-                        {destinationCity?.name} - {originCity?.name}
+                      <span className="text-background/60">Ruta</span>
+                      <span className="text-background">
+                        {originCity?.name} - {destinationCity?.name}
                       </span>
                     </p>
                     <p className="flex justify-between">
-                      <span className="text-muted-foreground">Horario</span>
-                      <span>
-                        {selectedReturnTrip.departureTime} -{" "}
-                        {selectedReturnTrip.arrivalTime}
+                      <span className="text-background/60">Horario</span>
+                      <span className="text-background">
+                        {selectedOutboundTrip.departureTime} -{" "}
+                        {selectedOutboundTrip.arrivalTime}
                       </span>
                     </p>
                     <p className="flex justify-between">
-                      <span className="text-muted-foreground">Asientos</span>
-                      <span>
-                        {selectedReturnSeats.map((s) => s.number).join(", ")}
+                      <span className="text-background/60">Asientos</span>
+                      <span className="text-background">
+                        {selectedSeats.map((s) => s.number).join(", ")}
                       </span>
                     </p>
                   </div>
                 </div>
-              )}
 
-              {/* Price Breakdown */}
-              <div className="space-y-3 mb-6 pb-6 border-b border-border">
-                <p className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">
-                    Subtotal ({totalPassengers} asiento
-                    {totalPassengers > 1 ? "s" : ""})
-                  </span>
-                  <span>
-                    Gs. {Math.round(totalPrice * 0.82).toLocaleString("es-PY")}
-                  </span>
-                </p>
-                <p className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">IVA (10%)</span>
-                  <span>
-                    Gs. {Math.round(totalPrice * 0.1).toLocaleString("es-PY")}
-                  </span>
-                </p>
-                <p className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Servicio (8%)</span>
-                  <span>
-                    Gs. {Math.round(totalPrice * 0.08).toLocaleString("es-PY")}
-                  </span>
-                </p>
-              </div>
-
-              {/* Total */}
-              <div className="mb-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-lg font-medium">Total a Pagar</span>
-                  <span className="text-3xl font-bold text-secondary">
-                    Gs. {totalPrice.toLocaleString("es-PY")}
-                  </span>
-                </div>
-              </div>
-
-              {/* Pay Button */}
-              <Button
-                onClick={handlePayment}
-                disabled={
-                  !isFormValid ||
-                  passengerDetails.length === 0 ||
-                  !selectedPaymentMethod ||
-                  isProcessing
-                }
-                className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground h-14 text-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
-              >
-                {isProcessing ? (
-                  <>
-                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                    {selectedPaymentMethod === "tarjeta"
-                      ? "Procesando pago..."
-                      : "Redirigiendo a Pagopar..."}
-                  </>
-                ) : passengerDetails.length === 0 ? (
-                  "Cargando..."
-                ) : isFormValid && selectedPaymentMethod ? (
-                  `Pagar con ${selectedPaymentMethod === "tarjeta" ? "Tarjeta" : "Pagopar"}`
-                ) : (
-                  "Completa los datos"
+                {/* Return Trip */}
+                {tripType === "round-trip" && selectedReturnTrip && (
+                  <div className="mb-6 pb-6 border-b border-background/20">
+                    <p className="text-sm font-medium text-secondary mb-3">
+                      Viaje de Regreso
+                    </p>
+                    <div className="flex items-center gap-3 mb-3">
+                      <Bus className="h-5 w-5 text-background/60" />
+                      <div>
+                        <p className="font-medium text-background">
+                          {selectedReturnTrip.company}
+                        </p>
+                        <p className="text-sm text-background/60">
+                          {selectedReturnTrip.busType}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <p className="flex justify-between">
+                        <span className="text-background/60">Fecha</span>
+                        <span className="text-background">
+                          {format(new Date(returnDate || ""), "dd MMM yyyy", {
+                            locale: es,
+                          })}
+                        </span>
+                      </p>
+                      <p className="flex justify-between">
+                        <span className="text-background/60">Ruta</span>
+                        <span className="text-background">
+                          {destinationCity?.name} - {originCity?.name}
+                        </span>
+                      </p>
+                      <p className="flex justify-between">
+                        <span className="text-background/60">Horario</span>
+                        <span className="text-background">
+                          {selectedReturnTrip.departureTime} -{" "}
+                          {selectedReturnTrip.arrivalTime}
+                        </span>
+                      </p>
+                      <p className="flex justify-between">
+                        <span className="text-background/60">Asientos</span>
+                        <span className="text-background">
+                          {selectedReturnSeats.map((s) => s.number).join(", ")}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
                 )}
-              </Button>
-            </Card>
+
+                {/* Price Breakdown */}
+                <div className="space-y-3 mb-6 pb-6 border-b border-background/20">
+                  <p className="flex justify-between text-sm">
+                    <span className="text-background/60">
+                      Subtotal ({totalPassengers} asiento
+                      {totalPassengers > 1 ? "s" : ""})
+                    </span>
+                    <span className="text-background">
+                      Gs.{" "}
+                      {Math.round(totalPrice * 0.82).toLocaleString("es-PY")}
+                    </span>
+                  </p>
+                  <p className="flex justify-between text-sm">
+                    <span className="text-background/60">IVA (10%)</span>
+                    <span className="text-background">
+                      Gs. {Math.round(totalPrice * 0.1).toLocaleString("es-PY")}
+                    </span>
+                  </p>
+                  <p className="flex justify-between text-sm">
+                    <span className="text-background/60">Servicio (8%)</span>
+                    <span className="text-background">
+                      Gs.{" "}
+                      {Math.round(totalPrice * 0.08).toLocaleString("es-PY")}
+                    </span>
+                  </p>
+                </div>
+
+                {/* Total */}
+                <div className="mb-6">
+                  <div className="flex items-center justify-between">
+                    <span className="text-lg font-medium text-background">
+                      Total a Pagar
+                    </span>
+                    <span className="text-3xl font-bold text-secondary">
+                      Gs. {totalPrice.toLocaleString("es-PY")}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Pay Button */}
+                <Button
+                  onClick={handlePayment}
+                  disabled={
+                    !isFormValid ||
+                    passengerDetails.length === 0 ||
+                    !selectedPaymentMethod ||
+                    isProcessing
+                  }
+                  className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground h-14 text-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
+                >
+                  {isProcessing ? (
+                    <>
+                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                      {selectedPaymentMethod === "tarjeta"
+                        ? "Procesando pago..."
+                        : "Redirigiendo a Pagopar..."}
+                    </>
+                  ) : passengerDetails.length === 0 ? (
+                    "Cargando..."
+                  ) : isFormValid && selectedPaymentMethod ? (
+                    `Pagar con ${selectedPaymentMethod === "tarjeta" ? "Tarjeta" : "Pagopar"}`
+                  ) : (
+                    "Completa los datos"
+                  )}
+                </Button>
+              </Card>
+            </div>
           </div>
         </div>
       </div>
@@ -1010,9 +1064,9 @@ export default function CheckoutPage() {
       {/* Overlay de procesamiento */}
       {isProcessing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-          <div className="text-center max-w-md p-8">
+          <div className="text-center max-w-md p-8 bg-background/5 backdrop-blur-sm rounded-2xl border border-background/20">
             <div
-              className={`w-24 h-24 ${selectedPaymentMethod === "tarjeta" ? "bg-blue-500/10" : "bg-purple-500/10"} rounded-full flex items-center justify-center mx-auto mb-6`}
+              className={`w-24 h-24 ${selectedPaymentMethod === "tarjeta" ? "bg-blue-500/10" : "bg-purple-500/10"} rounded-full flex items-center justify-center mx-auto mb-6 border ${selectedPaymentMethod === "tarjeta" ? "border-blue-500/30" : "border-purple-500/30"}`}
             >
               {selectedPaymentMethod === "tarjeta" ? (
                 <CreditCard className="h-12 w-12 text-blue-500" />
@@ -1020,12 +1074,12 @@ export default function CheckoutPage() {
                 <Wallet className="h-12 w-12 text-purple-500" />
               )}
             </div>
-            <h3 className="text-2xl font-bold mb-2">
+            <h3 className="text-2xl font-bold mb-2 text-background">
               {selectedPaymentMethod === "tarjeta"
                 ? "Procesando pago con Tarjeta"
                 : "Redirigiendo a Pagopar"}
             </h3>
-            <p className="text-muted-foreground mb-4">
+            <p className="text-background/60 mb-4">
               {selectedPaymentMethod === "tarjeta"
                 ? "Tu reserva se confirmará en instantes..."
                 : "Estamos preparando tu pago seguro. Serás redirigido automáticamente."}

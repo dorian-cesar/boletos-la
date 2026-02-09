@@ -15,8 +15,14 @@ export function BookingProgress() {
   const { step } = useBookingStore();
 
   return (
-    <div className="bg-background border-b border-border sticky top-0 z-40">
-      <div className="container mx-auto px-4 py-6">
+    <div className="bg-gradient-to-b from-[#1a2332] to-[#0f1419] border-b border-background/10 sticky top-0 z-40">
+      {/* Background Effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-secondary/10 rounded-full blur-[100px]" />
+      </div>
+
+      <div className="container mx-auto px-4 py-6 relative z-10">
         <div className="flex items-center justify-between max-w-3xl mx-auto">
           {steps.map((s, index) => (
             <div key={s.id} className="flex items-center">
@@ -24,12 +30,12 @@ export function BookingProgress() {
               <div className="flex flex-col items-center">
                 <div
                   className={cn(
-                    "w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500",
+                    "w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 border-2 border-background/20",
                     step > s.id
                       ? "bg-primary text-primary-foreground"
                       : step === s.id
-                        ? "bg-secondary text-secondary-foreground animate-pulse-glow"
-                        : "bg-muted text-muted-foreground",
+                        ? "bg-secondary text-secondary-foreground animate-pulse-glow shadow-lg shadow-secondary/30"
+                        : "bg-background/10 text-background/60",
                   )}
                 >
                   {step > s.id ? (
@@ -41,7 +47,7 @@ export function BookingProgress() {
                 <span
                   className={cn(
                     "mt-2 text-xs font-medium text-center hidden sm:block transition-colors duration-300",
-                    step >= s.id ? "text-foreground" : "text-muted-foreground",
+                    step >= s.id ? "text-background" : "text-background/60",
                   )}
                 >
                   {s.name}
@@ -50,7 +56,7 @@ export function BookingProgress() {
 
               {/* Connector Line */}
               {index < steps.length - 1 && (
-                <div className="w-12 sm:w-24 lg:w-32 h-1 mx-2 rounded-full overflow-hidden bg-muted">
+                <div className="w-12 sm:w-24 lg:w-32 h-1 mx-2 rounded-full overflow-hidden bg-background/10">
                   <div
                     className={cn(
                       "h-full bg-primary transition-all duration-700 ease-out",
