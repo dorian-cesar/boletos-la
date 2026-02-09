@@ -352,12 +352,80 @@ export default function ConfirmationPageContent({
     }
   };
 
-  if (!mounted || !selectedOutboundTrip) {
+  // Agrega DEBUG para ver qué está pasando:
+  console.log("🔍 DEBUG - Estado inicial:", {
+    mounted,
+    selectedOutboundTrip: !!selectedOutboundTrip,
+    paymentStatus,
+    hash,
+  });
+
+  // MODIFICA la condición para permitir mostrar error incluso sin selectedOutboundTrip
+  if (!mounted) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-16 w-16 text-primary mx-auto mb-4 animate-spin" />
           <p className="text-muted-foreground">Cargando confirmación...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Si no hay selectedOutboundTrip pero ya tenemos estado de pago, mostrar error
+  if (!selectedOutboundTrip) {
+    console.log(
+      "⚠️ No hay selectedOutboundTrip, pero paymentStatus es:",
+      paymentStatus,
+    );
+
+    return (
+      <div className="min-h-screen">
+        <BookingProgress />
+        <div className="container mx-auto px-4 py-8">
+          <Card className="p-6 bg-amber-50 border-amber-200">
+            <div className="flex items-start gap-4">
+              <AlertCircle className="h-8 w-8 text-amber-600 mt-0.5 flex-shrink-0" />
+              <div className="flex-1">
+                <h3 className="font-semibold text-amber-800 mb-2">
+                  Información de reserva no disponible
+                </h3>
+                <p className="text-sm text-amber-600 mb-4">
+                  No pudimos recuperar los detalles de tu reserva. Esto puede
+                  pasar si:
+                </p>
+                <ul className="text-sm text-amber-600 mb-4 list-disc pl-4">
+                  <li>La sesión expiró</li>
+                  <li>Limpiaste el caché del navegador</li>
+                  <li>El pago no se completó correctamente</li>
+                </ul>
+
+                <div className="bg-amber-100 p-3 rounded mb-4">
+                  <p className="text-xs font-medium">Información disponible:</p>
+                  <p className="text-xs">Hash: {hash}</p>
+                  <p className="text-xs">Estado pago: {paymentStatus}</p>
+                  <p className="text-xs">
+                    Fecha: {new Date().toLocaleString()}
+                  </p>
+                </div>
+
+                <div className="flex gap-3">
+                  <Button
+                    onClick={() => router.push("/")}
+                    className="bg-primary"
+                  >
+                    Volver al inicio
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => router.push("/booking/checkout")}
+                  >
+                    Intentar nuevamente
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
     );
