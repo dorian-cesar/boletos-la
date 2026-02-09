@@ -758,7 +758,7 @@ export default function CheckoutPage() {
                       </div>
                       <div className="flex-1">
                         <p className="font-medium text-background">
-                          Pago con Tarjeta
+                          Simulación de Pago (Tarjeta)
                         </p>
                         <p className="text-xs text-background/60">
                           Simulación de pago inmediato

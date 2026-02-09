@@ -23,6 +23,7 @@ import {
   AlertCircle,
   Wallet,
   CreditCard,
+  Send,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -55,6 +56,12 @@ export default function ConfirmationPageContent({
   const [showPaymentStatus, setShowPaymentStatus] = useState(true);
   const [isTarjetaPayment, setIsTarjetaPayment] = useState(false);
 
+  // ESTADO PARA EMAIL AUTOMÁTICO
+  const [autoEmailStatus, setAutoEmailStatus] = useState<
+    "idle" | "sending" | "sent" | "failed"
+  >("idle");
+  const [autoEmailMessage, setAutoEmailMessage] = useState<string>("");
+
   const {
     tripType,
     departureDate,
@@ -77,7 +84,95 @@ export default function ConfirmationPageContent({
     (c) => c.id === selectedOutboundTrip?.destination,
   );
 
-  // 1. DETECTAR TIPO DE PAGO AL CARGAR
+  // 1. FUNCIÓN PARA ENVIAR EMAIL DE CONFIRMACIÓN AUTOMÁTICO
+  const sendConfirmationEmail = async (
+    passengerEmail: string,
+  ): Promise<boolean> => {
+    if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) {
+      console.warn("⚠️ No hay datos suficientes para enviar email");
+      return false;
+    }
+
+    try {
+      setAutoEmailStatus("sending");
+      setAutoEmailMessage("Enviando boleto por email...");
+
+      // Preparar datos para el endpoint de email
+      const emailPayload = {
+        to: passengerEmail,
+        reservaCodigo: bookingReference,
+        documento: primaryPassenger.documentNumber,
+        origen: originCity?.name || "",
+        destino: destinationCity?.name || "",
+        horaSalida: selectedOutboundTrip.departureTime,
+        horaLlegada: selectedOutboundTrip.arrivalTime,
+        fechaViaje: format(new Date(departureDate || ""), "EEEE d 'de' MMMM", {
+          locale: es,
+        }),
+        duracion: selectedOutboundTrip.duration,
+        empresa: selectedOutboundTrip.company,
+        servicioTipo: selectedOutboundTrip.busType,
+        asientos: selectedSeats.map((s) => s.number).join(", "),
+        terminal: `Terminal de Ómnibus de ${originCity?.name}`,
+        puerta: "10",
+        pasajeroNombre: `${primaryPassenger.firstName} ${primaryPassenger.lastName}`,
+        telefono: primaryPassenger.phone,
+        subtotal: `Gs. ${Math.round(totalPrice * 0.82).toLocaleString("es-PY")}`,
+        iva: `Gs. ${Math.round(totalPrice * 0.1).toLocaleString("es-PY")}`,
+        cargoServicio: `Gs. ${Math.round(totalPrice * 0.08).toLocaleString("es-PY")}`,
+        total: `Gs. ${totalPrice.toLocaleString("es-PY")}`,
+        pagoFecha: format(new Date(), "dd/MM/yyyy 'a las' HH:mm"),
+        metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
+      };
+
+      console.log("📤 Enviando email de confirmación automático...", {
+        reserva: bookingReference,
+        email: passengerEmail,
+      });
+
+      // Llamar al endpoint interno de Next.js
+      const response = await fetch("/api/email/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(emailPayload),
+        signal: AbortSignal.timeout(15000), // 15 segundos timeout
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.warn("⚠️ Email de confirmación no enviado:", result);
+        setAutoEmailStatus("failed");
+        setAutoEmailMessage(
+          `Error: ${result.error || "No se pudo enviar el email"}`,
+        );
+        return false;
+      }
+
+      console.log("✅ Email de confirmación enviado exitosamente:", result);
+      setAutoEmailStatus("sent");
+      setAutoEmailMessage("Boleto enviado al correo electrónico");
+
+      return true;
+    } catch (error: any) {
+      console.error("❌ Error enviando email de confirmación:", error);
+
+      let errorMessage = "Error al enviar el email";
+      if (error.name === "AbortError") {
+        errorMessage = "Timeout: El envío de email tardó demasiado";
+      } else if (error.message.includes("network")) {
+        errorMessage = "Error de red al enviar el email";
+      }
+
+      setAutoEmailStatus("failed");
+      setAutoEmailMessage(errorMessage);
+      return false;
+    }
+  };
+
+  // 2. DETECTAR TIPO DE PAGO AL CARGAR
   useEffect(() => {
     console.log("🔗 Hash recibido en la URL:", hash);
 
@@ -111,8 +206,8 @@ export default function ConfirmationPageContent({
     }
   }, [setStep, hash]);
 
-  // 2. FUNCIÓN PARA PAGO CON TARJETA
-  const handleTarjetaPayment = () => {
+  // 3. FUNCIÓN PARA PAGO CON TARJETA
+  const handleTarjetaPayment = async () => {
     setIsTarjetaPayment(true);
 
     // 1. Crear referencia de reserva si no existe
@@ -137,11 +232,17 @@ export default function ConfirmationPageContent({
       cancelado: false,
     });
 
-    // 4. Guardar en base de datos
+    // 4. Enviar email de confirmación automático
+    if (primaryPassenger?.email) {
+      console.log("📧 Enviando email automático para pago con tarjeta...");
+      await sendConfirmationEmail(primaryPassenger.email);
+    }
+
+    // 5. Guardar en base de datos
     saveTarjetaBookingToDatabase();
   };
 
-  // 3. FUNCIÓN PARA VERIFICAR PAGO CON PAGOPAR
+  // 4. FUNCIÓN PARA VERIFICAR PAGO CON PAGOPAR
   const verifyPagoparPayment = async (hash: string) => {
     try {
       console.log("🔄 Consultando estado en Pagopar con hash:", hash);
@@ -159,7 +260,6 @@ export default function ConfirmationPageContent({
         const payment = data.resultado[0];
         setPaymentDetails(payment);
 
-        // ✅ LÓGICA CORREGIDA:
         if (payment.pagado === true) {
           // PAGO EXITOSO
           console.log("✅ PAGO CONFIRMADO POR PAGOPAR");
@@ -173,6 +273,12 @@ export default function ConfirmationPageContent({
             setStorePaymentStatus("completed");
           }
 
+          // Enviar email de confirmación automático
+          if (primaryPassenger?.email) {
+            console.log("📧 Enviando email automático para pago Pagopar...");
+            await sendConfirmationEmail(primaryPassenger.email);
+          }
+
           await saveBookingToDatabase(payment, hash);
         } else if (payment.cancelado === true) {
           // PAGO CANCELADO
@@ -182,9 +288,6 @@ export default function ConfirmationPageContent({
           // ✅ ESTADO CORRECTO: NO HAY PAGO (no "pending")
           console.log("🚫 PAGO NO REALIZADO - Usuario no completó el pago");
           setPaymentStatus("failed");
-
-          // Opcional: mostrar botón para reintentar pago
-          // O redirigir al checkout nuevamente
         } else {
           // Caso inesperado
           console.log("⚠️ Estado desconocido del pago");
@@ -200,7 +303,7 @@ export default function ConfirmationPageContent({
     }
   };
 
-  // 4. GUARDAR RESERVA EN BASE DE DATOS PARA PAGOPAR
+  // 5. GUARDAR RESERVA EN BASE DE DATOS PARA PAGOPAR
   const saveBookingToDatabase = async (payment: any, hash: string) => {
     try {
       setSavingToDB(true);
@@ -246,7 +349,7 @@ export default function ConfirmationPageContent({
     }
   };
 
-  // 5. GUARDAR RESERVA EN BASE DE DATOS PARA TARJETA
+  // 6. GUARDAR RESERVA EN BASE DE DATOS PARA TARJETA
   const saveTarjetaBookingToDatabase = async () => {
     try {
       setSavingToDB(true);
@@ -292,43 +395,187 @@ export default function ConfirmationPageContent({
     }
   };
 
-  // 6. FUNCIONES EXISTENTES
+  // 7. FUNCIÓN PARA DESCARGAR PDF (ya existente)
   const handleDownloadPDF = async () => {
-    if (!selectedOutboundTrip || !bookingReference) return;
+    if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) return;
 
     setIsGeneratingPDF(true);
     try {
-      const pdfBlob = await generateTicketPDF({
-        bookingReference,
-        outboundTrip: selectedOutboundTrip,
-        returnTrip: selectedReturnTrip,
-        seats: selectedSeats,
-        returnSeats: selectedReturnSeats,
-        passengers: passengerDetails,
-        totalPrice,
-        originCity: originCity?.name || "",
-        destinationCity: destinationCity?.name || "",
-        departureDate: format(new Date(departureDate || ""), "dd MMM yyyy", {
+      // Preparar datos para el endpoint
+      const pdfPayload = {
+        to: primaryPassenger.email,
+        reservaCodigo: bookingReference,
+        documento: primaryPassenger.documentNumber,
+        origen: originCity?.name || "",
+        destino: destinationCity?.name || "",
+        horaSalida: selectedOutboundTrip.departureTime,
+        horaLlegada: selectedOutboundTrip.arrivalTime,
+        fechaViaje: format(new Date(departureDate || ""), "EEEE d 'de' MMMM", {
           locale: es,
         }),
-        returnDate: returnDate
-          ? format(new Date(returnDate), "dd MMM yyyy", { locale: es })
-          : undefined,
+        duracion: selectedOutboundTrip.duration,
+        empresa: selectedOutboundTrip.company,
+        servicioTipo: selectedOutboundTrip.busType,
+        asientos: selectedSeats.map((s) => s.number).join(", "),
+        terminal: `Terminal de Ómnibus de ${originCity?.name}`,
+        puerta: "10",
+        pasajeroNombre: `${primaryPassenger.firstName} ${primaryPassenger.lastName}`,
+        telefono: primaryPassenger.phone,
+        subtotal: `Gs. ${Math.round(totalPrice * 0.82).toLocaleString("es-PY")}`,
+        iva: `Gs. ${Math.round(totalPrice * 0.1).toLocaleString("es-PY")}`,
+        cargoServicio: `Gs. ${Math.round(totalPrice * 0.08).toLocaleString("es-PY")}`,
+        total: `Gs. ${totalPrice.toLocaleString("es-PY")}`,
+        pagoFecha: format(new Date(), "dd/MM/yyyy 'a las' HH:mm"),
+        metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
+      };
+
+      console.log("📤 Enviando solicitud a API interna...");
+
+      // Usar el endpoint interno de Next.js
+      const response = await fetch("/api/tickets/download", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(pdfPayload),
       });
 
-      downloadPDF(pdfBlob, `boleto-${bookingReference}.pdf`);
-    } catch (error) {
-      console.error("Error generando PDF:", error);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Error ${response.status}`);
+      }
+
+      // Descargar el PDF
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `boleto-${bookingReference}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+
+      // Limpiar
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      console.log("✅ PDF descargado mediante API interna");
+    } catch (error: any) {
+      console.error("❌ Error descargando PDF:", error);
+
+      // Mostrar error al usuario
+      alert(`Error al generar el PDF: ${error.message}`);
+
+      // Opcional: fallback a generación local
+      try {
+        console.log("🔄 Intentando generación local como fallback...");
+        const pdfBlob = await generateTicketPDF({
+          bookingReference,
+          outboundTrip: selectedOutboundTrip,
+          returnTrip: selectedReturnTrip,
+          seats: selectedSeats,
+          returnSeats: selectedReturnSeats,
+          passengers: passengerDetails,
+          totalPrice,
+          originCity: originCity?.name || "",
+          destinationCity: destinationCity?.name || "",
+          departureDate: format(new Date(departureDate || ""), "dd MMM yyyy", {
+            locale: es,
+          }),
+          returnDate: returnDate
+            ? format(new Date(returnDate), "dd MMM yyyy", { locale: es })
+            : undefined,
+        });
+
+        downloadPDF(pdfBlob, `boleto-${bookingReference}.pdf`);
+      } catch (fallbackError) {
+        console.error("💥 Error en fallback también:", fallbackError);
+      }
     } finally {
       setIsGeneratingPDF(false);
     }
   };
 
+  // 8. FUNCIÓN PARA ENVIAR EMAIL MANUAL (botón)
   const handleSendEmail = async () => {
+    if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) return;
+
     setIsSendingEmail(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setEmailSent(true);
-    setIsSendingEmail(false);
+    setEmailSent(false);
+
+    try {
+      // Preparar datos para el endpoint de email
+      const emailPayload = {
+        to: primaryPassenger.email,
+        reservaCodigo: bookingReference,
+        documento: primaryPassenger.documentNumber,
+        origen: originCity?.name || "",
+        destino: destinationCity?.name || "",
+        horaSalida: selectedOutboundTrip.departureTime,
+        horaLlegada: selectedOutboundTrip.arrivalTime,
+        fechaViaje: format(new Date(departureDate || ""), "EEEE d 'de' MMMM", {
+          locale: es,
+        }),
+        duracion: selectedOutboundTrip.duration,
+        empresa: selectedOutboundTrip.company,
+        servicioTipo: selectedOutboundTrip.busType,
+        asientos: selectedSeats.map((s) => s.number).join(", "),
+        terminal: `Terminal de Ómnibus de ${originCity?.name}`,
+        puerta: "10",
+        pasajeroNombre: `${primaryPassenger.firstName} ${primaryPassenger.lastName}`,
+        telefono: primaryPassenger.phone,
+        subtotal: `Gs. ${Math.round(totalPrice * 0.82).toLocaleString("es-PY")}`,
+        iva: `Gs. ${Math.round(totalPrice * 0.1).toLocaleString("es-PY")}`,
+        cargoServicio: `Gs. ${Math.round(totalPrice * 0.08).toLocaleString("es-PY")}`,
+        total: `Gs. ${totalPrice.toLocaleString("es-PY")}`,
+        pagoFecha: format(new Date(), "dd/MM/yyyy 'a las' HH:mm"),
+        metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
+      };
+
+      console.log("📤 Enviando email manual...");
+
+      // Llamar al endpoint interno de Next.js
+      const response = await fetch("/api/email/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(emailPayload),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.error || result.message || `Error ${response.status}`,
+        );
+      }
+
+      console.log("✅ Email enviado exitosamente:", result);
+
+      // Marcar como enviado
+      setEmailSent(true);
+
+      // Mostrar notificación de éxito
+      alert(`✅ Boleto enviado exitosamente a ${primaryPassenger.email}`);
+    } catch (error: any) {
+      console.error("❌ Error enviando email:", error);
+
+      // Mostrar error específico al usuario
+      let errorMessage =
+        "Error al enviar el email. Por favor, intenta descargar el PDF manualmente.";
+
+      if (error.message.includes("Timeout")) {
+        errorMessage =
+          "El servicio de email está tardando demasiado. Por favor, intenta nuevamente o descarga el PDF.";
+      } else if (error.message.includes("Formato de email")) {
+        errorMessage =
+          "El formato de email es inválido. Verifica tu dirección de correo.";
+      }
+
+      alert(`⚠️ ${errorMessage}`);
+    } finally {
+      setIsSendingEmail(false);
+    }
   };
 
   const handleCopyReference = () => {
@@ -344,21 +591,13 @@ export default function ConfirmationPageContent({
     router.push("/");
   };
 
-  // 7. COMPLETAR PAGO EN PAGOPAR
+  // 9. COMPLETAR PAGO EN PAGOPAR
   const handleCompletePayment = () => {
     if (pagoparHash) {
       localStorage.removeItem("pagopar_last_hash");
       window.location.href = `https://www.pagopar.com/pagos/${pagoparHash}`;
     }
   };
-
-  // Agrega DEBUG para ver qué está pasando:
-  console.log("🔍 DEBUG - Estado inicial:", {
-    mounted,
-    selectedOutboundTrip: !!selectedOutboundTrip,
-    paymentStatus,
-    hash,
-  });
 
   // MODIFICA la condición para permitir mostrar error incluso sin selectedOutboundTrip
   if (!mounted) {
@@ -429,7 +668,7 @@ export default function ConfirmationPageContent({
                     <Button
                       variant="outline"
                       onClick={() => router.push("/booking/checkout")}
-                      className="border-background/30 text-background hover:bg-background/10"
+                      className="border-background/30 text-foreground hover:bg-background/10"
                     >
                       Intentar nuevamente
                     </Button>
@@ -621,6 +860,59 @@ export default function ConfirmationPageContent({
         <div className="container mx-auto px-4 py-8">
           {/* Mostrar estado de pago */}
           {showPaymentStatus && renderPaymentStatus()}
+
+          {/* Notificación de email automático */}
+          {autoEmailStatus !== "idle" && (
+            <div className="mb-6 animate-fade-in">
+              <Card
+                className={`p-4 backdrop-blur-sm border ${
+                  autoEmailStatus === "sent"
+                    ? "bg-green-500/10 border-green-500/30"
+                    : autoEmailStatus === "sending"
+                      ? "bg-blue-500/10 border-blue-500/30"
+                      : "bg-amber-500/10 border-amber-500/30"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  {autoEmailStatus === "sent" ? (
+                    <CheckCircle2 className="h-6 w-6 text-green-400" />
+                  ) : autoEmailStatus === "sending" ? (
+                    <Loader2 className="h-6 w-6 text-blue-400 animate-spin" />
+                  ) : (
+                    <AlertCircle className="h-6 w-6 text-amber-400" />
+                  )}
+                  <div className="flex-1">
+                    <p
+                      className={`font-medium ${
+                        autoEmailStatus === "sent"
+                          ? "text-green-300"
+                          : autoEmailStatus === "sending"
+                            ? "text-blue-300"
+                            : "text-amber-300"
+                      }`}
+                    >
+                      {autoEmailStatus === "sending"
+                        ? "Enviando boleto por email..."
+                        : autoEmailStatus === "sent"
+                          ? "✅ Boleto enviado al correo electrónico"
+                          : "⚠️ No se pudo enviar el email automáticamente"}
+                    </p>
+                    <p
+                      className={`text-sm ${
+                        autoEmailStatus === "sent"
+                          ? "text-green-400"
+                          : autoEmailStatus === "sending"
+                            ? "text-blue-400"
+                            : "text-amber-400"
+                      }`}
+                    >
+                      {autoEmailMessage}
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          )}
 
           {/* Success Header */}
           <div className="text-center mb-12 animate-bounce-in">
@@ -990,7 +1282,10 @@ export default function ConfirmationPageContent({
                     className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isGeneratingPDF ? (
-                      <span className="animate-pulse">Generando PDF...</span>
+                      <>
+                        <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                        Generando PDF...
+                      </>
                     ) : (
                       <>
                         <Download className="h-5 w-5 mr-2" />
@@ -1008,14 +1303,17 @@ export default function ConfirmationPageContent({
                     {emailSent ? (
                       <>
                         <Check className="h-5 w-5 mr-2" />
-                        Enviado al correo
+                        Reenviar por Correo
                       </>
                     ) : isSendingEmail ? (
-                      <span className="animate-pulse">Enviando...</span>
+                      <>
+                        <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                        Enviando...
+                      </>
                     ) : (
                       <>
-                        <Mail className="h-5 w-5 mr-2" />
-                        Enviar por Correo
+                        <Send className="h-5 w-5 mr-2" />
+                        Reenviar por Correo
                       </>
                     )}
                   </Button>
