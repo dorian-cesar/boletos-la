@@ -67,6 +67,7 @@ export default function CheckoutPage() {
     setStep,
     setBookingReference,
     setPaymentStatus,
+    resetBooking,
   } = useBookingStore();
 
   const originCity = cities.find((c) => c.id === selectedOutboundTrip?.origin);
@@ -209,37 +210,39 @@ export default function CheckoutPage() {
 
     try {
       if (selectedPaymentMethod === "tarjeta") {
-        // Lógica existente para Webpay
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-        const reference = `BL-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+        // ✅ PAGO CON TARJETA - SIMULACIÓN EXITOSA
+        console.log("💳 Procesando pago con tarjeta (simulación)");
+
+        // 1. Generar referencia única
+        const reference = `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+
+        // 2. Actualizar store
         setBookingReference(reference);
         setPaymentStatus("completed");
-        router.push("/booking/confirmation");
+
+        // 3. Redirigir a confirmación con hash "tarjeta"
+        router.push("/booking/confirmation/tarjeta");
       } else if (selectedPaymentMethod === "pagopar") {
-        // 1. Verificar que todos los datos estén completos
+        // Lógica existente de Pagopar...
         const primaryPassenger = passengerDetails[0];
         if (!primaryPassenger) {
           throw new Error("No hay datos del pasajero");
         }
 
-        // 2. Preparar datos EXACTAMENTE como los necesita Pagopar
         const paymentData = {
           montoTotal: totalPrice,
           datosComprador: {
             nombre: primaryPassenger.firstName,
             apellido: primaryPassenger.lastName,
             email: primaryPassenger.email,
-            telefono: primaryPassenger.phone.replace(/\D/g, ""), // Solo números
+            telefono: primaryPassenger.phone.replace(/\D/g, ""),
             ruc: primaryPassenger.documentNumber,
           },
         };
 
         console.log("📤 Enviando a Pagopar:", paymentData);
-
-        // 3. Encriptar (como ya tienes)
         const encryptedData = encryptData(paymentData);
 
-        // 4. Llamar a TU API para crear el pedido en Pagopar
         const response = await fetch("/api/pagopar/init", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -249,12 +252,8 @@ export default function CheckoutPage() {
         const result = await response.json();
         console.log("📥 Respuesta Pagopar:", result);
 
-        // 5. Si es exitoso, redirigir a Pagopar para pagar
         if (result.success === true && result.hash) {
-          // IMPORTANTE: Guardar temporalmente el hash para después
           localStorage.setItem("pagopar_last_hash", result.hash);
-
-          // Redirigir a Pagopar para que el usuario pague
           window.location.href = `https://www.pagopar.com/pagos/${result.hash}`;
         } else {
           throw new Error(result.message || "Error al crear pago en Pagopar");
@@ -734,9 +733,9 @@ export default function CheckoutPage() {
                       <CreditCard className="h-4 w-4 text-white" />
                     </div>
                     <div className="flex-1">
-                      <p className="font-medium">Tarjeta de Crédito</p>
+                      <p className="font-medium">Pago con Tarjeta</p>
                       <p className="text-xs text-muted-foreground">
-                        Visa, Mastercard, Amex
+                        Simulación de pago inmediato
                       </p>
                     </div>
                     {selectedPaymentMethod === "tarjeta" && (
@@ -744,14 +743,16 @@ export default function CheckoutPage() {
                     )}
                   </div>
                   <div className="flex flex-wrap gap-1">
-                    {["Visa", "Mastercard", "Amex"].map((card) => (
-                      <span
-                        key={card}
-                        className="text-xs px-2 py-1 bg-muted rounded"
-                      >
-                        {card}
-                      </span>
-                    ))}
+                    {["Pago instantáneo", "Sin redirección", "Simulación"].map(
+                      (card) => (
+                        <span
+                          key={card}
+                          className="text-xs px-2 py-1 bg-muted rounded"
+                        >
+                          {card}
+                        </span>
+                      ),
+                    )}
                   </div>
                 </Card>
 
@@ -801,16 +802,16 @@ export default function CheckoutPage() {
                       <div className="flex items-center gap-2">
                         <Shield className="h-5 w-5 text-blue-500" />
                         <span className="text-sm font-medium">
-                          Pago con Tarjeta
+                          Pago con Tarjeta (Simulación)
                         </span>
                       </div>
                       <Badge variant="outline" className="bg-background">
-                        Pago Seguro
+                        Pago Inmediato
                       </Badge>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Aceptamos tarjetas Visa, Mastercard y American Express con
-                      seguridad SSL.
+                      Esta es una simulación de pago exitoso. Tu reserva se
+                      confirmará inmediatamente sin necesidad de redirección.
                     </p>
                   </div>
                 ) : (
@@ -827,14 +828,8 @@ export default function CheckoutPage() {
                       </div>
                       <p className="text-sm text-muted-foreground">
                         Pagá con tarjeta, transferencia o billetera electrónica
-                        desde Paraguay.
+                        desde Paraguay. Serás redirigido al portal de Pagopar.
                       </p>
-                      <ul className="text-xs text-muted-foreground space-y-1 pl-4 list-disc">
-                        <li>Pago en supermercados, farmacias y agencias</li>
-                        <li>Tarjetas de crédito y débito</li>
-                        <li>Transferencia bancaria</li>
-                        <li>Billeteras electrónicas</li>
-                      </ul>
                     </div>
                   )
                 )}
@@ -847,9 +842,7 @@ export default function CheckoutPage() {
                     Transacción Segura
                   </p>
                   <p className="text-muted-foreground">
-                    Tu información está protegida con encriptación SSL. Los
-                    datos sensibles nunca son almacenados en nuestros
-                    servidores.
+                    Tu información está protegida con encriptación SSL.
                   </p>
                 </div>
               </div>
@@ -988,46 +981,7 @@ export default function CheckoutPage() {
                     Gs. {totalPrice.toLocaleString("es-PY")}
                   </span>
                 </div>
-                {selectedPaymentMethod === "tarjeta" && (
-                  <div className="mt-2 text-sm text-muted-foreground">
-                    <p>Posible cobro en dólares según tu banco</p>
-                  </div>
-                )}
               </div>
-
-              {/* Validation Summary */}
-              {passengerDetails.length === 0 ? (
-                <div className="mb-4 p-3 bg-amber-500/10 rounded-lg border border-amber-500/20">
-                  <div className="flex items-start gap-2">
-                    <AlertCircle className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="text-sm font-medium text-amber-700">
-                        Inicializando formulario...
-                      </p>
-                      <p className="text-xs text-amber-600/80 mt-1">
-                        Por favor espera mientras se cargan los datos
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                !isFormValid && (
-                  <div className="mb-4 p-3 bg-destructive/10 rounded-lg border border-destructive/20">
-                    <div className="flex items-start gap-2">
-                      <AlertCircle className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-destructive">
-                          Datos incompletos
-                        </p>
-                        <p className="text-xs text-destructive/80 mt-1">
-                          Completa todos los campos obligatorios (*) para
-                          continuar
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )
-              )}
 
               {/* Pay Button */}
               <Button
@@ -1046,10 +1000,6 @@ export default function CheckoutPage() {
                     ? `Pagar con ${selectedPaymentMethod === "tarjeta" ? "Tarjeta" : "Pagopar"}`
                     : "Completa los datos"}
               </Button>
-
-              <p className="text-xs text-muted-foreground text-center mt-4">
-                Al pagar aceptas nuestros términos y condiciones
-              </p>
             </Card>
           </div>
         </div>
@@ -1075,14 +1025,9 @@ export default function CheckoutPage() {
                   </div>
                   <h3 className="text-2xl font-bold mb-2">
                     {selectedPaymentMethod === "tarjeta"
-                      ? "Pago con Tarjeta"
-                      : "Pagopar"}
+                      ? "Confirmar Pago con Tarjeta"
+                      : "Redirigiendo a Pagopar"}
                   </h3>
-                  <p className="text-muted-foreground">
-                    {selectedPaymentMethod === "tarjeta"
-                      ? "Serás redirigido al portal de pago seguro"
-                      : "Serás redirigido al portal de pago de Pagopar"}
-                  </p>
                 </div>
 
                 <div className="bg-muted/50 rounded-xl p-4 mb-6">
@@ -1111,7 +1056,9 @@ export default function CheckoutPage() {
                         : "bg-purple-600 hover:bg-purple-700",
                     )}
                   >
-                    Confirmar Pago
+                    {selectedPaymentMethod === "tarjeta"
+                      ? "Confirmar Pago"
+                      : "Ir a Pagopar"}
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
                 </div>
@@ -1119,10 +1066,11 @@ export default function CheckoutPage() {
             ) : (
               <div className="text-center py-8">
                 <Loader2 className="h-16 w-16 text-primary mx-auto mb-4 animate-spin" />
-                <h3 className="text-xl font-bold mb-2">Procesando pago...</h3>
-                <p className="text-muted-foreground">
-                  Por favor espera mientras confirmamos tu transacción
-                </p>
+                <h3 className="text-xl font-bold mb-2">
+                  {selectedPaymentMethod === "tarjeta"
+                    ? "Procesando pago..."
+                    : "Redirigiendo a Pagopar..."}
+                </h3>
               </div>
             )}
           </div>

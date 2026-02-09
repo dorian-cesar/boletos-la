@@ -22,6 +22,7 @@ import {
   Loader2,
   AlertCircle,
   Wallet,
+  CreditCard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -44,14 +45,15 @@ export default function ConfirmationPageContent({
   const [copied, setCopied] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
 
-  // ESTADOS PARA PAGOPAR
+  // ESTADOS PARA PAGO
   const [pagoparHash, setPagoparHash] = useState<string | null>(hash);
-  const [pagoparStatus, setPagoparStatus] = useState<
+  const [paymentStatus, setPaymentStatus] = useState<
     "checking" | "paid" | "pending" | "failed" | "cancelled"
   >("checking");
-  const [pagoparDetails, setPagoparDetails] = useState<any>(null);
+  const [paymentDetails, setPaymentDetails] = useState<any>(null);
   const [savingToDB, setSavingToDB] = useState(false);
   const [showPaymentStatus, setShowPaymentStatus] = useState(true);
+  const [isTarjetaPayment, setIsTarjetaPayment] = useState(false);
 
   const {
     tripType,
@@ -67,7 +69,7 @@ export default function ConfirmationPageContent({
     setStep,
     resetBooking,
     setBookingReference,
-    setPaymentStatus,
+    setPaymentStatus: setStorePaymentStatus,
   } = useBookingStore();
 
   const originCity = cities.find((c) => c.id === selectedOutboundTrip?.origin);
@@ -75,24 +77,27 @@ export default function ConfirmationPageContent({
     (c) => c.id === selectedOutboundTrip?.destination,
   );
 
-  // 1. AL CARGAR LA PÁGINA - Verificar si viene de Pagopar
+  // 1. DETECTAR TIPO DE PAGO AL CARGAR
   useEffect(() => {
     console.log("🔗 Hash recibido en la URL:", hash);
 
     setMounted(true);
     setStep(4);
 
-    if (hash && hash !== "undefined" && hash !== "null") {
+    // DETECCIÓN DE PAGO CON TARJETA
+    if (hash === "tarjeta") {
+      console.log("💳 PAGO CON TARJETA DETECTADO");
+      handleTarjetaPayment();
+      return;
+    }
+
+    // Lógica para Pagopar (con hash válido)
+    if (hash && hash !== "undefined" && hash !== "null" && hash !== "tarjeta") {
       console.log("✅ Hash válido recibido de Pagopar:", hash);
       setPagoparHash(hash);
-
-      // Verificar estado del pedido con Pagopar
       verifyPagoparPayment(hash);
-
-      // Limpiar localStorage si existe
       localStorage.removeItem("pagopar_last_hash");
     } else {
-      // Si no hay hash en la URL, verificar localStorage
       const savedHash = localStorage.getItem("pagopar_last_hash");
       if (savedHash) {
         console.log("🔍 Hash encontrado en localStorage:", savedHash);
@@ -100,20 +105,47 @@ export default function ConfirmationPageContent({
         verifyPagoparPayment(savedHash);
         localStorage.removeItem("pagopar_last_hash");
       } else {
-        console.log("⚠️ No se encontró hash de Pagopar en URL ni localStorage");
-        // Asumir que ya pagó con tarjeta
-        setPagoparStatus("paid");
-        setShowPaymentStatus(false);
+        console.log("⚠️ No se encontró hash");
+        setPaymentStatus("failed");
       }
     }
   }, [setStep, hash]);
 
-  // 2. FUNCIÓN PARA VERIFICAR ESTADO CON PAGOPAR
+  // 2. FUNCIÓN PARA PAGO CON TARJETA
+  const handleTarjetaPayment = () => {
+    setIsTarjetaPayment(true);
+
+    // 1. Crear referencia de reserva si no existe
+    if (!bookingReference) {
+      const newReference = `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+      setBookingReference(newReference);
+      setStorePaymentStatus("completed");
+    }
+
+    // 2. Marcar como pagado
+    setPaymentStatus("paid");
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 5000);
+
+    // 3. Configurar detalles de pago con tarjeta
+    setPaymentDetails({
+      forma_pago: "Tarjeta de Crédito/Débito",
+      fecha_pago: new Date().toISOString(),
+      numero_pedido: `TARJ-${Date.now().toString(36).toUpperCase()}`,
+      monto: totalPrice.toString(),
+      pagado: true,
+      cancelado: false,
+    });
+
+    // 4. Guardar en base de datos
+    saveTarjetaBookingToDatabase();
+  };
+
+  // 3. FUNCIÓN PARA VERIFICAR PAGO CON PAGOPAR
   const verifyPagoparPayment = async (hash: string) => {
     try {
       console.log("🔄 Consultando estado en Pagopar con hash:", hash);
 
-      // Llamar a la API para verificar estado
       const response = await fetch("/api/pagopar/check-status", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -125,12 +157,12 @@ export default function ConfirmationPageContent({
 
       if (data.respuesta === true && data.resultado?.[0]) {
         const payment = data.resultado[0];
-        setPagoparDetails(payment);
+        setPaymentDetails(payment);
 
         if (payment.pagado === true) {
           // ✅ PAGO EXITOSO
           console.log("✅ PAGO CONFIRMADO POR PAGOPAR");
-          setPagoparStatus("paid");
+          setPaymentStatus("paid");
           setShowConfetti(true);
           setTimeout(() => setShowConfetti(false), 5000);
 
@@ -138,7 +170,7 @@ export default function ConfirmationPageContent({
           if (!bookingReference) {
             const newReference = `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
             setBookingReference(newReference);
-            setPaymentStatus("completed");
+            setStorePaymentStatus("completed");
           }
 
           // Guardar en base de datos
@@ -146,23 +178,23 @@ export default function ConfirmationPageContent({
         } else if (payment.cancelado === true) {
           // ❌ PAGO CANCELADO
           console.log("❌ PAGO CANCELADO");
-          setPagoparStatus("cancelled");
+          setPaymentStatus("cancelled");
         } else {
           // ⏳ PAGO PENDIENTE
           console.log("⏳ PAGO PENDIENTE");
-          setPagoparStatus("pending");
+          setPaymentStatus("pending");
         }
       } else {
         console.log("⚠️ No se pudo verificar el pago");
-        setPagoparStatus("failed");
+        setPaymentStatus("failed");
       }
     } catch (error: any) {
       console.error("💥 Error verificando pago:", error);
-      setPagoparStatus("failed");
+      setPaymentStatus("failed");
     }
   };
 
-  // 3. GUARDAR RESERVA EN BASE DE DATOS
+  // 4. GUARDAR RESERVA EN BASE DE DATOS PARA PAGOPAR
   const saveBookingToDatabase = async (payment: any, hash: string) => {
     try {
       setSavingToDB(true);
@@ -188,9 +220,8 @@ export default function ConfirmationPageContent({
         },
       };
 
-      console.log("💾 Guardando reserva en BD:", bookingData);
+      console.log("💾 Guardando reserva Pagopar en BD:", bookingData);
 
-      // Llamar a TU API para guardar la reserva
       const response = await fetch("/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -198,26 +229,64 @@ export default function ConfirmationPageContent({
       });
 
       if (response.ok) {
-        console.log("✅ Reserva guardada exitosamente");
+        console.log("✅ Reserva Pagopar guardada exitosamente");
       } else {
-        console.error("❌ Error guardando reserva");
+        console.error("❌ Error guardando reserva Pagopar");
       }
     } catch (error) {
-      console.error("💥 Error guardando reserva:", error);
+      console.error("💥 Error guardando reserva Pagopar:", error);
     } finally {
       setSavingToDB(false);
     }
   };
 
-  // 4. REINTENTAR VERIFICACIÓN
-  const handleRetryVerification = () => {
-    if (pagoparHash) {
-      setPagoparStatus("checking");
-      verifyPagoparPayment(pagoparHash);
+  // 5. GUARDAR RESERVA EN BASE DE DATOS PARA TARJETA
+  const saveTarjetaBookingToDatabase = async () => {
+    try {
+      setSavingToDB(true);
+
+      const bookingData = {
+        reference: bookingReference,
+        pagoparHash: null,
+        pagoparOrderId: `TARJ-${Date.now().toString(36).toUpperCase()}`,
+        status: "paid",
+        paymentMethod: "Tarjeta de Crédito/Débito",
+        paymentDate: new Date().toISOString(),
+        amount: totalPrice,
+        passengerCount: passengerDetails.length,
+        totalPrice,
+        departureDate,
+        returnDate,
+        passengerDetails,
+        tripDetails: {
+          outbound: selectedOutboundTrip,
+          return: selectedReturnTrip,
+          seats: selectedSeats,
+          returnSeats: selectedReturnSeats,
+        },
+      };
+
+      console.log("💳 Guardando reserva con tarjeta en BD:", bookingData);
+
+      const response = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bookingData),
+      });
+
+      if (response.ok) {
+        console.log("✅ Reserva con tarjeta guardada exitosamente");
+      } else {
+        console.error("❌ Error guardando reserva con tarjeta");
+      }
+    } catch (error) {
+      console.error("💥 Error guardando reserva con tarjeta:", error);
+    } finally {
+      setSavingToDB(false);
     }
   };
 
-  // 5. FUNCIONES EXISTENTES
+  // 6. FUNCIONES EXISTENTES
   const handleDownloadPDF = async () => {
     if (!selectedOutboundTrip || !bookingReference) return;
 
@@ -251,7 +320,6 @@ export default function ConfirmationPageContent({
 
   const handleSendEmail = async () => {
     setIsSendingEmail(true);
-    // Simulate email sending
     await new Promise((resolve) => setTimeout(resolve, 2000));
     setEmailSent(true);
     setIsSendingEmail(false);
@@ -270,7 +338,7 @@ export default function ConfirmationPageContent({
     router.push("/");
   };
 
-  // 6. COMPLETAR PAGO EN PAGOPAR
+  // 7. COMPLETAR PAGO EN PAGOPAR
   const handleCompletePayment = () => {
     if (pagoparHash) {
       window.location.href = `https://www.pagopar.com/pagos/${pagoparHash}`;
@@ -289,11 +357,11 @@ export default function ConfirmationPageContent({
   }
 
   const primaryPassenger = passengerDetails[0];
-  const canShowActions = bookingReference && pagoparStatus === "paid";
+  const canShowActions = bookingReference && paymentStatus === "paid";
 
-  // Renderizar contenido según estado de Pagopar
-  const renderPagoparStatus = () => {
-    switch (pagoparStatus) {
+  // Renderizar contenido según estado de pago
+  const renderPaymentStatus = () => {
+    switch (paymentStatus) {
       case "checking":
         return (
           <div className="mb-6 animate-fade-in">
@@ -305,13 +373,8 @@ export default function ConfirmationPageContent({
                     Verificando estado del pago...
                   </h3>
                   <p className="text-sm text-blue-600">
-                    Estamos consultando el estado de tu transacción con Pagopar.
+                    Estamos consultando el estado de tu transacción.
                   </p>
-                  {pagoparHash && (
-                    <p className="text-xs text-blue-500 mt-2">
-                      ID de transacción: {pagoparHash.substring(0, 20)}...
-                    </p>
-                  )}
                 </div>
               </div>
             </Card>
@@ -323,50 +386,89 @@ export default function ConfirmationPageContent({
           <div className="mb-6 animate-fade-in">
             <Card className="p-6 bg-green-50 border-green-200">
               <div className="flex items-start gap-4">
-                <CheckCircle2 className="h-8 w-8 text-green-600 mt-0.5 flex-shrink-0" />
+                {isTarjetaPayment ? (
+                  <CreditCard className="h-8 w-8 text-green-600 mt-0.5 flex-shrink-0" />
+                ) : (
+                  <CheckCircle2 className="h-8 w-8 text-green-600 mt-0.5 flex-shrink-0" />
+                )}
                 <div className="flex-1">
-                  <h3 className="font-semibold text-green-800 mb-2">
-                    ¡Pago confirmado con Pagopar!
-                  </h3>
-                  {pagoparDetails && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-3">
-                      <div>
-                        <p className="text-green-700">
-                          <span className="font-medium">Método:</span>{" "}
-                          {pagoparDetails.forma_pago}
-                        </p>
-                        <p className="text-green-700">
-                          <span className="font-medium">Fecha:</span>{" "}
-                          {pagoparDetails.fecha_pago
-                            ? format(
-                                new Date(pagoparDetails.fecha_pago),
-                                "dd/MM/yyyy HH:mm",
-                              )
-                            : "N/A"}
-                        </p>
-                        <p className="text-green-700">
-                          <span className="font-medium">N° Pedido:</span>{" "}
-                          {pagoparDetails.numero_pedido}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-green-700">
-                          <span className="font-medium">Monto:</span> Gs.{" "}
-                          {parseFloat(pagoparDetails.monto).toLocaleString(
-                            "es-PY",
-                          )}
-                        </p>
-                        <p className="text-green-700">
-                          <span className="font-medium">Estado:</span>{" "}
-                          <span className="font-bold">Pagado</span>
-                        </p>
-                        {pagoparHash && (
-                          <p className="text-xs text-green-600 mt-2">
-                            ID: {pagoparHash.substring(0, 20)}...
+                  {isTarjetaPayment ? (
+                    <>
+                      <h3 className="font-semibold text-green-800 mb-2">
+                        ¡Pago con Tarjeta Confirmado!
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-3">
+                        <div>
+                          <p className="text-green-700">
+                            <span className="font-medium">Método:</span> Tarjeta
+                            de Crédito/Débito
                           </p>
-                        )}
+                          <p className="text-green-700">
+                            <span className="font-medium">Fecha:</span>{" "}
+                            {format(new Date(), "dd/MM/yyyy HH:mm")}
+                          </p>
+                          <p className="text-green-700">
+                            <span className="font-medium">N° Transacción:</span>{" "}
+                            {paymentDetails?.numero_pedido ||
+                              `TARJ-${Date.now().toString(36).toUpperCase()}`}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-green-700">
+                            <span className="font-medium">Monto:</span> Gs.{" "}
+                            {totalPrice.toLocaleString("es-PY")}
+                          </p>
+                          <p className="text-green-700">
+                            <span className="font-medium">Estado:</span>{" "}
+                            <span className="font-bold">Pagado</span>
+                          </p>
+                          <p className="text-xs text-green-600 mt-2">
+                            Simulación de pago exitosa
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                    </>
+                  ) : (
+                    <>
+                      <h3 className="font-semibold text-green-800 mb-2">
+                        ¡Pago confirmado con Pagopar!
+                      </h3>
+                      {paymentDetails && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-3">
+                          <div>
+                            <p className="text-green-700">
+                              <span className="font-medium">Método:</span>{" "}
+                              {paymentDetails.forma_pago}
+                            </p>
+                            <p className="text-green-700">
+                              <span className="font-medium">Fecha:</span>{" "}
+                              {paymentDetails.fecha_pago
+                                ? format(
+                                    new Date(paymentDetails.fecha_pago),
+                                    "dd/MM/yyyy HH:mm",
+                                  )
+                                : "N/A"}
+                            </p>
+                            <p className="text-green-700">
+                              <span className="font-medium">N° Pedido:</span>{" "}
+                              {paymentDetails.numero_pedido}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-green-700">
+                              <span className="font-medium">Monto:</span> Gs.{" "}
+                              {parseFloat(paymentDetails.monto).toLocaleString(
+                                "es-PY",
+                              )}
+                            </p>
+                            <p className="text-green-700">
+                              <span className="font-medium">Estado:</span>{" "}
+                              <span className="font-bold">Pagado</span>
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </>
                   )}
                   <Button
                     onClick={() => setShowPaymentStatus(false)}
@@ -392,30 +494,10 @@ export default function ConfirmationPageContent({
                   <h3 className="font-semibold text-yellow-800 mb-2">
                     Pago pendiente
                   </h3>
-                  {pagoparDetails?.fecha_maxima_pago && (
-                    <p className="text-sm text-yellow-700 mb-3">
-                      Tienes hasta el{" "}
-                      {format(
-                        new Date(pagoparDetails.fecha_maxima_pago),
-                        "dd/MM/yyyy HH:mm",
-                      )}{" "}
-                      para completar el pago.
-                    </p>
-                  )}
-                  {pagoparDetails?.mensaje_resultado_pago?.descripcion ? (
-                    <div
-                      className="mb-4 p-3 bg-yellow-100/50 rounded-lg"
-                      dangerouslySetInnerHTML={{
-                        __html:
-                          pagoparDetails.mensaje_resultado_pago.descripcion,
-                      }}
-                    />
-                  ) : (
-                    <p className="text-sm text-yellow-600 mb-4">
-                      Tu pedido está esperando el pago. Por favor, completa el
-                      pago en Pagopar para confirmar tu reserva.
-                    </p>
-                  )}
+                  <p className="text-sm text-yellow-600 mb-4">
+                    Tu pedido está esperando el pago. Por favor, completa el
+                    pago en Pagopar para confirmar tu reserva.
+                  </p>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Button
                       onClick={handleCompletePayment}
@@ -423,14 +505,6 @@ export default function ConfirmationPageContent({
                     >
                       <Wallet className="h-4 w-4 mr-2" />
                       Completar pago en Pagopar
-                    </Button>
-                    <Button
-                      onClick={handleRetryVerification}
-                      variant="outline"
-                      className="border-yellow-300 text-yellow-700 hover:bg-yellow-100"
-                    >
-                      <Loader2 className="h-3 w-3 mr-2" />
-                      Reintentar verificación
                     </Button>
                   </div>
                 </div>
@@ -440,36 +514,6 @@ export default function ConfirmationPageContent({
         );
 
       case "cancelled":
-        return (
-          <div className="mb-6 animate-fade-in">
-            <Card className="p-6 bg-red-50 border-red-200">
-              <div className="flex items-start gap-4">
-                <AlertCircle className="h-8 w-8 text-red-600 mt-0.5 flex-shrink-0" />
-                <div className="flex-1">
-                  <h3 className="font-semibold text-red-800 mb-2">
-                    Pago cancelado
-                  </h3>
-                  <p className="text-sm text-red-600 mb-4">
-                    El pago ha sido cancelado. Si deseas realizar la reserva,
-                    por favor inicia un nuevo proceso de pago.
-                  </p>
-                  <div className="flex gap-3">
-                    <Button
-                      onClick={() => router.push("/booking/checkout")}
-                      className="bg-red-600 hover:bg-red-700"
-                    >
-                      Volver al checkout
-                    </Button>
-                    <Button variant="outline" onClick={() => router.push("/")}>
-                      Ir al inicio
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </div>
-        );
-
       case "failed":
         return (
           <div className="mb-6 animate-fade-in">
@@ -478,11 +522,14 @@ export default function ConfirmationPageContent({
                 <AlertCircle className="h-8 w-8 text-red-600 mt-0.5 flex-shrink-0" />
                 <div className="flex-1">
                   <h3 className="font-semibold text-red-800 mb-2">
-                    Error en el pago
+                    {paymentStatus === "cancelled"
+                      ? "Pago cancelado"
+                      : "Error en el pago"}
                   </h3>
                   <p className="text-sm text-red-600 mb-4">
-                    Hubo un problema con tu transacción. Por favor, intenta
-                    nuevamente o contacta con soporte.
+                    {paymentStatus === "cancelled"
+                      ? "El pago ha sido cancelado. Si deseas realizar la reserva, por favor inicia un nuevo proceso de pago."
+                      : "Hubo un problema con tu transacción. Por favor, intenta nuevamente o contacta con soporte."}
                   </p>
                   <div className="flex gap-3">
                     <Button
@@ -507,12 +554,12 @@ export default function ConfirmationPageContent({
   };
 
   // Si el pago no está confirmado, mostrar solo el estado
-  if (pagoparStatus !== "paid") {
+  if (paymentStatus !== "paid") {
     return (
       <div className="min-h-screen">
         <BookingProgress />
         <div className="container mx-auto px-4 py-8">
-          {renderPagoparStatus()}
+          {renderPaymentStatus()}
 
           {/* Mostrar información de la reserva aunque no esté pagada */}
           <Card className="p-6 mb-6">
@@ -533,9 +580,6 @@ export default function ConfirmationPageContent({
               <p>
                 <span className="font-medium">Total:</span> Gs.{" "}
                 {totalPrice.toLocaleString("es-PY")}
-              </p>
-              <p className="text-sm text-muted-foreground pt-2 border-t">
-                Hash de transacción: {pagoparHash?.substring(0, 30)}...
               </p>
             </div>
           </Card>
@@ -578,8 +622,8 @@ export default function ConfirmationPageContent({
       )}
 
       <div className="container mx-auto px-4 py-8">
-        {/* Mostrar estado de Pagopar */}
-        {showPaymentStatus && renderPagoparStatus()}
+        {/* Mostrar estado de pago */}
+        {showPaymentStatus && renderPaymentStatus()}
 
         {/* Success Header */}
         <div className="text-center mb-12 animate-bounce-in">
@@ -590,8 +634,9 @@ export default function ConfirmationPageContent({
             ¡Reserva Confirmada!
           </h1>
           <p className="text-lg text-muted-foreground mb-6">
-            Tu pago ha sido procesado exitosamente. Tu boleto electrónico está
-            listo.
+            {isTarjetaPayment
+              ? "Tu pago con tarjeta ha sido procesado exitosamente. Tu boleto electrónico está listo."
+              : "Tu pago ha sido procesado exitosamente. Tu boleto electrónico está listo."}
           </p>
 
           {/* Booking Reference */}
@@ -599,14 +644,13 @@ export default function ConfirmationPageContent({
             <FileText className="h-5 w-5 text-primary" />
             <span className="text-muted-foreground">Código de reserva:</span>
             <span className="font-bold text-xl text-primary">
-              {bookingReference || "Generando..."}
+              {bookingReference}
             </span>
             {bookingReference && (
               <button
                 onClick={handleCopyReference}
                 className="p-1 hover:bg-background rounded transition-colors"
                 title="Copiar código"
-                disabled={!bookingReference}
               >
                 {copied ? (
                   <Check className="h-5 w-5 text-green-500" />
@@ -903,16 +947,25 @@ export default function ConfirmationPageContent({
                     Gs. {totalPrice.toLocaleString("es-PY")}
                   </span>
                 </div>
-                {pagoparDetails?.fecha_pago && (
+                {paymentDetails?.fecha_pago && (
                   <div className="text-xs text-muted-foreground mt-2">
                     <p>
                       Pago realizado el{" "}
                       {format(
-                        new Date(pagoparDetails.fecha_pago),
+                        new Date(paymentDetails.fecha_pago),
                         "dd/MM/yyyy 'a las' HH:mm",
                       )}
                     </p>
-                    <p className="mt-1">Método: {pagoparDetails.forma_pago}</p>
+                    <p className="mt-1">Método: {paymentDetails.forma_pago}</p>
+                  </div>
+                )}
+                {isTarjetaPayment && (
+                  <div className="text-xs text-muted-foreground mt-2">
+                    <p>
+                      Pago realizado el{" "}
+                      {format(new Date(), "dd/MM/yyyy 'a las' HH:mm")}
+                    </p>
+                    <p className="mt-1">Método: Tarjeta de Crédito/Débito</p>
                   </div>
                 )}
               </div>
@@ -995,83 +1048,6 @@ export default function ConfirmationPageContent({
                     <Home className="h-4 w-4 mr-2" />
                     Nueva Reserva
                   </Button>
-                </div>
-              </div>
-
-              {/* Important Info */}
-              <div className="mt-6 p-4 bg-muted/50 rounded-xl">
-                <h4 className="font-medium mb-3">Información Importante</h4>
-                <ul className="text-sm text-muted-foreground space-y-2">
-                  <li className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    <span>
-                      Presenta tu cédula de identidad o RUC original al abordar
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    <span>Llega al terminal 45 minutos antes de la salida</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    <span>
-                      Guarda este código:{" "}
-                      <strong className="text-foreground">
-                        {bookingReference || "---"}
-                      </strong>
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    <span>
-                      El boleto fue enviado a{" "}
-                      <strong className="text-foreground">
-                        {primaryPassenger?.email}
-                      </strong>
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    <span>
-                      Validez del boleto: Hasta 1 hora después de la hora de
-                      salida
-                    </span>
-                  </li>
-                </ul>
-
-                {/* Info adicional de Pagopar */}
-                {pagoparDetails && (
-                  <div className="mt-4 pt-4 border-t border-border">
-                    <h5 className="font-medium mb-2">Información de Pago</h5>
-                    <p className="text-xs text-muted-foreground">
-                      <strong>Transacción Pagopar:</strong>{" "}
-                      {pagoparDetails.numero_pedido}
-                      <br />
-                      <strong>Método:</strong> {pagoparDetails.forma_pago}
-                      <br />
-                      <strong>Estado:</strong> Confirmado
-                      {pagoparHash && (
-                        <>
-                          <br />
-                          <strong>ID:</strong> {pagoparHash.substring(0, 20)}...
-                        </>
-                      )}
-                    </p>
-                  </div>
-                )}
-
-                <div className="mt-4 pt-4 border-t border-border">
-                  <h5 className="font-medium mb-2">¿Necesitas ayuda?</h5>
-                  <p className="text-sm text-muted-foreground">
-                    Contacta al soporte: <br />
-                    <strong className="text-foreground">
-                      0981 123 456
-                    </strong>{" "}
-                    <br />
-                    <strong className="text-foreground">
-                      reservas@busparaguay.com.py
-                    </strong>
-                  </p>
                 </div>
               </div>
             </Card>
