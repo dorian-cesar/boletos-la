@@ -249,7 +249,8 @@ export const generateTrips = (
       departureTime: time,
       arrivalTime: `${arrivalHour.toString().padStart(2, "0")}:${arrivalMinute}`,
       duration: `${duration}h ${Math.random() > 0.5 ? "30" : "00"}min`,
-      price: Math.floor(Math.random() * 150000) + 50000, // En guaraníes (Gs. 50,000 - 200,000)
+      // price: Math.floor(Math.random() * 150000) + 50000, // En guaraníes (Gs. 50,000 - 200,000)
+      price: 1000,
       busType: busTypes[index % busTypes.length],
       company: companies[index % companies.length],
       amenities: amenities[index % amenities.length],
@@ -277,7 +278,8 @@ export const generateSeats = (tripId: string, floor: number = 1): Seat[] => {
         floor,
         type: isVip ? "vip" : isPremium ? "premium" : "standard",
         status: isOccupied ? "occupied" : "available",
-        price: isVip ? 250000 : isPremium ? 180000 : 150000, // En guaraníes
+        // price: isVip ? 250000 : isPremium ? 180000 : 150000, // En guaraníes
+        price: 1000,
       });
     }
   }
