@@ -6,28 +6,28 @@ import Image from "next/image";
 
 const companies = [
   {
-    name: "La Santaniana",
-    logo: "/logos/logo-la-santaniana.png",
-    alt: "Logo La Santaniana",
-    containerSize: "h-40", // Contenedor mediano
-    scale: "scale-100", // Escala inicial
-    hoverScale: "group-hover:scale-105", // Escala al hacer hover
-  },
-  {
     name: "Nuestra Señora de la Asunción",
     logo: "/logos/logo-nsa.png",
     alt: "Logo Nuestra Señora de la Asunción",
-    containerSize: "h-16", // Contenedor más bajo para logo alargado
-    scale: "scale-75", // Escala inicial
-    hoverScale: "group-hover:scale-[0.8]", // Escala al hacer hover
+    containerSize: "h-16",
+    scale: "scale-100",
+    hoverScale: "group-hover:scale-105",
+  },
+  {
+    name: "La Santaniana",
+    logo: "/logos/logo-la-santaniana.png",
+    alt: "Logo La Santaniana",
+    containerSize: "h-32",
+    scale: "scale-75",
+    hoverScale: "group-hover:scale-[0.8]",
   },
   {
     name: "Sol de Paraguay",
     logo: "/logos/logo-sol-de-paraguay.png",
     alt: "Logo Sol de Paraguay",
-    containerSize: "h-24", // Contenedor más alto
-    scale: "scale-100", // Escala inicial
-    hoverScale: "group-hover:scale-105", // Escala al hacer hover
+    containerSize: "h-24",
+    scale: "scale-100",
+    hoverScale: "group-hover:scale-105",
   },
 ];
 
