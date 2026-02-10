@@ -676,6 +676,7 @@ export default function CheckoutPage() {
                             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-background/60" />
                             <Input
                               id={`email-${index}`}
+                              name={`booking-passenger-email-${index}`}
                               type="email"
                               placeholder="correo@ejemplo.com"
                               value={passenger.email}

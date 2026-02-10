@@ -59,7 +59,8 @@ export function Footer() {
             <div className="flex w-full lg:w-auto gap-3">
               <Input
                 type="email"
-                autoComplete="off"
+                name="newsletter-subscribe-email"
+                autoComplete="newsletter-email"
                 placeholder="Tu correo electrónico"
                 className="bg-background/10 border-background/20 text-background placeholder:text-background/50 h-12 w-full lg:w-80"
               />
