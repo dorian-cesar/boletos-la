@@ -3,9 +3,8 @@
 import Link from "next/link";
 import {
   Facebook,
-  Twitter,
+  Linkedin,
   Instagram,
-  Youtube,
   MapPin,
   Phone,
   Mail,
@@ -14,6 +13,24 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
+
+const socialLinks = [
+  {
+    icon: Facebook,
+    href: "https://www.facebook.com/boletos.com.py",
+    label: "Facebook",
+  },
+  {
+    icon: Instagram,
+    href: "https://www.instagram.com/boletos.la.py",
+    label: "Instagram",
+  },
+  {
+    icon: Linkedin,
+    href: "https://www.linkedin.com/in/boletoslatam",
+    label: "LinkedIn",
+  },
+];
 
 export function Footer() {
   return (
@@ -74,15 +91,20 @@ export function Footer() {
               Paraguay. Viaja seguro, viaja con nosotros.
             </p>
             <div className="flex items-center gap-4">
-              {[Facebook, Twitter, Instagram, Youtube].map((Icon, index) => (
-                <a
-                  key={index}
-                  href="#"
-                  className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110"
-                >
-                  <Icon className="h-5 w-5" />
-                </a>
-              ))}
+              <div className="flex items-center gap-4">
+                {socialLinks.map(({ icon: Icon, href, label }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110"
+                  >
+                    <Icon className="h-5 w-5" />
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
 
