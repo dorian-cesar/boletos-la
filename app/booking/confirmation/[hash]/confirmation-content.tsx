@@ -44,6 +44,7 @@ interface TicketData {
   origin: string;
   destination: string;
   seat: string;
+  passengerName: string;
 }
 
 export default function ConfirmationPageContent({
@@ -61,6 +62,9 @@ export default function ConfirmationPageContent({
   const [showTicketPreview, setShowTicketPreview] = useState(false);
   const [ticketPreviewData, setTicketPreviewData] = useState<any>(null);
   const [generatedTickets, setGeneratedTickets] = useState<TicketData[]>([]);
+  const [downloadingSingleTicket, setDownloadingSingleTicket] = useState<
+    number | null
+  >(null);
 
   // ESTADOS PARA PAGO
   const [pagoparHash, setPagoparHash] = useState<string | null>(hash);
@@ -100,152 +104,152 @@ export default function ConfirmationPageContent({
     (c) => c.id === selectedOutboundTrip?.destination,
   );
 
-  const generateTicketDataForAPI = () => {
-    if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) {
-      console.warn("⚠️ No hay datos suficientes para generar boletos");
-      return null;
-    }
+  const primaryPassenger = passengerDetails[0];
 
-    // Estructurar los datos según el formato esperado por la API de boletos
-    const ticketData: any = {};
-
-    // IDA - Preparar datos para asientos
-    const idaSeats = selectedSeats.map((seat) => ({
-      asiento: seat.number,
-      floor: "floor1", // Valor por defecto, ajustar según tu lógica
-      valorAsiento: seat.price || Math.round(totalPrice / selectedSeats.length),
-      authCode: bookingReference,
-    }));
-
-    ticketData[bookingReference] = {
-      ida: [
-        {
-          ...selectedOutboundTrip,
-          origin: originCity?.name || selectedOutboundTrip.origin,
-          destination:
-            destinationCity?.name || selectedOutboundTrip.destination,
-          terminalOrigin: `Terminal de Ómnibus de ${originCity?.name}`,
-          terminalDestination: `Terminal de Ómnibus de ${destinationCity?.name}`,
-          date: departureDate,
-          arrivalDate: departureDate,
-          seatLayout: {
-            tipo_Asiento_piso_1: selectedOutboundTrip.busType,
-            tipo_Asiento_piso_2: selectedOutboundTrip.busType,
-          },
-          company: selectedOutboundTrip.company,
-          asientos: idaSeats,
-        },
-      ],
-    };
-
-    // VUELTA - Si hay viaje de regreso
-    if (tripType === "round-trip" && selectedReturnTrip) {
-      const vueltaSeats = selectedReturnSeats.map((seat) => ({
-        asiento: seat.number,
-        floor: "floor1",
-        valorAsiento:
-          seat.price || Math.round(totalPrice / selectedReturnSeats.length),
-        authCode: bookingReference,
-      }));
-
-      ticketData[bookingReference].vuelta = [
-        {
-          ...selectedReturnTrip,
-          origin: destinationCity?.name || selectedReturnTrip.origin,
-          destination: originCity?.name || selectedReturnTrip.destination,
-          terminalOrigin: `Terminal de Ómnibus de ${destinationCity?.name}`,
-          terminalDestination: `Terminal de Ómnibus de ${originCity?.name}`,
-          date: returnDate,
-          arrivalDate: returnDate,
-          seatLayout: {
-            tipo_Asiento_piso_1: selectedReturnTrip.busType,
-            tipo_Asiento_piso_2: selectedReturnTrip.busType,
-          },
-          company: selectedReturnTrip.company,
-          asientos: vueltaSeats,
-        },
-      ];
-    }
-
-    return ticketData;
-  };
-
+  // =====================================================================
+  // FUNCIÓN PARA DESCARGAR MULTIPLES PDFs (UNO POR PASAJERO)
+  // =====================================================================
   const handleDownloadPDF = async () => {
-    if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) {
-      console.error("❌ Datos insuficientes para generar PDF");
-      alert("Error: No hay datos suficientes para generar el boleto");
+    if (
+      !selectedOutboundTrip ||
+      !bookingReference ||
+      passengerDetails.length === 0
+    ) {
+      console.error("❌ Datos insuficientes para generar PDFs");
+      alert("Error: No hay datos suficientes para generar los boletos");
       return;
     }
 
     setIsGeneratingPDF(true);
-    console.log("📝 Iniciando generación de PDF...");
+    console.log(
+      `📝 Iniciando generación de ${passengerDetails.length} PDF(s)...`,
+    );
 
     try {
-      // Preparar payload EXACTO como lo espera el backend externo
-      const payload = {
-        reservaCodigo: bookingReference,
-        horaSalida: selectedOutboundTrip.departureTime,
-        origen: originCity?.name || selectedOutboundTrip.origin,
-        horaLlegada: selectedOutboundTrip.arrivalTime,
-        destino: destinationCity?.name || selectedOutboundTrip.destination,
-        fechaViaje: format(new Date(departureDate || ""), "d 'de' MMMM, yyyy", {
-          locale: es,
-        }),
-        duracion: selectedOutboundTrip.duration,
-        empresa: selectedOutboundTrip.company,
-        servicioTipo: selectedOutboundTrip.busType,
-        asientos: selectedSeats.map((s) => s.number).join(", "),
-        terminal: `Terminal de Ómnibus de ${originCity?.name}`,
-        puerta: Math.floor(Math.random() * 20 + 1).toString(),
-        pasajeroNombre: `${primaryPassenger.firstName} ${primaryPassenger.lastName}`,
-        documento: primaryPassenger.documentNumber || "Sin documento",
-        telefono: primaryPassenger.phone || "Sin teléfono",
-        subtotal: `Gs. ${Math.round(totalPrice * 0.82).toLocaleString("es-PY")}`,
-        iva: `Gs. ${Math.round(totalPrice * 0.1).toLocaleString("es-PY")}`,
-        cargoServicio: `Gs. ${Math.round(totalPrice * 0.08).toLocaleString("es-PY")}`,
-        total: `Gs. ${totalPrice.toLocaleString("es-PY")}`,
-        pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
-        metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
-      };
+      const newGeneratedTickets: TicketData[] = [];
 
-      console.log("📤 Enviando a API interna:", payload);
+      // Para cada pasajero, generar su boleto individual
+      for (const [index, passenger] of passengerDetails.entries()) {
+        console.log(
+          `🔄 Generando boleto ${index + 1}/${passengerDetails.length} para ${passenger.firstName} ${passenger.lastName}`,
+        );
 
-      // Llamar a NUESTRA API interna (que luego llama al externo)
-      const response = await fetch("/api/tickets/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+        // Encontrar el asiento correspondiente a este pasajero
+        const passengerSeat =
+          selectedSeats[index]?.number ||
+          passenger.seatNumber ||
+          `A${index + 1}`;
 
-      const result = await response.json();
-      console.log("📥 Respuesta de API interna:", result);
+        // Calcular precio por pasajero
+        const pricePerPassenger = Math.round(
+          totalPrice / passengerDetails.length,
+        );
 
-      if (!result.success) {
-        throw new Error(result.message || "Error del servidor");
+        // Preparar payload EXACTO como lo espera el backend externo
+        const payload = {
+          reservaCodigo: `${bookingReference}-${passengerSeat}`,
+          horaSalida: selectedOutboundTrip.departureTime,
+          origen: originCity?.name || selectedOutboundTrip.origin,
+          horaLlegada: selectedOutboundTrip.arrivalTime,
+          destino: destinationCity?.name || selectedOutboundTrip.destination,
+          fechaViaje: format(
+            new Date(departureDate || ""),
+            "d 'de' MMMM, yyyy",
+            {
+              locale: es,
+            },
+          ),
+          duracion: selectedOutboundTrip.duration,
+          empresa: selectedOutboundTrip.company,
+          servicioTipo: selectedOutboundTrip.busType,
+          asientos: passengerSeat, // Solo el asiento de este pasajero
+          terminal: `Terminal de Ómnibus de ${originCity?.name}`,
+          puerta: Math.floor(Math.random() * 20 + 1).toString(),
+          pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
+          documento: passenger.documentNumber || "Sin documento",
+          telefono: passenger.phone || "Sin teléfono",
+          subtotal: `Gs. ${Math.round(pricePerPassenger * 0.82).toLocaleString("es-PY")}`,
+          iva: `Gs. ${Math.round(pricePerPassenger * 0.1).toLocaleString("es-PY")}`,
+          cargoServicio: `Gs. ${Math.round(pricePerPassenger * 0.08).toLocaleString("es-PY")}`,
+          total: `Gs. ${pricePerPassenger.toLocaleString("es-PY")}`,
+          pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
+          metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
+        };
+
+        console.log(
+          `📤 Enviando a API interna para ${passenger.firstName}:`,
+          payload,
+        );
+
+        // Llamar a NUESTRA API interna (que luego llama al externo)
+        const response = await fetch("/api/tickets/generate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const result = await response.json();
+        console.log(
+          `📥 Respuesta de API interna para ${passenger.firstName}:`,
+          result.success ? "✅" : "❌",
+        );
+
+        if (!result.success) {
+          throw new Error(
+            `Error generando boleto para ${passenger.firstName}: ${result.message}`,
+          );
+        }
+
+        if (!result.pdf?.base64) {
+          throw new Error(`No se recibió el PDF para ${passenger.firstName}`);
+        }
+
+        // Guardar el ticket generado
+        newGeneratedTickets.push({
+          fileName: result.pdf.fileName,
+          base64: result.pdf.base64,
+          origin: payload.origen,
+          destination: payload.destino,
+          seat: passengerSeat,
+          passengerName: `${passenger.firstName} ${passenger.lastName}`,
+        });
       }
 
-      if (!result.pdf?.base64) {
-        throw new Error("No se recibió el PDF");
+      console.log(
+        `✅ ${newGeneratedTickets.length} PDF(s) generados exitosamente`,
+      );
+
+      // Actualizar estado con los nuevos tickets
+      setGeneratedTickets(newGeneratedTickets);
+
+      // Descargar todos los boletos automáticamente (uno tras otro)
+      for (const [index, ticket] of newGeneratedTickets.entries()) {
+        console.log(
+          `⬇️ Descargando PDF ${index + 1}/${newGeneratedTickets.length}: ${ticket.fileName}`,
+        );
+
+        // Pequeña pausa entre descargas para evitar problemas
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        const link = document.createElement("a");
+        link.href = ticket.base64;
+        link.download = ticket.fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
 
-      // Descargar el PDF
-      console.log("⬇️ Descargando PDF...");
-      const link = document.createElement("a");
-      link.href = result.pdf.base64;
-      link.download = result.pdf.fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      console.log("✅ PDF descargado exitosamente");
-      alert(`✅ Boleto descargado: ${result.pdf.fileName}`);
+      console.log("✅ Todos los PDFs descargados exitosamente");
+      alert(
+        `✅ Se generaron y descargaron ${newGeneratedTickets.length} boleto(s) exitosamente`,
+      );
     } catch (error: any) {
-      console.error("❌ Error generando PDF:", error);
+      console.error("❌ Error generando PDFs:", error);
 
       // Mensajes de error más amigables
-      let userMessage = "Error al generar el PDF";
+      let userMessage = "Error al generar los boletos";
 
       if (error.message.includes("Timeout") || error.message.includes("504")) {
         userMessage =
@@ -258,12 +262,107 @@ export default function ConfirmationPageContent({
           "El servicio de boletos no está disponible temporalmente. Intenta nuevamente en unos minutos.";
       } else if (error.message.includes("No se recibió")) {
         userMessage =
-          "El PDF no se generó correctamente. Contacta con soporte.";
+          "Algunos PDFs no se generaron correctamente. Contacta con soporte.";
       }
 
       alert(`⚠️ ${userMessage}\n\nCódigo de error: ${bookingReference}`);
     } finally {
       setIsGeneratingPDF(false);
+    }
+  };
+
+  // =====================================================================
+  // FUNCIÓN PARA DESCARGAR UN BOLETO ESPECÍFICO
+  // =====================================================================
+  const handleDownloadSingleTicket = async (passengerIndex: number) => {
+    const passenger = passengerDetails[passengerIndex];
+    if (!selectedOutboundTrip || !bookingReference || !passenger) {
+      console.error("❌ Datos insuficientes para generar PDF");
+      alert("Error: No hay datos del pasajero");
+      return;
+    }
+
+    // Activar loader para este pasajero específico
+    setDownloadingSingleTicket(passengerIndex);
+
+    try {
+      // Encontrar el asiento correspondiente a este pasajero
+      const passengerSeat =
+        selectedSeats[passengerIndex]?.number ||
+        passenger.seatNumber ||
+        `A${passengerIndex + 1}`;
+
+      // Calcular precio por pasajero
+      const pricePerPassenger = Math.round(
+        totalPrice / passengerDetails.length,
+      );
+
+      // Preparar payload
+      const payload = {
+        reservaCodigo: `${bookingReference}-${passengerSeat}`,
+        horaSalida: selectedOutboundTrip.departureTime,
+        origen: originCity?.name || selectedOutboundTrip.origin,
+        horaLlegada: selectedOutboundTrip.arrivalTime,
+        destino: destinationCity?.name || selectedOutboundTrip.destination,
+        fechaViaje: format(new Date(departureDate || ""), "d 'de' MMMM, yyyy", {
+          locale: es,
+        }),
+        duracion: selectedOutboundTrip.duration,
+        empresa: selectedOutboundTrip.company,
+        servicioTipo: selectedOutboundTrip.busType,
+        asientos: passengerSeat,
+        terminal: `Terminal de Ómnibus de ${originCity?.name}`,
+        puerta: Math.floor(Math.random() * 20 + 1).toString(),
+        pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
+        documento: passenger.documentNumber || "Sin documento",
+        telefono: passenger.phone || "Sin teléfono",
+        subtotal: `Gs. ${Math.round(pricePerPassenger * 0.82).toLocaleString("es-PY")}`,
+        iva: `Gs. ${Math.round(pricePerPassenger * 0.1).toLocaleString("es-PY")}`,
+        cargoServicio: `Gs. ${Math.round(pricePerPassenger * 0.08).toLocaleString("es-PY")}`,
+        total: `Gs. ${pricePerPassenger.toLocaleString("es-PY")}`,
+        pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
+        metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
+      };
+
+      console.log(
+        `📤 Generando boleto individual para ${passenger.firstName}`,
+        payload,
+      );
+
+      const response = await fetch("/api/tickets/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.message || "Error del servidor");
+      }
+
+      if (!result.pdf?.base64) {
+        throw new Error("No se recibió el PDF");
+      }
+
+      // Descargar el PDF
+      const link = document.createElement("a");
+      link.href = result.pdf.base64;
+      link.download = result.pdf.fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      console.log(`✅ Boleto individual descargado: ${result.pdf.fileName}`);
+      alert(`✅ Boleto descargado para ${passenger.firstName}`);
+    } catch (error: any) {
+      console.error("❌ Error generando boleto individual:", error);
+      alert(`⚠️ Error generando boleto: ${error.message}`);
+    } finally {
+      // Desactivar loader
+      setDownloadingSingleTicket(null);
     }
   };
 
@@ -277,28 +376,46 @@ export default function ConfirmationPageContent({
     setEmailSent(false);
 
     try {
-      // 1. Primero generar los boletos
-      const ticketData = generateTicketDataForAPI();
-      if (!ticketData) {
-        throw new Error("No se pudieron generar los datos del boleto");
-      }
+      // Para el email, podemos enviar un solo boleto con todos los pasajeros
+      const passengerSeats = selectedSeats.map((s) => s.number).join(", ");
+      const passengerNames = passengerDetails
+        .map((p) => `${p.firstName} ${p.lastName}`)
+        .join(", ");
 
-      // 2. Llamar al endpoint de generación y envío de boletos
-      console.log("📤 Enviando boletos por email...");
+      const payload = {
+        reservaCodigo: bookingReference,
+        horaSalida: selectedOutboundTrip.departureTime,
+        origen: originCity?.name || selectedOutboundTrip.origin,
+        horaLlegada: selectedOutboundTrip.arrivalTime,
+        destino: destinationCity?.name || selectedOutboundTrip.destination,
+        fechaViaje: format(new Date(departureDate || ""), "d 'de' MMMM, yyyy", {
+          locale: es,
+        }),
+        duracion: selectedOutboundTrip.duration,
+        empresa: selectedOutboundTrip.company,
+        servicioTipo: selectedOutboundTrip.busType,
+        asientos: passengerSeats,
+        terminal: `Terminal de Ómnibus de ${originCity?.name}`,
+        puerta: Math.floor(Math.random() * 20 + 1).toString(),
+        pasajeroNombre: passengerNames,
+        documento: primaryPassenger.documentNumber || "Sin documento",
+        telefono: primaryPassenger.phone || "Sin teléfono",
+        subtotal: `Gs. ${Math.round(totalPrice * 0.82).toLocaleString("es-PY")}`,
+        iva: `Gs. ${Math.round(totalPrice * 0.1).toLocaleString("es-PY")}`,
+        cargoServicio: `Gs. ${Math.round(totalPrice * 0.08).toLocaleString("es-PY")}`,
+        total: `Gs. ${totalPrice.toLocaleString("es-PY")}`,
+        pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
+        metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
+      };
+
+      console.log("📤 Enviando boleto por email...", payload);
 
       const response = await fetch("/api/tickets/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ticketData,
-          email: primaryPassenger.email,
-          authCode: bookingReference,
-          customerName: `${primaryPassenger.firstName} ${primaryPassenger.lastName}`,
-          bookingReference,
-          tokenBoleto: `EMAIL-${Date.now()}-${bookingReference}`,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -359,25 +476,44 @@ export default function ConfirmationPageContent({
       setAutoEmailStatus("sending");
       setAutoEmailMessage("Enviando boleto por email...");
 
-      // Usar la misma función que handleSendEmail pero automáticamente
-      const ticketData = generateTicketDataForAPI();
-      if (!ticketData) {
-        throw new Error("No se pudieron generar los datos del boleto");
-      }
+      // Para email automático, enviamos un solo boleto con todos los pasajeros
+      const passengerSeats = selectedSeats.map((s) => s.number).join(", ");
+      const passengerNames = passengerDetails
+        .map((p) => `${p.firstName} ${p.lastName}`)
+        .join(", ");
+
+      const payload = {
+        reservaCodigo: bookingReference,
+        horaSalida: selectedOutboundTrip.departureTime,
+        origen: originCity?.name || selectedOutboundTrip.origin,
+        horaLlegada: selectedOutboundTrip.arrivalTime,
+        destino: destinationCity?.name || selectedOutboundTrip.destination,
+        fechaViaje: format(new Date(departureDate || ""), "d 'de' MMMM, yyyy", {
+          locale: es,
+        }),
+        duracion: selectedOutboundTrip.duration,
+        empresa: selectedOutboundTrip.company,
+        servicioTipo: selectedOutboundTrip.busType,
+        asientos: passengerSeats,
+        terminal: `Terminal de Ómnibus de ${originCity?.name}`,
+        puerta: Math.floor(Math.random() * 20 + 1).toString(),
+        pasajeroNombre: passengerNames,
+        documento: primaryPassenger.documentNumber || "Sin documento",
+        telefono: primaryPassenger.phone || "Sin teléfono",
+        subtotal: `Gs. ${Math.round(totalPrice * 0.82).toLocaleString("es-PY")}`,
+        iva: `Gs. ${Math.round(totalPrice * 0.1).toLocaleString("es-PY")}`,
+        cargoServicio: `Gs. ${Math.round(totalPrice * 0.08).toLocaleString("es-PY")}`,
+        total: `Gs. ${totalPrice.toLocaleString("es-PY")}`,
+        pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
+        metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
+      };
 
       const response = await fetch("/api/tickets/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ticketData,
-          email: passengerEmail,
-          authCode: bookingReference,
-          customerName: `${primaryPassenger.firstName} ${primaryPassenger.lastName}`,
-          bookingReference,
-          tokenBoleto: `AUTO-${Date.now()}-${bookingReference}`,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const result = await response.json();
@@ -410,12 +546,8 @@ export default function ConfirmationPageContent({
   };
 
   // =====================================================================
-  // RESTANTE DEL CÓDIGO DEL COMPONENTE (sin cambios)
-  // =====================================================================
-
-  const primaryPassenger = passengerDetails[0];
-
   // DETECTAR TIPO DE PAGO AL CARGAR
+  // =====================================================================
   useEffect(() => {
     console.log("🔗 Hash recibido en la URL:", hash);
 
@@ -1267,6 +1399,26 @@ export default function ConfirmationPageContent({
                         <p className="text-sm text-background/60">
                           Tel: {passenger.phone}
                         </p>
+                        {/* Botón para descargar boleto individual */}
+                        <Button
+                          onClick={() => handleDownloadSingleTicket(index)}
+                          disabled={downloadingSingleTicket === index}
+                          variant="ghost"
+                          size="sm"
+                          className="mt-2 text-xs bg-secondary/10 hover:bg-secondary/20 text-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {downloadingSingleTicket === index ? (
+                            <>
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                              Generando...
+                            </>
+                          ) : (
+                            <>
+                              <Download className="h-3 w-3" />
+                              Descargar boleto individual
+                            </>
+                          )}
+                        </Button>
                       </div>
                     </div>
                   ))}
@@ -1341,13 +1493,13 @@ export default function ConfirmationPageContent({
                   >
                     {isGeneratingPDF ? (
                       <>
-                        <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                        Generando PDF...
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        Generando {passengerDetails.length} PDF(s)...
                       </>
                     ) : (
                       <>
-                        <Download className="h-5 w-5 mr-2" />
-                        Descargar Boleto PDF
+                        <Download className="h-5 w-5" />
+                        Descargar boletos ({passengerDetails.length})
                       </>
                     )}
                   </Button>
@@ -1360,18 +1512,18 @@ export default function ConfirmationPageContent({
                   >
                     {emailSent ? (
                       <>
-                        <Check className="h-5 w-5 mr-2" />
+                        <Check className="h-5 w-5" />
                         Reenviar por Correo
                       </>
                     ) : isSendingEmail ? (
                       <>
-                        <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                        <Loader2 className="h-5 w-5 animate-spin" />
                         Enviando...
                       </>
                     ) : (
                       <>
-                        <Send className="h-5 w-5 mr-2" />
-                        Reenviar por Correo
+                        <Send className="h-5 w-5" />
+                        Enviar por Correo
                       </>
                     )}
                   </Button>
@@ -1392,23 +1544,44 @@ export default function ConfirmationPageContent({
                 {generatedTickets.length > 0 && (
                   <div className="mt-6 pt-4 border-t border-background/20">
                     <p className="text-sm text-background/60 mb-2">
-                      Boletos generados:
+                      Boletos generados ({generatedTickets.length}/
+                      {passengerDetails.length}):
                     </p>
-                    <div className="space-y-1">
-                      {generatedTickets.slice(0, 3).map((ticket, index) => (
+                    <div className="space-y-2">
+                      {generatedTickets.map((ticket, index) => (
                         <div
                           key={index}
-                          className="text-xs text-background/40 truncate"
-                          title={ticket.fileName}
+                          className="flex items-center justify-between p-2 bg-background/10 rounded"
                         >
-                          • {ticket.fileName}
+                          <div
+                            className="text-xs text-background/60 truncate mr-2"
+                            title={ticket.fileName}
+                          >
+                            • {ticket.passengerName} - Asiento {ticket.seat}
+                          </div>
+                          <Button
+                            onClick={() => {
+                              // Si el boleto ya está generado, descargarlo directamente
+                              const link = document.createElement("a");
+                              link.href = ticket.base64;
+                              link.download = ticket.fileName;
+                              document.body.appendChild(link);
+                              link.click();
+                              document.body.removeChild(link);
+                            }}
+                            disabled={downloadingSingleTicket === index}
+                            variant="ghost"
+                            size="sm"
+                            className="text-xs h-6 px-2"
+                          >
+                            {downloadingSingleTicket === index ? (
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                            ) : (
+                              <Download className="h-3 w-3" />
+                            )}
+                          </Button>
                         </div>
                       ))}
-                      {generatedTickets.length > 3 && (
-                        <div className="text-xs text-background/40">
-                          • ...y {generatedTickets.length - 3} más
-                        </div>
-                      )}
                     </div>
                   </div>
                 )}
