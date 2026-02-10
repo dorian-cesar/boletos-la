@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, MapPin, Clock, Star } from "lucide-react";
+import { ArrowRight, MapPin, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import { format } from "date-fns";
+import { useBookingStore, cities } from "@/lib/booking-store";
 
 const destinations = [
   {
@@ -65,6 +68,16 @@ const destinations = [
 export function DestinationsSection() {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
+  const router = useRouter();
+  const {
+    setOrigin,
+    setDestination,
+    setDepartureDate,
+    setTripType,
+    setSelectedOutboundTrip,
+    setSelectedReturnTrip,
+    setReturnDate,
+  } = useBookingStore();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -82,6 +95,67 @@ export function DestinationsSection() {
 
     return () => observer.disconnect();
   }, []);
+
+  // Función para manejar la búsqueda de servicios
+  const handleSearchServices = (destinationName: string) => {
+    // Obtener la fecha actual en formato yyyy-MM-dd
+    const today = new Date();
+    const formattedDate = format(today, "yyyy-MM-dd");
+
+    // Buscar Asunción en el array de ciudades
+    const asuncion = cities.find((c) => c.name === "Asunción");
+
+    // Buscar la ciudad de destino
+    const destino = cities.find((c) => c.name === destinationName);
+
+    // Limpiar selecciones previas
+    setSelectedOutboundTrip(null);
+    setSelectedReturnTrip(null);
+    setReturnDate("");
+
+    // Establecer los valores en el store
+    if (asuncion) {
+      setOrigin(asuncion.id);
+    } else {
+      // Si no encuentra Asunción, usar "asu" que es el ID en tu store
+      setOrigin("asu");
+    }
+
+    // Establecer el destino
+    if (destino) {
+      setDestination(destino.id);
+    } else {
+      // Si no encuentra la ciudad por nombre exacto, buscar por coincidencia
+      const foundCity = cities.find(
+        (c) =>
+          c.name.toLowerCase().includes(destinationName.toLowerCase()) ||
+          destinationName.toLowerCase().includes(c.name.toLowerCase()),
+      );
+      if (foundCity) {
+        setDestination(foundCity.id);
+      } else {
+        // Si aún no encuentra, usar un valor por defecto basado en el nombre
+        const cityIdMap: Record<string, string> = {
+          "Ciudad del Este": "cde",
+          Encarnación: "enc",
+          "Pedro Juan Caballero": "pjc",
+          "Coronel Oviedo": "cor",
+          "Salto del Guairá": "sal",
+        };
+
+        const cityId =
+          cityIdMap[destinationName] ||
+          destinationName.toLowerCase().replace(/\s+/g, "-");
+        setDestination(cityId);
+      }
+    }
+
+    setDepartureDate(formattedDate);
+    setTripType("one-way"); // Solo ida
+
+    // Redirigir a la página de servicios
+    router.push("/booking/services");
+  };
 
   return (
     <section
@@ -128,7 +202,8 @@ export function DestinationsSection() {
                   : "opacity-0 translate-y-10",
               )}
             >
-              Descubre los destinos más visitados y planifica tu próximo viaje.
+              Descubre los destinos más visitados y planifica tu próximo viaje
+              con un solo clic.
             </p>
           </div>
         </div>
@@ -139,7 +214,7 @@ export function DestinationsSection() {
             <div
               key={destination.id}
               className={cn(
-                "group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-700",
+                "group relative rounded-3xl overflow-hidden transition-all duration-700",
                 isVisible
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-10",
@@ -147,29 +222,44 @@ export function DestinationsSection() {
               )}
               style={{ transitionDelay: `${(index + 3) * 100}ms` }}
             >
-              {/* Image with enhanced effects */}
-              <div className="absolute inset-0">
-                <img
-                  src={destination.image}
-                  alt={destination.name}
-                  className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
-                />
-                {/* Multi-layer gradient overlay - Mejorado para fondo oscuro */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-br from-[#00c7cc]/10 via-transparent to-[#ffaa00]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                {/* Shine effect on hover */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+              {/* Contenedor clickeable para toda la tarjeta */}
+              <div
+                className="absolute inset-0 cursor-pointer"
+                onClick={() => handleSearchServices(destination.name)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleSearchServices(destination.name);
+                  }
+                }}
+                aria-label={`Buscar servicios de Asunción a ${destination.name} para hoy`}
+              >
+                {/* Image with enhanced effects */}
+                <div className="absolute inset-0">
+                  <img
+                    src={destination.image}
+                    alt={`Imagen de ${destination.name}`}
+                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
+                  />
+                  {/* Multi-layer gradient overlay - Mejorado para fondo oscuro */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#00c7cc]/10 via-transparent to-[#ffaa00]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  {/* Shine effect on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                </div>
               </div>
 
               {/* Popular Badge */}
               {destination.popular && (
-                <div className="absolute top-4 left-4 px-3 py-1 bg-[#ffaa00] text-black text-xs font-bold rounded-full">
+                <div className="absolute top-4 left-4 px-3 py-1 bg-[#ffaa00] text-black text-xs font-bold rounded-full z-10">
                   Popular
                 </div>
               )}
 
               {/* Content */}
-              <div className="absolute bottom-0 left-0 right-0 p-6">
+              <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-2 text-white/70 text-sm mb-2">
@@ -196,7 +286,13 @@ export function DestinationsSection() {
 
                 {/* Hover Button */}
                 <div className="mt-4 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                  <Button className="w-full bg-[#00c7cc] hover:bg-[#00c7cc]/90 text-white">
+                  <Button
+                    className="w-full bg-[#00c7cc] hover:bg-[#00c7cc]/90 text-white"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSearchServices(destination.name);
+                    }}
+                  >
                     Ver Servicios
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
