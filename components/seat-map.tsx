@@ -278,7 +278,7 @@ function SeatButton({ seat, isSelected, onClick }: SeatButtonProps) {
           )}
           {/* Price tooltip on hover */}
           <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50">
-            <div className="bg-background text-background-foreground text-xs px-2 py-1 rounded whitespace-nowrap shadow-lg border border-background/20">
+            <div className="bg-accent text-background-foreground text-xs px-2 py-1 rounded whitespace-nowrap shadow-lg border border-background/20">
               Gs. {seat.price.toLocaleString("es-PY")}
             </div>
             <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-background mx-auto"></div>
