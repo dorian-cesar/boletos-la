@@ -65,20 +65,14 @@ export function SearchForm() {
 
   return (
     <div
-      className="max-w-7xl mx-auto animate-scale-in"
+      className="w-full flex justify-center px-4 animate-scale-in"
       style={{ animationDelay: "0.6s" }}
     >
-      <div
-        className={cn(
-          "bg-white/20 backdrop-blur-md rounded-3xl shadow-2xl p-6 lg:p-8 border border-white/30 relative overflow-hidden",
-          // Ajusta el padding bottom según si es ida y vuelta o no
-          tripType === "round-trip" ? "pb-8" : "pb-6",
-        )}
-      >
+      <div className="bg-white/20 backdrop-blur-md rounded-3xl shadow-2xl p-6 lg:p-8 border border-white/30 relative overflow-hidden w-full max-w-7xl">
         {/* Efecto de vidrio con gradiente sutil */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl pointer-events-none" />
 
-        {/* Trip Type Toggle - ARRIBA como originalmente */}
+        {/* Trip Type Toggle */}
         <div className="flex justify-center mb-8 relative z-10">
           <div className="inline-flex bg-black/20 backdrop-blur-sm rounded-full p-1 border border-white/10">
             <button
@@ -106,10 +100,10 @@ export function SearchForm() {
           </div>
         </div>
 
-        {/* Search Fields - EN UNA FILA con swap siempre visible */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-3 relative z-10 items-end">
+        {/* Search Fields - Responsive con mismo ancho */}
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-3 relative z-10 items-stretch lg:items-end">
           {/* Origin */}
-          <div className="lg:col-span-3">
+          <div className="flex-1 min-w-0">
             <Label className="text-sm font-medium text-white/90 mb-2 block">
               Origen
             </Label>
@@ -173,8 +167,8 @@ export function SearchForm() {
             </Popover>
           </div>
 
-          {/* Swap Button - SIEMPRE VISIBLE, centrado verticalmente con los inputs */}
-          <div className="lg:flex items-center justify-center lg:col-span-1 hidden">
+          {/* Swap Button - Desktop */}
+          <div className="hidden lg:flex items-center justify-center w-[52px] flex-shrink-0">
             <div className="h-14 flex items-center">
               <button
                 onClick={swapCities}
@@ -187,7 +181,7 @@ export function SearchForm() {
           </div>
 
           {/* Destination */}
-          <div className="lg:col-span-3">
+          <div className="flex-1 min-w-0">
             <Label className="text-sm font-medium text-white/90 mb-2 block">
               Destino
             </Label>
@@ -255,14 +249,8 @@ export function SearchForm() {
             </Popover>
           </div>
 
-          {/* Fecha de Ida - Tamaño fijo */}
-          <div
-            className={cn(
-              "lg:col-span-2",
-              // Ajusta el ancho según si es solo ida o ida y vuelta
-              tripType === "round-trip" ? "" : "lg:col-span-2",
-            )}
-          >
+          {/* Fecha de Ida */}
+          <div className="flex-1 min-w-0">
             <Label className="text-sm font-medium text-white/90 mb-2 block">
               Fecha de Ida
             </Label>
@@ -287,7 +275,7 @@ export function SearchForm() {
                         ? format(new Date(departureDate), "dd MMM yyyy", {
                             locale: es,
                           })
-                        : "Seleccionar fecha"}
+                        : "Seleccionar"}
                     </span>
                   </div>
                 </Button>
@@ -313,9 +301,9 @@ export function SearchForm() {
             </Popover>
           </div>
 
-          {/* Fecha de Vuelta - Mismo tamaño que fecha de ida */}
+          {/* Fecha de Vuelta - Con animación */}
           {tripType === "round-trip" && (
-            <div className="lg:col-span-2">
+            <div className="flex-1 min-w-0 animate-in fade-in slide-in-from-right-5 duration-500">
               <Label className="text-sm font-medium text-white/90 mb-2 block">
                 Fecha de Vuelta
               </Label>
@@ -378,13 +366,8 @@ export function SearchForm() {
           </button>
         </div>
 
-        {/* Search Button - Se ajusta dinámicamente según el contenido */}
-        <div
-          className={cn(
-            "mt-8 flex justify-center relative z-10",
-            tripType === "round-trip" ? "mt-8" : "mt-6",
-          )}
-        >
+        {/* Search Button */}
+        <div className="mt-8 flex justify-center relative z-10">
           <Button
             onClick={handleSearch}
             disabled={!origin || !destination || !departureDate}
