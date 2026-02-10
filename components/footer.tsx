@@ -17,7 +17,7 @@ import Image from "next/image";
 const socialLinks = [
   {
     icon: Facebook,
-    href: "https://www.facebook.com/boletos.com.py",
+    href: "https://www.facebook.com/boletos.latam",
     label: "Facebook",
   },
   {
@@ -223,7 +223,7 @@ export function Footer() {
             {/* Año + logo */}
             <div className="flex items-center gap-2 text-background/50 text-sm">
               <Image
-                src="/logos/logo-boletos.png"
+                src="/logos/logo-boletos-blanco.png"
                 alt="Boletos.la"
                 width={90}
                 height={24}

@@ -352,7 +352,7 @@ export default function SeatsPage() {
                   selectedReturnTrip
                     ? "Seleccionar Asientos de Regreso"
                     : "Continuar al Pago"}
-                  <ArrowRight className="h-5 w-5 ml-2" />
+                  <ArrowRight className="h-5 w-5" />
                 </Button>
 
                 {!canContinue && (

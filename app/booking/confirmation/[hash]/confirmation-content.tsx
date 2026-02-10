@@ -24,15 +24,26 @@ import {
   Wallet,
   CreditCard,
   Send,
+  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { BookingProgress } from "@/components/booking-progress";
 import { useBookingStore, cities } from "@/lib/booking-store";
-import { generateTicketPDF, downloadPDF } from "@/lib/generate-ticket-pdf";
+import QRCode from "qrcode";
 
 interface ConfirmationPageContentProps {
   hash: string;
+}
+
+// Interfaz para los datos del boleto
+interface TicketData {
+  fileName: string;
+  base64: string;
+  buffer?: Buffer;
+  origin: string;
+  destination: string;
+  seat: string;
 }
 
 export default function ConfirmationPageContent({
@@ -45,6 +56,11 @@ export default function ConfirmationPageContent({
   const [emailSent, setEmailSent] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+
+  // Estados para previsualización del boleto
+  const [showTicketPreview, setShowTicketPreview] = useState(false);
+  const [ticketPreviewData, setTicketPreviewData] = useState<any>(null);
+  const [generatedTickets, setGeneratedTickets] = useState<TicketData[]>([]);
 
   // ESTADOS PARA PAGO
   const [pagoparHash, setPagoparHash] = useState<string | null>(hash);
@@ -84,22 +100,193 @@ export default function ConfirmationPageContent({
     (c) => c.id === selectedOutboundTrip?.destination,
   );
 
-  // 1. FUNCIÓN PARA ENVIAR EMAIL DE CONFIRMACIÓN AUTOMÁTICO
-  const sendConfirmationEmail = async (
-    passengerEmail: string,
-  ): Promise<boolean> => {
+  const generateTicketDataForAPI = () => {
     if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) {
-      console.warn("⚠️ No hay datos suficientes para enviar email");
-      return false;
+      console.warn("⚠️ No hay datos suficientes para generar boletos");
+      return null;
     }
 
-    try {
-      setAutoEmailStatus("sending");
-      setAutoEmailMessage("Enviando boleto por email...");
+    // Estructurar los datos según el formato esperado por la API de boletos
+    const ticketData: any = {};
 
-      // Preparar datos para el endpoint de email
-      const emailPayload = {
-        to: passengerEmail,
+    // IDA - Preparar datos para asientos
+    const idaSeats = selectedSeats.map((seat) => ({
+      asiento: seat.number,
+      floor: "floor1", // Valor por defecto, ajustar según tu lógica
+      valorAsiento: seat.price || Math.round(totalPrice / selectedSeats.length),
+      authCode: bookingReference,
+    }));
+
+    ticketData[bookingReference] = {
+      ida: [
+        {
+          ...selectedOutboundTrip,
+          origin: originCity?.name || selectedOutboundTrip.origin,
+          destination:
+            destinationCity?.name || selectedOutboundTrip.destination,
+          terminalOrigin: `Terminal de Ómnibus de ${originCity?.name}`,
+          terminalDestination: `Terminal de Ómnibus de ${destinationCity?.name}`,
+          date: departureDate,
+          arrivalDate: departureDate,
+          seatLayout: {
+            tipo_Asiento_piso_1: selectedOutboundTrip.busType,
+            tipo_Asiento_piso_2: selectedOutboundTrip.busType,
+          },
+          company: selectedOutboundTrip.company,
+          asientos: idaSeats,
+        },
+      ],
+    };
+
+    // VUELTA - Si hay viaje de regreso
+    if (tripType === "round-trip" && selectedReturnTrip) {
+      const vueltaSeats = selectedReturnSeats.map((seat) => ({
+        asiento: seat.number,
+        floor: "floor1",
+        valorAsiento:
+          seat.price || Math.round(totalPrice / selectedReturnSeats.length),
+        authCode: bookingReference,
+      }));
+
+      ticketData[bookingReference].vuelta = [
+        {
+          ...selectedReturnTrip,
+          origin: destinationCity?.name || selectedReturnTrip.origin,
+          destination: originCity?.name || selectedReturnTrip.destination,
+          terminalOrigin: `Terminal de Ómnibus de ${destinationCity?.name}`,
+          terminalDestination: `Terminal de Ómnibus de ${originCity?.name}`,
+          date: returnDate,
+          arrivalDate: returnDate,
+          seatLayout: {
+            tipo_Asiento_piso_1: selectedReturnTrip.busType,
+            tipo_Asiento_piso_2: selectedReturnTrip.busType,
+          },
+          company: selectedReturnTrip.company,
+          asientos: vueltaSeats,
+        },
+      ];
+    }
+
+    return ticketData;
+  };
+
+  // =====================================================================
+  // 2. FUNCIÓN PARA DESCARGAR PDF CON LA NUEVA MAQUETACIÓN
+  // =====================================================================
+  const handleDownloadPDF = async () => {
+    if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) return;
+
+    setIsGeneratingPDF(true);
+    try {
+      // 1. Preparar datos para la API de boletos
+      const ticketData = generateTicketDataForAPI();
+      if (!ticketData) {
+        throw new Error("No se pudieron generar los datos del boleto");
+      }
+
+      // 2. Llamar al endpoint de generación de boletos
+      console.log("📤 Enviando solicitud a API de boletos...");
+
+      const response = await fetch("/api/tickets/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ticketData,
+          email: primaryPassenger.email,
+          authCode: bookingReference,
+          customerName: `${primaryPassenger.firstName} ${primaryPassenger.lastName}`,
+          bookingReference,
+          tokenBoleto: `BOL-${Date.now()}-${bookingReference}`,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Error ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("✅ Respuesta de API de boletos:", result);
+
+      if (!result.success || !result.tickets?.length) {
+        throw new Error("No se generaron boletos");
+      }
+
+      // 3. Guardar los boletos generados
+      setGeneratedTickets(result.tickets);
+
+      // 4. Descargar el primer boleto
+      const firstTicket = result.tickets[0];
+
+      // Convertir base64 a blob
+      const base64Data = firstTicket.base64.split(",")[1]; // Remover el prefijo data:application/pdf;base64,
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = new Array(byteCharacters.length);
+
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: "application/pdf" });
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = firstTicket.fileName;
+      document.body.appendChild(a);
+      a.click();
+
+      // Limpiar
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      console.log("✅ PDF descargado exitosamente");
+
+      // Mostrar notificación de éxito
+      alert(`✅ Boleto descargado: ${firstTicket.fileName}`);
+    } catch (error: any) {
+      console.error("❌ Error generando PDF con la nueva maquetación:", error);
+
+      // Mostrar error específico al usuario
+      let errorMessage = "Error al generar el PDF con la nueva maquetación.";
+
+      if (error.message.includes("No se pudieron generar")) {
+        errorMessage = "No hay suficientes datos para generar el boleto.";
+      } else if (
+        error.message.includes("404") ||
+        error.message.includes("No se encontró")
+      ) {
+        errorMessage =
+          "El servicio de generación de boletos no está disponible. Por favor, intenta más tarde.";
+      }
+
+      alert(`⚠️ ${errorMessage}\n\nDetalles: ${error.message}`);
+
+      // Fallback: intentar con la API antigua si existe
+      console.log("🔄 Intentando fallback a API antigua...");
+      try {
+        await handleDownloadPDFFallback();
+      } catch (fallbackError) {
+        console.error("💥 Error en fallback también:", fallbackError);
+      }
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
+
+  // =====================================================================
+  // 3. FALLBACK PARA GENERACIÓN DE PDF (API antigua)
+  // =====================================================================
+  const handleDownloadPDFFallback = async () => {
+    if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) return;
+
+    try {
+      // Preparar datos para el endpoint antiguo
+      const pdfPayload = {
+        to: primaryPassenger.email,
         reservaCodigo: bookingReference,
         documento: primaryPassenger.documentNumber,
         origen: originCity?.name || "",
@@ -125,41 +312,171 @@ export default function ConfirmationPageContent({
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
       };
 
-      console.log("📤 Enviando email de confirmación automático...", {
-        reserva: bookingReference,
-        email: passengerEmail,
-      });
+      console.log("📤 Enviando solicitud a API antigua...");
 
-      // Llamar al endpoint interno de Next.js
-      const response = await fetch("/api/email/send", {
+      const response = await fetch("/api/tickets/download", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(emailPayload),
-        signal: AbortSignal.timeout(15000), // 15 segundos timeout
+        body: JSON.stringify(pdfPayload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Error ${response.status}`);
+      }
+
+      // Descargar el PDF
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `boleto-${bookingReference}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+
+      // Limpiar
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      console.log("✅ PDF descargado mediante API antigua");
+    } catch (error: any) {
+      console.error("❌ Error en fallback de PDF:", error);
+      throw error;
+    }
+  };
+
+  // =====================================================================
+  // 5. FUNCIÓN PARA ENVIAR EMAIL CON LA NUEVA MAQUETACIÓN
+  // =====================================================================
+  const handleSendEmail = async () => {
+    if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) return;
+
+    setIsSendingEmail(true);
+    setEmailSent(false);
+
+    try {
+      // 1. Primero generar los boletos
+      const ticketData = generateTicketDataForAPI();
+      if (!ticketData) {
+        throw new Error("No se pudieron generar los datos del boleto");
+      }
+
+      // 2. Llamar al endpoint de generación y envío de boletos
+      console.log("📤 Enviando boletos por email...");
+
+      const response = await fetch("/api/tickets/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ticketData,
+          email: primaryPassenger.email,
+          authCode: bookingReference,
+          customerName: `${primaryPassenger.firstName} ${primaryPassenger.lastName}`,
+          bookingReference,
+          tokenBoleto: `EMAIL-${Date.now()}-${bookingReference}`,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Error ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("✅ Respuesta de envío de email:", result);
+
+      if (!result.success) {
+        throw new Error(result.message || "Error al enviar el email");
+      }
+
+      // 3. Marcar como enviado
+      setEmailSent(true);
+      setAutoEmailStatus("sent");
+      setAutoEmailMessage("Boleto enviado al correo electrónico");
+
+      // 4. Mostrar notificación de éxito
+      alert(`✅ Boleto enviado exitosamente a ${primaryPassenger.email}`);
+    } catch (error: any) {
+      console.error("❌ Error enviando email:", error);
+
+      // Mostrar error específico al usuario
+      let errorMessage = "Error al enviar el email con la nueva maquetación.";
+
+      if (error.message.includes("No se pudieron generar")) {
+        errorMessage = "No hay suficientes datos para enviar el boleto.";
+      } else if (
+        error.message.includes("network") ||
+        error.message.includes("fetch")
+      ) {
+        errorMessage = "Error de red al enviar el email. Verifica tu conexión.";
+      }
+
+      setAutoEmailStatus("failed");
+      setAutoEmailMessage(errorMessage);
+
+      alert(`⚠️ ${errorMessage}\n\nDetalles: ${error.message}`);
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
+
+  // =====================================================================
+  // 6. FUNCIÓN PARA ENVIAR EMAIL DE CONFIRMACIÓN AUTOMÁTICO
+  // =====================================================================
+  const sendConfirmationEmail = async (
+    passengerEmail: string,
+  ): Promise<boolean> => {
+    if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) {
+      console.warn("⚠️ No hay datos suficientes para enviar email");
+      return false;
+    }
+
+    try {
+      setAutoEmailStatus("sending");
+      setAutoEmailMessage("Enviando boleto por email...");
+
+      // Usar la misma función que handleSendEmail pero automáticamente
+      const ticketData = generateTicketDataForAPI();
+      if (!ticketData) {
+        throw new Error("No se pudieron generar los datos del boleto");
+      }
+
+      const response = await fetch("/api/tickets/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ticketData,
+          email: passengerEmail,
+          authCode: bookingReference,
+          customerName: `${primaryPassenger.firstName} ${primaryPassenger.lastName}`,
+          bookingReference,
+          tokenBoleto: `AUTO-${Date.now()}-${bookingReference}`,
+        }),
       });
 
       const result = await response.json();
 
-      if (!response.ok) {
-        console.warn("⚠️ Email de confirmación no enviado:", result);
-        setAutoEmailStatus("failed");
-        setAutoEmailMessage(
-          `Error: ${result.error || "No se pudo enviar el email"}`,
+      if (!response.ok || !result.success) {
+        throw new Error(
+          result.message || "Error al enviar el email automático",
         );
-        return false;
       }
 
-      console.log("✅ Email de confirmación enviado exitosamente:", result);
+      console.log("✅ Email automático enviado exitosamente:", result);
       setAutoEmailStatus("sent");
       setAutoEmailMessage("Boleto enviado al correo electrónico");
 
       return true;
     } catch (error: any) {
-      console.error("❌ Error enviando email de confirmación:", error);
+      console.error("❌ Error enviando email automático:", error);
 
-      let errorMessage = "Error al enviar el email";
+      let errorMessage = "Error al enviar el email automático";
       if (error.name === "AbortError") {
         errorMessage = "Timeout: El envío de email tardó demasiado";
       } else if (error.message.includes("network")) {
@@ -172,7 +489,13 @@ export default function ConfirmationPageContent({
     }
   };
 
-  // 2. DETECTAR TIPO DE PAGO AL CARGAR
+  // =====================================================================
+  // RESTANTE DEL CÓDIGO DEL COMPONENTE (sin cambios)
+  // =====================================================================
+
+  const primaryPassenger = passengerDetails[0];
+
+  // DETECTAR TIPO DE PAGO AL CARGAR
   useEffect(() => {
     console.log("🔗 Hash recibido en la URL:", hash);
 
@@ -206,7 +529,7 @@ export default function ConfirmationPageContent({
     }
   }, [setStep, hash]);
 
-  // 3. FUNCIÓN PARA PAGO CON TARJETA
+  // FUNCIÓN PARA PAGO CON TARJETA
   const handleTarjetaPayment = async () => {
     setIsTarjetaPayment(true);
 
@@ -242,7 +565,7 @@ export default function ConfirmationPageContent({
     saveTarjetaBookingToDatabase();
   };
 
-  // 4. FUNCIÓN PARA VERIFICAR PAGO CON PAGOPAR
+  // FUNCIÓN PARA VERIFICAR PAGO CON PAGOPAR
   const verifyPagoparPayment = async (hash: string) => {
     try {
       console.log("🔄 Consultando estado en Pagopar con hash:", hash);
@@ -303,7 +626,7 @@ export default function ConfirmationPageContent({
     }
   };
 
-  // 5. GUARDAR RESERVA EN BASE DE DATOS PARA PAGOPAR
+  // GUARDAR RESERVA EN BASE DE DATOS PARA PAGOPAR
   const saveBookingToDatabase = async (payment: any, hash: string) => {
     try {
       setSavingToDB(true);
@@ -331,17 +654,17 @@ export default function ConfirmationPageContent({
 
       console.log("💾 Guardando reserva Pagopar en BD:", bookingData);
 
-      const response = await fetch("/api/bookings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bookingData),
-      });
+      // const response = await fetch("/api/bookings", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(bookingData),
+      // });
 
-      if (response.ok) {
-        console.log("✅ Reserva Pagopar guardada exitosamente");
-      } else {
-        console.error("❌ Error guardando reserva Pagopar");
-      }
+      // if (response.ok) {
+      //   console.log("✅ Reserva Pagopar guardada exitosamente");
+      // } else {
+      //   console.error("❌ Error guardando reserva Pagopar");
+      // }
     } catch (error) {
       console.error("💥 Error guardando reserva Pagopar:", error);
     } finally {
@@ -349,7 +672,7 @@ export default function ConfirmationPageContent({
     }
   };
 
-  // 6. GUARDAR RESERVA EN BASE DE DATOS PARA TARJETA
+  // GUARDAR RESERVA EN BASE DE DATOS PARA TARJETA
   const saveTarjetaBookingToDatabase = async () => {
     try {
       setSavingToDB(true);
@@ -377,204 +700,21 @@ export default function ConfirmationPageContent({
 
       console.log("💳 Guardando reserva con tarjeta en BD:", bookingData);
 
-      const response = await fetch("/api/bookings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bookingData),
-      });
+      // const response = await fetch("/api/bookings", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(bookingData),
+      // });
 
-      if (response.ok) {
-        console.log("✅ Reserva con tarjeta guardada exitosamente");
-      } else {
-        console.error("❌ Error guardando reserva con tarjeta");
-      }
+      // if (response.ok) {
+      //   console.log("✅ Reserva con tarjeta guardada exitosamente");
+      // } else {
+      //   console.error("❌ Error guardando reserva con tarjeta");
+      // }
     } catch (error) {
       console.error("💥 Error guardando reserva con tarjeta:", error);
     } finally {
       setSavingToDB(false);
-    }
-  };
-
-  // 7. FUNCIÓN PARA DESCARGAR PDF (ya existente)
-  const handleDownloadPDF = async () => {
-    if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) return;
-
-    setIsGeneratingPDF(true);
-    try {
-      // Preparar datos para el endpoint
-      const pdfPayload = {
-        to: primaryPassenger.email,
-        reservaCodigo: bookingReference,
-        documento: primaryPassenger.documentNumber,
-        origen: originCity?.name || "",
-        destino: destinationCity?.name || "",
-        horaSalida: selectedOutboundTrip.departureTime,
-        horaLlegada: selectedOutboundTrip.arrivalTime,
-        fechaViaje: format(new Date(departureDate || ""), "EEEE d 'de' MMMM", {
-          locale: es,
-        }),
-        duracion: selectedOutboundTrip.duration,
-        empresa: selectedOutboundTrip.company,
-        servicioTipo: selectedOutboundTrip.busType,
-        asientos: selectedSeats.map((s) => s.number).join(", "),
-        terminal: `Terminal de Ómnibus de ${originCity?.name}`,
-        puerta: "10",
-        pasajeroNombre: `${primaryPassenger.firstName} ${primaryPassenger.lastName}`,
-        telefono: primaryPassenger.phone,
-        subtotal: `Gs. ${Math.round(totalPrice * 0.82).toLocaleString("es-PY")}`,
-        iva: `Gs. ${Math.round(totalPrice * 0.1).toLocaleString("es-PY")}`,
-        cargoServicio: `Gs. ${Math.round(totalPrice * 0.08).toLocaleString("es-PY")}`,
-        total: `Gs. ${totalPrice.toLocaleString("es-PY")}`,
-        pagoFecha: format(new Date(), "dd/MM/yyyy 'a las' HH:mm"),
-        metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
-      };
-
-      console.log("📤 Enviando solicitud a API interna...");
-
-      // Usar el endpoint interno de Next.js
-      const response = await fetch("/api/tickets/download", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(pdfPayload),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Error ${response.status}`);
-      }
-
-      // Descargar el PDF
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `boleto-${bookingReference}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-
-      // Limpiar
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-
-      console.log("✅ PDF descargado mediante API interna");
-    } catch (error: any) {
-      console.error("❌ Error descargando PDF:", error);
-
-      // Mostrar error al usuario
-      alert(`Error al generar el PDF: ${error.message}`);
-
-      // Opcional: fallback a generación local
-      try {
-        console.log("🔄 Intentando generación local como fallback...");
-        const pdfBlob = await generateTicketPDF({
-          bookingReference,
-          outboundTrip: selectedOutboundTrip,
-          returnTrip: selectedReturnTrip,
-          seats: selectedSeats,
-          returnSeats: selectedReturnSeats,
-          passengers: passengerDetails,
-          totalPrice,
-          originCity: originCity?.name || "",
-          destinationCity: destinationCity?.name || "",
-          departureDate: format(new Date(departureDate || ""), "dd MMM yyyy", {
-            locale: es,
-          }),
-          returnDate: returnDate
-            ? format(new Date(returnDate), "dd MMM yyyy", { locale: es })
-            : undefined,
-        });
-
-        downloadPDF(pdfBlob, `boleto-${bookingReference}.pdf`);
-      } catch (fallbackError) {
-        console.error("💥 Error en fallback también:", fallbackError);
-      }
-    } finally {
-      setIsGeneratingPDF(false);
-    }
-  };
-
-  // 8. FUNCIÓN PARA ENVIAR EMAIL MANUAL (botón)
-  const handleSendEmail = async () => {
-    if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) return;
-
-    setIsSendingEmail(true);
-    setEmailSent(false);
-
-    try {
-      // Preparar datos para el endpoint de email
-      const emailPayload = {
-        to: primaryPassenger.email,
-        reservaCodigo: bookingReference,
-        documento: primaryPassenger.documentNumber,
-        origen: originCity?.name || "",
-        destino: destinationCity?.name || "",
-        horaSalida: selectedOutboundTrip.departureTime,
-        horaLlegada: selectedOutboundTrip.arrivalTime,
-        fechaViaje: format(new Date(departureDate || ""), "EEEE d 'de' MMMM", {
-          locale: es,
-        }),
-        duracion: selectedOutboundTrip.duration,
-        empresa: selectedOutboundTrip.company,
-        servicioTipo: selectedOutboundTrip.busType,
-        asientos: selectedSeats.map((s) => s.number).join(", "),
-        terminal: `Terminal de Ómnibus de ${originCity?.name}`,
-        puerta: "10",
-        pasajeroNombre: `${primaryPassenger.firstName} ${primaryPassenger.lastName}`,
-        telefono: primaryPassenger.phone,
-        subtotal: `Gs. ${Math.round(totalPrice * 0.82).toLocaleString("es-PY")}`,
-        iva: `Gs. ${Math.round(totalPrice * 0.1).toLocaleString("es-PY")}`,
-        cargoServicio: `Gs. ${Math.round(totalPrice * 0.08).toLocaleString("es-PY")}`,
-        total: `Gs. ${totalPrice.toLocaleString("es-PY")}`,
-        pagoFecha: format(new Date(), "dd/MM/yyyy 'a las' HH:mm"),
-        metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
-      };
-
-      console.log("📤 Enviando email manual...");
-
-      // Llamar al endpoint interno de Next.js
-      const response = await fetch("/api/email/send", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(emailPayload),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          result.error || result.message || `Error ${response.status}`,
-        );
-      }
-
-      console.log("✅ Email enviado exitosamente:", result);
-
-      // Marcar como enviado
-      setEmailSent(true);
-
-      // Mostrar notificación de éxito
-      alert(`✅ Boleto enviado exitosamente a ${primaryPassenger.email}`);
-    } catch (error: any) {
-      console.error("❌ Error enviando email:", error);
-
-      // Mostrar error específico al usuario
-      let errorMessage =
-        "Error al enviar el email. Por favor, intenta descargar el PDF manualmente.";
-
-      if (error.message.includes("Timeout")) {
-        errorMessage =
-          "El servicio de email está tardando demasiado. Por favor, intenta nuevamente o descarga el PDF.";
-      } else if (error.message.includes("Formato de email")) {
-        errorMessage =
-          "El formato de email es inválido. Verifica tu dirección de correo.";
-      }
-
-      alert(`⚠️ ${errorMessage}`);
-    } finally {
-      setIsSendingEmail(false);
     }
   };
 
@@ -591,7 +731,7 @@ export default function ConfirmationPageContent({
     router.push("/");
   };
 
-  // 9. COMPLETAR PAGO EN PAGOPAR
+  // COMPLETAR PAGO EN PAGOPAR
   const handleCompletePayment = () => {
     if (pagoparHash) {
       localStorage.removeItem("pagopar_last_hash");
@@ -599,7 +739,6 @@ export default function ConfirmationPageContent({
     }
   };
 
-  // MODIFICA la condición para permitir mostrar error incluso sin selectedOutboundTrip
   if (!mounted) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#1a2332] to-[#0f1419]">
@@ -682,7 +821,6 @@ export default function ConfirmationPageContent({
     );
   }
 
-  const primaryPassenger = passengerDetails[0];
   const canShowActions = bookingReference && paymentStatus === "paid";
 
   // Renderizar contenido según estado de pago
@@ -894,7 +1032,7 @@ export default function ConfirmationPageContent({
                       {autoEmailStatus === "sending"
                         ? "Enviando boleto por email..."
                         : autoEmailStatus === "sent"
-                          ? "✅ Boleto enviado al correo electrónico"
+                          ? "Boleto enviado al correo electrónico"
                           : "⚠️ No se pudo enviar el email automáticamente"}
                     </p>
                     <p
@@ -1329,6 +1467,31 @@ export default function ConfirmationPageContent({
                     </Button>
                   </div>
                 </div>
+
+                {/* Información adicional */}
+                {generatedTickets.length > 0 && (
+                  <div className="mt-6 pt-4 border-t border-background/20">
+                    <p className="text-sm text-background/60 mb-2">
+                      Boletos generados:
+                    </p>
+                    <div className="space-y-1">
+                      {generatedTickets.slice(0, 3).map((ticket, index) => (
+                        <div
+                          key={index}
+                          className="text-xs text-background/40 truncate"
+                          title={ticket.fileName}
+                        >
+                          • {ticket.fileName}
+                        </div>
+                      ))}
+                      {generatedTickets.length > 3 && (
+                        <div className="text-xs text-background/40">
+                          • ...y {generatedTickets.length - 3} más
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </Card>
             </div>
           </div>
