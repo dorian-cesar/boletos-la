@@ -6,7 +6,7 @@ import {
   Linkedin,
   Instagram,
   MapPin,
-  Phone,
+  MessageCircle,
   Mail,
   ArrowRight,
 } from "lucide-react";
@@ -177,7 +177,7 @@ export function Footer() {
                 </span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-primary" />
+                <MessageCircle className="h-5 w-5 text-primary" />
                 <a
                   href="https://wa.me/595991224613?text=Hola%2C%20me%20gustar%C3%ADa%20recibir%20informaci%C3%B3n%20sobre%20los%20servicios%20que%20ofrece%20www.boletos.la%20en%20Paraguay.%0A%0A%C2%BFPodr%C3%ADan%20asesorarme%3F%20Muchas%20gracias"
                   className="text-background/60 hover:text-primary transition-colors"
