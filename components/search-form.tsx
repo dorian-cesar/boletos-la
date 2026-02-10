@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/command";
 import { useBookingStore, cities } from "@/lib/booking-store";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 import { es } from "date-fns/locale";
 
 export function SearchForm() {
@@ -61,6 +61,11 @@ export function SearchForm() {
     const temp = origin;
     setOrigin(destination);
     setDestination(temp);
+  };
+
+  // Función helper para parsear fechas sin problemas de zona horaria
+  const parseDate = (dateString: string) => {
+    return parse(dateString, "yyyy-MM-dd", new Date());
   };
 
   return (
@@ -272,7 +277,7 @@ export function SearchForm() {
                       )}
                     >
                       {departureDate
-                        ? format(new Date(departureDate), "dd MMM yyyy", {
+                        ? format(parseDate(departureDate), "dd MMM yyyy", {
                             locale: es,
                           })
                         : "Seleccionar"}
@@ -286,7 +291,9 @@ export function SearchForm() {
               >
                 <CalendarComponent
                   mode="single"
-                  selected={departureDate ? new Date(departureDate) : undefined}
+                  selected={
+                    departureDate ? parseDate(departureDate) : undefined
+                  }
                   onSelect={(date) => {
                     if (date) {
                       setDepartureDate(format(date, "yyyy-MM-dd"));
@@ -301,7 +308,7 @@ export function SearchForm() {
             </Popover>
           </div>
 
-          {/* Fecha de Vuelta - Con animación */}
+          {/* Fecha de Vuelta */}
           {tripType === "round-trip" && (
             <div className="flex-1 min-w-0 animate-in fade-in slide-in-from-right-5 duration-500">
               <Label className="text-sm font-medium text-white/90 mb-2 block">
@@ -322,7 +329,7 @@ export function SearchForm() {
                         )}
                       >
                         {returnDate
-                          ? format(new Date(returnDate), "dd MMM yyyy", {
+                          ? format(parseDate(returnDate), "dd MMM yyyy", {
                               locale: es,
                             })
                           : "Seleccionar"}
@@ -336,7 +343,7 @@ export function SearchForm() {
                 >
                   <CalendarComponent
                     mode="single"
-                    selected={returnDate ? new Date(returnDate) : undefined}
+                    selected={returnDate ? parseDate(returnDate) : undefined}
                     onSelect={(date) => {
                       if (date) {
                         setReturnDate(format(date, "yyyy-MM-dd"));
@@ -344,7 +351,8 @@ export function SearchForm() {
                       }
                     }}
                     disabled={(date) =>
-                      date < new Date(departureDate || new Date())
+                      date <
+                      (departureDate ? parseDate(departureDate) : new Date())
                     }
                     initialFocus
                     className="bg-transparent"
@@ -373,9 +381,8 @@ export function SearchForm() {
             disabled={!origin || !destination || !departureDate}
             className="bg-white/30 hover:bg-white/40 text-white h-14 px-12 text-lg font-semibold rounded-full shadow-lg transition-all duration-300 backdrop-blur-sm border border-white/40 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:transform-none disabled:hover:bg-white/30"
           >
-            <Bus className="h-5 w-5 mr-2 flex-shrink-0" />
             Buscar Pasajes
-            <ArrowRight className="h-5 w-5 ml-2 flex-shrink-0" />
+            <ArrowRight className="h-5 w-5 ml-2 shrink-0" />
           </Button>
         </div>
       </div>
