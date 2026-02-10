@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       );
     }
-    console.log("📤 Enviando datos ENCRIPTADOS al backend...");
+    console.log("Enviando datos ENCRIPTADOS al backend...");
     console.log("Longitud:", data.length);
     console.log("Primeros 50 chars:", data.substring(0, 50) + "...");
 
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(resultado);
   } catch (error: any) {
-    console.error("❌ Error en proxy:", error);
+    console.error("Error en proxy:", error);
     return NextResponse.json(
       {
         success: false,

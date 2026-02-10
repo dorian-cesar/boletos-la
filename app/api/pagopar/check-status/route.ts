@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(resultado);
   } catch (error: any) {
-    console.error("❌ Error consultando estado:", error);
+    console.error("Error consultando estado:", error);
     return NextResponse.json(
       {
         error: "Error interno",

@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     // Pagopar envía el hash en el cuerpo de la petición
     const { hash_pedido, numero_pedido, estado } = body;
 
-    console.log("📢 Callback recibido de Pagopar:", {
+    console.log("Callback recibido de Pagopar:", {
       hash_pedido,
       numero_pedido,
       estado,
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       receivedAt: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("❌ Error en callback de Pagopar:", error);
+    console.error("Error en callback de Pagopar:", error);
     return NextResponse.json(
       { success: false, error: "Error procesando callback" },
       { status: 500 },

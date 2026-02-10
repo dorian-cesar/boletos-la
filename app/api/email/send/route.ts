@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(
-      "📤 Enviando solicitud de email para reserva:",
+      "Enviando solicitud de email para reserva:",
       emailData.reservaCodigo,
     );
 
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
 
     const responseData = await externalResponse.json();
 
-    console.log("✅ Email procesado correctamente:", {
+    console.log("Email procesado correctamente:", {
       reserva: emailData.reservaCodigo,
       destinatario: emailData.to,
       timestamp: new Date().toISOString(),
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.error("❌ Error en endpoint de email:", error);
+    console.error("Error en endpoint de email:", error);
     return NextResponse.json(
       {
         error: "Error al procesar la solicitud de email",
