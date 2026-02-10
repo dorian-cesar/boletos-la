@@ -1181,7 +1181,7 @@ export default function ConfirmationPageContent({
           {showPaymentStatus && renderPaymentStatus()}
 
           {/* Notificación de email automático */}
-          {autoEmailStatus !== "idle" && (
+          {/* {autoEmailStatus !== "idle" && (
             <div className="mb-6 animate-fade-in">
               <Card
                 className={`p-4 backdrop-blur-sm border ${
@@ -1231,7 +1231,7 @@ export default function ConfirmationPageContent({
                 </div>
               </Card>
             </div>
-          )}
+          )} */}
 
           {/* Success Header */}
           <div className="text-center mb-12 animate-bounce-in">
