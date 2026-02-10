@@ -170,130 +170,25 @@ export default function ConfirmationPageContent({
     return ticketData;
   };
 
-  // =====================================================================
-  // 2. FUNCIÓN PARA DESCARGAR PDF CON LA NUEVA MAQUETACIÓN
-  // =====================================================================
   const handleDownloadPDF = async () => {
-    if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) return;
+    if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) {
+      console.error("❌ Datos insuficientes para generar PDF");
+      alert("Error: No hay datos suficientes para generar el boleto");
+      return;
+    }
 
     setIsGeneratingPDF(true);
-    try {
-      // 1. Preparar datos para la API de boletos
-      const ticketData = generateTicketDataForAPI();
-      if (!ticketData) {
-        throw new Error("No se pudieron generar los datos del boleto");
-      }
-
-      // 2. Llamar al endpoint de generación de boletos
-      console.log("📤 Enviando solicitud a API de boletos...");
-
-      const response = await fetch("/api/tickets/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ticketData,
-          email: primaryPassenger.email,
-          authCode: bookingReference,
-          customerName: `${primaryPassenger.firstName} ${primaryPassenger.lastName}`,
-          bookingReference,
-          tokenBoleto: `BOL-${Date.now()}-${bookingReference}`,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `Error ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log("✅ Respuesta de API de boletos:", result);
-
-      if (!result.success || !result.tickets?.length) {
-        throw new Error("No se generaron boletos");
-      }
-
-      // 3. Guardar los boletos generados
-      setGeneratedTickets(result.tickets);
-
-      // 4. Descargar el primer boleto
-      const firstTicket = result.tickets[0];
-
-      // Convertir base64 a blob
-      const base64Data = firstTicket.base64.split(",")[1]; // Remover el prefijo data:application/pdf;base64,
-      const byteCharacters = atob(base64Data);
-      const byteNumbers = new Array(byteCharacters.length);
-
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: "application/pdf" });
-
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = firstTicket.fileName;
-      document.body.appendChild(a);
-      a.click();
-
-      // Limpiar
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-
-      console.log("✅ PDF descargado exitosamente");
-
-      // Mostrar notificación de éxito
-      alert(`✅ Boleto descargado: ${firstTicket.fileName}`);
-    } catch (error: any) {
-      console.error("❌ Error generando PDF con la nueva maquetación:", error);
-
-      // Mostrar error específico al usuario
-      let errorMessage = "Error al generar el PDF con la nueva maquetación.";
-
-      if (error.message.includes("No se pudieron generar")) {
-        errorMessage = "No hay suficientes datos para generar el boleto.";
-      } else if (
-        error.message.includes("404") ||
-        error.message.includes("No se encontró")
-      ) {
-        errorMessage =
-          "El servicio de generación de boletos no está disponible. Por favor, intenta más tarde.";
-      }
-
-      alert(`⚠️ ${errorMessage}\n\nDetalles: ${error.message}`);
-
-      // Fallback: intentar con la API antigua si existe
-      console.log("🔄 Intentando fallback a API antigua...");
-      try {
-        await handleDownloadPDFFallback();
-      } catch (fallbackError) {
-        console.error("💥 Error en fallback también:", fallbackError);
-      }
-    } finally {
-      setIsGeneratingPDF(false);
-    }
-  };
-
-  // =====================================================================
-  // 3. FALLBACK PARA GENERACIÓN DE PDF (API antigua)
-  // =====================================================================
-  const handleDownloadPDFFallback = async () => {
-    if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) return;
+    console.log("📝 Iniciando generación de PDF...");
 
     try {
-      // Preparar datos para el endpoint antiguo
-      const pdfPayload = {
-        to: primaryPassenger.email,
+      // Preparar payload EXACTO como lo espera el backend externo
+      const payload = {
         reservaCodigo: bookingReference,
-        documento: primaryPassenger.documentNumber,
-        origen: originCity?.name || "",
-        destino: destinationCity?.name || "",
         horaSalida: selectedOutboundTrip.departureTime,
+        origen: originCity?.name || selectedOutboundTrip.origin,
         horaLlegada: selectedOutboundTrip.arrivalTime,
-        fechaViaje: format(new Date(departureDate || ""), "EEEE d 'de' MMMM", {
+        destino: destinationCity?.name || selectedOutboundTrip.destination,
+        fechaViaje: format(new Date(departureDate || ""), "d 'de' MMMM, yyyy", {
           locale: es,
         }),
         duracion: selectedOutboundTrip.duration,
@@ -301,49 +196,74 @@ export default function ConfirmationPageContent({
         servicioTipo: selectedOutboundTrip.busType,
         asientos: selectedSeats.map((s) => s.number).join(", "),
         terminal: `Terminal de Ómnibus de ${originCity?.name}`,
-        puerta: "10",
+        puerta: Math.floor(Math.random() * 20 + 1).toString(),
         pasajeroNombre: `${primaryPassenger.firstName} ${primaryPassenger.lastName}`,
-        telefono: primaryPassenger.phone,
+        documento: primaryPassenger.documentNumber || "Sin documento",
+        telefono: primaryPassenger.phone || "Sin teléfono",
         subtotal: `Gs. ${Math.round(totalPrice * 0.82).toLocaleString("es-PY")}`,
         iva: `Gs. ${Math.round(totalPrice * 0.1).toLocaleString("es-PY")}`,
         cargoServicio: `Gs. ${Math.round(totalPrice * 0.08).toLocaleString("es-PY")}`,
         total: `Gs. ${totalPrice.toLocaleString("es-PY")}`,
-        pagoFecha: format(new Date(), "dd/MM/yyyy 'a las' HH:mm"),
+        pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
       };
 
-      console.log("📤 Enviando solicitud a API antigua...");
+      console.log("📤 Enviando a API interna:", payload);
 
-      const response = await fetch("/api/tickets/download", {
+      // Llamar a NUESTRA API interna (que luego llama al externo)
+      const response = await fetch("/api/tickets/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(pdfPayload),
+        body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Error ${response.status}`);
+      const result = await response.json();
+      console.log("📥 Respuesta de API interna:", result);
+
+      if (!result.success) {
+        throw new Error(result.message || "Error del servidor");
+      }
+
+      if (!result.pdf?.base64) {
+        throw new Error("No se recibió el PDF");
       }
 
       // Descargar el PDF
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `boleto-${bookingReference}.pdf`;
-      document.body.appendChild(a);
-      a.click();
+      console.log("⬇️ Descargando PDF...");
+      const link = document.createElement("a");
+      link.href = result.pdf.base64;
+      link.download = result.pdf.fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
-      // Limpiar
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-
-      console.log("✅ PDF descargado mediante API antigua");
+      console.log("✅ PDF descargado exitosamente");
+      alert(`✅ Boleto descargado: ${result.pdf.fileName}`);
     } catch (error: any) {
-      console.error("❌ Error en fallback de PDF:", error);
-      throw error;
+      console.error("❌ Error generando PDF:", error);
+
+      // Mensajes de error más amigables
+      let userMessage = "Error al generar el PDF";
+
+      if (error.message.includes("Timeout") || error.message.includes("504")) {
+        userMessage =
+          "El servicio de boletos está demorando mucho. Por favor, intenta más tarde.";
+      } else if (
+        error.message.includes("502") ||
+        error.message.includes("503")
+      ) {
+        userMessage =
+          "El servicio de boletos no está disponible temporalmente. Intenta nuevamente en unos minutos.";
+      } else if (error.message.includes("No se recibió")) {
+        userMessage =
+          "El PDF no se generó correctamente. Contacta con soporte.";
+      }
+
+      alert(`⚠️ ${userMessage}\n\nCódigo de error: ${bookingReference}`);
+    } finally {
+      setIsGeneratingPDF(false);
     }
   };
 
