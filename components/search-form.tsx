@@ -384,10 +384,10 @@ export function SearchForm() {
               !departureDate ||
               (tripType === "round-trip" && !returnDate)
             }
-            className="bg-white/30 hover:bg-white/40 text-white h-14 px-12 text-lg font-semibold rounded-full shadow-lg transition-all duration-300 backdrop-blur-sm border border-white/40 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:transform-none disabled:hover:bg-white/30"
+            className="bg-white/30 hover:bg-white/40 text-white h-12 px-12 text-lg font-semibold rounded-full shadow-lg transition-all duration-300 backdrop-blur-sm border border-white/40 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:transform-none disabled:hover:bg-white/30"
           >
             Buscar Pasajes
-            <ArrowRight className="h-5 w-5 ml-2 shrink-0" />
+            <ArrowRight className="h-5 w-5 shrink-0" />
           </Button>
         </div>
       </div>
