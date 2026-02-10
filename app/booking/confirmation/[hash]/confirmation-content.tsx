@@ -52,8 +52,6 @@ export default function ConfirmationPageContent({
 }: ConfirmationPageContentProps) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -62,9 +60,12 @@ export default function ConfirmationPageContent({
   const [showTicketPreview, setShowTicketPreview] = useState(false);
   const [ticketPreviewData, setTicketPreviewData] = useState<any>(null);
   const [generatedTickets, setGeneratedTickets] = useState<TicketData[]>([]);
-  const [downloadingSingleTicket, setDownloadingSingleTicket] = useState<
-    number | null
-  >(null);
+
+  // UN SOLO ESTADO PARA CONTROLAR TODAS LAS ACCIONES
+  const [processing, setProcessing] = useState<{
+    type: "all-tickets" | "single-ticket" | "email-all" | "email-single" | null;
+    passengerIndex?: number | null;
+  }>({ type: null, passengerIndex: null });
 
   // ESTADOS PARA PAGO
   const [pagoparHash, setPagoparHash] = useState<string | null>(hash);
@@ -106,6 +107,20 @@ export default function ConfirmationPageContent({
 
   const primaryPassenger = passengerDetails[0];
 
+  // Helper para verificar si se está procesando algo
+  const isProcessing = (
+    type?: "all-tickets" | "single-ticket" | "email-all" | "email-single",
+  ) => {
+    if (!processing.type) return false;
+    if (!type) return true; // Si no se especifica tipo, cualquier procesamiento cuenta
+    return processing.type === type;
+  };
+
+  // Helper para verificar si se está procesando algo para un pasajero específico
+  const isProcessingForPassenger = (passengerIndex: number) => {
+    return processing.passengerIndex === passengerIndex;
+  };
+
   // =====================================================================
   // FUNCIÓN PARA DESCARGAR MULTIPLES PDFs (UNO POR PASAJERO)
   // =====================================================================
@@ -120,7 +135,15 @@ export default function ConfirmationPageContent({
       return;
     }
 
-    setIsGeneratingPDF(true);
+    // Verificar si ya se está procesando algo
+    if (isProcessing()) {
+      console.log("⚠️ Ya se está procesando una acción");
+      return;
+    }
+
+    // Activar loader para todos los boletos
+    setProcessing({ type: "all-tickets", passengerIndex: null });
+
     console.log(
       `📝 Iniciando generación de ${passengerDetails.length} PDF(s)...`,
     );
@@ -267,7 +290,8 @@ export default function ConfirmationPageContent({
 
       alert(`⚠️ ${userMessage}\n\nCódigo de error: ${bookingReference}`);
     } finally {
-      setIsGeneratingPDF(false);
+      // Desactivar loader
+      setProcessing({ type: null, passengerIndex: null });
     }
   };
 
@@ -282,8 +306,14 @@ export default function ConfirmationPageContent({
       return;
     }
 
+    // Verificar si ya se está procesando algo
+    if (isProcessing()) {
+      console.log("⚠️ Ya se está procesando una acción");
+      return;
+    }
+
     // Activar loader para este pasajero específico
-    setDownloadingSingleTicket(passengerIndex);
+    setProcessing({ type: "single-ticket", passengerIndex });
 
     try {
       // Encontrar el asiento correspondiente a este pasajero
@@ -362,17 +392,24 @@ export default function ConfirmationPageContent({
       alert(`⚠️ Error generando boleto: ${error.message}`);
     } finally {
       // Desactivar loader
-      setDownloadingSingleTicket(null);
+      setProcessing({ type: null, passengerIndex: null });
     }
   };
 
   // =====================================================================
-  // 5. FUNCIÓN PARA ENVIAR EMAIL CON LA NUEVA MAQUETACIÓN
+  // 5. FUNCIÓN PARA ENVIAR EMAIL USANDO LA NUEVA API
   // =====================================================================
   const handleSendEmail = async () => {
     if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) return;
 
-    setIsSendingEmail(true);
+    // Verificar si ya se está procesando algo
+    if (isProcessing()) {
+      console.log("⚠️ Ya se está procesando una acción");
+      return;
+    }
+
+    // Activar loader para email a todos
+    setProcessing({ type: "email-all", passengerIndex: null });
     setEmailSent(false);
 
     try {
@@ -382,15 +419,15 @@ export default function ConfirmationPageContent({
         .map((p) => `${p.firstName} ${p.lastName}`)
         .join(", ");
 
+      // Preparar payload para la API de email
       const payload = {
+        emailDestino: primaryPassenger.email,
         reservaCodigo: bookingReference,
         horaSalida: selectedOutboundTrip.departureTime,
         origen: originCity?.name || selectedOutboundTrip.origin,
         horaLlegada: selectedOutboundTrip.arrivalTime,
         destino: destinationCity?.name || selectedOutboundTrip.destination,
-        fechaViaje: format(new Date(departureDate || ""), "d 'de' MMMM, yyyy", {
-          locale: es,
-        }),
+        fechaViaje: format(new Date(departureDate || ""), "dd/MM/yyyy"),
         duracion: selectedOutboundTrip.duration,
         empresa: selectedOutboundTrip.company,
         servicioTipo: selectedOutboundTrip.busType,
@@ -404,13 +441,14 @@ export default function ConfirmationPageContent({
         iva: `Gs. ${Math.round(totalPrice * 0.1).toLocaleString("es-PY")}`,
         cargoServicio: `Gs. ${Math.round(totalPrice * 0.08).toLocaleString("es-PY")}`,
         total: `Gs. ${totalPrice.toLocaleString("es-PY")}`,
-        pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
+        pagoFecha: format(new Date(), "dd/MM/yyyy"),
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
       };
 
       console.log("📤 Enviando boleto por email...", payload);
 
-      const response = await fetch("/api/tickets/generate", {
+      // Llamar a la NUEVA API de envío de email
+      const response = await fetch("/api/tickets/send-email", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -418,33 +456,35 @@ export default function ConfirmationPageContent({
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `Error ${response.status}`);
-      }
-
       const result = await response.json();
-      console.log("✅ Respuesta de envío de email:", result);
 
       if (!result.success) {
         throw new Error(result.message || "Error al enviar el email");
       }
 
-      // 3. Marcar como enviado
+      // Marcar como enviado
       setEmailSent(true);
       setAutoEmailStatus("sent");
       setAutoEmailMessage("Boleto enviado al correo electrónico");
 
-      // 4. Mostrar notificación de éxito
+      // Mostrar notificación de éxito
+      console.log("✅ Email enviado exitosamente:", result);
       alert(`✅ Boleto enviado exitosamente a ${primaryPassenger.email}`);
     } catch (error: any) {
       console.error("❌ Error enviando email:", error);
 
       // Mostrar error específico al usuario
-      let errorMessage = "Error al enviar el email con la nueva maquetación.";
+      let errorMessage = "Error al enviar el email.";
 
-      if (error.message.includes("No se pudieron generar")) {
-        errorMessage = "No hay suficientes datos para enviar el boleto.";
+      if (error.message.includes("Timeout") || error.message.includes("504")) {
+        errorMessage =
+          "El servicio de email está demorando mucho. Por favor, intenta más tarde.";
+      } else if (
+        error.message.includes("502") ||
+        error.message.includes("503")
+      ) {
+        errorMessage =
+          "El servicio de email no está disponible temporalmente. Intenta nuevamente en unos minutos.";
       } else if (
         error.message.includes("network") ||
         error.message.includes("fetch")
@@ -457,7 +497,8 @@ export default function ConfirmationPageContent({
 
       alert(`⚠️ ${errorMessage}\n\nDetalles: ${error.message}`);
     } finally {
-      setIsSendingEmail(false);
+      // Desactivar loader
+      setProcessing({ type: null, passengerIndex: null });
     }
   };
 
@@ -482,15 +523,15 @@ export default function ConfirmationPageContent({
         .map((p) => `${p.firstName} ${p.lastName}`)
         .join(", ");
 
+      // Preparar payload para la API de email
       const payload = {
+        emailDestino: passengerEmail,
         reservaCodigo: bookingReference,
         horaSalida: selectedOutboundTrip.departureTime,
         origen: originCity?.name || selectedOutboundTrip.origin,
         horaLlegada: selectedOutboundTrip.arrivalTime,
         destino: destinationCity?.name || selectedOutboundTrip.destination,
-        fechaViaje: format(new Date(departureDate || ""), "d 'de' MMMM, yyyy", {
-          locale: es,
-        }),
+        fechaViaje: format(new Date(departureDate || ""), "dd/MM/yyyy"),
         duracion: selectedOutboundTrip.duration,
         empresa: selectedOutboundTrip.company,
         servicioTipo: selectedOutboundTrip.busType,
@@ -504,11 +545,12 @@ export default function ConfirmationPageContent({
         iva: `Gs. ${Math.round(totalPrice * 0.1).toLocaleString("es-PY")}`,
         cargoServicio: `Gs. ${Math.round(totalPrice * 0.08).toLocaleString("es-PY")}`,
         total: `Gs. ${totalPrice.toLocaleString("es-PY")}`,
-        pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
+        pagoFecha: format(new Date(), "dd/MM/yyyy"),
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
       };
 
-      const response = await fetch("/api/tickets/generate", {
+      // Llamar a la NUEVA API de envío de email
+      const response = await fetch("/api/tickets/send-email", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -542,6 +584,93 @@ export default function ConfirmationPageContent({
       setAutoEmailStatus("failed");
       setAutoEmailMessage(errorMessage);
       return false;
+    }
+  };
+
+  // =====================================================================
+  // FUNCIÓN PARA ENVIAR EMAIL A UN PASAJERO ESPECÍFICO
+  // =====================================================================
+  const handleSendEmailToPassenger = async (passengerIndex: number) => {
+    const passenger = passengerDetails[passengerIndex];
+    if (!selectedOutboundTrip || !bookingReference || !passenger) {
+      alert("Error: No hay datos del pasajero");
+      return;
+    }
+
+    // Verificar si ya se está procesando algo
+    if (isProcessing()) {
+      console.log("⚠️ Ya se está procesando una acción");
+      return;
+    }
+
+    const confirmSend = window.confirm(`¿Enviar boleto a ${passenger.email}?`);
+
+    if (!confirmSend) return;
+
+    // Activar loader para este pasajero específico
+    setProcessing({ type: "email-single", passengerIndex });
+
+    try {
+      // Buscar el asiento correspondiente
+      const passengerSeat =
+        selectedSeats[passengerIndex]?.number ||
+        passenger.seatNumber ||
+        `A${passengerIndex + 1}`;
+
+      // Calcular precio por pasajero
+      const pricePerPassenger = Math.round(
+        totalPrice / passengerDetails.length,
+      );
+
+      // Preparar payload para la API de email
+      const payload = {
+        emailDestino: passenger.email,
+        reservaCodigo: `${bookingReference}-${passengerSeat}`,
+        horaSalida: selectedOutboundTrip.departureTime,
+        origen: originCity?.name || selectedOutboundTrip.origin,
+        horaLlegada: selectedOutboundTrip.arrivalTime,
+        destino: destinationCity?.name || selectedOutboundTrip.destination,
+        fechaViaje: format(new Date(departureDate || ""), "dd/MM/yyyy"),
+        duracion: selectedOutboundTrip.duration,
+        empresa: selectedOutboundTrip.company,
+        servicioTipo: selectedOutboundTrip.busType,
+        asientos: passengerSeat,
+        terminal: `Terminal de Ómnibus de ${originCity?.name}`,
+        puerta: Math.floor(Math.random() * 20 + 1).toString(),
+        pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
+        documento: passenger.documentNumber || "Sin documento",
+        telefono: passenger.phone || "Sin teléfono",
+        subtotal: `Gs. ${Math.round(pricePerPassenger * 0.82).toLocaleString("es-PY")}`,
+        iva: `Gs. ${Math.round(pricePerPassenger * 0.1).toLocaleString("es-PY")}`,
+        cargoServicio: `Gs. ${Math.round(pricePerPassenger * 0.08).toLocaleString("es-PY")}`,
+        total: `Gs. ${pricePerPassenger.toLocaleString("es-PY")}`,
+        pagoFecha: format(new Date(), "dd/MM/yyyy"),
+        metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
+      };
+
+      console.log(`📧 Enviando boleto a ${passenger.email}`, payload);
+
+      const response = await fetch("/api/tickets/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.message || "Error al enviar el email");
+      }
+
+      alert(`✅ Boleto enviado exitosamente a ${passenger.email}`);
+    } catch (error: any) {
+      console.error("❌ Error enviando email al pasajero:", error);
+      alert(`⚠️ Error enviando email: ${error.message}`);
+    } finally {
+      // Desactivar loader
+      setProcessing({ type: null, passengerIndex: null });
     }
   };
 
@@ -1399,26 +1528,52 @@ export default function ConfirmationPageContent({
                         <p className="text-sm text-background/60">
                           Tel: {passenger.phone}
                         </p>
-                        {/* Botón para descargar boleto individual */}
-                        <Button
-                          onClick={() => handleDownloadSingleTicket(index)}
-                          disabled={downloadingSingleTicket === index}
-                          variant="ghost"
-                          size="sm"
-                          className="mt-2 text-xs bg-secondary/10 hover:bg-secondary/20 text-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {downloadingSingleTicket === index ? (
-                            <>
-                              <Loader2 className="h-3 w-3 animate-spin" />
-                              Generando...
-                            </>
-                          ) : (
-                            <>
-                              <Download className="h-3 w-3" />
-                              Descargar boleto individual
-                            </>
-                          )}
-                        </Button>
+                        {/* Botones para cada pasajero */}
+                        <div className="flex gap-2 mt-2">
+                          {/* Botón para descargar boleto individual */}
+                          <Button
+                            onClick={() => handleDownloadSingleTicket(index)}
+                            disabled={isProcessing()}
+                            variant="ghost"
+                            size="sm"
+                            className="text-xs bg-secondary/10 hover:bg-secondary/20 text-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-1"
+                          >
+                            {processing.type === "single-ticket" &&
+                            processing.passengerIndex === index ? (
+                              <>
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                                Generando...
+                              </>
+                            ) : (
+                              <>
+                                <Download className="h-3 w-3" />
+                                Descargar boleto individual
+                              </>
+                            )}
+                          </Button>
+
+                          {/* Botón para enviar por email */}
+                          <Button
+                            onClick={() => handleSendEmailToPassenger(index)}
+                            disabled={isProcessing()}
+                            variant="ghost"
+                            size="sm"
+                            className="text-xs bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-1"
+                          >
+                            {processing.type === "email-single" &&
+                            processing.passengerIndex === index ? (
+                              <>
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                                Enviando...
+                              </>
+                            ) : (
+                              <>
+                                <Mail className="h-3 w-3" />
+                                Enviar a email
+                              </>
+                            )}
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -1488,10 +1643,10 @@ export default function ConfirmationPageContent({
                 <div className="space-y-4">
                   <Button
                     onClick={handleDownloadPDF}
-                    disabled={isGeneratingPDF || !canShowActions}
+                    disabled={isProcessing() || !canShowActions}
                     className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isGeneratingPDF ? (
+                    {processing.type === "all-tickets" ? (
                       <>
                         <Loader2 className="h-5 w-5 animate-spin" />
                         Generando {passengerDetails.length} PDF(s)...
@@ -1506,19 +1661,19 @@ export default function ConfirmationPageContent({
 
                   <Button
                     onClick={handleSendEmail}
-                    disabled={isSendingEmail || emailSent || !canShowActions}
+                    disabled={isProcessing() || emailSent || !canShowActions}
                     variant="outline"
                     className="w-full h-14 text-lg font-semibold border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {emailSent ? (
-                      <>
-                        <Check className="h-5 w-5" />
-                        Reenviar por Correo
-                      </>
-                    ) : isSendingEmail ? (
+                    {processing.type === "email-all" ? (
                       <>
                         <Loader2 className="h-5 w-5 animate-spin" />
                         Enviando...
+                      </>
+                    ) : emailSent ? (
+                      <>
+                        <Check className="h-5 w-5" />
+                        Reenviar por Correo
                       </>
                     ) : (
                       <>
@@ -1569,12 +1724,13 @@ export default function ConfirmationPageContent({
                               link.click();
                               document.body.removeChild(link);
                             }}
-                            disabled={downloadingSingleTicket === index}
+                            disabled={isProcessing()}
                             variant="ghost"
                             size="sm"
                             className="text-xs h-6 px-2"
                           >
-                            {downloadingSingleTicket === index ? (
+                            {processing.type === "single-ticket" &&
+                            processing.passengerIndex === index ? (
                               <Loader2 className="h-3 w-3 animate-spin" />
                             ) : (
                               <Download className="h-3 w-3" />
