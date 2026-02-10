@@ -765,7 +765,7 @@ export default function CheckoutPage() {
                         </p>
                       </div>
                       {selectedPaymentMethod === "tarjeta" && (
-                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                        <CheckCircle2 className="h-5 w-5 text-green-500 self-start" />
                       )}
                     </div>
                     <div className="flex flex-wrap gap-1">
@@ -805,7 +805,7 @@ export default function CheckoutPage() {
                         </p>
                       </div>
                       {selectedPaymentMethod === "pagopar" && (
-                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                        <CheckCircle2 className="h-5 w-5 text-green-500 self-start" />
                       )}
                     </div>
                     <div className="flex flex-wrap gap-1">
