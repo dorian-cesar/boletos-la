@@ -474,7 +474,7 @@ export default function ConfirmationPageContent({
   };
 
   // =====================================================================
-  // 5. FUNCIÓN PARA ENVIAR EMAIL USANDO LA NUEVA API
+  // FUNCIÓN PARA ENVIAR EMAIL A TODOS LOS PASAJEROS
   // =====================================================================
   const handleSendEmail = async () => {
     if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) return;
@@ -515,21 +515,29 @@ export default function ConfirmationPageContent({
       const loadingToast = toast.loading("Enviando boleto por email...");
 
       try {
+        // Primero generar el PDF
+        console.log("📄 Generando PDF para email...");
+
         // Para el email, podemos enviar un solo boleto con todos los pasajeros
         const passengerSeats = selectedSeats.map((s) => s.number).join(", ");
         const passengerNames = passengerDetails
           .map((p) => `${p.firstName} ${p.lastName}`)
           .join(", ");
 
-        // Preparar payload para la API de email
+        // Preparar payload para generar el PDF
         const payload = {
-          emailDestino: primaryPassenger.email,
           reservaCodigo: bookingReference,
           horaSalida: selectedOutboundTrip.departureTime,
           origen: originCity?.name || selectedOutboundTrip.origin,
           horaLlegada: selectedOutboundTrip.arrivalTime,
           destino: destinationCity?.name || selectedOutboundTrip.destination,
-          fechaViaje: format(new Date(departureDate || ""), "dd/MM/yyyy"),
+          fechaViaje: format(
+            new Date(departureDate || ""),
+            "d 'de' MMMM, yyyy",
+            {
+              locale: es,
+            },
+          ),
           duracion: selectedOutboundTrip.duration,
           empresa: selectedOutboundTrip.company,
           servicioTipo: selectedOutboundTrip.busType,
@@ -543,14 +551,14 @@ export default function ConfirmationPageContent({
           iva: `Gs. ${Math.round(totalPrice * 0.1).toLocaleString("es-PY")}`,
           cargoServicio: `Gs. ${Math.round(totalPrice * 0.08).toLocaleString("es-PY")}`,
           total: `Gs. ${totalPrice.toLocaleString("es-PY")}`,
-          pagoFecha: format(new Date(), "dd/MM/yyyy"),
+          pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
           metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
         };
 
-        console.log("📤 Enviando boleto por email...", payload);
+        console.log("📤 Generando PDF para email...");
 
-        // Llamar a la NUEVA API de envío de email
-        const response = await fetch("/api/tickets/send-email", {
+        // 1. Generar el PDF
+        const pdfResponse = await fetch("/api/tickets/generate", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -558,10 +566,38 @@ export default function ConfirmationPageContent({
           body: JSON.stringify(payload),
         });
 
-        const result = await response.json();
+        const pdfResult = await pdfResponse.json();
 
-        if (!result.success) {
-          throw new Error(result.message || "Error al enviar el email");
+        if (!pdfResult.success || !pdfResult.pdf?.base64) {
+          throw new Error("Error generando el PDF: " + pdfResult.message);
+        }
+
+        console.log("✅ PDF generado exitosamente para email");
+
+        // 2. Preparar payload para enviar email
+        const emailPayload = {
+          emailDestino: primaryPassenger.email,
+          pdfBase64: pdfResult.pdf.base64,
+          fileName: pdfResult.pdf.fileName,
+          // Pasamos los datos del ticket por si el backend los necesita
+          ...payload,
+        };
+
+        console.log("📧 Enviando a API interna de email...");
+
+        // 3. Llamar a NUESTRA API interna que reenvía al backend externo
+        const emailResponse = await fetch("/api/tickets/send-email", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(emailPayload),
+        });
+
+        const emailResult = await emailResponse.json();
+
+        if (!emailResult.success) {
+          throw new Error(emailResult.message || "Error al enviar el email");
         }
 
         // Marcar como enviado
@@ -569,8 +605,7 @@ export default function ConfirmationPageContent({
         setAutoEmailStatus("sent");
         setAutoEmailMessage("Boleto enviado al correo electrónico");
 
-        // Mostrar notificación de éxito
-        console.log("✅ Email enviado exitosamente:", result);
+        console.log("✅ Email enviado exitosamente:", emailResult);
 
         toast.success(`✅ Boleto enviado exitosamente`, {
           id: loadingToast,
@@ -581,9 +616,11 @@ export default function ConfirmationPageContent({
             onClick: () => {
               toast.info(
                 <div className="space-y-2">
-                  <p className="font-medium">Detalles del envío:</p>
-                  <p className="text-sm">Pasajeros: {passengerNames}</p>
-                  <p className="text-sm">Asientos: {passengerSeats}</p>
+                  <p className="font-medium">Email enviado correctamente</p>
+                  <p className="text-sm">
+                    Destinatario: {primaryPassenger.email}
+                  </p>
+                  <p className="text-sm">Archivo: {pdfResult.pdf.fileName}</p>
                   <p className="text-sm">Referencia: {bookingReference}</p>
                 </div>,
                 { duration: 10000 },

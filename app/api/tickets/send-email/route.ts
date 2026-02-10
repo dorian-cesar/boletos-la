@@ -1,76 +1,52 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// URL del backend externo para enviar email
-const EXTERNAL_MAIL_API_URL =
-  "https://pdf-mail.dev-wit.com/api/mail/send-ticket";
+// URL del backend externo para enviar emails
+const EXTERNAL_EMAIL_API_URL = "https://tu-backend.com/api/email/send";
 
 export async function POST(request: NextRequest) {
-  console.log("API interna: Iniciando envío de email con boleto");
-
   try {
     // 1. Obtener los datos del frontend
     const body = await request.json();
-    console.log(
-      "Datos recibidos para envío de email:",
-      JSON.stringify(body, null, 2),
-    );
 
     // 2. Validar campos requeridos
-    const requiredFields = ["emailDestino", "reservaCodigo", "pasajeroNombre"];
-    for (const field of requiredFields) {
-      if (!body[field]) {
-        return NextResponse.json(
-          {
-            success: false,
-            message: `Campo requerido faltante: ${field}`,
-          },
-          { status: 400 },
-        );
-      }
+    if (!body.emailDestino || !body.pdfBase64) {
+      console.error("Campos requeridos faltantes");
+      return NextResponse.json(
+        {
+          success: false,
+          message: "emailDestino y pdfBase64 son requeridos",
+        },
+        { status: 400 },
+      );
     }
 
-    // 3. Preparar payload para el backend externo de email
-    const mailPayload = {
-      emailDestino: body.emailDestino,
-      reservaCodigo: body.reservaCodigo,
-      horaSalida: body.horaSalida,
-      origen: body.origen,
-      horaLlegada: body.horaLlegada,
-      destino: body.destino,
-      fechaViaje: body.fechaViaje,
-      duracion: body.duracion,
-      empresa: body.empresa,
-      servicioTipo: body.servicioTipo,
-      asientos: body.asientos,
-      terminal: body.terminal,
-      puerta: body.puerta,
+    // 3. Preparar payload para el backend externo
+    const externalPayload = {
+      email: body.emailDestino,
+      pdfBase64: body.pdfBase64,
+      fileName:
+        body.fileName || `boleto-${body.reservaCodigo || Date.now()}.pdf`,
       pasajeroNombre: body.pasajeroNombre,
-      documento: body.documento,
-      telefono: body.telefono,
-      subtotal: body.subtotal,
-      iva: body.iva,
-      cargoServicio: body.cargoServicio,
-      total: body.total,
-      pagoFecha: body.pagoFecha,
-      metodoPago: body.metodoPago,
     };
 
-    console.log("Enviando a API de email externa:", {
-      url: EXTERNAL_MAIL_API_URL,
-      payload: mailPayload,
+    console.log("📤 Enviando a backend externo de email:", {
+      email: body.emailDestino,
+      fileName: externalPayload.fileName,
     });
 
     // 4. Llamar al backend externo de email
-    const response = await fetch(EXTERNAL_MAIL_API_URL, {
+    const response = await fetch(EXTERNAL_EMAIL_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        // Agregar headers de autorización si tu backend los requiere
+        // "Authorization": `Bearer ${process.env.BACKEND_API_KEY}`,
       },
-      body: JSON.stringify(mailPayload),
-      //   signal: AbortSignal.timeout(30000),
+      body: JSON.stringify(externalPayload),
+      signal: AbortSignal.timeout(30000),
     });
 
-    console.log("Respuesta del servicio de email:", {
+    console.log("📥 Respuesta del backend de email:", {
       status: response.status,
       statusText: response.statusText,
       ok: response.ok,
@@ -79,7 +55,7 @@ export async function POST(request: NextRequest) {
     // 5. Verificar respuesta
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("Error del servicio de email:", errorText);
+      console.error("Error del backend de email:", errorText);
 
       return NextResponse.json(
         {
@@ -91,25 +67,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 6. Procesar respuesta exitosa
+    // 6. Obtener respuesta del backend
     const result = await response.json();
-    console.log("Respuesta exitosa del servicio de email:", result);
 
+    // 7. Devolver respuesta exitosa
     return NextResponse.json({
       success: true,
       message: "Email enviado exitosamente",
-      data: {
-        email: body.emailDestino,
-        reservaCodigo: body.reservaCodigo,
-        timestamp: new Date().toISOString(),
-        externalResponse: result,
-      },
+      emailSentTo: body.emailDestino,
+      externalResponse: result,
     });
   } catch (error: any) {
     console.error("Error en API interna de email:", error);
 
+    // Manejar diferentes tipos de errores
     let statusCode = 500;
-    let errorMessage = "Error interno del servidor al enviar email";
+    let errorMessage = "Error interno del servidor";
 
     if (error.name === "TimeoutError" || error.name === "AbortError") {
       statusCode = 504;
