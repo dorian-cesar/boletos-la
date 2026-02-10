@@ -4,19 +4,14 @@ import { NextRequest, NextResponse } from "next/server";
 const EXTERNAL_API_URL = "https://pdf-mail.dev-wit.com/api/tickets/generate";
 
 export async function POST(request: NextRequest) {
-  console.log("🚀 API interna: Iniciando generación de PDF");
-
   try {
     // 1. Obtener los datos del frontend
     const body = await request.json();
-    console.log(
-      "📦 Datos recibidos del frontend:",
-      JSON.stringify(body, null, 2),
-    );
+    // console.log("Datos recibidos del frontend:", JSON.stringify(body, null, 2));
 
     // 2. Validar campos mínimos requeridos
     if (!body.reservaCodigo || !body.pasajeroNombre) {
-      console.error("❌ Campos requeridos faltantes");
+      console.error("Campos requeridos faltantes");
       return NextResponse.json(
         {
           success: false,
@@ -29,32 +24,27 @@ export async function POST(request: NextRequest) {
     // 3. Preparar payload para el backend externo (exactamente como lo esperan)
     const externalPayload = {
       reservaCodigo: body.reservaCodigo,
-      horaSalida: body.horaSalida || "22:30",
-      origen: body.origen || "Terminal Sur, Santiago",
-      horaLlegada: body.horaLlegada || "06:45",
-      destino: body.destino || "Terminal de Buses, Puerto Montt",
-      fechaViaje: body.fechaViaje || "15 de Octubre, 2024",
-      duracion: body.duracion || "8h 15m",
-      empresa: body.empresa || "TransVip Interurbano",
-      servicioTipo: body.servicioTipo || "Salón Cama",
-      asientos: body.asientos || "12, 13",
-      terminal: body.terminal || "Terminal Alameda",
-      puerta: body.puerta || "15",
+      horaSalida: body.horaSalida,
+      origen: body.origen,
+      horaLlegada: body.horaLlegada,
+      destino: body.destino,
+      fechaViaje: body.fechaViaje,
+      duracion: body.duracion,
+      empresa: body.empresa,
+      servicioTipo: body.servicioTipo,
+      asientos: body.asientos,
+      terminal: body.terminal,
+      puerta: body.puerta,
       pasajeroNombre: body.pasajeroNombre,
-      documento: body.documento || "12.345.678-9",
-      telefono: body.telefono || "+56 9 1234 5678",
-      subtotal: body.subtotal || "$25.000",
-      iva: body.iva || "$2.500",
-      cargoServicio: body.cargoServicio || "$2.000",
-      total: body.total || "$29.500",
-      pagoFecha: body.pagoFecha || "10/10/2024 14:20",
-      metodoPago: body.metodoPago || "Visa Debito (** 4455)",
+      documento: body.documento,
+      telefono: body.telefono,
+      subtotal: body.subtotal,
+      iva: body.iva,
+      cargoServicio: body.cargoServicio,
+      total: body.total,
+      pagoFecha: body.pagoFecha,
+      metodoPago: body.metodoPago,
     };
-
-    console.log("📤 Enviando a backend externo:", {
-      url: EXTERNAL_API_URL,
-      payload: externalPayload,
-    });
 
     // 4. Llamar al backend externo
     const response = await fetch(EXTERNAL_API_URL, {
@@ -67,7 +57,7 @@ export async function POST(request: NextRequest) {
       signal: AbortSignal.timeout(30000),
     });
 
-    console.log("📥 Respuesta del backend externo:", {
+    console.log("Respuesta del backend externo:", {
       status: response.status,
       statusText: response.statusText,
       ok: response.ok,
@@ -76,7 +66,7 @@ export async function POST(request: NextRequest) {
     // 5. Verificar respuesta
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("❌ Error del backend externo:", errorText);
+      console.error("Error del backend externo:", errorText);
 
       return NextResponse.json(
         {
@@ -96,8 +86,6 @@ export async function POST(request: NextRequest) {
     const base64PDF = Buffer.from(arrayBuffer).toString("base64");
 
     // 8. Devolver respuesta exitosa
-    console.log("✅ PDF generado exitosamente, tamaño:", pdfBlob.size, "bytes");
-
     return NextResponse.json({
       success: true,
       message: "PDF generado exitosamente",
@@ -114,7 +102,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error: any) {
-    console.error("💥 Error en API interna:", error);
+    console.error("Error en API interna:", error);
 
     // Manejar diferentes tipos de errores
     let statusCode = 500;
