@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { Seat, generateSeats, useBookingStore } from "@/lib/booking-store";
 import { cn } from "@/lib/utils";
-import { User, Crown, Star } from "lucide-react";
+import { User, Crown, Star, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface SeatMapProps {
   tripId: string;
@@ -13,6 +14,7 @@ interface SeatMapProps {
 export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
   const [seats, setSeats] = useState<Seat[]>([]);
   const [activeFloor, setActiveFloor] = useState(1);
+  const [showMaxAlert, setShowMaxAlert] = useState(false);
 
   const {
     selectedSeats,
@@ -32,21 +34,24 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
   }, [tripId]);
 
   const handleSeatClick = (seat: Seat) => {
-    console.log("Asiento clickeado:", seat.number, "Estado:", seat.status);
-
     if (seat.status === "occupied") {
-      console.log("Asiento está ocupado");
       return;
     }
 
     const isSelected = currentSelectedSeats.some((s) => s.id === seat.id);
-    console.log("¿Ya está seleccionado?", isSelected);
 
     if (isSelected) {
-      console.log("Removiendo asiento:", seat.id);
       isReturn ? removeReturnSeat(seat.id) : removeSeat(seat.id);
+      if (showMaxAlert) setShowMaxAlert(false);
     } else {
-      console.log("Agregando asiento:", seat.id);
+      // Verificar si ya se alcanzó el límite de 4 asientos
+      if (currentSelectedSeats.length >= 4) {
+        setShowMaxAlert(true);
+        // Ocultar la alerta después de 3 segundos
+        setTimeout(() => setShowMaxAlert(false), 3000);
+        return;
+      }
+
       isReturn ? addReturnSeat(seat) : addSeat(seat);
     }
   };
@@ -56,6 +61,68 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
 
   return (
     <div className="bg-background/5 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-background/20">
+      {/* Alert para límite máximo */}
+      {showMaxAlert && (
+        <Alert variant="destructive" className="mb-4 animate-fade-in">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Solo puedes seleccionar un máximo de 4 asientos por reserva.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Selection Counter */}
+      <div className="mb-6 p-4 bg-background/10 rounded-xl border border-background/20">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-background/60">Asientos seleccionados</p>
+            <p
+              className={cn(
+                "font-bold text-2xl text-background transition-colors duration-300",
+                currentSelectedSeats.length > 4
+                  ? "text-destructive animate-pulse"
+                  : "text-primary",
+              )}
+            >
+              {currentSelectedSeats.length}
+              <span className="text-base font-normal text-background/60 ml-1">
+                /4
+              </span>
+            </p>
+          </div>
+          {currentSelectedSeats.length > 0 && (
+            <div className="text-right">
+              <p className="text-sm text-background/60">Total seleccionado</p>
+              <p className="font-bold text-lg text-secondary">
+                Gs.{" "}
+                {currentSelectedSeats
+                  .reduce((acc, seat) => acc + seat.price, 0)
+                  .toLocaleString("es-PY")}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Selected seats badges */}
+        {currentSelectedSeats.length > 0 && (
+          <div className="mt-3 pt-3 border-t border-background/20">
+            <div className="flex flex-wrap gap-2">
+              {currentSelectedSeats.map((seat) => (
+                <button
+                  key={seat.id}
+                  onClick={() => handleSeatClick(seat)}
+                  className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-sm font-medium hover:bg-primary/80 transition-colors duration-200 flex items-center gap-1 group animate-scale-in"
+                  title="Haz clic para deseleccionar"
+                >
+                  <span>{seat.number}</span>
+                  <span className="opacity-80 group-hover:opacity-100">×</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Floor Selector */}
       <div className="flex justify-center gap-4 mb-8">
         {[1, 2].map((floor) => (
@@ -147,6 +214,10 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
                       isSelected={currentSelectedSeats.some(
                         (s) => s.id === seat.id,
                       )}
+                      isDisabled={
+                        currentSelectedSeats.length >= 4 &&
+                        !currentSelectedSeats.some((s) => s.id === seat.id)
+                      }
                       onClick={() => handleSeatClick(seat)}
                     />
                   ))}
@@ -166,6 +237,10 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
                       isSelected={currentSelectedSeats.some(
                         (s) => s.id === seat.id,
                       )}
+                      isDisabled={
+                        currentSelectedSeats.length >= 4 &&
+                        !currentSelectedSeats.some((s) => s.id === seat.id)
+                      }
                       onClick={() => handleSeatClick(seat)}
                     />
                   ))}
@@ -185,33 +260,38 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
 
       {/* Selection Summary */}
       <div className="mt-8 p-4 bg-background/10 rounded-xl border border-background/20">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-3">
           <div>
-            <p className="text-sm text-background/60">Asientos seleccionados</p>
-            <p className="font-semibold text-background">
-              {currentSelectedSeats.length}
+            <p className="text-sm text-background/60">Resumen</p>
+            <p
+              className={cn(
+                "font-semibold text-lg text-background",
+                currentSelectedSeats.length > 4 && "text-destructive",
+              )}
+            >
+              {currentSelectedSeats.length} asiento(s) seleccionado(s)
             </p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {currentSelectedSeats.map((seat) => (
-              <span
-                key={seat.id}
-                className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-sm font-medium animate-scale-in"
-              >
-                {seat.number} - Gs. {seat.price.toLocaleString("es-PY")}
-              </span>
-            ))}
+          {currentSelectedSeats.length > 0 && (
+            <div className="text-right">
+              <p className="text-sm text-background/60">Total</p>
+              <p className="font-bold text-xl text-secondary">
+                Gs.{" "}
+                {currentSelectedSeats
+                  .reduce((acc, seat) => acc + seat.price, 0)
+                  .toLocaleString("es-PY")}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {currentSelectedSeats.length > 4 && (
+          <div className="mt-2 p-2 bg-destructive/10 border border-destructive/30 rounded animate-pulse">
+            <p className="text-destructive text-sm font-medium text-center">
+              ⚠️ Límite excedido: Máximo 4 asientos permitidos
+            </p>
           </div>
-        </div>
-        <div className="mt-3 pt-3 border-t border-background/20">
-          <p className="text-sm text-background/60">Total seleccionado:</p>
-          <p className="font-bold text-lg text-secondary">
-            Gs.{" "}
-            {currentSelectedSeats
-              .reduce((acc, seat) => acc + seat.price, 0)
-              .toLocaleString("es-PY")}
-          </p>
-        </div>
+        )}
       </div>
     </div>
   );
@@ -220,30 +300,43 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
 interface SeatButtonProps {
   seat: Seat;
   isSelected: boolean;
+  isDisabled?: boolean;
   onClick: () => void;
 }
 
-function SeatButton({ seat, isSelected, onClick }: SeatButtonProps) {
+function SeatButton({
+  seat,
+  isSelected,
+  isDisabled = false,
+  onClick,
+}: SeatButtonProps) {
   const isOccupied = seat.status === "occupied";
 
   return (
     <button
       onClick={onClick}
-      disabled={isOccupied}
+      disabled={isOccupied || (isDisabled && !isSelected)}
       className={cn(
         "relative w-12 h-12 rounded-lg font-medium text-sm transition-all duration-300 flex items-center justify-center group",
         isOccupied &&
           "bg-background/20 cursor-not-allowed border border-background/40",
+        isDisabled &&
+          !isOccupied &&
+          !isSelected &&
+          "bg-background/5 cursor-not-allowed border border-background/20 opacity-50",
         !isOccupied &&
           !isSelected &&
+          !isDisabled &&
           seat.type === "vip" &&
           "bg-gradient-to-br from-secondary/10 to-secondary/5 border-2 border-secondary/50 hover:border-secondary hover:bg-secondary/20",
         !isOccupied &&
           !isSelected &&
+          !isDisabled &&
           seat.type === "premium" &&
           "bg-gradient-to-br from-primary/10 to-primary/5 border-2 border-primary/50 hover:border-primary hover:bg-primary/20",
         !isOccupied &&
           !isSelected &&
+          !isDisabled &&
           seat.type === "standard" &&
           "bg-background/10 border-2 border-background/30 hover:border-primary hover:bg-primary/10",
         isSelected &&
@@ -256,7 +349,11 @@ function SeatButton({ seat, isSelected, onClick }: SeatButtonProps) {
           seat.type === "standard" &&
           "bg-primary text-primary-foreground shadow-lg transform scale-110 border border-primary",
       )}
-      title={`Asiento ${seat.number} - ${seat.type === "vip" ? "Ejecutivo VIP" : seat.type === "premium" ? "Cama Ejecutivo" : "Semi Cama"} - Gs. ${seat.price.toLocaleString("es-PY")}`}
+      title={
+        isDisabled && !isOccupied && !isSelected
+          ? "Límite máximo alcanzado (4 asientos)"
+          : `Asiento ${seat.number} - ${seat.type === "vip" ? "Ejecutivo VIP" : seat.type === "premium" ? "Cama Ejecutivo" : "Semi Cama"} - Gs. ${seat.price.toLocaleString("es-PY")}`
+      }
     >
       {isOccupied ? (
         <User className="h-5 w-5 text-background/60" />
@@ -276,10 +373,20 @@ function SeatButton({ seat, isSelected, onClick }: SeatButtonProps) {
           {seat.type === "premium" && !isSelected && (
             <Star className="absolute -top-1 -right-1 h-3 w-3 text-primary" />
           )}
+
+          {/* Disabled overlay */}
+          {isDisabled && !isOccupied && !isSelected && (
+            <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
+              {/* <span className="text-xs text-white font-bold"></span> */}
+            </div>
+          )}
+
           {/* Price tooltip on hover */}
           <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50">
             <div className="bg-accent text-background-foreground text-xs px-2 py-1 rounded whitespace-nowrap shadow-lg border border-background/20">
-              Gs. {seat.price.toLocaleString("es-PY")}
+              {isDisabled && !isOccupied && !isSelected
+                ? "Límite máximo alcanzado"
+                : `Gs. ${seat.price.toLocaleString("es-PY")}`}
             </div>
             <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-background mx-auto"></div>
           </div>

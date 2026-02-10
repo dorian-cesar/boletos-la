@@ -12,9 +12,11 @@ import {
   Users,
   ChevronLeft,
   ChevronRight,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { BookingProgress } from "@/components/booking-progress";
 import { SeatMap } from "@/components/seat-map";
 import { useBookingStore, cities } from "@/lib/booking-store";
@@ -56,9 +58,17 @@ export default function SeatsPage() {
     }
   };
 
-  const canContinue = selectingReturn
-    ? selectedReturnSeats.length > 0
-    : selectedSeats.length > 0;
+  // Obtener asientos actuales basado en si estamos seleccionando ida o regreso
+  const currentSelectedSeats = selectingReturn
+    ? selectedReturnSeats
+    : selectedSeats;
+
+  // Verificar si se puede continuar (mínimo 1 asiento, máximo 4)
+  const canContinue =
+    currentSelectedSeats.length > 0 && currentSelectedSeats.length <= 4;
+
+  // Verificar si se ha excedido el límite
+  const hasExceededLimit = currentSelectedSeats.length > 4;
 
   const currentTrip = selectingReturn
     ? selectedReturnTrip
@@ -120,6 +130,17 @@ export default function SeatsPage() {
         <BookingProgress />
 
         <div className="container mx-auto px-4 py-8">
+          {/* Alert para límite de asientos */}
+          {hasExceededLimit && (
+            <Alert variant="destructive" className="mb-6 animate-fade-in">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                Solo puedes seleccionar un máximo de 4 asientos por reserva. Por
+                favor, deselecciona algunos asientos.
+              </AlertDescription>
+            </Alert>
+          )}
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Seat Selection */}
             <div className="lg:col-span-2">
@@ -218,10 +239,16 @@ export default function SeatsPage() {
                   <Button
                     variant="outline"
                     onClick={() => setSelectingReturn(true)}
-                    disabled={selectingReturn || selectedSeats.length === 0}
+                    disabled={
+                      selectingReturn ||
+                      selectedSeats.length === 0 ||
+                      selectedSeats.length > 4
+                    }
                     className={cn(
                       "border-background/20 text-background hover:bg-background/10",
-                      (selectingReturn || selectedSeats.length === 0) &&
+                      (selectingReturn ||
+                        selectedSeats.length === 0 ||
+                        selectedSeats.length > 4) &&
                         "opacity-50",
                     )}
                   >
@@ -238,6 +265,25 @@ export default function SeatsPage() {
                 <h3 className="text-xl font-bold mb-6 text-background">
                   Resumen de Reserva
                 </h3>
+
+                {/* Asientos seleccionados contador */}
+                <div className="mb-4 p-3 bg-background/10 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-background/60">
+                      Asientos seleccionados:
+                    </span>
+                    <div
+                      className={cn(
+                        "text-sm font-medium",
+                        currentSelectedSeats.length > 4
+                          ? "text-destructive animate-pulse"
+                          : "text-primary",
+                      )}
+                    >
+                      {currentSelectedSeats.length}/4
+                    </div>
+                  </div>
+                </div>
 
                 {/* Outbound Trip */}
                 <div className="mb-6 pb-6 border-b border-background/20">
@@ -266,6 +312,11 @@ export default function SeatsPage() {
                       {selectedSeats.length > 0
                         ? selectedSeats.map((s) => s.number).join(", ")
                         : "Sin seleccionar"}
+                      {selectedSeats.length > 4 && (
+                        <span className="text-destructive text-xs ml-2">
+                          (máximo 4)
+                        </span>
+                      )}
                     </p>
                     <p className="text-sm font-medium text-secondary">
                       Gs.{" "}
@@ -304,6 +355,11 @@ export default function SeatsPage() {
                         {selectedReturnSeats.length > 0
                           ? selectedReturnSeats.map((s) => s.number).join(", ")
                           : "Sin seleccionar"}
+                        {selectedReturnSeats.length > 4 && (
+                          <span className="text-destructive text-xs ml-2">
+                            (máximo 4)
+                          </span>
+                        )}
                       </p>
                       <p className="text-sm font-medium text-secondary">
                         Gs.{" "}
@@ -356,8 +412,10 @@ export default function SeatsPage() {
                 </Button>
 
                 {!canContinue && (
-                  <p className="text-sm text-destructive mt-3 text-center animate-pulse">
-                    Selecciona al menos 1 asiento para continuar
+                  <p className="text-sm text-destructive mt-3 text-center">
+                    {hasExceededLimit
+                      ? "Máximo 4 asientos permitidos"
+                      : "Selecciona al menos 1 asiento para continuar"}
                   </p>
                 )}
               </Card>

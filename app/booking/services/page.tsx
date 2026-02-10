@@ -315,7 +315,7 @@ export default function ServicesPage() {
                         className="bg-secondary hover:bg-secondary/90 text-secondary-foreground transition-all duration-300 transform hover:scale-105"
                       >
                         Seleccionar
-                        <ArrowRight className="h-4 w-4 ml-2" />
+                        <ArrowRight className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
