@@ -59,6 +59,7 @@ export function Footer() {
             <div className="flex w-full lg:w-auto gap-3">
               <Input
                 type="email"
+                autoComplete="off"
                 placeholder="Tu correo electrónico"
                 className="bg-background/10 border-background/20 text-background placeholder:text-background/50 h-12 w-full lg:w-80"
               />
@@ -219,10 +220,21 @@ export function Footer() {
       <div className="border-t border-background/10">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-background/50 text-sm text-center md:text-left">
-              {new Date().getFullYear()} boletos.la. Todos los derechos
-              reservados.
-            </p>
+            {/* Año + logo */}
+            <div className="flex items-center gap-2 text-background/50 text-sm">
+              <Image
+                src="/logos/logo-boletos.png"
+                alt="Boletos.la"
+                width={90}
+                height={24}
+                className="opacity-70 mb-1"
+              />
+              <span>{new Date().getFullYear()}</span>
+              <span>-</span>
+              <span>Todos los derechos reservados.</span>
+            </div>
+
+            {/* Links */}
             <div className="flex items-center gap-6 text-sm">
               <a
                 href="#"
