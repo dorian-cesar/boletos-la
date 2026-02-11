@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 3. Generar PDF directamente
-    console.log("📄 Generando PDF localmente para:", body.reservaCodigo);
+    console.log("Generando PDF localmente para:", body.reservaCodigo);
 
     const pdfData = await generateTicketPDF(body);
     const base64PDF = pdfData.base64;
@@ -586,45 +586,34 @@ async function generateTicketPDF(ticketData: any): Promise<{
 </html>
   `;
 
-  // Configuración de Puppeteer
-  // const browser = await puppeteer.launch({
-  //   args: chromium.args,
-  //   executablePath:
-  //     process.env.NODE_ENV === "production"
-  //       ? await chromium.executablePath()
-  //       : process.platform === "win32"
-  //         ? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-  //         : process.platform === "linux"
-  //           ? "/usr/bin/google-chrome"
-  //           : "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-  //   headless: true,
-  // });
-
   async function launchPuppeteer() {
-    const isProduction = process.env.NODE_ENV === "production";
-    const isVercel = process.env.VERCEL === "1"; // Si usas Vercel
-    const isAwsLambda = process.env.AWS_LAMBDA_FUNCTION_NAME; // Si usas AWS Lambda
+    const isServerless =
+      process.env.AWS_EXECUTION_ENV ||
+      process.env.AWS_REGION ||
+      process.env.VERCEL;
 
-    if (isProduction && (isVercel || isAwsLambda)) {
-      // Configuración para producción en serverless
-      return await puppeteer.launch({
-        args: chromium.args,
-        executablePath: await chromium.executablePath(),
+    // ===== AWS / AMPLIFY / SERVERLESS =====
+    if (isServerless) {
+      const executablePath = await chromium.executablePath();
+
+      return puppeteer.launch({
+        args: [...chromium.args, "--no-sandbox", "--disable-setuid-sandbox"],
+        executablePath,
         headless: true,
-      });
-    } else {
-      // Configuración para desarrollo local o servidor tradicional
-      return await puppeteer.launch({
-        headless: true,
-        executablePath:
-          process.platform === "win32"
-            ? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-            : process.platform === "linux"
-              ? "/usr/bin/google-chrome"
-              : "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
       });
     }
+
+    // ===== DESARROLLO LOCAL =====
+    return puppeteer.launch({
+      headless: true,
+      executablePath:
+        process.platform === "win32"
+          ? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+          : process.platform === "linux"
+            ? "/usr/bin/google-chrome"
+            : "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
   }
 
   // En tu función generateTicketPDF:
