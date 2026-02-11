@@ -535,7 +535,7 @@ export default function ConfirmationPageContent({
     passengerEmail: string,
   ): Promise<boolean> => {
     if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) {
-      console.warn("No hay datos suficientes para enviar email");
+      console.warn("⚠️ No hay datos suficientes para enviar email");
       return false;
     }
 
@@ -557,7 +557,9 @@ export default function ConfirmationPageContent({
         origen: originCity?.name || selectedOutboundTrip.origin,
         horaLlegada: selectedOutboundTrip.arrivalTime,
         destino: destinationCity?.name || selectedOutboundTrip.destination,
-        fechaViaje: format(new Date(departureDate || ""), "dd/MM/yyyy"),
+        fechaViaje: format(new Date(departureDate || ""), "d 'de' MMMM, yyyy", {
+          locale: es,
+        }),
         duracion: selectedOutboundTrip.duration,
         empresa: selectedOutboundTrip.company,
         servicioTipo: selectedOutboundTrip.busType,
@@ -571,11 +573,11 @@ export default function ConfirmationPageContent({
         iva: `Gs. ${Math.round(totalPrice * 0.1).toLocaleString("es-PY")}`,
         cargoServicio: `Gs. ${Math.round(totalPrice * 0.08).toLocaleString("es-PY")}`,
         total: `Gs. ${totalPrice.toLocaleString("es-PY")}`,
-        pagoFecha: format(new Date(), "dd/MM/yyyy"),
+        pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
       };
 
-      // Llamar a la NUEVA API de envío de email
+      // Llamar DIRECTAMENTE a la API de email (sin generar PDF primero)
       const response = await fetch("/api/tickets/send-email", {
         method: "POST",
         headers: {
@@ -592,7 +594,7 @@ export default function ConfirmationPageContent({
         );
       }
 
-      console.log("Email automático enviado exitosamente:", result);
+      console.log("✅ Email automático enviado exitosamente:", result);
       setAutoEmailStatus("sent");
       setAutoEmailMessage("Boleto enviado al correo electrónico");
 
@@ -625,74 +627,80 @@ export default function ConfirmationPageContent({
 
     // Verificar si ya se está procesando algo
     if (isProcessing()) {
-      console.log("Ya se está procesando una acción");
+      console.log("⚠️ Ya se está procesando una acción");
       return;
     }
 
-    const proceedWithEmail = async () => {
-      // Activar loader para este pasajero específico
-      setProcessing({ type: "email-single", passengerIndex });
+    // Activar loader para este pasajero específico
+    setProcessing({ type: "email-single", passengerIndex });
 
-      try {
-        // Buscar el asiento correspondiente
-        const passengerSeat =
-          selectedSeats[passengerIndex]?.number ||
-          passenger.seatNumber ||
-          `A${passengerIndex + 1}`;
+    try {
+      // Buscar el asiento correspondiente
+      const passengerSeat =
+        selectedSeats[passengerIndex]?.number ||
+        passenger.seatNumber ||
+        `A${passengerIndex + 1}`;
 
-        // Calcular precio por pasajero
-        const pricePerPassenger = Math.round(
-          totalPrice / passengerDetails.length,
-        );
+      // Calcular precio por pasajero
+      const pricePerPassenger = Math.round(
+        totalPrice / passengerDetails.length,
+      );
 
-        // Preparar payload para la API de email
-        const payload = {
-          emailDestino: passenger.email,
-          reservaCodigo: `${bookingReference}-${passengerSeat}`,
-          horaSalida: selectedOutboundTrip.departureTime,
-          origen: originCity?.name || selectedOutboundTrip.origin,
-          horaLlegada: selectedOutboundTrip.arrivalTime,
-          destino: destinationCity?.name || selectedOutboundTrip.destination,
-          fechaViaje: format(new Date(departureDate || ""), "dd/MM/yyyy"),
-          duracion: selectedOutboundTrip.duration,
-          empresa: selectedOutboundTrip.company,
-          servicioTipo: selectedOutboundTrip.busType,
-          asientos: passengerSeat,
-          terminal: `Terminal de Ómnibus de ${originCity?.name}`,
-          puerta: Math.floor(Math.random() * 20 + 1).toString(),
-          pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
-          documento: passenger.documentNumber || "Sin documento",
-          telefono: passenger.phone || "Sin teléfono",
-          subtotal: `Gs. ${Math.round(pricePerPassenger * 0.82).toLocaleString("es-PY")}`,
-          iva: `Gs. ${Math.round(pricePerPassenger * 0.1).toLocaleString("es-PY")}`,
-          cargoServicio: `Gs. ${Math.round(pricePerPassenger * 0.08).toLocaleString("es-PY")}`,
-          total: `Gs. ${pricePerPassenger.toLocaleString("es-PY")}`,
-          pagoFecha: format(new Date(), "dd/MM/yyyy"),
-          metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
-        };
+      // Preparar payload para la API de email
+      // AHORA NO NECESITAMOS GENERAR EL PDF PRIMERO
+      // La API de email generará el PDF automáticamente
+      const payload = {
+        emailDestino: passenger.email,
+        reservaCodigo: `${bookingReference}-${passengerSeat}`,
+        horaSalida: selectedOutboundTrip.departureTime,
+        origen: originCity?.name || selectedOutboundTrip.origin,
+        horaLlegada: selectedOutboundTrip.arrivalTime,
+        destino: destinationCity?.name || selectedOutboundTrip.destination,
+        fechaViaje: format(new Date(departureDate || ""), "d 'de' MMMM, yyyy", {
+          locale: es,
+        }),
+        duracion: selectedOutboundTrip.duration,
+        empresa: selectedOutboundTrip.company,
+        servicioTipo: selectedOutboundTrip.busType,
+        asientos: passengerSeat,
+        terminal: `Terminal de Ómnibus de ${originCity?.name}`,
+        puerta: Math.floor(Math.random() * 20 + 1).toString(),
+        pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
+        documento: passenger.documentNumber || "Sin documento",
+        telefono: passenger.phone || "Sin teléfono",
+        subtotal: `Gs. ${Math.round(pricePerPassenger * 0.82).toLocaleString("es-PY")}`,
+        iva: `Gs. ${Math.round(pricePerPassenger * 0.1).toLocaleString("es-PY")}`,
+        cargoServicio: `Gs. ${Math.round(pricePerPassenger * 0.08).toLocaleString("es-PY")}`,
+        total: `Gs. ${pricePerPassenger.toLocaleString("es-PY")}`,
+        pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
+        metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
+      };
 
-        console.log(`Enviando boleto a ${passenger.email}`, payload);
+      console.log(`📧 Enviando boleto a ${passenger.email}...`);
 
-        const response = await fetch("/api/tickets/send-email", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        });
+      // Llamar DIRECTAMENTE a la API de email
+      // Ella se encargará de generar el PDF y enviarlo
+      const response = await fetch("/api/tickets/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
-        const result = await response.json();
+      const result = await response.json();
 
-        if (!result.success) {
-          throw new Error(result.message || "Error al enviar el email");
-        }
-      } catch (error: any) {
-        console.error("Error enviando email al pasajero:", error);
-      } finally {
-        // Desactivar loader
-        setProcessing({ type: null, passengerIndex: null });
+      if (!result.success) {
+        throw new Error(result.message || "Error al enviar el email");
       }
-    };
+
+      console.log("Email enviado exitosamente:", result);
+    } catch (error: any) {
+      console.error("Error enviando email al pasajero:", error);
+    } finally {
+      // Desactivar loader
+      setProcessing({ type: null, passengerIndex: null });
+    }
   };
 
   // =====================================================================
