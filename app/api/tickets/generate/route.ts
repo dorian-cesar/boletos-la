@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
 
     // 4. Preparar payload para el backend externo
     const externalPayload = {
-      templateName: "ticketTemplate",
+      templateName: "ticket-boleto",
       reservaCodigo: body.reservaCodigo,
       horaSalida: body.horaSalida,
       origen: body.origen,

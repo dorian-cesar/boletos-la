@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     // 4. Preparar payload para el backend externo
     // El backend externo ahora generará el PDF automáticamente
     const externalPayload = {
-      templateName: "ticketTemplate", // Template fijo para boletos
+      templateName: "ticket-boleto", // Template fijo para boletos
       emailDestino: body.emailDestino,
       reservaCodigo: body.reservaCodigo,
       horaSalida: body.horaSalida,
