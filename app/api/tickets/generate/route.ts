@@ -617,43 +617,48 @@ async function generateTicketPDF(ticketData: any): Promise<{
   }
 
   // En tu función generateTicketPDF:
-  const browser = await launchPuppeteer();
+  let browser;
+  try {
+    browser = await launchPuppeteer();
 
-  const page = await browser.newPage();
+    const page = await browser.newPage();
 
-  // Establecer las dimensiones exactas de A4
-  await page.setViewport({
-    width: 794, // 210mm en pixels (210 * 3.78)
-    height: 1123, // 297mm en pixels (297 * 3.78)
-  });
+    // Establecer las dimensiones exactas de A4
+    await page.setViewport({
+      width: 794, // 210mm en pixels (210 * 3.78)
+      height: 1123, // 297mm en pixels (297 * 3.78)
+    });
 
-  // Establecer el contenido HTML
-  await page.setContent(htmlContent, {
-    waitUntil: "networkidle0",
-  });
+    // Establecer el contenido HTML
+    await page.setContent(htmlContent, {
+      waitUntil: "networkidle0",
+    });
 
-  // Generar el PDF con márgenes mínimos
-  const pdfBuffer = await page.pdf({
-    format: "A4",
-    printBackground: true,
-    margin: {
-      top: "5mm",
-      right: "5mm",
-      bottom: "5mm",
-      left: "5mm",
-    },
-    preferCSSPageSize: true,
-  });
+    // Generar el PDF con márgenes mínimos
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+      printBackground: true,
+      margin: {
+        top: "5mm",
+        right: "5mm",
+        bottom: "5mm",
+        left: "5mm",
+      },
+      preferCSSPageSize: true,
+    });
 
-  await browser.close();
+    await browser.close();
 
-  const buffer = Buffer.from(pdfBuffer);
-  const base64 = `data:application/pdf;base64,${buffer.toString("base64")}`;
-  const fileName = `Boleto_${ticketData.origen}-${ticketData.destino}_${ticketData.reservaCodigo}.pdf`;
+    const buffer = Buffer.from(pdfBuffer);
+    const base64 = `data:application/pdf;base64,${buffer.toString("base64")}`;
+    const fileName = `Boleto_${ticketData.origen}-${ticketData.destino}_${ticketData.reservaCodigo}.pdf`;
 
-  return {
-    fileName,
-    base64,
-    size: buffer.length,
-  };
+    return {
+      fileName,
+      base64,
+      size: buffer.length,
+    };
+  } finally {
+    if (browser) await browser.close();
+  }
 }
