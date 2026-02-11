@@ -1,14 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// URL del backend externo para enviar emails
+// URL del backend externo para enviar emails (NUEVO ENDPOINT)
 const EXTERNAL_EMAIL_API_URL =
-  "https://pdf-mail.dev-wit.com/api/pdf-mail/send-confirmed";
-
-// URL de la API interna de generación de PDF
-const TICKET_API_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://boletos.la/api/tickets/generate"
-    : "http://localhost:3000/api/tickets/generate";
+  "https://pdf-mail.dev-wit.com/api/mail/send-ticket";
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,155 +17,136 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 3. Variables iniciales
-    let pdfBase64: string | undefined = body.pdfBase64;
-    let fileName: string | undefined = body.fileName;
+    // 3. Validar datos mínimos requeridos por el backend externo
+    const requiredFields = [
+      "reservaCodigo",
+      "horaSalida",
+      "origen",
+      "horaLlegada",
+      "destino",
+      "fechaViaje",
+      "duracion",
+      "empresa",
+      "servicioTipo",
+      "asientos",
+      "terminal",
+      "puerta",
+      "pasajeroNombre",
+      "documento",
+      "telefono",
+      "subtotal",
+      "iva",
+      "cargoServicio",
+      "total",
+      "pagoFecha",
+      "metodoPago",
+    ];
 
-    // 4. Si NO hay PDF → generarlo
-    if (!pdfBase64) {
-      // Validar datos mínimos para generar boleto
-      if (
-        !body.reservaCodigo ||
-        !body.pasajeroNombre ||
-        !body.origen ||
-        !body.destino
-      ) {
-        return NextResponse.json(
-          {
-            success: false,
-            message:
-              "Se requiere reservaCodigo, pasajeroNombre, origen y destino para generar el PDF",
-          },
-          { status: 400 },
-        );
-      }
+    const missingFields = requiredFields.filter((field) => !body[field]);
 
-      try {
-        const ticketPayload = {
-          reservaCodigo: body.reservaCodigo,
-          horaSalida: body.horaSalida,
-          origen: body.origen,
-          horaLlegada: body.horaLlegada,
-          destino: body.destino,
-          fechaViaje: body.fechaViaje,
-          duracion: body.duracion,
-          empresa: body.empresa,
-          servicioTipo: body.servicioTipo,
-          asientos: body.asientos,
-          terminal: body.terminal,
-          puerta: body.puerta,
-          pasajeroNombre: body.pasajeroNombre,
-          documento: body.documento || "Sin documento",
-          telefono: body.telefono || "Sin teléfono",
-          subtotal: body.subtotal,
-          iva: body.iva,
-          cargoServicio: body.cargoServicio,
-          total: body.total,
-          pagoFecha: body.pagoFecha || new Date().toISOString(),
-          metodoPago: body.metodoPago || "Tarjeta de Crédito/Débito",
-        };
-
-        const ticketResponse = await fetch(TICKET_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(ticketPayload),
-          signal: AbortSignal.timeout(30000),
-        });
-
-        if (!ticketResponse.ok) {
-          throw new Error(`Error generando PDF: ${ticketResponse.statusText}`);
-        }
-
-        const ticketResult = await ticketResponse.json();
-
-        if (!ticketResult.success || !ticketResult.pdf?.base64) {
-          throw new Error("No se pudo generar el PDF");
-        }
-
-        pdfBase64 = ticketResult.pdf.base64;
-        fileName = ticketResult.pdf.fileName;
-      } catch (ticketError: any) {
-        return NextResponse.json(
-          {
-            success: false,
-            message: `Error al generar el boleto: ${ticketError.message}`,
-          },
-          { status: 502 },
-        );
-      }
-    }
-
-    // 5. Verificar que ahora sí tenemos PDF
-    if (!pdfBase64) {
+    if (missingFields.length > 0) {
       return NextResponse.json(
-        { success: false, message: "No se pudo generar o recibir el PDF" },
-        { status: 500 },
+        {
+          success: false,
+          message: `Campos requeridos faltantes: ${missingFields.join(", ")}`,
+        },
+        { status: 400 },
       );
     }
 
-    // 6. 🔥 LIMPIEZA CORRECTA DEL BASE64 (SOLO AQUÍ)
-    if (pdfBase64.startsWith("data:")) {
-      const base64Match = pdfBase64.match(
-        /^data:application\/pdf;base64,(.*)$/,
-      );
-
-      if (!base64Match?.[1]) {
-        return NextResponse.json(
-          { success: false, message: "Formato de PDF inválido" },
-          { status: 400 },
-        );
-      }
-
-      pdfBase64 = base64Match[1];
-    }
-
-    // 7. Payload para backend externo de email
+    // 4. Preparar payload para el backend externo
+    // El backend externo ahora generará el PDF automáticamente
     const externalPayload = {
-      email: body.emailDestino,
-      pdfBase64,
-      fileName: fileName || `boleto-${body.reservaCodigo || Date.now()}.pdf`,
-      pasajeroNombre: body.pasajeroNombre || "Pasajero",
+      templateName: "ticketTemplate", // Template fijo para boletos
+      emailDestino: body.emailDestino,
       reservaCodigo: body.reservaCodigo,
+      horaSalida: body.horaSalida,
+      origen: body.origen,
+      horaLlegada: body.horaLlegada,
+      destino: body.destino,
+      fechaViaje: body.fechaViaje,
+      duracion: body.duracion,
+      empresa: body.empresa,
+      servicioTipo: body.servicioTipo,
+      asientos: body.asientos,
+      terminal: body.terminal,
+      puerta: body.puerta,
+      pasajeroNombre: body.pasajeroNombre,
+      documento: body.documento,
+      telefono: body.telefono,
+      subtotal: body.subtotal,
+      iva: body.iva,
+      cargoServicio: body.cargoServicio,
+      total: body.total,
+      pagoFecha: body.pagoFecha,
+      metodoPago: body.metodoPago,
     };
 
-    console.log("Enviando email a backend externo:", {
-      pdfBase64Preview: pdfBase64.slice(0, 50) + "...",
-      pdfSize: pdfBase64.length,
-      email: body.emailDestino,
-      fileName: externalPayload.fileName,
+    console.log("📧 Enviando email a backend externo:", {
+      email: externalPayload.emailDestino,
+      reservaCodigo: externalPayload.reservaCodigo,
+      pasajero: externalPayload.pasajeroNombre,
+      template: externalPayload.templateName,
     });
 
-    // 8. Llamar backend externo
+    // 5. Llamar al backend externo
     const emailResponse = await fetch(EXTERNAL_EMAIL_API_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(externalPayload),
-      signal: AbortSignal.timeout(30000),
+      signal: AbortSignal.timeout(30000), // 30 segundos timeout
     });
 
+    // 6. Obtener respuesta del backend externo
+    let responseData;
+    try {
+      responseData = await emailResponse.json();
+    } catch (e) {
+      responseData = { message: "No se pudo parsear la respuesta" };
+    }
+
     if (!emailResponse.ok) {
+      console.error("❌ Error en backend externo:", {
+        status: emailResponse.status,
+        statusText: emailResponse.statusText,
+        data: responseData,
+      });
+
       return NextResponse.json(
         {
           success: false,
           message: `Error del servicio de email: ${emailResponse.statusText}`,
           status: emailResponse.status,
+          externalError: responseData,
         },
-        { status: 502 },
+        { status: 502 }, // Bad Gateway
       );
     }
 
-    const result = await emailResponse.json();
+    // 7. Respuesta exitosa
+    console.log("✅ Email enviado exitosamente:", {
+      email: externalPayload.emailDestino,
+      reservaCodigo: externalPayload.reservaCodigo,
+      response: responseData,
+    });
 
-    // 9. Respuesta final
     return NextResponse.json({
       success: true,
       message: "Email enviado exitosamente",
       emailSentTo: body.emailDestino,
-      pdfGenerated: !body.pdfBase64,
-      pdfFileName: externalPayload.fileName,
-      externalResponse: result,
+      reservaCodigo: body.reservaCodigo,
+      externalResponse: responseData,
     });
   } catch (error: any) {
+    // Manejo de errores
+    console.error("❌ Error en API send-email:", {
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+    });
+
     let statusCode = 500;
     let errorMessage = "Error interno del servidor";
 
@@ -179,12 +154,25 @@ export async function POST(request: NextRequest) {
       statusCode = 504;
       errorMessage = "Timeout: El servicio tardó demasiado en responder";
     } else if (error.name === "TypeError" && error.message.includes("fetch")) {
-      statusCode = 503;
-      errorMessage = "Servicio no disponible temporalmente";
+      if (
+        error.message.includes("ECONNREFUSED") ||
+        error.message.includes("Failed to fetch")
+      ) {
+        statusCode = 503;
+        errorMessage = "Servicio de email no disponible temporalmente";
+      } else {
+        statusCode = 503;
+        errorMessage = "Error de conexión con el servicio de email";
+      }
     }
 
     return NextResponse.json(
-      { success: false, message: errorMessage, error: error.message },
+      {
+        success: false,
+        message: errorMessage,
+        error: error.message,
+        type: error.name,
+      },
       { status: statusCode },
     );
   }

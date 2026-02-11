@@ -393,139 +393,107 @@ export default function ConfirmationPageContent({
 
     // Verificar si ya se está procesando algo
     if (isProcessing()) {
-      console.log("⚠️ Ya se está procesando una acción");
+      console.log("Ya se está procesando una acción");
       return;
     }
 
     // Activar loader para email a todos
     setProcessing({ type: "email-all", passengerIndex: null });
     setEmailSent(false);
+    setAutoEmailStatus("sending");
+    setAutoEmailMessage("Enviando boletos por email...");
 
-    const proceedWithEmail = async () => {
-      try {
-        // Primero generar el PDF
-        console.log("Generando PDF para email...");
+    try {
+      // Para el email, enviamos un solo boleto con todos los pasajeros
+      const passengerSeats = selectedSeats.map((s) => s.number).join(", ");
+      const passengerNames = passengerDetails
+        .map((p) => `${p.firstName} ${p.lastName}`)
+        .join(", ");
 
-        // Para el email, podemos enviar un solo boleto con todos los pasajeros
-        const passengerSeats = selectedSeats.map((s) => s.number).join(", ");
-        const passengerNames = passengerDetails
-          .map((p) => `${p.firstName} ${p.lastName}`)
-          .join(", ");
+      // Preparar payload para la API de email
+      // SIN PDF - El backend externo generará el PDF automáticamente
+      const payload = {
+        emailDestino: primaryPassenger.email,
+        reservaCodigo: bookingReference,
+        horaSalida: selectedOutboundTrip.departureTime,
+        origen: originCity?.name || selectedOutboundTrip.origin,
+        horaLlegada: selectedOutboundTrip.arrivalTime,
+        destino: destinationCity?.name || selectedOutboundTrip.destination,
+        fechaViaje: format(new Date(departureDate || ""), "d 'de' MMMM, yyyy", {
+          locale: es,
+        }),
+        duracion: selectedOutboundTrip.duration,
+        empresa: selectedOutboundTrip.company,
+        servicioTipo: selectedOutboundTrip.busType,
+        asientos: passengerSeats,
+        terminal: `Terminal de Ómnibus de ${originCity?.name}`,
+        puerta: Math.floor(Math.random() * 20 + 1).toString(),
+        pasajeroNombre: passengerNames,
+        documento: primaryPassenger.documentNumber || "Sin documento",
+        telefono: primaryPassenger.phone || "Sin teléfono",
+        subtotal: `Gs. ${Math.round(totalPrice * 0.82).toLocaleString("es-PY")}`,
+        iva: `Gs. ${Math.round(totalPrice * 0.1).toLocaleString("es-PY")}`,
+        cargoServicio: `Gs. ${Math.round(totalPrice * 0.08).toLocaleString("es-PY")}`,
+        total: `Gs. ${totalPrice.toLocaleString("es-PY")}`,
+        pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
+        metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
+      };
 
-        // Preparar payload para generar el PDF
-        const payload = {
-          reservaCodigo: bookingReference,
-          horaSalida: selectedOutboundTrip.departureTime,
-          origen: originCity?.name || selectedOutboundTrip.origin,
-          horaLlegada: selectedOutboundTrip.arrivalTime,
-          destino: destinationCity?.name || selectedOutboundTrip.destination,
-          fechaViaje: format(
-            new Date(departureDate || ""),
-            "d 'de' MMMM, yyyy",
-            {
-              locale: es,
-            },
-          ),
-          duracion: selectedOutboundTrip.duration,
-          empresa: selectedOutboundTrip.company,
-          servicioTipo: selectedOutboundTrip.busType,
-          asientos: passengerSeats,
-          terminal: `Terminal de Ómnibus de ${originCity?.name}`,
-          puerta: Math.floor(Math.random() * 20 + 1).toString(),
-          pasajeroNombre: passengerNames,
-          documento: primaryPassenger.documentNumber || "Sin documento",
-          telefono: primaryPassenger.phone || "Sin teléfono",
-          subtotal: `Gs. ${Math.round(totalPrice * 0.82).toLocaleString("es-PY")}`,
-          iva: `Gs. ${Math.round(totalPrice * 0.1).toLocaleString("es-PY")}`,
-          cargoServicio: `Gs. ${Math.round(totalPrice * 0.08).toLocaleString("es-PY")}`,
-          total: `Gs. ${totalPrice.toLocaleString("es-PY")}`,
-          pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
-          metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
-        };
+      console.log("📧 Enviando email a todos los pasajeros (destino único):", {
+        email: primaryPassenger.email,
+        asientos: passengerSeats,
+        pasajeros: passengerNames,
+      });
 
-        console.log("Generando PDF para email...");
+      // Llamar DIRECTAMENTE a la API de email
+      // Ella se encargará de generar el PDF y enviarlo
+      const response = await fetch("/api/tickets/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
-        // 1. Generar el PDF
-        const pdfResponse = await fetch("/api/tickets/generate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        });
+      const result = await response.json();
 
-        const pdfResult = await pdfResponse.json();
-
-        if (!pdfResult.success || !pdfResult.pdf?.base64) {
-          throw new Error("Error generando el PDF: " + pdfResult.message);
-        }
-
-        console.log("PDF generado exitosamente para email");
-
-        // 2. Preparar payload para enviar email
-        const emailPayload = {
-          emailDestino: primaryPassenger.email,
-          pdfBase64: pdfResult.pdf.base64,
-          fileName: pdfResult.pdf.fileName,
-          ...payload,
-        };
-
-        console.log("Enviando a API interna de email...");
-
-        // 3. Llamar a NUESTRA API interna que reenvía al backend externo
-        const emailResponse = await fetch("/api/tickets/send-email", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(emailPayload),
-        });
-
-        const emailResult = await emailResponse.json();
-
-        if (!emailResult.success) {
-          throw new Error(emailResult.message || "Error al enviar el email");
-        }
-
-        // Marcar como enviado
-        setEmailSent(true);
-        setAutoEmailStatus("sent");
-        setAutoEmailMessage("Boleto enviado al correo electrónico");
-
-        console.log("Email enviado exitosamente:", emailResult);
-      } catch (error: any) {
-        console.error("Error enviando email:", error);
-
-        // Mostrar error específico al usuario
-        let errorMessage = "Error al enviar el email.";
-
-        if (
-          error.message.includes("Timeout") ||
-          error.message.includes("504")
-        ) {
-          errorMessage =
-            "El servicio de email está demorando mucho. Por favor, intenta más tarde.";
-        } else if (
-          error.message.includes("502") ||
-          error.message.includes("503")
-        ) {
-          errorMessage =
-            "El servicio de email no está disponible temporalmente. Intenta nuevamente en unos minutos.";
-        } else if (
-          error.message.includes("network") ||
-          error.message.includes("fetch")
-        ) {
-          errorMessage =
-            "Error de red al enviar el email. Verifica tu conexión.";
-        }
-
-        setAutoEmailStatus("failed");
-        setAutoEmailMessage(errorMessage);
-      } finally {
-        // Desactivar loader
-        setProcessing({ type: null, passengerIndex: null });
+      if (!result.success) {
+        throw new Error(result.message || "Error al enviar el email");
       }
-    };
+
+      // Marcar como enviado exitosamente
+      setEmailSent(true);
+      setAutoEmailStatus("sent");
+      setAutoEmailMessage("Boletos enviados al correo electrónico");
+
+      console.log("✅ Email enviado exitosamente a todos:", result);
+    } catch (error: any) {
+      console.error("❌ Error enviando email a todos:", error);
+
+      let errorMessage = "Error al enviar el email.";
+
+      if (error.message.includes("Timeout") || error.message.includes("504")) {
+        errorMessage =
+          "El servicio de email está demorando mucho. Por favor, intenta más tarde.";
+      } else if (
+        error.message.includes("502") ||
+        error.message.includes("503")
+      ) {
+        errorMessage =
+          "El servicio de email no está disponible temporalmente. Intenta nuevamente en unos minutos.";
+      } else if (
+        error.message.includes("network") ||
+        error.message.includes("fetch")
+      ) {
+        errorMessage = "Error de red al enviar el email. Verifica tu conexión.";
+      }
+
+      setAutoEmailStatus("failed");
+      setAutoEmailMessage(errorMessage);
+    } finally {
+      // Desactivar loader
+      setProcessing({ type: null, passengerIndex: null });
+    }
   };
 
   // =====================================================================
