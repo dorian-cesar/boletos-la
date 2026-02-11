@@ -30,8 +30,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { BookingProgress } from "@/components/booking-progress";
 import { useBookingStore, cities } from "@/lib/booking-store";
-import QRCode from "qrcode";
-import { toast } from "sonner";
 
 interface ConfirmationPageContentProps {
   hash: string;
@@ -132,24 +130,17 @@ export default function ConfirmationPageContent({
       passengerDetails.length === 0
     ) {
       console.error("❌ Datos insuficientes para generar PDFs");
-      toast.error("Error: No hay datos suficientes para generar los boletos");
       return;
     }
 
     // Verificar si ya se está procesando algo
     if (isProcessing()) {
       console.log("⚠️ Ya se está procesando una acción");
-      toast.info("Ya se está procesando una acción");
       return;
     }
 
     // Activar loader para todos los boletos
     setProcessing({ type: "all-tickets", passengerIndex: null });
-
-    // Mostrar toast de carga
-    const loadingToast = toast.loading(
-      `Generando ${passengerDetails.length} PDF(s)...`,
-    );
 
     console.log(
       `📝 Iniciando generación de ${passengerDetails.length} PDF(s)...`,
@@ -162,12 +153,6 @@ export default function ConfirmationPageContent({
       for (const [index, passenger] of passengerDetails.entries()) {
         console.log(
           `🔄 Generando boleto ${index + 1}/${passengerDetails.length} para ${passenger.firstName} ${passenger.lastName}`,
-        );
-
-        // Actualizar toast de progreso
-        toast.loading(
-          `Generando boleto ${index + 1}/${passengerDetails.length}...`,
-          { id: loadingToast },
         );
 
         // Encontrar el asiento correspondiente a este pasajero
@@ -213,7 +198,7 @@ export default function ConfirmationPageContent({
         };
 
         console.log(
-          `📤 Enviando a API interna para ${passenger.firstName}:`,
+          `Enviando a API interna para ${passenger.firstName}:`,
           payload,
         );
 
@@ -228,7 +213,7 @@ export default function ConfirmationPageContent({
 
         const result = await response.json();
         console.log(
-          `📥 Respuesta de API interna para ${passenger.firstName}:`,
+          `Respuesta de API interna para ${passenger.firstName}:`,
           result.success ? "✅" : "❌",
         );
 
@@ -254,28 +239,17 @@ export default function ConfirmationPageContent({
       }
 
       console.log(
-        `✅ ${newGeneratedTickets.length} PDF(s) generados exitosamente`,
+        `${newGeneratedTickets.length} PDF(s) generados exitosamente`,
       );
 
       // Actualizar estado con los nuevos tickets
       setGeneratedTickets(newGeneratedTickets);
-
-      // Mostrar toast de éxito
-      toast.success(
-        `✅ ${newGeneratedTickets.length} PDF(s) generados exitosamente`,
-        { id: loadingToast },
-      );
 
       // Descargar todos los boletos automáticamente (uno tras otro)
       for (const [index, ticket] of newGeneratedTickets.entries()) {
         console.log(
           `⬇️ Descargando PDF ${index + 1}/${newGeneratedTickets.length}: ${ticket.fileName}`,
         );
-
-        // Mostrar toast de progreso de descarga
-        toast.info(`Descargando ${ticket.passengerName}...`, {
-          id: `download-${index}`,
-        });
 
         // Pequeña pausa entre descargas para evitar problemas
         await new Promise((resolve) => setTimeout(resolve, 300));
@@ -286,37 +260,11 @@ export default function ConfirmationPageContent({
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-
-        // Cerrar toast de descarga
-        toast.dismiss(`download-${index}`);
       }
 
-      console.log("✅ Todos los PDFs descargados exitosamente");
-      toast.success(
-        `Se generaron y descargaron ${newGeneratedTickets.length} boleto(s) exitosamente`,
-        {
-          duration: 5000,
-          action: {
-            label: "Ver detalles",
-            onClick: () => {
-              // Mostrar detalles en un toast expandido
-              toast.info(
-                <div className="space-y-2">
-                  <p className="font-medium">Boletos generados:</p>
-                  {newGeneratedTickets.map((ticket, idx) => (
-                    <div key={idx} className="text-sm">
-                      • {ticket.passengerName} - Asiento {ticket.seat}
-                    </div>
-                  ))}
-                </div>,
-                { duration: 10000 },
-              );
-            },
-          },
-        },
-      );
+      console.log("Todos los PDFs descargados exitosamente");
     } catch (error: any) {
-      console.error("❌ Error generando PDFs:", error);
+      console.error("Error generando PDFs:", error);
 
       // Mensajes de error más amigables
       let userMessage = "Error al generar los boletos";
@@ -335,20 +283,6 @@ export default function ConfirmationPageContent({
         userMessage =
           "Algunos PDFs no se generaron correctamente. Contacta con soporte.";
       }
-
-      toast.error(`${userMessage}`, {
-        id: loadingToast,
-        description: `Código de error: ${bookingReference}`,
-        duration: 8000,
-        action: {
-          label: "Ver detalles",
-          onClick: () => {
-            toast.error(`Detalles del error: ${errorDetails}`, {
-              duration: 10000,
-            });
-          },
-        },
-      });
     } finally {
       // Desactivar loader
       setProcessing({ type: null, passengerIndex: null });
@@ -362,24 +296,17 @@ export default function ConfirmationPageContent({
     const passenger = passengerDetails[passengerIndex];
     if (!selectedOutboundTrip || !bookingReference || !passenger) {
       console.error("❌ Datos insuficientes para generar PDF");
-      toast.error("Error: No hay datos del pasajero");
       return;
     }
 
     // Verificar si ya se está procesando algo
     if (isProcessing()) {
       console.log("⚠️ Ya se está procesando una acción");
-      toast.info("Ya se está procesando una acción");
       return;
     }
 
     // Activar loader para este pasajero específico
     setProcessing({ type: "single-ticket", passengerIndex });
-
-    // Mostrar toast de carga
-    const loadingToast = toast.loading(
-      `Generando boleto para ${passenger.firstName}...`,
-    );
 
     try {
       // Encontrar el asiento correspondiente a este pasajero
@@ -421,7 +348,7 @@ export default function ConfirmationPageContent({
       };
 
       console.log(
-        `📤 Generando boleto individual para ${passenger.firstName}`,
+        `Generando boleto individual para ${passenger.firstName}`,
         payload,
       );
 
@@ -452,21 +379,8 @@ export default function ConfirmationPageContent({
       document.body.removeChild(link);
 
       console.log(`Boleto individual descargado: ${result.pdf.fileName}`);
-
-      // Mostrar toast de éxito
-      toast.success(`Boleto descargado para ${passenger.firstName}`, {
-        id: loadingToast,
-        description: `Asiento: ${passengerSeat}`,
-        duration: 4000,
-      });
     } catch (error: any) {
-      console.error("❌ Error generando boleto individual:", error);
-
-      // Mostrar toast de error
-      toast.error(`⚠️ Error generando boleto: ${error.message}`, {
-        id: loadingToast,
-        duration: 6000,
-      });
+      console.error("Error generando boleto individual:", error);
     } finally {
       // Desactivar loader
       setProcessing({ type: null, passengerIndex: null });
@@ -482,7 +396,6 @@ export default function ConfirmationPageContent({
     // Verificar si ya se está procesando algo
     if (isProcessing()) {
       console.log("⚠️ Ya se está procesando una acción");
-      toast.info("Ya se está procesando una acción");
       return;
     }
 
@@ -490,33 +403,10 @@ export default function ConfirmationPageContent({
     setProcessing({ type: "email-all", passengerIndex: null });
     setEmailSent(false);
 
-    // Mostrar toast de confirmación
-    const confirmToast = toast.loading(
-      `¿Enviar boleto a ${primaryPassenger.email}?`,
-      {
-        action: {
-          label: "Confirmar",
-          onClick: () => {
-            toast.dismiss(confirmToast);
-            proceedWithEmail();
-          },
-        },
-        cancel: {
-          label: "Cancelar",
-          onClick: () => {
-            toast.dismiss(confirmToast);
-            setProcessing({ type: null, passengerIndex: null });
-          },
-        },
-      },
-    );
-
     const proceedWithEmail = async () => {
-      const loadingToast = toast.loading("Enviando boleto por email...");
-
       try {
         // Primero generar el PDF
-        console.log("📄 Generando PDF para email...");
+        console.log("Generando PDF para email...");
 
         // Para el email, podemos enviar un solo boleto con todos los pasajeros
         const passengerSeats = selectedSeats.map((s) => s.number).join(", ");
@@ -555,7 +445,7 @@ export default function ConfirmationPageContent({
           metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
         };
 
-        console.log("📤 Generando PDF para email...");
+        console.log("Generando PDF para email...");
 
         // 1. Generar el PDF
         const pdfResponse = await fetch("/api/tickets/generate", {
@@ -572,7 +462,7 @@ export default function ConfirmationPageContent({
           throw new Error("Error generando el PDF: " + pdfResult.message);
         }
 
-        console.log("✅ PDF generado exitosamente para email");
+        console.log("PDF generado exitosamente para email");
 
         // 2. Preparar payload para enviar email
         const emailPayload = {
@@ -605,30 +495,8 @@ export default function ConfirmationPageContent({
         setAutoEmailMessage("Boleto enviado al correo electrónico");
 
         console.log("Email enviado exitosamente:", emailResult);
-
-        toast.success(`Boleto enviado exitosamente`, {
-          id: loadingToast,
-          description: `Correo: ${primaryPassenger.email}`,
-          duration: 6000,
-          action: {
-            label: "Ver detalles",
-            onClick: () => {
-              toast.info(
-                <div className="space-y-2">
-                  <p className="font-medium">Email enviado correctamente</p>
-                  <p className="text-sm">
-                    Destinatario: {primaryPassenger.email}
-                  </p>
-                  <p className="text-sm">Archivo: {pdfResult.pdf.fileName}</p>
-                  <p className="text-sm">Referencia: {bookingReference}</p>
-                </div>,
-                { duration: 10000 },
-              );
-            },
-          },
-        });
       } catch (error: any) {
-        console.error("❌ Error enviando email:", error);
+        console.error("Error enviando email:", error);
 
         // Mostrar error específico al usuario
         let errorMessage = "Error al enviar el email.";
@@ -655,12 +523,6 @@ export default function ConfirmationPageContent({
 
         setAutoEmailStatus("failed");
         setAutoEmailMessage(errorMessage);
-
-        toast.error(`⚠️ ${errorMessage}`, {
-          id: loadingToast,
-          description: error.message,
-          duration: 8000,
-        });
       } finally {
         // Desactivar loader
         setProcessing({ type: null, passengerIndex: null });
@@ -676,18 +538,12 @@ export default function ConfirmationPageContent({
   ): Promise<boolean> => {
     if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) {
       console.warn("⚠️ No hay datos suficientes para enviar email");
-      toast.warning("No hay datos suficientes para enviar email");
       return false;
     }
 
     try {
       setAutoEmailStatus("sending");
       setAutoEmailMessage("Enviando boleto por email...");
-
-      // Mostrar toast de carga
-      const loadingToast = toast.loading(
-        "Enviando boleto por email automático...",
-      );
 
       // Para email automático, enviamos un solo boleto con todos los pasajeros
       const passengerSeats = selectedSeats.map((s) => s.number).join(", ");
@@ -738,19 +594,13 @@ export default function ConfirmationPageContent({
         );
       }
 
-      console.log("✅ Email automático enviado exitosamente:", result);
+      console.log("Email automático enviado exitosamente:", result);
       setAutoEmailStatus("sent");
       setAutoEmailMessage("Boleto enviado al correo electrónico");
 
-      toast.success("✅ Boleto enviado automáticamente", {
-        id: loadingToast,
-        description: `Correo: ${passengerEmail}`,
-        duration: 5000,
-      });
-
       return true;
     } catch (error: any) {
-      console.error("❌ Error enviando email automático:", error);
+      console.error("Error enviando email automático:", error);
 
       let errorMessage = "Error al enviar el email automático";
       if (error.name === "AbortError") {
@@ -762,11 +612,6 @@ export default function ConfirmationPageContent({
       setAutoEmailStatus("failed");
       setAutoEmailMessage(errorMessage);
 
-      toast.error("❌ No se pudo enviar el email automático", {
-        description: errorMessage,
-        duration: 6000,
-      });
-
       return false;
     }
   };
@@ -777,41 +622,18 @@ export default function ConfirmationPageContent({
   const handleSendEmailToPassenger = async (passengerIndex: number) => {
     const passenger = passengerDetails[passengerIndex];
     if (!selectedOutboundTrip || !bookingReference || !passenger) {
-      toast.error("Error: No hay datos del pasajero");
       return;
     }
 
     // Verificar si ya se está procesando algo
     if (isProcessing()) {
       console.log("Ya se está procesando una acción");
-      toast.info("Ya se está procesando una acción");
       return;
     }
-
-    // Mostrar toast de confirmación con opciones
-    const confirmToast = toast.loading(`¿Enviar boleto a ${passenger.email}?`, {
-      action: {
-        label: "Enviar",
-        onClick: () => {
-          toast.dismiss(confirmToast);
-          proceedWithEmail();
-        },
-      },
-      cancel: {
-        label: "Cancelar",
-        onClick: () => {
-          toast.dismiss(confirmToast);
-        },
-      },
-    });
 
     const proceedWithEmail = async () => {
       // Activar loader para este pasajero específico
       setProcessing({ type: "email-single", passengerIndex });
-
-      const loadingToast = toast.loading(
-        `Enviando boleto a ${passenger.email}...`,
-      );
 
       try {
         // Buscar el asiento correspondiente
@@ -851,7 +673,7 @@ export default function ConfirmationPageContent({
           metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
         };
 
-        console.log(`📧 Enviando boleto a ${passenger.email}`, payload);
+        console.log(`Enviando boleto a ${passenger.email}`, payload);
 
         const response = await fetch("/api/tickets/send-email", {
           method: "POST",
@@ -866,19 +688,8 @@ export default function ConfirmationPageContent({
         if (!result.success) {
           throw new Error(result.message || "Error al enviar el email");
         }
-
-        toast.success(`✅ Boleto enviado exitosamente`, {
-          id: loadingToast,
-          description: `Correo: ${passenger.email}`,
-          duration: 5000,
-        });
       } catch (error: any) {
-        console.error("❌ Error enviando email al pasajero:", error);
-
-        toast.error(`⚠️ Error enviando email: ${error.message}`, {
-          id: loadingToast,
-          duration: 6000,
-        });
+        console.error("Error enviando email al pasajero:", error);
       } finally {
         // Desactivar loader
         setProcessing({ type: null, passengerIndex: null });
@@ -898,9 +709,6 @@ export default function ConfirmationPageContent({
     // DETECCIÓN DE PAGO CON TARJETA
     if (hash === "tarjeta") {
       console.log("💳 PAGO CON TARJETA DETECTADO");
-      toast.success("Pago con tarjeta detectado", {
-        description: "Procesando tu reserva...",
-      });
       handleTarjetaPayment();
       return;
     }
@@ -909,7 +717,6 @@ export default function ConfirmationPageContent({
     if (hash && hash !== "undefined" && hash !== "null" && hash !== "tarjeta") {
       console.log("Hash válido recibido de Pagopar:", hash);
       setPagoparHash(hash);
-      toast.loading("Verificando estado del pago...");
       verifyPagoparPayment(hash);
       localStorage.removeItem("pagopar_last_hash");
     } else {
@@ -917,12 +724,10 @@ export default function ConfirmationPageContent({
       if (savedHash) {
         console.log("Hash encontrado en localStorage:", savedHash);
         setPagoparHash(savedHash);
-        toast.loading("Verificando estado del pago...");
         verifyPagoparPayment(savedHash);
         localStorage.removeItem("pagopar_last_hash");
       } else {
         console.log("No se encontró hash");
-        toast.error("No se encontró información de pago");
         setPaymentStatus("failed");
       }
     }
@@ -932,19 +737,11 @@ export default function ConfirmationPageContent({
   const handleTarjetaPayment = async () => {
     setIsTarjetaPayment(true);
 
-    // Mostrar toast de procesamiento
-    const processingToast = toast.loading("Procesando pago con tarjeta...");
-
     // 1. Crear referencia de reserva si no existe
     if (!bookingReference) {
       const newReference = `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
       setBookingReference(newReference);
       setStorePaymentStatus("completed");
-
-      toast.success("Referencia creada", {
-        id: processingToast,
-        description: `Código: ${newReference}`,
-      });
     }
 
     // 2. Marcar como pagado
@@ -960,10 +757,6 @@ export default function ConfirmationPageContent({
       monto: totalPrice.toString(),
       pagado: true,
       cancelado: false,
-    });
-
-    toast.success("Pago con tarjeta procesado exitosamente", {
-      duration: 4000,
     });
 
     // 4. Enviar email de confirmación automático
@@ -1001,11 +794,6 @@ export default function ConfirmationPageContent({
           setShowConfetti(true);
           setTimeout(() => setShowConfetti(false), 5000);
 
-          toast.success("Pago confirmado exitosamente", {
-            description: `Pedido: ${payment.numero_pedido}`,
-            duration: 5000,
-          });
-
           if (!bookingReference) {
             const newReference = `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
             setBookingReference(newReference);
@@ -1023,41 +811,21 @@ export default function ConfirmationPageContent({
           // PAGO CANCELADO
           console.log("PAGO CANCELADO");
           setPaymentStatus("cancelled");
-          toast.error("Pago cancelado", {
-            description: "El pago fue cancelado en Pagopar",
-            duration: 6000,
-          });
         } else if (payment.fecha_pago === null && payment.pagado === false) {
           console.log("PAGO NO REALIZADO - Usuario no completó el pago");
           setPaymentStatus("failed");
-          toast.warning("Pago no completado", {
-            description: "No detectamos un pago exitoso para esta reserva",
-            duration: 6000,
-          });
         } else {
           // Caso inesperado
           console.log("Estado desconocido del pago");
           setPaymentStatus("failed");
-          toast.error("Error verificando pago", {
-            description: "Estado desconocido del pago",
-            duration: 6000,
-          });
         }
       } else {
         console.log("No se pudo verificar el pago");
         setPaymentStatus("failed");
-        toast.error("Error verificando pago", {
-          description: "No se pudo verificar el estado del pago",
-          duration: 6000,
-        });
       }
     } catch (error: any) {
       console.error("Error verificando pago:", error);
       setPaymentStatus("failed");
-      toast.error("Error verificando pago", {
-        description: error.message,
-        duration: 6000,
-      });
     }
   };
 
@@ -1065,10 +833,6 @@ export default function ConfirmationPageContent({
   const saveBookingToDatabase = async (payment: any, hash: string) => {
     try {
       setSavingToDB(true);
-
-      const savingToast = toast.loading(
-        "Guardando reserva en la base de datos...",
-      );
 
       const bookingData = {
         reference: bookingReference,
@@ -1091,7 +855,7 @@ export default function ConfirmationPageContent({
         },
       };
 
-      console.log("💾 Guardando reserva Pagopar en BD:", bookingData);
+      console.log("Guardando reserva Pagopar en BD:", bookingData);
 
       // const response = await fetch("/api/bookings", {
       //   method: "POST",
@@ -1113,11 +877,7 @@ export default function ConfirmationPageContent({
       //   });
       // }
     } catch (error) {
-      console.error("💥 Error guardando reserva Pagopar:", error);
-      toast.error("💥 Error guardando reserva", {
-        description: "Hubo un problema al guardar en la base de datos",
-        duration: 6000,
-      });
+      console.error("Error guardando reserva Pagopar:", error);
     } finally {
       setSavingToDB(false);
     }
@@ -1127,8 +887,6 @@ export default function ConfirmationPageContent({
   const saveTarjetaBookingToDatabase = async () => {
     try {
       setSavingToDB(true);
-
-      const savingToast = toast.loading("Guardando reserva con tarjeta...");
 
       const bookingData = {
         reference: bookingReference,
@@ -1151,7 +909,7 @@ export default function ConfirmationPageContent({
         },
       };
 
-      console.log("💳 Guardando reserva con tarjeta en BD:", bookingData);
+      console.log("Guardando reserva con tarjeta en BD:", bookingData);
 
       // const response = await fetch("/api/bookings", {
       //   method: "POST",
@@ -1174,10 +932,6 @@ export default function ConfirmationPageContent({
       // }
     } catch (error) {
       console.error("Error guardando reserva con tarjeta:", error);
-      toast.error("Error guardando reserva con tarjeta", {
-        description: "Hubo un problema al guardar en la base de datos",
-        duration: 6000,
-      });
     } finally {
       setSavingToDB(false);
     }
@@ -1188,30 +942,18 @@ export default function ConfirmationPageContent({
       navigator.clipboard.writeText(bookingReference);
       setCopied(true);
 
-      toast.success("Código copiado al portapapeles", {
-        description: bookingReference,
-        duration: 3000,
-      });
-
       setTimeout(() => setCopied(false), 2000);
     }
   };
 
   const handleNewBooking = () => {
     resetBooking();
-    toast.info("Creando nueva reserva", {
-      description: "Redirigiendo al inicio...",
-      duration: 2000,
-    });
     router.push("/");
   };
 
   // COMPLETAR PAGO EN PAGOPAR
   const handleCompletePayment = () => {
     if (pagoparHash) {
-      toast.loading("Redirigiendo a Pagopar...", {
-        duration: 2000,
-      });
       localStorage.removeItem("pagopar_last_hash");
       setTimeout(() => {
         window.location.href = `https://www.pagopar.com/pagos/${pagoparHash}`;
@@ -1280,7 +1022,6 @@ export default function ConfirmationPageContent({
                   <div className="flex gap-3">
                     <Button
                       onClick={() => {
-                        toast.info("Volviendo al inicio...");
                         router.push("/");
                       }}
                       className="bg-primary hover:bg-primary/90"
@@ -1377,7 +1118,6 @@ export default function ConfirmationPageContent({
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Button
                       onClick={() => {
-                        toast.info("Redirigiendo a checkout...");
                         router.push("/booking/checkout");
                       }}
                       className="bg-purple-600 hover:bg-purple-700"
@@ -2030,11 +1770,6 @@ export default function ConfirmationPageContent({
                               document.body.appendChild(link);
                               link.click();
                               document.body.removeChild(link);
-
-                              toast.success("Boleto descargado", {
-                                description: ticket.fileName,
-                                duration: 3000,
-                              });
                             }}
                             disabled={isProcessing()}
                             variant="ghost"
