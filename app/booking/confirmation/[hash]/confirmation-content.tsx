@@ -535,7 +535,7 @@ export default function ConfirmationPageContent({
     passengerEmail: string,
   ): Promise<boolean> => {
     if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) {
-      console.warn("⚠️ No hay datos suficientes para enviar email");
+      console.warn("No hay datos suficientes para enviar email");
       return false;
     }
 
@@ -868,8 +868,8 @@ export default function ConfirmationPageContent({
       //   duration: 3000,
       // });
       // } else {
-      //   console.error("❌ Error guardando reserva Pagopar");
-      //   toast.error("❌ Error guardando reserva", {
+      //   console.error("Error guardando reserva Pagopar");
+      //   toast.error("Error guardando reserva", {
       //     id: savingToast,
       //     duration: 5000,
       //   });

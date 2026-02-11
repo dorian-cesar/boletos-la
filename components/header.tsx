@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, Phone, Mail, MapPin } from "lucide-react";
+import { Menu, X, Phone, Mail, MapPin, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -25,14 +25,20 @@ export function Header() {
       <div className="hidden lg:block bg-black text-white py-2">
         <div className="container mx-auto px-4 flex items-center justify-between text-sm">
           <div className="flex items-center gap-6">
-            <span className="flex items-center gap-2">
-              <Phone className="h-4 w-4 text-[#00c7cc]" />
+            <a
+              href="https://wa.me/595991224613?text=Hola%2C%20me%20gustar%C3%ADa%20recibir%20informaci%C3%B3n%20sobre%20los%20servicios%20que%20ofrece%20www.boletos.la%20en%20Paraguay.%0A%0A%C2%BFPodr%C3%ADan%20asesorarme%3F%20Muchas%20gracias"
+              className="flex items-center gap-2 hover:text-[#00c7cc] transition-colors"
+            >
+              <MessageCircle className="h-4 w-4 text-[#00c7cc]" />
               +595 21 123 4567
-            </span>
-            <span className="flex items-center gap-2">
+            </a>
+            <a
+              href="mailto:contacto@boletos.la"
+              className="flex items-center gap-2 hover:text-[#00c7cc] transition-colors"
+            >
               <Mail className="h-4 w-4 text-[#00c7cc]" />
               contacto@boletos.la
-            </span>
+            </a>
             <span className="flex items-center gap-2">
               <MapPin className="h-4 w-4 text-[#00c7cc]" />
               Asunción, Paraguay
