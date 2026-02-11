@@ -587,18 +587,48 @@ async function generateTicketPDF(ticketData: any): Promise<{
   `;
 
   // Configuración de Puppeteer
-  const browser = await puppeteer.launch({
-    args: chromium.args,
-    executablePath:
-      process.env.NODE_ENV === "production"
-        ? await chromium.executablePath()
-        : process.platform === "win32"
-          ? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-          : process.platform === "linux"
-            ? "/usr/bin/google-chrome"
-            : "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    headless: true,
-  });
+  // const browser = await puppeteer.launch({
+  //   args: chromium.args,
+  //   executablePath:
+  //     process.env.NODE_ENV === "production"
+  //       ? await chromium.executablePath()
+  //       : process.platform === "win32"
+  //         ? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+  //         : process.platform === "linux"
+  //           ? "/usr/bin/google-chrome"
+  //           : "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  //   headless: true,
+  // });
+
+  async function launchPuppeteer() {
+    const isProduction = process.env.NODE_ENV === "production";
+    const isVercel = process.env.VERCEL === "1"; // Si usas Vercel
+    const isAwsLambda = process.env.AWS_LAMBDA_FUNCTION_NAME; // Si usas AWS Lambda
+
+    if (isProduction && (isVercel || isAwsLambda)) {
+      // Configuración para producción en serverless
+      return await puppeteer.launch({
+        args: chromium.args,
+        executablePath: await chromium.executablePath(),
+        headless: true,
+      });
+    } else {
+      // Configuración para desarrollo local o servidor tradicional
+      return await puppeteer.launch({
+        headless: true,
+        executablePath:
+          process.platform === "win32"
+            ? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+            : process.platform === "linux"
+              ? "/usr/bin/google-chrome"
+              : "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      });
+    }
+  }
+
+  // En tu función generateTicketPDF:
+  const browser = await launchPuppeteer();
 
   const page = await browser.newPage();
 
