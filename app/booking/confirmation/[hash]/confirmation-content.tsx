@@ -129,22 +129,20 @@ export default function ConfirmationPageContent({
       !bookingReference ||
       passengerDetails.length === 0
     ) {
-      console.error("❌ Datos insuficientes para generar PDFs");
+      console.error("Datos insuficientes para generar PDFs");
       return;
     }
 
     // Verificar si ya se está procesando algo
     if (isProcessing()) {
-      console.log("⚠️ Ya se está procesando una acción");
+      console.log("Ya se está procesando una acción");
       return;
     }
 
     // Activar loader para todos los boletos
     setProcessing({ type: "all-tickets", passengerIndex: null });
 
-    console.log(
-      `📝 Iniciando generación de ${passengerDetails.length} PDF(s)...`,
-    );
+    console.log(`Iniciando generación de ${passengerDetails.length} PDF(s)...`);
 
     try {
       const newGeneratedTickets: TicketData[] = [];
@@ -152,7 +150,7 @@ export default function ConfirmationPageContent({
       // Para cada pasajero, generar su boleto individual
       for (const [index, passenger] of passengerDetails.entries()) {
         console.log(
-          `🔄 Generando boleto ${index + 1}/${passengerDetails.length} para ${passenger.firstName} ${passenger.lastName}`,
+          `Generando boleto ${index + 1}/${passengerDetails.length} para ${passenger.firstName} ${passenger.lastName}`,
         );
 
         // Encontrar el asiento correspondiente a este pasajero
@@ -248,7 +246,7 @@ export default function ConfirmationPageContent({
       // Descargar todos los boletos automáticamente (uno tras otro)
       for (const [index, ticket] of newGeneratedTickets.entries()) {
         console.log(
-          `⬇️ Descargando PDF ${index + 1}/${newGeneratedTickets.length}: ${ticket.fileName}`,
+          `Descargando PDF ${index + 1}/${newGeneratedTickets.length}: ${ticket.fileName}`,
         );
 
         // Pequeña pausa entre descargas para evitar problemas
@@ -295,13 +293,13 @@ export default function ConfirmationPageContent({
   const handleDownloadSingleTicket = async (passengerIndex: number) => {
     const passenger = passengerDetails[passengerIndex];
     if (!selectedOutboundTrip || !bookingReference || !passenger) {
-      console.error("❌ Datos insuficientes para generar PDF");
+      console.error("Datos insuficientes para generar PDF");
       return;
     }
 
     // Verificar si ya se está procesando algo
     if (isProcessing()) {
-      console.log("⚠️ Ya se está procesando una acción");
+      console.log("Ya se está procesando una acción");
       return;
     }
 
