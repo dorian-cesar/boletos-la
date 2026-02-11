@@ -5,7 +5,10 @@ const EXTERNAL_EMAIL_API_URL =
   "https://pdf-mail.dev-wit.com/api/pdf-mail/send-confirmed";
 
 // URL de la API interna de generación de PDF
-const TICKET_API_URL = "http://localhost:3000/api/tickets/generate";
+const TICKET_API_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://boletos.la/api/tickets/generate"
+    : "http://localhost:3000/api/tickets/generate";
 
 export async function POST(request: NextRequest) {
   try {
