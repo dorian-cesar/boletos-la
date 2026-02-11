@@ -451,10 +451,10 @@ export default function ConfirmationPageContent({
       link.click();
       document.body.removeChild(link);
 
-      console.log(`✅ Boleto individual descargado: ${result.pdf.fileName}`);
+      console.log(`Boleto individual descargado: ${result.pdf.fileName}`);
 
       // Mostrar toast de éxito
-      toast.success(`✅ Boleto descargado para ${passenger.firstName}`, {
+      toast.success(`Boleto descargado para ${passenger.firstName}`, {
         id: loadingToast,
         description: `Asiento: ${passengerSeat}`,
         duration: 4000,
@@ -579,11 +579,10 @@ export default function ConfirmationPageContent({
           emailDestino: primaryPassenger.email,
           pdfBase64: pdfResult.pdf.base64,
           fileName: pdfResult.pdf.fileName,
-          // Pasamos los datos del ticket por si el backend los necesita
           ...payload,
         };
 
-        console.log("📧 Enviando a API interna de email...");
+        console.log("Enviando a API interna de email...");
 
         // 3. Llamar a NUESTRA API interna que reenvía al backend externo
         const emailResponse = await fetch("/api/tickets/send-email", {
@@ -605,9 +604,9 @@ export default function ConfirmationPageContent({
         setAutoEmailStatus("sent");
         setAutoEmailMessage("Boleto enviado al correo electrónico");
 
-        console.log("✅ Email enviado exitosamente:", emailResult);
+        console.log("Email enviado exitosamente:", emailResult);
 
-        toast.success(`✅ Boleto enviado exitosamente`, {
+        toast.success(`Boleto enviado exitosamente`, {
           id: loadingToast,
           description: `Correo: ${primaryPassenger.email}`,
           duration: 6000,
@@ -784,7 +783,7 @@ export default function ConfirmationPageContent({
 
     // Verificar si ya se está procesando algo
     if (isProcessing()) {
-      console.log("⚠️ Ya se está procesando una acción");
+      console.log("Ya se está procesando una acción");
       toast.info("Ya se está procesando una acción");
       return;
     }
@@ -908,7 +907,7 @@ export default function ConfirmationPageContent({
 
     // Lógica para Pagopar (con hash válido)
     if (hash && hash !== "undefined" && hash !== "null" && hash !== "tarjeta") {
-      console.log("✅ Hash válido recibido de Pagopar:", hash);
+      console.log("Hash válido recibido de Pagopar:", hash);
       setPagoparHash(hash);
       toast.loading("Verificando estado del pago...");
       verifyPagoparPayment(hash);
@@ -916,13 +915,13 @@ export default function ConfirmationPageContent({
     } else {
       const savedHash = localStorage.getItem("pagopar_last_hash");
       if (savedHash) {
-        console.log("🔍 Hash encontrado en localStorage:", savedHash);
+        console.log("Hash encontrado en localStorage:", savedHash);
         setPagoparHash(savedHash);
         toast.loading("Verificando estado del pago...");
         verifyPagoparPayment(savedHash);
         localStorage.removeItem("pagopar_last_hash");
       } else {
-        console.log("⚠️ No se encontró hash");
+        console.log("No se encontró hash");
         toast.error("No se encontró información de pago");
         setPaymentStatus("failed");
       }
@@ -963,13 +962,13 @@ export default function ConfirmationPageContent({
       cancelado: false,
     });
 
-    toast.success("✅ Pago con tarjeta procesado exitosamente", {
+    toast.success("Pago con tarjeta procesado exitosamente", {
       duration: 4000,
     });
 
     // 4. Enviar email de confirmación automático
     if (primaryPassenger?.email) {
-      console.log("📧 Enviando email automático para pago con tarjeta...");
+      console.log("Enviando email automático para pago con tarjeta...");
       await sendConfirmationEmail(primaryPassenger.email);
     }
 
@@ -980,7 +979,7 @@ export default function ConfirmationPageContent({
   // FUNCIÓN PARA VERIFICAR PAGO CON PAGOPAR
   const verifyPagoparPayment = async (hash: string) => {
     try {
-      console.log("🔄 Consultando estado en Pagopar con hash:", hash);
+      console.log("Consultando estado en Pagopar con hash:", hash);
 
       const response = await fetch("/api/pagopar/check-status", {
         method: "POST",
@@ -989,7 +988,7 @@ export default function ConfirmationPageContent({
       });
 
       const data = await response.json();
-      console.log("📊 Respuesta de consulta Pagopar:", data);
+      console.log("Respuesta de consulta Pagopar:", data);
 
       if (data.respuesta === true && data.resultado?.[0]) {
         const payment = data.resultado[0];
@@ -997,12 +996,12 @@ export default function ConfirmationPageContent({
 
         if (payment.pagado === true) {
           // PAGO EXITOSO
-          console.log("✅ PAGO CONFIRMADO POR PAGOPAR");
+          console.log("PAGO CONFIRMADO POR PAGOPAR");
           setPaymentStatus("paid");
           setShowConfetti(true);
           setTimeout(() => setShowConfetti(false), 5000);
 
-          toast.success("✅ Pago confirmado exitosamente", {
+          toast.success("Pago confirmado exitosamente", {
             description: `Pedido: ${payment.numero_pedido}`,
             duration: 5000,
           });
@@ -1015,48 +1014,47 @@ export default function ConfirmationPageContent({
 
           // Enviar email de confirmación automático
           if (primaryPassenger?.email) {
-            console.log("📧 Enviando email automático para pago Pagopar...");
+            console.log("Enviando email automático para pago Pagopar...");
             await sendConfirmationEmail(primaryPassenger.email);
           }
 
           await saveBookingToDatabase(payment, hash);
         } else if (payment.cancelado === true) {
           // PAGO CANCELADO
-          console.log("❌ PAGO CANCELADO");
+          console.log("PAGO CANCELADO");
           setPaymentStatus("cancelled");
-          toast.error("❌ Pago cancelado", {
+          toast.error("Pago cancelado", {
             description: "El pago fue cancelado en Pagopar",
             duration: 6000,
           });
         } else if (payment.fecha_pago === null && payment.pagado === false) {
-          // ✅ ESTADO CORRECTO: NO HAY PAGO (no "pending")
-          console.log("🚫 PAGO NO REALIZADO - Usuario no completó el pago");
+          console.log("PAGO NO REALIZADO - Usuario no completó el pago");
           setPaymentStatus("failed");
-          toast.warning("⚠️ Pago no completado", {
+          toast.warning("Pago no completado", {
             description: "No detectamos un pago exitoso para esta reserva",
             duration: 6000,
           });
         } else {
           // Caso inesperado
-          console.log("⚠️ Estado desconocido del pago");
+          console.log("Estado desconocido del pago");
           setPaymentStatus("failed");
-          toast.error("❌ Error verificando pago", {
+          toast.error("Error verificando pago", {
             description: "Estado desconocido del pago",
             duration: 6000,
           });
         }
       } else {
-        console.log("⚠️ No se pudo verificar el pago");
+        console.log("No se pudo verificar el pago");
         setPaymentStatus("failed");
-        toast.error("❌ Error verificando pago", {
+        toast.error("Error verificando pago", {
           description: "No se pudo verificar el estado del pago",
           duration: 6000,
         });
       }
     } catch (error: any) {
-      console.error("💥 Error verificando pago:", error);
+      console.error("Error verificando pago:", error);
       setPaymentStatus("failed");
-      toast.error("❌ Error verificando pago", {
+      toast.error("Error verificando pago", {
         description: error.message,
         duration: 6000,
       });
@@ -1102,11 +1100,11 @@ export default function ConfirmationPageContent({
       // });
 
       // if (response.ok) {
-      //   console.log("✅ Reserva Pagopar guardada exitosamente");
-      toast.success("✅ Reserva guardada exitosamente", {
-        id: savingToast,
-        duration: 3000,
-      });
+      //   console.log("Reserva Pagopar guardada exitosamente");
+      // toast.success("Reserva guardada exitosamente", {
+      //   id: savingToast,
+      //   duration: 3000,
+      // });
       // } else {
       //   console.error("❌ Error guardando reserva Pagopar");
       //   toast.error("❌ Error guardando reserva", {
@@ -1162,21 +1160,21 @@ export default function ConfirmationPageContent({
       // });
 
       // if (response.ok) {
-      //   console.log("✅ Reserva con tarjeta guardada exitosamente");
-      toast.success("✅ Reserva con tarjeta guardada", {
-        id: savingToast,
-        duration: 3000,
-      });
+      //   console.log("Reserva con tarjeta guardada exitosamente");
+      // toast.success("Reserva con tarjeta guardada", {
+      //   id: savingToast,
+      //   duration: 3000,
+      // });
       // } else {
-      //   console.error("❌ Error guardando reserva con tarjeta");
-      //   toast.error("❌ Error guardando reserva", {
+      //   console.error("Error guardando reserva con tarjeta");
+      //   toast.error("Error guardando reserva", {
       //     id: savingToast,
       //     duration: 5000,
       //   });
       // }
     } catch (error) {
-      console.error("💥 Error guardando reserva con tarjeta:", error);
-      toast.error("💥 Error guardando reserva con tarjeta", {
+      console.error("Error guardando reserva con tarjeta:", error);
+      toast.error("Error guardando reserva con tarjeta", {
         description: "Hubo un problema al guardar en la base de datos",
         duration: 6000,
       });
@@ -1235,7 +1233,7 @@ export default function ConfirmationPageContent({
   // Si no hay selectedOutboundTrip pero ya tenemos estado de pago, mostrar error
   if (!selectedOutboundTrip) {
     console.log(
-      "⚠️ No hay selectedOutboundTrip, pero paymentStatus es:",
+      "No hay selectedOutboundTrip, pero paymentStatus es:",
       paymentStatus,
     );
 
@@ -1292,7 +1290,6 @@ export default function ConfirmationPageContent({
                     <Button
                       variant="outline"
                       onClick={() => {
-                        toast.info("Intentando nuevamente...");
                         router.push("/booking/checkout");
                       }}
                       className="border-background/30 text-foreground hover:bg-background/10"

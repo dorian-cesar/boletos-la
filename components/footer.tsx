@@ -230,8 +230,8 @@ export function Footer() {
                 height={24}
                 className="opacity-70 mb-1"
               />
-              <span>{new Date().getFullYear()}</span>
-              <span>-</span>
+              {/* <span>{new Date().getFullYear()}</span> */}
+              <span>|</span>
               <span>Todos los derechos reservados.</span>
             </div>
 
