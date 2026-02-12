@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 import { es } from "date-fns/locale";
 import {
   Bus,
@@ -919,9 +919,13 @@ export default function CheckoutPage() {
                     <p className="flex justify-between gap-2">
                       <span className="text-background/60 shrink-0">Fecha</span>
                       <span className="text-background truncate text-right">
-                        {format(new Date(departureDate || ""), "dd MMM yyyy", {
-                          locale: es,
-                        })}
+                        {format(
+                          parse(departureDate || "", "yyyy-MM-dd", new Date()),
+                          "dd MMM yyyy",
+                          {
+                            locale: es,
+                          },
+                        )}
                       </span>
                     </p>
                     <p className="flex justify-between gap-2">
@@ -973,9 +977,13 @@ export default function CheckoutPage() {
                           Fecha
                         </span>
                         <span className="text-background truncate text-right">
-                          {format(new Date(returnDate || ""), "dd MMM yyyy", {
-                            locale: es,
-                          })}
+                          {format(
+                            parse(returnDate || "", "yyyy-MM-dd", new Date()),
+                            "dd MMM yyyy",
+                            {
+                              locale: es,
+                            },
+                          )}
                         </span>
                       </p>
                       <p className="flex justify-between gap-2">

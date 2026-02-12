@@ -3,7 +3,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 import { es } from "date-fns/locale";
 import {
   ArrowRight,
@@ -164,10 +164,12 @@ export default function ServicesPage() {
                   </div>
                   <p className="text-background/60 mt-1">
                     {format(
-                      new Date(
+                      parse(
                         showingReturn
                           ? returnDate || departureDate
                           : departureDate,
+                        "yyyy-MM-dd",
+                        new Date(),
                       ),
                       "EEEE d 'de' MMMM, yyyy",
                       { locale: es },

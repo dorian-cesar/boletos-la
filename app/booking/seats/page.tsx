@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 import { es } from "date-fns/locale";
 import {
   ArrowRight,
@@ -218,9 +218,13 @@ export default function SeatsPage() {
                     {/* Bloque fecha y precio */}
                     <div className="flex flex-row items-center justify-between sm:flex-col sm:items-end w-full sm:w-auto gap-2 sm:gap-0 sm:ml-0 lg:ml-4 mt-2 sm:mt-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-background/10 sm:border-0">
                       <p className="text-[10px] sm:text-xs md:text-sm text-background/60">
-                        {format(new Date(currentDate || ""), "EEE d MMM", {
-                          locale: es,
-                        })}
+                        {format(
+                          parse(currentDate || "", "yyyy-MM-dd", new Date()),
+                          "EEE d MMM",
+                          {
+                            locale: es,
+                          },
+                        )}
                       </p>
                       <p className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-secondary whitespace-nowrap">
                         Gs. {currentTrip?.price.toLocaleString("es-PY")}
@@ -317,9 +321,13 @@ export default function SeatsPage() {
                     <div className="pl-8 md:pl-10 space-y-1.5 md:space-y-2">
                       <p className="text-xs md:text-sm text-background/80">
                         <span className="text-background/60">Fecha:</span>{" "}
-                        {format(new Date(departureDate || ""), "dd MMM yyyy", {
-                          locale: es,
-                        })}
+                        {format(
+                          parse(departureDate || "", "yyyy-MM-dd", new Date()),
+                          "dd MMM yyyy",
+                          {
+                            locale: es,
+                          },
+                        )}
                       </p>
                       <p className="text-xs md:text-sm text-background/80">
                         <span className="text-background/60">Horario:</span>{" "}
@@ -360,9 +368,13 @@ export default function SeatsPage() {
                       <div className="pl-8 md:pl-10 space-y-1.5 md:space-y-2">
                         <p className="text-xs md:text-sm text-background/80">
                           <span className="text-background/60">Fecha:</span>{" "}
-                          {format(new Date(returnDate || ""), "dd MMM yyyy", {
-                            locale: es,
-                          })}
+                          {format(
+                            parse(returnDate || "", "yyyy-MM-dd", new Date()),
+                            "dd MMM yyyy",
+                            {
+                              locale: es,
+                            },
+                          )}
                         </p>
                         <p className="text-xs md:text-sm text-background/80">
                           <span className="text-background/60">Horario:</span>{" "}

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 import { es } from "date-fns/locale";
 import {
   CheckCircle2,
@@ -173,7 +173,7 @@ export default function ConfirmationPageContent({
           horaLlegada: selectedOutboundTrip.arrivalTime,
           destino: destinationCity?.name || selectedOutboundTrip.destination,
           fechaViaje: format(
-            new Date(departureDate || ""),
+            parse(departureDate || "", "yyyy-MM-dd", new Date()),
             "d 'de' MMMM, yyyy",
             {
               locale: es,
@@ -326,9 +326,13 @@ export default function ConfirmationPageContent({
         origen: originCity?.name || selectedOutboundTrip.origin,
         horaLlegada: selectedOutboundTrip.arrivalTime,
         destino: destinationCity?.name || selectedOutboundTrip.destination,
-        fechaViaje: format(new Date(departureDate || ""), "d 'de' MMMM, yyyy", {
-          locale: es,
-        }),
+        fechaViaje: format(
+          parse(departureDate || "", "yyyy-MM-dd", new Date()),
+          "d 'de' MMMM, yyyy",
+          {
+            locale: es,
+          },
+        ),
         duracion: selectedOutboundTrip.duration,
         empresa: selectedOutboundTrip.company,
         servicioTipo: selectedOutboundTrip.busType,
@@ -420,9 +424,13 @@ export default function ConfirmationPageContent({
         origen: originCity?.name || selectedOutboundTrip.origin,
         horaLlegada: selectedOutboundTrip.arrivalTime,
         destino: destinationCity?.name || selectedOutboundTrip.destination,
-        fechaViaje: format(new Date(departureDate || ""), "d 'de' MMMM, yyyy", {
-          locale: es,
-        }),
+        fechaViaje: format(
+          parse(departureDate || "", "yyyy-MM-dd", new Date()),
+          "d 'de' MMMM, yyyy",
+          {
+            locale: es,
+          },
+        ),
         duracion: selectedOutboundTrip.duration,
         empresa: selectedOutboundTrip.company,
         servicioTipo: selectedOutboundTrip.busType,
@@ -526,9 +534,13 @@ export default function ConfirmationPageContent({
         origen: originCity?.name || selectedOutboundTrip.origin,
         horaLlegada: selectedOutboundTrip.arrivalTime,
         destino: destinationCity?.name || selectedOutboundTrip.destination,
-        fechaViaje: format(new Date(departureDate || ""), "d 'de' MMMM, yyyy", {
-          locale: es,
-        }),
+        fechaViaje: format(
+          parse(departureDate || "", "yyyy-MM-dd", new Date()),
+          "d 'de' MMMM, yyyy",
+          {
+            locale: es,
+          },
+        ),
         duracion: selectedOutboundTrip.duration,
         empresa: selectedOutboundTrip.company,
         servicioTipo: selectedOutboundTrip.busType,
@@ -625,9 +637,13 @@ export default function ConfirmationPageContent({
         origen: originCity?.name || selectedOutboundTrip.origin,
         horaLlegada: selectedOutboundTrip.arrivalTime,
         destino: destinationCity?.name || selectedOutboundTrip.destination,
-        fechaViaje: format(new Date(departureDate || ""), "d 'de' MMMM, yyyy", {
-          locale: es,
-        }),
+        fechaViaje: format(
+          parse(departureDate || "", "yyyy-MM-dd", new Date()),
+          "d 'de' MMMM, yyyy",
+          {
+            locale: es,
+          },
+        ),
         duracion: selectedOutboundTrip.duration,
         empresa: selectedOutboundTrip.company,
         servicioTipo: selectedOutboundTrip.busType,
@@ -1146,7 +1162,10 @@ export default function ConfirmationPageContent({
                 </p>
                 <p className="text-background/80">
                   <span className="font-medium text-background">Fecha:</span>{" "}
-                  {format(new Date(departureDate || ""), "dd/MM/yyyy")}
+                  {format(
+                    parse(departureDate || "", "yyyy-MM-dd", new Date()),
+                    "dd/MM/yyyy",
+                  )}
                 </p>
                 <p className="text-background/80">
                   <span className="font-medium text-background">
@@ -1360,7 +1379,7 @@ export default function ConfirmationPageContent({
                       <span className="flex items-center gap-2 text-background/60">
                         <Calendar className="h-4 w-4" />
                         {format(
-                          new Date(departureDate || ""),
+                          parse(departureDate || "", "yyyy-MM-dd", new Date()),
                           "EEEE d 'de' MMMM",
                           { locale: es },
                         )}
@@ -1460,7 +1479,7 @@ export default function ConfirmationPageContent({
                         <span className="flex items-center gap-2 text-background/60">
                           <Calendar className="h-4 w-4" />
                           {format(
-                            new Date(returnDate || ""),
+                            parse(returnDate || "", "yyyy-MM-dd", new Date()),
                             "EEEE d 'de' MMMM",
                             { locale: es },
                           )}
