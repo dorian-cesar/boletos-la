@@ -1,5 +1,6 @@
 import { Loader2, Bus } from "lucide-react";
 import { BookingProgress } from "@/components/booking-progress";
+import Image from "next/image";
 
 export default function ConfirmationLoading() {
   return (
@@ -15,7 +16,14 @@ export default function ConfirmationLoading() {
         <div className="container mx-auto px-4 py-8">
           <div className="text-center mb-12">
             <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-primary/30">
-              <Loader2 className="h-14 w-14 text-primary animate-spin" />
+              <Image
+                src="/logos/logo-boletos.png"
+                alt="Logo Boletos.la"
+                width={120}
+                height={64}
+                className="mx-auto mb-5 animate-bounce"
+                priority
+              />
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-background mb-3">
               Cargando confirmación...

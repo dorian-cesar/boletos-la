@@ -111,7 +111,9 @@ export const useBookingStore = create<BookingState>()(
 
       addSeat: (seat) => {
         const { selectedSeats } = get();
-        set({ selectedSeats: [...selectedSeats, seat] });
+        set({
+          selectedSeats: [...selectedSeats, { ...seat, status: "selected" }],
+        });
         get().calculateTotal();
       },
 
@@ -123,7 +125,12 @@ export const useBookingStore = create<BookingState>()(
 
       addReturnSeat: (seat) => {
         const { selectedReturnSeats } = get();
-        set({ selectedReturnSeats: [...selectedReturnSeats, seat] });
+        set({
+          selectedReturnSeats: [
+            ...selectedReturnSeats,
+            { ...seat, status: "selected" },
+          ],
+        });
         get().calculateTotal();
       },
 
@@ -172,11 +179,47 @@ export const useBookingStore = create<BookingState>()(
       setBookingReference: (bookingReference) => set({ bookingReference }),
       setPaymentStatus: (paymentStatus) => set({ paymentStatus }),
 
-      resetBooking: () => set(initialState),
+      resetBooking: () => {
+        // Limpiar localStorage al hacer reset
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("booking-store");
+        }
+        set(initialState);
+      },
     }),
     {
-      name: "booking-store",
+      name: "booking-store", // Nombre único en localStorage
       storage: createJSONStorage(() => localStorage),
+      // Solo persistir estos campos (excluir funciones)
+      partialize: (state) => ({
+        step: state.step,
+        tripType: state.tripType,
+        origin: state.origin,
+        destination: state.destination,
+        departureDate: state.departureDate,
+        returnDate: state.returnDate,
+        selectedOutboundTrip: state.selectedOutboundTrip,
+        selectedReturnTrip: state.selectedReturnTrip,
+        selectedSeats: state.selectedSeats,
+        selectedReturnSeats: state.selectedReturnSeats,
+        passengerDetails: state.passengerDetails,
+        totalPrice: state.totalPrice,
+        bookingReference: state.bookingReference,
+        paymentStatus: state.paymentStatus,
+      }),
+      // Versión para migraciones futuras
+      version: 1,
+      // Migrar datos de versiones anteriores si es necesario
+      migrate: (persistedState: any, version: number) => {
+        if (version === 0) {
+          // Migrar de versión 0 a 1 si es necesario
+          return {
+            ...persistedState,
+            paymentStatus: persistedState.paymentStatus || "pending",
+          };
+        }
+        return persistedState;
+      },
     },
   ),
 );
@@ -249,7 +292,6 @@ export const generateTrips = (
       departureTime: time,
       arrivalTime: `${arrivalHour.toString().padStart(2, "0")}:${arrivalMinute}`,
       duration: `${duration}h ${Math.random() > 0.5 ? "30" : "00"}min`,
-      // price: Math.floor(Math.random() * 150000) + 50000, // En guaraníes (Gs. 50,000 - 200,000)
       price: 1000,
       busType: busTypes[index % busTypes.length],
       company: companies[index % companies.length],
@@ -278,7 +320,6 @@ export const generateSeats = (tripId: string, floor: number = 1): Seat[] => {
         floor,
         type: isVip ? "vip" : isPremium ? "premium" : "standard",
         status: isOccupied ? "occupied" : "available",
-        // price: isVip ? 250000 : isPremium ? 180000 : 150000, // En guaraníes
         price: 1000,
       });
     }
