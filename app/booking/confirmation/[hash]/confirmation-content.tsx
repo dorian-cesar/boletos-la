@@ -1550,14 +1550,14 @@ export default function ConfirmationPageContent({
                           Tel: {passenger.phone}
                         </p>
                         {/* Botones para cada pasajero */}
-                        <div className="flex gap-2 mt-2">
+                        <div className="flex flex-col sm:flex-row gap-2 mt-2">
                           {/* Botón para descargar boleto individual */}
                           <Button
                             onClick={() => handleDownloadSingleTicket(index)}
                             disabled={isProcessing()}
                             variant="ghost"
                             size="sm"
-                            className="text-xs bg-secondary/10 hover:bg-secondary/20 text-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-1"
+                            className="text-xs bg-secondary/10 hover:bg-secondary/20 text-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:flex-1"
                           >
                             {processing.type === "single-ticket" &&
                             processing.passengerIndex === index ? (
@@ -1579,7 +1579,7 @@ export default function ConfirmationPageContent({
                             disabled={isProcessing()}
                             variant="ghost"
                             size="sm"
-                            className="text-xs bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-1"
+                            className="text-xs bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:flex-1"
                           >
                             {processing.type === "email-single" &&
                             processing.passengerIndex === index ? (

@@ -170,6 +170,17 @@ export function SearchForm() {
                 </Command>
               </PopoverContent>
             </Popover>
+
+            {/* Swap Button - Mobile (debajo de origen) */}
+            <div className="lg:hidden flex items-center justify-center mt-3">
+              <button
+                onClick={swapCities}
+                className="w-10 h-10 flex items-center justify-center bg-white/30 text-white rounded-full shadow-lg hover:scale-110 transition-transform duration-300 backdrop-blur-sm border border-white/40 hover:bg-white/40"
+                aria-label="Intercambiar origen y destino"
+              >
+                <ArrowRightLeft className="h-5 w-5 rotate-90" />
+              </button>
+            </div>
           </div>
 
           {/* Swap Button - Desktop */}
@@ -361,17 +372,6 @@ export function SearchForm() {
               </Popover>
             </div>
           )}
-        </div>
-
-        {/* Swap Button para móvil */}
-        <div className="lg:hidden flex items-center justify-center my-4 relative z-10">
-          <button
-            onClick={swapCities}
-            className="w-10 h-10 flex items-center justify-center bg-white/30 text-white rounded-full shadow-lg hover:scale-110 transition-transform duration-300 backdrop-blur-sm border border-white/40 hover:bg-white/40"
-            aria-label="Intercambiar origen y destino"
-          >
-            <ArrowRightLeft className="h-5 w-5 rotate-90" />
-          </button>
         </div>
 
         {/* Search Button */}

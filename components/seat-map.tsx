@@ -44,10 +44,8 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
       isReturn ? removeReturnSeat(seat.id) : removeSeat(seat.id);
       if (showMaxAlert) setShowMaxAlert(false);
     } else {
-      // Verificar si ya se alcanzó el límite de 4 asientos
       if (currentSelectedSeats.length >= 4) {
         setShowMaxAlert(true);
-        // Ocultar la alerta después de 3 segundos
         setTimeout(() => setShowMaxAlert(false), 3000);
         return;
       }
@@ -60,7 +58,7 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
   const rows = [...new Set(floorSeats.map((s) => s.row))].sort((a, b) => a - b);
 
   return (
-    <div className="bg-background/5 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-background/20">
+    <div className="bg-background/5 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg border border-background/20">
       {/* Alert para límite máximo */}
       {showMaxAlert && (
         <Alert variant="destructive" className="mb-4 animate-fade-in">
@@ -71,68 +69,16 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
         </Alert>
       )}
 
-      {/* Selection Counter */}
-      <div className="mb-6 p-4 bg-background/10 rounded-xl border border-background/20">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-background/60">Asientos seleccionados</p>
-            <p
-              className={cn(
-                "font-bold text-2xl text-background transition-colors duration-300",
-                currentSelectedSeats.length > 4
-                  ? "text-destructive animate-pulse"
-                  : "text-primary",
-              )}
-            >
-              {currentSelectedSeats.length}
-              <span className="text-base font-normal text-background/60 ml-1">
-                /4
-              </span>
-            </p>
-          </div>
-          {currentSelectedSeats.length > 0 && (
-            <div className="text-right">
-              <p className="text-sm text-background/60">Total seleccionado</p>
-              <p className="font-bold text-lg text-secondary">
-                Gs.{" "}
-                {currentSelectedSeats
-                  .reduce((acc, seat) => acc + seat.price, 0)
-                  .toLocaleString("es-PY")}
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Selected seats badges */}
-        {currentSelectedSeats.length > 0 && (
-          <div className="mt-3 pt-3 border-t border-background/20">
-            <div className="flex flex-wrap gap-2">
-              {currentSelectedSeats.map((seat) => (
-                <button
-                  key={seat.id}
-                  onClick={() => handleSeatClick(seat)}
-                  className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-sm font-medium hover:bg-primary/80 transition-colors duration-200 flex items-center gap-1 group animate-scale-in"
-                  title="Haz clic para deseleccionar"
-                >
-                  <span>{seat.number}</span>
-                  <span className="opacity-80 group-hover:opacity-100">×</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
       {/* Floor Selector */}
-      <div className="flex justify-center gap-4 mb-8">
+      <div className="flex justify-center gap-3 mb-8">
         {[1, 2].map((floor) => (
           <button
             key={floor}
             onClick={() => setActiveFloor(floor)}
             className={cn(
-              "px-6 py-3 rounded-xl font-medium transition-all duration-300 border",
+              "px-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 border",
               activeFloor === floor
-                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30 scale-105 border-primary"
+                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30 border-primary"
                 : "bg-background/10 text-background/80 hover:bg-background/20 border-background/30",
             )}
           >
@@ -142,30 +88,34 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap justify-center gap-6 mb-8">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-background/10 border-2 border-background/30" />
-          <span className="text-sm text-background/60">Disponible</span>
+      <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 mb-8">
+        <div className="flex items-center gap-1.5 md:gap-2">
+          <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-background/10 border border-background/30" />
+          <span className="text-xs md:text-sm text-background/60">
+            Disponible
+          </span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary border border-primary/50" />
-          <span className="text-sm text-background/60">Seleccionado</span>
+        <div className="flex items-center gap-1.5 md:gap-2">
+          <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-primary border border-primary/50" />
+          <span className="text-xs md:text-sm text-background/60">
+            Seleccionado
+          </span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-background/20 border border-background/40" />
-          <span className="text-sm text-background/60">Ocupado</span>
+        <div className="flex items-center gap-1.5 md:gap-2">
+          <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-background/20 border border-background/40" />
+          <span className="text-xs md:text-sm text-background/60">Ocupado</span>
         </div>
-        <div className="flex items-center gap-2">
-          <Crown className="h-5 w-5 text-secondary" />
-          <span className="text-sm text-background/60">Ejecutivo VIP</span>
+        <div className="flex items-center gap-1.5 md:gap-2">
+          <Crown className="h-3.5 w-3.5 md:h-5 md:w-5 text-secondary" />
+          <span className="text-xs md:text-sm text-background/60">VIP</span>
         </div>
-        <div className="flex items-center gap-2">
-          <Star className="h-5 w-5 text-primary" />
-          <span className="text-sm text-background/60">Cama Ejecutivo</span>
+        <div className="flex items-center gap-1.5 md:gap-2">
+          <Star className="h-3.5 w-3.5 md:h-5 md:w-5 text-primary" />
+          <span className="text-xs md:text-sm text-background/60">Cama</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-background/20 border-2 border-background/40" />
-          <span className="text-sm text-background/60">Semi Cama</span>
+        <div className="flex items-center gap-1.5 md:gap-2">
+          <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-background/20 border border-background/40" />
+          <span className="text-xs md:text-sm text-background/60">Semi</span>
         </div>
       </div>
 
@@ -181,13 +131,20 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
         </div>
 
         {/* Seats Grid */}
-        <div className="bg-background/10 rounded-3xl p-6 border-4 border-background/30">
-          {/* Row Numbers on Left */}
-          <div className="absolute left-4 top-6 flex flex-col gap-3">
-            {rows.map((row) => (
-              <div key={row} className="h-12 flex items-center">
-                <span className="text-xs text-background/60 font-medium">
-                  Fila {row}
+        <div className="bg-background/10 rounded-3xl p-6 border-4 border-background/30 relative">
+          {/* Row Numbers */}
+          <div className="absolute left-0 top-0 h-full flex flex-col pt-6 pb-6 pl-2">
+            {rows.map((row, index) => (
+              <div
+                key={row}
+                className="flex items-center"
+                style={{
+                  height: "48px",
+                  marginBottom: index === rows.length - 1 ? "0" : "12px",
+                }}
+              >
+                <span className="text-xs font-medium text-background/60 w-4 text-center">
+                  {row}
                 </span>
               </div>
             ))}
@@ -258,24 +215,29 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
         </div>
       </div>
 
-      {/* Selection Summary */}
+      {/* Selection Counter - AHORA ABAJO */}
       <div className="mt-8 p-4 bg-background/10 rounded-xl border border-background/20">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-background/60">Resumen</p>
+            <p className="text-sm text-background/60">Asientos seleccionados</p>
             <p
               className={cn(
-                "font-semibold text-lg text-background",
-                currentSelectedSeats.length > 4 && "text-destructive",
+                "font-bold text-2xl text-background transition-colors duration-300",
+                currentSelectedSeats.length > 4
+                  ? "text-destructive animate-pulse"
+                  : "text-primary",
               )}
             >
-              {currentSelectedSeats.length} asiento(s) seleccionado(s)
+              {currentSelectedSeats.length}
+              <span className="text-base font-normal text-background/60 ml-1">
+                /4
+              </span>
             </p>
           </div>
           {currentSelectedSeats.length > 0 && (
             <div className="text-right">
-              <p className="text-sm text-background/60">Total</p>
-              <p className="font-bold text-xl text-secondary">
+              <p className="text-sm text-background/60">Total seleccionado</p>
+              <p className="font-bold text-lg text-secondary">
                 Gs.{" "}
                 {currentSelectedSeats
                   .reduce((acc, seat) => acc + seat.price, 0)
@@ -285,11 +247,22 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
           )}
         </div>
 
-        {currentSelectedSeats.length > 4 && (
-          <div className="mt-2 p-2 bg-destructive/10 border border-destructive/30 rounded animate-pulse">
-            <p className="text-destructive text-sm font-medium text-center">
-              ⚠️ Límite excedido: Máximo 4 asientos permitidos
-            </p>
+        {/* Selected seats badges */}
+        {currentSelectedSeats.length > 0 && (
+          <div className="mt-3 pt-3 border-t border-background/20">
+            <div className="flex flex-wrap gap-2">
+              {currentSelectedSeats.map((seat) => (
+                <button
+                  key={seat.id}
+                  onClick={() => handleSeatClick(seat)}
+                  className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-sm font-medium hover:bg-primary/80 transition-colors duration-200 flex items-center gap-1 group"
+                  title="Haz clic para deseleccionar"
+                >
+                  <span>{seat.number}</span>
+                  <span className="opacity-80 group-hover:opacity-100">×</span>
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -352,7 +325,7 @@ function SeatButton({
       title={
         isDisabled && !isOccupied && !isSelected
           ? "Límite máximo alcanzado (4 asientos)"
-          : `Asiento ${seat.number} - ${seat.type === "vip" ? "Ejecutivo VIP" : seat.type === "premium" ? "Cama Ejecutivo" : "Semi Cama"} - Gs. ${seat.price.toLocaleString("es-PY")}`
+          : `Asiento ${seat.number} - ${seat.type === "vip" ? "VIP" : seat.type === "premium" ? "Cama" : "Semi"} - Gs. ${seat.price.toLocaleString("es-PY")}`
       }
     >
       {isOccupied ? (
@@ -374,21 +347,17 @@ function SeatButton({
             <Star className="absolute -top-1 -right-1 h-3 w-3 text-primary" />
           )}
 
-          {/* Disabled overlay */}
           {isDisabled && !isOccupied && !isSelected && (
-            <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
-              {/* <span className="text-xs text-white font-bold"></span> */}
-            </div>
+            <div className="absolute inset-0 bg-black/20 rounded-lg" />
           )}
 
-          {/* Price tooltip on hover */}
           <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50">
             <div className="bg-accent text-background-foreground text-xs px-2 py-1 rounded whitespace-nowrap shadow-lg border border-background/20">
               {isDisabled && !isOccupied && !isSelected
-                ? "Límite máximo alcanzado"
+                ? "Límite máximo"
                 : `Gs. ${seat.price.toLocaleString("es-PY")}`}
             </div>
-            <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-background mx-auto"></div>
+            <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-background mx-auto" />
           </div>
         </>
       )}
