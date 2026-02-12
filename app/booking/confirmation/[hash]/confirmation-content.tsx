@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { format, parse } from "date-fns";
 import { es } from "date-fns/locale";
@@ -691,7 +691,13 @@ export default function ConfirmationPageContent({
   // =====================================================================
   // DETECTAR TIPO DE PAGO AL CARGAR
   // =====================================================================
+  const processingRef = useRef(false);
+
+  // DETECTAR TIPO DE PAGO AL CARGAR
   useEffect(() => {
+    if (processingRef.current) return;
+    processingRef.current = true;
+
     console.log("🔗 Hash recibido en la URL:", hash);
 
     setMounted(true);
