@@ -29,7 +29,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { BookingProgress } from "@/components/booking-progress";
-import { useBookingStore, cities } from "@/lib/booking-store";
+import {
+  useBookingStore,
+  cities,
+  type Trip,
+  type Seat,
+  type Passenger,
+} from "@/lib/booking-store";
 import Image from "next/image";
 
 interface ConfirmationPageContentProps {
@@ -154,9 +160,24 @@ export default function ConfirmationPageContent({
           `Generando boleto ${index + 1}/${passengerDetails.length} para ${passenger.firstName} ${passenger.lastName}`,
         );
 
+        // Determinar si es IDA o VUELTA
+        const isOutbound = index < selectedSeats.length;
+        const trip = isOutbound ? selectedOutboundTrip : selectedReturnTrip;
+
+        if (!trip) {
+          console.error(`No hay viaje seleccionado para el índice ${index}`);
+          continue;
+        }
+
+        const label = isOutbound ? "Ida" : "Vuelta";
+
         // Encontrar el asiento correspondiente a este pasajero
+        // Si es vuelta, el índice en selectedReturnSeats es (index - selectedSeats.length)
+        const seatIndex = isOutbound ? index : index - selectedSeats.length;
+        const seatsArray = isOutbound ? selectedSeats : selectedReturnSeats;
+
         const passengerSeat =
-          selectedSeats[index]?.number ||
+          seatsArray[seatIndex]?.number ||
           passenger.seatNumber ||
           `A${index + 1}`;
 
@@ -168,22 +189,30 @@ export default function ConfirmationPageContent({
         // Preparar payload EXACTO como lo espera el backend externo
         const payload = {
           reservaCodigo: `${bookingReference}-${passengerSeat}`,
-          horaSalida: selectedOutboundTrip.departureTime,
-          origen: originCity?.name || selectedOutboundTrip.origin,
-          horaLlegada: selectedOutboundTrip.arrivalTime,
-          destino: destinationCity?.name || selectedOutboundTrip.destination,
+          horaSalida: trip.departureTime,
+          origen:
+            (isOutbound ? originCity?.name : destinationCity?.name) ||
+            trip.origin,
+          horaLlegada: trip.arrivalTime,
+          destino:
+            (isOutbound ? destinationCity?.name : originCity?.name) ||
+            trip.destination,
           fechaViaje: format(
-            parse(departureDate || "", "yyyy-MM-dd", new Date()),
+            parse(
+              (isOutbound ? departureDate : returnDate) || "",
+              "yyyy-MM-dd",
+              new Date(),
+            ),
             "d 'de' MMMM, yyyy",
             {
               locale: es,
             },
           ),
-          duracion: selectedOutboundTrip.duration,
-          empresa: selectedOutboundTrip.company,
-          servicioTipo: selectedOutboundTrip.busType,
+          duracion: trip.duration,
+          empresa: trip.company,
+          servicioTipo: trip.busType,
           asientos: passengerSeat, // Solo el asiento de este pasajero
-          terminal: `Terminal de Ómnibus de ${originCity?.name}`,
+          terminal: `Terminal de Ómnibus de ${isOutbound ? originCity?.name : destinationCity?.name}`,
           puerta: Math.floor(Math.random() * 20 + 1).toString(),
           pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
           documento: passenger.documentNumber || "Sin documento",
@@ -197,7 +226,7 @@ export default function ConfirmationPageContent({
         };
 
         console.log(
-          `Enviando a API interna para ${passenger.firstName}:`,
+          `Enviando a API interna para ${passenger.firstName} (${label}):`,
           payload,
         );
 
@@ -291,6 +320,9 @@ export default function ConfirmationPageContent({
   // =====================================================================
   // FUNCIÓN PARA DESCARGAR UN BOLETO ESPECÍFICO
   // =====================================================================
+  // =====================================================================
+  // FUNCIÓN PARA DESCARGAR UN BOLETO ESPECÍFICO
+  // =====================================================================
   const handleDownloadSingleTicket = async (passengerIndex: number) => {
     const passenger = passengerDetails[passengerIndex];
     if (!selectedOutboundTrip || !bookingReference || !passenger) {
@@ -304,13 +336,29 @@ export default function ConfirmationPageContent({
       return;
     }
 
+    // Determinar si es IDA o VUELTA
+    const isOutbound = passengerIndex < selectedSeats.length;
+    const trip = isOutbound ? selectedOutboundTrip : selectedReturnTrip;
+
+    if (!trip) {
+      console.error("No hay viaje seleccionado para este pasajero");
+      return;
+    }
+
+    const label = isOutbound ? "Ida" : "Vuelta";
+
     // Activar loader para este pasajero específico
     setProcessing({ type: "single-ticket", passengerIndex });
 
     try {
       // Encontrar el asiento correspondiente a este pasajero
+      const seatIndex = isOutbound
+        ? passengerIndex
+        : passengerIndex - selectedSeats.length;
+      const seatsArray = isOutbound ? selectedSeats : selectedReturnSeats;
+
       const passengerSeat =
-        selectedSeats[passengerIndex]?.number ||
+        seatsArray[seatIndex]?.number ||
         passenger.seatNumber ||
         `A${passengerIndex + 1}`;
 
@@ -322,22 +370,30 @@ export default function ConfirmationPageContent({
       // Preparar payload
       const payload = {
         reservaCodigo: `${bookingReference}-${passengerSeat}`,
-        horaSalida: selectedOutboundTrip.departureTime,
-        origen: originCity?.name || selectedOutboundTrip.origin,
-        horaLlegada: selectedOutboundTrip.arrivalTime,
-        destino: destinationCity?.name || selectedOutboundTrip.destination,
+        horaSalida: trip.departureTime,
+        origen:
+          (isOutbound ? originCity?.name : destinationCity?.name) ||
+          trip.origin,
+        horaLlegada: trip.arrivalTime,
+        destino:
+          (isOutbound ? destinationCity?.name : originCity?.name) ||
+          trip.destination,
         fechaViaje: format(
-          parse(departureDate || "", "yyyy-MM-dd", new Date()),
+          parse(
+            (isOutbound ? departureDate : returnDate) || "",
+            "yyyy-MM-dd",
+            new Date(),
+          ),
           "d 'de' MMMM, yyyy",
           {
             locale: es,
           },
         ),
-        duracion: selectedOutboundTrip.duration,
-        empresa: selectedOutboundTrip.company,
-        servicioTipo: selectedOutboundTrip.busType,
+        duracion: trip.duration,
+        empresa: trip.company,
+        servicioTipo: trip.busType,
         asientos: passengerSeat,
-        terminal: `Terminal de Ómnibus de ${originCity?.name}`,
+        terminal: `Terminal de Ómnibus de ${isOutbound ? originCity?.name : destinationCity?.name}`,
         puerta: Math.floor(Math.random() * 20 + 1).toString(),
         pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
         documento: passenger.documentNumber || "Sin documento",
@@ -351,7 +407,7 @@ export default function ConfirmationPageContent({
       };
 
       console.log(
-        `Generando boleto individual para ${passenger.firstName}`,
+        `Generando boleto individual para ${passenger.firstName} (${label})`,
         payload,
       );
 
@@ -393,6 +449,9 @@ export default function ConfirmationPageContent({
   // =====================================================================
   // FUNCIÓN PARA ENVIAR EMAIL A TODOS LOS PASAJEROS
   // =====================================================================
+  // =====================================================================
+  // FUNCIÓN PARA ENVIAR EMAIL A TODOS LOS PASAJEROS
+  // =====================================================================
   const handleSendEmail = async () => {
     if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) return;
 
@@ -408,54 +467,59 @@ export default function ConfirmationPageContent({
     setAutoEmailStatus("sending");
     setAutoEmailMessage("Enviando boletos por email...");
 
-    try {
-      // Para el email, enviamos un solo boleto con todos los pasajeros
-      const passengerSeats = selectedSeats.map((s) => s.number).join(", ");
-      const passengerNames = passengerDetails
-        .map((p) => `${p.firstName} ${p.lastName}`)
-        .join(", ");
-
-      // Preparar payload para la API de email
-      // SIN PDF - El backend externo generará el PDF automáticamente
+    // Helper interno para enviar un email específico
+    const sendTripEmail = async (
+      trip: Trip,
+      seat: Seat,
+      passenger: Passenger,
+      label: string,
+      index: number,
+      total: number,
+    ) => {
       const payload = {
         emailDestino: primaryPassenger.email,
-        reservaCodigo: bookingReference,
-        horaSalida: selectedOutboundTrip.departureTime,
-        origen: originCity?.name || selectedOutboundTrip.origin,
-        horaLlegada: selectedOutboundTrip.arrivalTime,
-        destino: destinationCity?.name || selectedOutboundTrip.destination,
+        reservaCodigo: `${bookingReference}-${seat.number}`,
+        horaSalida: trip.departureTime,
+        origen:
+          (label === "Ida" ? originCity?.name : destinationCity?.name) ||
+          trip.origin,
+        horaLlegada: trip.arrivalTime,
+        destino:
+          (label === "Ida" ? destinationCity?.name : originCity?.name) ||
+          trip.destination,
         fechaViaje: format(
-          parse(departureDate || "", "yyyy-MM-dd", new Date()),
+          parse(
+            (label === "Ida" ? departureDate : returnDate) || "",
+            "yyyy-MM-dd",
+            new Date(),
+          ),
           "d 'de' MMMM, yyyy",
           {
             locale: es,
           },
         ),
-        duracion: selectedOutboundTrip.duration,
-        empresa: selectedOutboundTrip.company,
-        servicioTipo: selectedOutboundTrip.busType,
-        asientos: passengerSeats,
-        terminal: `Terminal de Ómnibus de ${originCity?.name}`,
+        duracion: trip.duration,
+        empresa: trip.company,
+        servicioTipo: trip.busType,
+        asientos: seat.number,
+        terminal: `Terminal de Ómnibus de ${label === "Ida" ? originCity?.name : destinationCity?.name}`,
         puerta: Math.floor(Math.random() * 20 + 1).toString(),
-        pasajeroNombre: passengerNames,
-        documento: primaryPassenger.documentNumber || "Sin documento",
-        telefono: primaryPassenger.phone || "Sin teléfono",
-        subtotal: `Gs. ${Math.round(totalPrice * 0.82).toLocaleString("es-PY")}`,
-        iva: `Gs. ${Math.round(totalPrice * 0.1).toLocaleString("es-PY")}`,
-        cargoServicio: `Gs. ${Math.round(totalPrice * 0.08).toLocaleString("es-PY")}`,
-        total: `Gs. ${totalPrice.toLocaleString("es-PY")}`,
+        pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
+        documento: passenger.documentNumber || "Sin documento",
+        telefono: passenger.phone || "Sin teléfono",
+        subtotal: `Gs. ${Math.round(seat.price * 0.82).toLocaleString("es-PY")}`,
+        iva: `Gs. ${Math.round(seat.price * 0.1).toLocaleString("es-PY")}`,
+        cargoServicio: `Gs. ${Math.round(seat.price * 0.08).toLocaleString("es-PY")}`,
+        total: `Gs. ${seat.price.toLocaleString("es-PY")}`,
         pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
       };
 
-      console.log("📧 Enviando email a todos los pasajeros (destino único):", {
-        email: primaryPassenger.email,
-        asientos: passengerSeats,
-        pasajeros: passengerNames,
-      });
+      console.log(
+        `📧 Enviando email (${label}) a todos los pasajeros:`,
+        payload,
+      );
 
-      // Llamar DIRECTAMENTE a la API de email
-      // Ella se encargará de generar el PDF y enviarlo
       const response = await fetch("/api/tickets/send-email", {
         method: "POST",
         headers: {
@@ -467,15 +531,65 @@ export default function ConfirmationPageContent({
       const result = await response.json();
 
       if (!result.success) {
-        throw new Error(result.message || "Error al enviar el email");
+        throw new Error(
+          result.message || `Error al enviar el email de ${label}`,
+        );
+      }
+
+      console.log(
+        `✅ Email (${label}) enviado exitosamente para ${passenger.firstName}:`,
+        result,
+      );
+    };
+
+    try {
+      setAutoEmailStatus("sending");
+      setAutoEmailMessage("Enviando boleto de Ida...");
+
+      // 1. Enviar IDA (Individualmente)
+      for (const [index, seat] of selectedSeats.entries()) {
+        const passenger = passengerDetails[index];
+        if (!passenger) continue;
+
+        setAutoEmailMessage(
+          `Enviando boleto de Ida (${index + 1}/${selectedSeats.length})...`,
+        );
+        await sendTripEmail(
+          selectedOutboundTrip,
+          seat,
+          passenger,
+          "Ida",
+          index,
+          selectedSeats.length,
+        );
+      }
+
+      // 2. Enviar VUELTA (Individualmente, si existe)
+      if (selectedReturnTrip && selectedReturnSeats.length > 0) {
+        for (const [index, seat] of selectedReturnSeats.entries()) {
+          // El pasajero de vuelta está desplazado en el array passengerDetails
+          const passengerIndex = selectedSeats.length + index;
+          const passenger = passengerDetails[passengerIndex];
+          if (!passenger) continue;
+
+          setAutoEmailMessage(
+            `Enviando boleto de Vuelta (${index + 1}/${selectedReturnSeats.length})...`,
+          );
+          await sendTripEmail(
+            selectedReturnTrip,
+            seat,
+            passenger,
+            "Vuelta",
+            index,
+            selectedReturnSeats.length,
+          );
+        }
       }
 
       // Marcar como enviado exitosamente
       setEmailSent(true);
       setAutoEmailStatus("sent");
-      setAutoEmailMessage("Boletos enviados al correo electrónico");
-
-      console.log("✅ Email enviado exitosamente a todos:", result);
+      setAutoEmailMessage("Todos los boletos fueron enviados");
     } catch (error: any) {
       console.error("❌ Error enviando email a todos:", error);
 
@@ -516,49 +630,54 @@ export default function ConfirmationPageContent({
       return false;
     }
 
-    try {
-      setAutoEmailStatus("sending");
-      setAutoEmailMessage("Enviando boleto por email...");
-
-      // Para email automático, enviamos un solo boleto con todos los pasajeros
-      const passengerSeats = selectedSeats.map((s) => s.number).join(", ");
-      const passengerNames = passengerDetails
-        .map((p) => `${p.firstName} ${p.lastName}`)
-        .join(", ");
-
-      // Preparar payload para la API de email
+    // Helper interno para enviar un email específico
+    const sendTripEmail = async (
+      trip: Trip,
+      seat: Seat,
+      passenger: Passenger,
+      label: string,
+      index: number,
+      total: number,
+    ) => {
       const payload = {
-        emailDestino: passengerEmail,
-        reservaCodigo: bookingReference,
-        horaSalida: selectedOutboundTrip.departureTime,
-        origen: originCity?.name || selectedOutboundTrip.origin,
-        horaLlegada: selectedOutboundTrip.arrivalTime,
-        destino: destinationCity?.name || selectedOutboundTrip.destination,
+        emailDestino: passengerEmail, // Siempre enviamos al email del comprador principal por ahora
+        reservaCodigo: `${bookingReference}-${seat.number}`,
+        horaSalida: trip.departureTime,
+        origen:
+          (label === "Ida" ? originCity?.name : destinationCity?.name) ||
+          trip.origin,
+        horaLlegada: trip.arrivalTime,
+        destino:
+          (label === "Ida" ? destinationCity?.name : originCity?.name) ||
+          trip.destination,
         fechaViaje: format(
-          parse(departureDate || "", "yyyy-MM-dd", new Date()),
+          parse(
+            (label === "Ida" ? departureDate : returnDate) || "",
+            "yyyy-MM-dd",
+            new Date(),
+          ),
           "d 'de' MMMM, yyyy",
           {
             locale: es,
           },
         ),
-        duracion: selectedOutboundTrip.duration,
-        empresa: selectedOutboundTrip.company,
-        servicioTipo: selectedOutboundTrip.busType,
-        asientos: passengerSeats,
-        terminal: `Terminal de Ómnibus de ${originCity?.name}`,
+        duracion: trip.duration,
+        empresa: trip.company,
+        servicioTipo: trip.busType,
+        asientos: seat.number,
+        terminal: `Terminal de Ómnibus de ${label === "Ida" ? originCity?.name : destinationCity?.name}`,
         puerta: Math.floor(Math.random() * 20 + 1).toString(),
-        pasajeroNombre: passengerNames,
-        documento: primaryPassenger.documentNumber || "Sin documento",
-        telefono: primaryPassenger.phone || "Sin teléfono",
-        subtotal: `Gs. ${Math.round(totalPrice * 0.82).toLocaleString("es-PY")}`,
-        iva: `Gs. ${Math.round(totalPrice * 0.1).toLocaleString("es-PY")}`,
-        cargoServicio: `Gs. ${Math.round(totalPrice * 0.08).toLocaleString("es-PY")}`,
-        total: `Gs. ${totalPrice.toLocaleString("es-PY")}`,
+        pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
+        documento: passenger.documentNumber || "Sin documento",
+        telefono: passenger.phone || "Sin teléfono",
+        subtotal: `Gs. ${Math.round(seat.price * 0.82).toLocaleString("es-PY")}`,
+        iva: `Gs. ${Math.round(seat.price * 0.1).toLocaleString("es-PY")}`,
+        cargoServicio: `Gs. ${Math.round(seat.price * 0.08).toLocaleString("es-PY")}`,
+        total: `Gs. ${seat.price.toLocaleString("es-PY")}`,
         pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
       };
 
-      // Llamar DIRECTAMENTE a la API de email (sin generar PDF primero)
       const response = await fetch("/api/tickets/send-email", {
         method: "POST",
         headers: {
@@ -571,13 +690,62 @@ export default function ConfirmationPageContent({
 
       if (!response.ok || !result.success) {
         throw new Error(
-          result.message || "Error al enviar el email automático",
+          result.message || `Error al enviar el email de ${label}`,
         );
       }
 
-      console.log("✅ Email automático enviado exitosamente:", result);
+      console.log(
+        `✅ Email (${label}) enviado exitosamente para ${passenger.firstName}:`,
+        result,
+      );
+    };
+
+    try {
+      setAutoEmailStatus("sending");
+      setAutoEmailMessage("Iniciando envío de boletos...");
+
+      // 1. Enviar IDA (Individualmente)
+      for (const [index, seat] of selectedSeats.entries()) {
+        const passenger = passengerDetails[index];
+        if (!passenger) continue;
+
+        setAutoEmailMessage(
+          `Enviando boleto de Ida (${index + 1}/${selectedSeats.length})...`,
+        );
+        await sendTripEmail(
+          selectedOutboundTrip,
+          seat,
+          passenger,
+          "Ida",
+          index,
+          selectedSeats.length,
+        );
+      }
+
+      // 2. Enviar VUELTA (Individualmente, si existe)
+      if (selectedReturnTrip && selectedReturnSeats.length > 0) {
+        for (const [index, seat] of selectedReturnSeats.entries()) {
+          // El pasajero de vuelta está desplazado en el array passengerDetails
+          const passengerIndex = selectedSeats.length + index;
+          const passenger = passengerDetails[passengerIndex];
+          if (!passenger) continue;
+
+          setAutoEmailMessage(
+            `Enviando boleto de Vuelta (${index + 1}/${selectedReturnSeats.length})...`,
+          );
+          await sendTripEmail(
+            selectedReturnTrip,
+            seat,
+            passenger,
+            "Vuelta",
+            index,
+            selectedReturnSeats.length,
+          );
+        }
+      }
+
       setAutoEmailStatus("sent");
-      setAutoEmailMessage("Boleto enviado al correo electrónico");
+      setAutoEmailMessage("Todos los boletos fueron enviados");
 
       return true;
     } catch (error: any) {

@@ -362,36 +362,80 @@ export default function CheckoutPage() {
                   </div>
                 </Card>
               ) : (
-                passengerDetails.map((passenger, index) => {
+                // Agrupar pasajeros: Iterar solo por la cantidad de asientos de IDA (o el máximo entre ida y vuelta)
+                Array.from({
+                  length: Math.max(
+                    selectedSeats.length,
+                    selectedReturnSeats.length,
+                  ),
+                }).map((_, index) => {
+                  // Índices en el array plano passengerDetails
+                  const outboundIndex =
+                    index < selectedSeats.length ? index : -1;
+                  const returnIndex =
+                    index < selectedReturnSeats.length
+                      ? selectedSeats.length + index
+                      : -1;
+
+                  // Usamos el outbound como principal, o el return si no hay outbound (caso raro)
+                  const primaryIndex =
+                    outboundIndex !== -1 ? outboundIndex : returnIndex;
+                  const passenger = passengerDetails[primaryIndex];
+
+                  if (!passenger) return null;
+
+                  // Validaciones (usamos el pasajero principal para mostrar errores)
                   const firstNameError = getFieldError(
                     "firstName",
                     passenger.firstName,
-                    index,
+                    primaryIndex,
                   );
                   const lastNameError = getFieldError(
                     "lastName",
                     passenger.lastName,
-                    index,
+                    primaryIndex,
                   );
                   const documentError = getFieldError(
                     "documentNumber",
                     passenger.documentNumber,
-                    index,
+                    primaryIndex,
                   );
                   const emailError = getFieldError(
                     "email",
                     passenger.email,
-                    index,
+                    primaryIndex,
                   );
                   const phoneError = getFieldError(
                     "phone",
                     passenger.phone,
-                    index,
+                    primaryIndex,
                   );
+
+                  // Función helper para actualizar todos los registros asociados a este pasajero humano
+                  const handlePassengerUpdate = (
+                    field: keyof Passenger,
+                    value: string,
+                  ) => {
+                    // Actualizar Ida
+                    if (outboundIndex !== -1) {
+                      updatePassenger(outboundIndex, { [field]: value });
+                    }
+                    // Actualizar Vuelta
+                    if (returnIndex !== -1) {
+                      updatePassenger(returnIndex, { [field]: value });
+                    }
+                  };
+
+                  const handleBlur = (field: string) => {
+                    // Marcar como 'touched' ambos índices
+                    if (outboundIndex !== -1)
+                      handleFieldBlur(field, outboundIndex);
+                    if (returnIndex !== -1) handleFieldBlur(field, returnIndex);
+                  };
 
                   return (
                     <Card
-                      key={`${passenger.seatId}-${index}`}
+                      key={`passenger-group-${index}`}
                       className="p-4 sm:p-6 animate-fade-in relative overflow-hidden bg-background/5 backdrop-blur-sm border-background/20 w-full"
                       style={{ animationDelay: `${index * 150}ms` }}
                     >
@@ -403,9 +447,26 @@ export default function CheckoutPage() {
                           <h3 className="font-semibold text-background truncate">
                             Pasajero {index + 1}
                           </h3>
-                          <p className="text-sm text-background/60 truncate">
-                            Asiento {passenger.seatNumber}
-                          </p>
+                          <div className="flex flex-col sm:flex-row sm:gap-4 text-sm text-background/60">
+                            {outboundIndex !== -1 && (
+                              <span className="flex items-center gap-1">
+                                <span className="bg-primary/20 text-primary text-[10px] px-1.5 py-0.5 rounded uppercase">
+                                  Ida
+                                </span>
+                                Asiento{" "}
+                                {passengerDetails[outboundIndex].seatNumber}
+                              </span>
+                            )}
+                            {returnIndex !== -1 && (
+                              <span className="flex items-center gap-1">
+                                <span className="bg-secondary/20 text-secondary text-[10px] px-1.5 py-0.5 rounded uppercase">
+                                  Vuelta
+                                </span>
+                                Asiento{" "}
+                                {passengerDetails[returnIndex].seatNumber}
+                              </span>
+                            )}
+                          </div>
                         </div>
                         {!firstNameError &&
                           !lastNameError &&
@@ -443,11 +504,12 @@ export default function CheckoutPage() {
                               placeholder="Ingresa el nombre"
                               value={passenger.firstName}
                               onChange={(e) =>
-                                updatePassenger(index, {
-                                  firstName: e.target.value,
-                                })
+                                handlePassengerUpdate(
+                                  "firstName",
+                                  e.target.value,
+                                )
                               }
-                              onBlur={() => handleFieldBlur("firstName", index)}
+                              onBlur={() => handleBlur("firstName")}
                               className={cn(
                                 "h-12 pr-10 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full",
                                 firstNameError && "border-destructive",
@@ -490,11 +552,12 @@ export default function CheckoutPage() {
                               placeholder="Ingresa el apellido"
                               value={passenger.lastName}
                               onChange={(e) =>
-                                updatePassenger(index, {
-                                  lastName: e.target.value,
-                                })
+                                handlePassengerUpdate(
+                                  "lastName",
+                                  e.target.value,
+                                )
                               }
-                              onBlur={() => handleFieldBlur("lastName", index)}
+                              onBlur={() => handleBlur("lastName")}
                               className={cn(
                                 "h-12 pr-10 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full",
                                 lastNameError && "border-destructive",
@@ -532,31 +595,33 @@ export default function CheckoutPage() {
                               Cédula/RUC
                               <span className="text-destructive ml-1">*</span>
                             </Label>
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-6 px-2 text-xs text-background/60 hover:text-background hover:bg-background/20 shrink-0"
-                                    onClick={() =>
-                                      setShowDocumentHelp(!showDocumentHelp)
-                                    }
-                                  >
-                                    <AlertCircle className="h-3 w-3 mr-1" />
-                                    Formato
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent className="bg-background/95 backdrop-blur-sm border-background/20">
-                                  <div className="text-sm">
-                                    <p>Ejemplos válidos:</p>
-                                    <p>• Cédula: 4.123.456</p>
-                                    <p>• RUC: 80.012.345-0</p>
-                                  </div>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
+                            {index === 0 && (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-6 px-2 text-xs text-background/60 hover:text-background hover:bg-background/20 shrink-0"
+                                      onClick={() =>
+                                        setShowDocumentHelp(!showDocumentHelp)
+                                      }
+                                    >
+                                      <AlertCircle className="h-3 w-3 mr-1" />
+                                      Formato
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent className="bg-background/95 backdrop-blur-sm border-background/20">
+                                    <div className="text-sm">
+                                      <p>Ejemplos válidos:</p>
+                                      <p>• Cédula: 4.123.456</p>
+                                      <p>• RUC: 80.012.345-0</p>
+                                    </div>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            )}
                           </div>
                           <div className="relative">
                             <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-background/60 shrink-0" />
@@ -565,15 +630,12 @@ export default function CheckoutPage() {
                               placeholder="4.123.456 o 80.012.345-0"
                               value={passenger.documentNumber}
                               onChange={(e) =>
-                                updatePassenger(index, {
-                                  documentNumber: formatDocument(
-                                    e.target.value,
-                                  ),
-                                })
+                                handlePassengerUpdate(
+                                  "documentNumber",
+                                  formatDocument(e.target.value),
+                                )
                               }
-                              onBlur={() =>
-                                handleFieldBlur("documentNumber", index)
-                              }
+                              onBlur={() => handleBlur("documentNumber")}
                               className={cn(
                                 "h-12 pl-10 pr-10 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full",
                                 documentError && "border-destructive",
@@ -599,17 +661,6 @@ export default function CheckoutPage() {
                               <span className="truncate">{documentError}</span>
                             </p>
                           )}
-                          {showDocumentHelp && !documentError && (
-                            <div className="text-xs text-background/60 p-2 bg-background/10 rounded w-full">
-                              <p className="truncate">
-                                Formato aceptado: 4.123.456 (cédula) o
-                                80.012.345-0 (RUC)
-                              </p>
-                              <p className="truncate">
-                                Para RUC, el dígito verificador puede ser 0-9
-                              </p>
-                            </div>
-                          )}
                         </div>
 
                         {/* Phone */}
@@ -628,11 +679,9 @@ export default function CheckoutPage() {
                               placeholder="0981 123 456"
                               value={passenger.phone}
                               onChange={(e) =>
-                                updatePassenger(index, {
-                                  phone: e.target.value,
-                                })
+                                handlePassengerUpdate("phone", e.target.value)
                               }
-                              onBlur={() => handleFieldBlur("phone", index)}
+                              onBlur={() => handleBlur("phone")}
                               className={cn(
                                 "h-12 pl-10 pr-10 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full",
                                 phoneError && "border-destructive",
@@ -683,11 +732,9 @@ export default function CheckoutPage() {
                               placeholder="correo@ejemplo.com"
                               value={passenger.email}
                               onChange={(e) =>
-                                updatePassenger(index, {
-                                  email: e.target.value,
-                                })
+                                handlePassengerUpdate("email", e.target.value)
                               }
-                              onBlur={() => handleFieldBlur("email", index)}
+                              onBlur={() => handleBlur("email")}
                               className={cn(
                                 "h-12 pl-10 pr-10 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full",
                                 emailError && "border-destructive",
