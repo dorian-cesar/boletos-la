@@ -11,9 +11,22 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "boletos.la - Reserva de Pasajes de Bus",
+  title: {
+    template: "%s | boletos.la",
+    default: "boletos.la - Reserva de Pasajes de Bus",
+  },
   description:
     "Reserva tus pasajes de bus de forma rápida y segura. Viaja por todo el país con las mejores empresas de transporte",
+
+  metadataBase: new URL("https://boletos.la"),
+  alternates: {
+    canonical: "/",
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
