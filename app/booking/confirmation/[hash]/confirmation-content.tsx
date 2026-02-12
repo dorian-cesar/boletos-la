@@ -30,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { BookingProgress } from "@/components/booking-progress";
 import { useBookingStore, cities } from "@/lib/booking-store";
+import Image from "next/image";
 
 interface ConfirmationPageContentProps {
   hash: string;
@@ -939,7 +940,14 @@ export default function ConfirmationPageContent({
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#1a2332] to-[#0f1419]">
         <div className="text-center text-background">
-          <Loader2 className="h-16 w-16 text-primary mx-auto mb-4 animate-spin" />
+          <Image
+            src="/logos/logo-boletos.png"
+            alt="Logo Boletos.la"
+            width={120}
+            height={64}
+            className="mx-auto mb-5 animate-bounce"
+            priority
+          />
           <p className="text-background/60">Cargando confirmación...</p>
         </div>
       </div>

@@ -29,6 +29,7 @@ import {
   Trip,
 } from "@/lib/booking-store";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 const amenityIcons: Record<
   string,
@@ -98,7 +99,14 @@ export default function ServicesPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#1a2332] to-[#0f1419]">
         <div className="text-center text-background">
-          <Bus className="h-16 w-16 text-primary mx-auto mb-4 animate-bounce" />
+          <Image
+            src="/logos/logo-boletos.png"
+            alt="Logo Boletos.la"
+            width={120}
+            height={64}
+            className="mx-auto mb-5 animate-bounce"
+            priority
+          />
           <p className="text-muted-foreground">Cargando servicios...</p>
         </div>
       </div>

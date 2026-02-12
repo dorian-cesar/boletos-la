@@ -21,6 +21,7 @@ import { BookingProgress } from "@/components/booking-progress";
 import { SeatMap } from "@/components/seat-map";
 import { useBookingStore, cities } from "@/lib/booking-store";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export default function SeatsPage() {
   const router = useRouter();
@@ -87,7 +88,14 @@ export default function SeatsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#1a2332] to-[#0f1419]">
         <div className="text-center text-background px-4">
-          <Bus className="h-16 w-16 text-primary mx-auto mb-4 animate-bounce" />
+          <Image
+            src="/logos/logo-boletos.png"
+            alt="Logo Boletos.la"
+            width={120}
+            height={64}
+            className="mx-auto mb-5 animate-bounce"
+            priority
+          />
           <p className="text-muted-foreground">
             Cargando selección de asientos...
           </p>
