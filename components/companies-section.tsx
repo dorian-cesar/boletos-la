@@ -5,14 +5,14 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 const companies = [
-  {
-    name: "Nuestra Señora de la Asunción",
-    logo: "/logos/logo-nsa.png",
-    alt: "Logo Nuestra Señora de la Asunción",
-    containerSize: "h-16",
-    scale: "scale-100",
-    hoverScale: "group-hover:scale-105",
-  },
+  // {
+  //   name: "Nuestra Señora de la Asunción",
+  //   logo: "/logos/logo-nsa.png",
+  //   alt: "Logo Nuestra Señora de la Asunción",
+  //   containerSize: "h-16",
+  //   scale: "scale-100",
+  //   hoverScale: "group-hover:scale-105",
+  // },
   {
     name: "La Santaniana",
     logo: "/logos/logo-la-santaniana.png",
@@ -21,14 +21,14 @@ const companies = [
     scale: "scale-75",
     hoverScale: "group-hover:scale-[0.8]",
   },
-  {
-    name: "Sol de Paraguay",
-    logo: "/logos/logo-sol-de-paraguay.png",
-    alt: "Logo Sol de Paraguay",
-    containerSize: "h-24",
-    scale: "scale-100",
-    hoverScale: "group-hover:scale-105",
-  },
+  // {
+  //   name: "Sol de Paraguay",
+  //   logo: "/logos/logo-sol-de-paraguay.png",
+  //   alt: "Logo Sol de Paraguay",
+  //   containerSize: "h-24",
+  //   scale: "scale-100",
+  //   hoverScale: "group-hover:scale-105",
+  // },
 ];
 
 export function CompaniesSection() {
@@ -102,12 +102,12 @@ export function CompaniesSection() {
         </div>
 
         {/* Companies Grid - Ajuste individual para cada logo */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 items-center">
+        <div className="flex justify-center items-center w-full">
           {companies.map((company, index) => (
             <div
               key={company.name}
               className={cn(
-                "group flex items-center justify-center w-full",
+                "group flex items-center justify-center w-full max-w-xs mx-auto",
                 company.containerSize, // Altura específica para cada contenedor
                 isVisible
                   ? "opacity-100 translate-y-0"
