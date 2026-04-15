@@ -24,7 +24,7 @@ export interface Seat {
   column: number;
   floor: number;
   type: "standard";
-  status: "available" | "occupied" | "selected";
+  status: "available" | "occupied" | "selected" | "blocked";
   price: number;
 }
 

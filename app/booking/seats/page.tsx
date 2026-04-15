@@ -78,7 +78,9 @@ export default function SeatsPage() {
     : selectedOutboundTrip;
   const currentDate = selectingReturn ? returnDate : departureDate;
   const currentOriginTitle = selectingReturn ? destinationTitle : originTitle;
-  const currentDestinationTitle = selectingReturn ? originTitle : destinationTitle;
+  const currentDestinationTitle = selectingReturn
+    ? originTitle
+    : destinationTitle;
 
   if (!mounted) {
     return (
@@ -441,7 +443,7 @@ export default function SeatsPage() {
                   </Button>
 
                   {!canContinue && (
-                    <p className="text-xs md:text-sm text-destructive mt-3 text-center">
+                    <p className="text-xs md:text-sm text-background/70 mt-3 text-center">
                       {hasExceededLimit
                         ? "Máximo 4 asientos permitidos"
                         : "Selecciona al menos 1 asiento para continuar"}
