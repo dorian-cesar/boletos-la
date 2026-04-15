@@ -27,7 +27,8 @@ import {
   CommandList,
   CommandInput,
 } from "@/components/ui/command";
-import { useBookingStore, cities } from "@/lib/booking-store";
+import { useBookingStore } from "@/lib/booking-store";
+import { useStops } from "@/lib/hooks/use-stops";
 import { cn } from "@/lib/utils";
 import { format, parse } from "date-fns";
 import { es } from "date-fns/locale";
@@ -99,6 +100,8 @@ export function SearchForm() {
   const [departureDateOpen, setDepartureDateOpen] = useState(false);
   const [returnDateOpen, setReturnDateOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
+
+  const { stops, loading: stopsLoading, error: stopsError } = useStops();
 
   const {
     tripType,
@@ -191,7 +194,7 @@ export function SearchForm() {
                         )}
                       >
                         {origin
-                          ? cities.find((c) => c.id === origin)?.name
+                          ? stops.find((c) => c.id === origin)?.name
                           : "Seleccionar ciudad"}
                       </span>
                     </div>
@@ -209,10 +212,14 @@ export function SearchForm() {
                     />
                     <CommandList>
                       <CommandEmpty className="text-white/70">
-                        No se encontró la ciudad.
+                        {stopsLoading
+                          ? "Cargando ciudades..."
+                          : stopsError
+                            ? "Error al cargar ciudades"
+                            : "No se encontró la ciudad."}
                       </CommandEmpty>
                       <CommandGroup className="bg-transparent">
-                        {cities.map((city) => (
+                        {stops.map((city) => (
                           <CommandItem
                             key={city.id}
                             value={city.name}
@@ -282,7 +289,7 @@ export function SearchForm() {
                         )}
                       >
                         {destination
-                          ? cities.find((c) => c.id === destination)?.name
+                          ? stops.find((c) => c.id === destination)?.name
                           : "Seleccionar ciudad"}
                       </span>
                     </div>
@@ -300,10 +307,14 @@ export function SearchForm() {
                     />
                     <CommandList>
                       <CommandEmpty className="text-white/70">
-                        No se encontró la ciudad.
+                        {stopsLoading
+                          ? "Cargando ciudades..."
+                          : stopsError
+                            ? "Error al cargar ciudades"
+                            : "No se encontró la ciudad."}
                       </CommandEmpty>
                       <CommandGroup className="bg-transparent">
-                        {cities
+                        {stops
                           .filter((c) => c.id !== origin)
                           .map((city) => (
                             <CommandItem
@@ -459,7 +470,7 @@ export function SearchForm() {
       </div>
 
       {/* Coming Soon Modal */}
-      <ComingSoonModal isOpen={showModal} onClose={() => setShowModal(false)} />
+      {/* <ComingSoonModal isOpen={showModal} onClose={() => setShowModal(false)} /> */}
     </>
   );
 }
