@@ -179,24 +179,32 @@ export function SearchForm() {
               <Label className="text-sm font-medium text-white/90 mb-2 block">
                 Origen
               </Label>
-              <Popover open={originOpen} onOpenChange={setOriginOpen}>
+              <Popover
+                open={originOpen && !stopsLoading}
+                onOpenChange={(open) => {
+                  if (!stopsLoading) setOriginOpen(open);
+                }}
+              >
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
                     role="combobox"
-                    className="w-full justify-between h-14 text-left font-normal bg-white/30 border-white/40 hover:border-white/60 hover:bg-white/40 transition-all duration-300 backdrop-blur-sm"
+                    disabled={stopsLoading}
+                    className={cn(
+                      "w-full justify-between h-14 text-left font-normal transition-all duration-300 backdrop-blur-sm",
+                      stopsLoading
+                        ? "bg-white/20 border-white/30 cursor-not-allowed opacity-60"
+                        : "bg-white/30 border-white/40 hover:border-white/60 hover:bg-white/40",
+                    )}
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <MapPin className="h-5 w-5 text-white flex-shrink-0" />
-                      <span
-                        className={cn(
-                          !origin && "text-white/70",
-                          "text-white truncate",
-                        )}
-                      >
-                        {origin
-                          ? stops.find((c) => c.id === origin)?.name
-                          : "Seleccionar ciudad"}
+                      <span className={cn("text-white truncate")}>
+                        {stopsLoading
+                          ? "Cargando ciudades..."
+                          : origin
+                            ? stops.find((c) => c.id === origin)?.name
+                            : "Seleccione ciudad"}
                       </span>
                     </div>
                     <ChevronDown className="h-4 w-4 text-white/70 flex-shrink-0" />
@@ -248,7 +256,13 @@ export function SearchForm() {
               <div className="lg:hidden flex items-center justify-center mt-3">
                 <button
                   onClick={swapCities}
-                  className="w-10 h-10 flex items-center justify-center bg-white/30 text-white rounded-full shadow-lg hover:scale-110 transition-transform duration-300 backdrop-blur-sm border border-white/40 hover:bg-white/40"
+                  disabled={stopsLoading}
+                  className={cn(
+                    "w-10 h-10 flex items-center justify-center text-white rounded-full shadow-lg transition-all duration-300 backdrop-blur-sm border border-white/40",
+                    stopsLoading
+                      ? "bg-white/20 cursor-not-allowed opacity-50"
+                      : "bg-white/30 hover:scale-110 hover:bg-white/40",
+                  )}
                   aria-label="Intercambiar origen y destino"
                 >
                   <ArrowRightLeft className="h-5 w-5 rotate-90" />
@@ -261,7 +275,13 @@ export function SearchForm() {
               <div className="h-14 flex items-center">
                 <button
                   onClick={swapCities}
-                  className="w-10 h-10 flex items-center justify-center bg-white/30 text-white rounded-full shadow-lg hover:scale-110 transition-transform duration-300 backdrop-blur-sm border border-white/40 hover:bg-white/40"
+                  disabled={stopsLoading}
+                  className={cn(
+                    "w-10 h-10 flex items-center justify-center text-white rounded-full shadow-lg transition-all duration-300 backdrop-blur-sm border border-white/40",
+                    stopsLoading
+                      ? "bg-white/20 cursor-not-allowed opacity-50"
+                      : "bg-white/30 hover:scale-110 hover:bg-white/40",
+                  )}
                   aria-label="Intercambiar origen y destino"
                 >
                   <ArrowRightLeft className="h-5 w-5" />
@@ -274,24 +294,32 @@ export function SearchForm() {
               <Label className="text-sm font-medium text-white/90 mb-2 block">
                 Destino
               </Label>
-              <Popover open={destinationOpen} onOpenChange={setDestinationOpen}>
+              <Popover
+                open={destinationOpen && !stopsLoading}
+                onOpenChange={(open) => {
+                  if (!stopsLoading) setDestinationOpen(open);
+                }}
+              >
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
                     role="combobox"
-                    className="w-full justify-between h-14 text-left font-normal bg-white/30 border-white/40 hover:border-white/60 hover:bg-white/40 transition-all duration-300 backdrop-blur-sm"
+                    disabled={stopsLoading}
+                    className={cn(
+                      "w-full justify-between h-14 text-left font-normal transition-all duration-300 backdrop-blur-sm",
+                      stopsLoading
+                        ? "bg-white/20 border-white/30 cursor-not-allowed opacity-60"
+                        : "bg-white/30 border-white/40 hover:border-white/60 hover:bg-white/40",
+                    )}
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <MapPin className="h-5 w-5 text-white flex-shrink-0" />
-                      <span
-                        className={cn(
-                          !destination && "text-white/70",
-                          "text-white truncate",
-                        )}
-                      >
-                        {destination
-                          ? stops.find((c) => c.id === destination)?.name
-                          : "Seleccionar ciudad"}
+                      <span className={cn("text-white truncate")}>
+                        {stopsLoading
+                          ? "Cargando ciudades..."
+                          : destination
+                            ? stops.find((c) => c.id === destination)?.name
+                            : "Seleccione ciudad"}
                       </span>
                     </div>
                     <ChevronDown className="h-4 w-4 text-white/70 flex-shrink-0" />
@@ -456,6 +484,7 @@ export function SearchForm() {
             <Button
               onClick={handleSearch}
               disabled={
+                stopsLoading ||
                 !origin ||
                 !destination ||
                 !departureDate ||
