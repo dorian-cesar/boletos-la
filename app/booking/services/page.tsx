@@ -22,12 +22,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookingProgress } from "@/components/booking-progress";
-import {
-  useBookingStore,
-  generateTrips,
-  cities,
-  Trip,
-} from "@/lib/booking-store";
+import { useBookingStore, Trip } from "@/lib/booking-store";
+import { useSearch } from "@/lib/hooks/use-search";
+import { useStops } from "@/lib/hooks/use-stops";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
@@ -61,21 +58,23 @@ export default function ServicesPage() {
     setStep,
   } = useBookingStore();
 
-  const [outboundTrips, setOutboundTrips] = useState<Trip[]>([]);
-  const [returnTrips, setReturnTrips] = useState<Trip[]>([]);
   const [showingReturn, setShowingReturn] = useState(false);
+  const { stops, loading: stopsLoading } = useStops();
+
+  const {
+    trips: currentTrips,
+    loading: searchLoading,
+    error: searchError,
+  } = useSearch({
+    originId: showingReturn ? destination : origin,
+    destinationId: showingReturn ? origin : destination,
+    date: showingReturn ? returnDate || departureDate : departureDate,
+  });
 
   useEffect(() => {
     setMounted(true);
     setStep(1);
-
-    if (origin && destination && departureDate) {
-      setOutboundTrips(generateTrips(origin, destination, departureDate));
-      if (tripType === "round-trip" && returnDate) {
-        setReturnTrips(generateTrips(destination, origin, returnDate));
-      }
-    }
-  }, [origin, destination, departureDate, returnDate, tripType, setStep]);
+  }, [setStep]);
 
   const handleSelectTrip = (trip: Trip) => {
     if (!showingReturn) {
@@ -91,11 +90,11 @@ export default function ServicesPage() {
     }
   };
 
-  const originCity = cities.find((c) => c.id === origin);
-  const destinationCity = cities.find((c) => c.id === destination);
-  const trips = showingReturn ? returnTrips : outboundTrips;
+  const originCity = stops.find((c) => c.id === origin);
+  const destinationCity = stops.find((c) => c.id === destination);
+  const trips = currentTrips;
 
-  if (!mounted) {
+  if (!mounted || stopsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#1a2332] to-[#0f1419]">
         <div className="text-center text-background">
@@ -104,10 +103,10 @@ export default function ServicesPage() {
             alt="Logo Boletos.la"
             width={120}
             height={64}
-            className="mx-auto mb-5 animate-bounce"
+            className="mx-auto mb-5 animate-pulse"
             priority
           />
-          <p className="text-muted-foreground">Cargando servicios...</p>
+          <p className="text-muted-foreground">Cargando ciudades...</p>
         </div>
       </div>
     );
@@ -210,179 +209,221 @@ export default function ServicesPage() {
           <div className="container mx-auto max-w-7xl">
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-xl font-semibold text-background">
-                {trips.length} servicios disponibles
+                {searchLoading
+                  ? "Buscando servicios..."
+                  : `${trips.length} servicios disponibles`}
               </h2>
-              <div className="flex items-center gap-2">
-                <Badge
-                  variant="outline"
-                  className="bg-primary/10 text-primary border-primary/30 whitespace-nowrap"
-                >
-                  Mejor precio
-                </Badge>
-              </div>
+              {/* {!searchLoading && trips.length > 0 && (
+                <div className="flex items-center gap-2">
+                  <Badge
+                    variant="outline"
+                    className="bg-primary/10 text-primary border-primary/30 whitespace-nowrap"
+                  >
+                    Mejor precio
+                  </Badge>
+                </div>
+              )} */}
             </div>
 
-            <div className="space-y-4">
-              {trips.map((trip, index) => (
-                <Card
-                  key={trip.id}
-                  className={cn(
-                    "overflow-hidden transition-all duration-500 animate-fade-in hover:shadow-lg bg-background/5 backdrop-blur-sm border-background/20",
-                    selectedOutboundTrip?.id === trip.id ||
-                      selectedReturnTrip?.id === trip.id
-                      ? "ring-2 ring-primary"
-                      : "",
-                  )}
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <div className="p-6">
-                    <div className="flex flex-col lg:flex-row lg:items-center gap-6">
-                      {/* Company Info */}
-                      <div className="flex items-center gap-4 lg:w-48">
-                        <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <Bus className="h-8 w-8 text-primary" />
+            {searchLoading ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <Card
+                    key={i}
+                    className="p-6 bg-white/5 border-white/10 animate-pulse h-32"
+                  >
+                    <div className="flex gap-6 h-full items-center">
+                      <div className="w-16 h-16 bg-white/10 rounded-xl" />
+                      <div className="flex-1 space-y-3">
+                        <div className="h-4 bg-white/10 rounded w-1/4" />
+                        <div className="h-4 bg-white/10 rounded w-1/2" />
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            ) : searchError ? (
+              <div className="text-center py-12 bg-background/5 rounded-3xl border border-background/10">
+                <p className="text-destructive mb-4">{searchError}</p>
+                <Button variant="outline" onClick={() => router.refresh()}>
+                  Reintentar
+                </Button>
+              </div>
+            ) : trips.length === 0 ? (
+              <div className="text-center py-12 bg-background/5 rounded-3xl border border-background/10">
+                <Bus className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-xl font-semibold mb-2">
+                  No se encontraron servicios
+                </p>
+                <p className="text-muted-foreground">
+                  Intenta con otra fecha u otra ruta
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {trips.map((trip, index) => (
+                  <Card
+                    key={trip.id}
+                    className={cn(
+                      "overflow-hidden transition-all duration-500 animate-fade-in hover:shadow-lg bg-background/5 backdrop-blur-sm border-background/20",
+                      selectedOutboundTrip?.id === trip.id ||
+                        selectedReturnTrip?.id === trip.id
+                        ? "ring-2 ring-primary"
+                        : "",
+                    )}
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <div className="p-6">
+                      <div className="flex flex-col lg:flex-row lg:items-center gap-6">
+                        {/* Company Info */}
+                        <div className="flex items-center gap-4 lg:w-48">
+                          <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <Bus className="h-8 w-8 text-primary" />
+                          </div>
+                          <div>
+                            <p className="font-bold text-background">
+                              {trip.company}
+                            </p>
+                            <p className="text-sm text-background/60">
+                              {trip.busType}
+                            </p>
+                            {/* <div className="flex items-center gap-1 mt-1">
+                              <Star className="h-3 w-3 text-secondary fill-secondary" />
+                              <span className="text-xs text-background/60">
+                                4.5
+                              </span>
+                            </div> */}
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-bold text-background">
-                            {trip.company}
-                          </p>
-                          <p className="text-sm text-background/60">
-                            {trip.busType}
-                          </p>
-                          <div className="flex items-center gap-1 mt-1">
-                            <Star className="h-3 w-3 text-secondary fill-secondary" />
-                            <span className="text-xs text-background/60">
-                              4.5
+
+                        {/* Time Info */}
+                        <div className="flex-1 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6">
+                          <div className="flex w-full md:w-auto justify-between md:justify-start md:flex-1">
+                            <div className="text-center flex-1 md:flex-none">
+                              <p className="text-2xl font-bold text-background">
+                                {trip.departureTime}
+                              </p>
+                              <p className="text-sm text-background/60">
+                                {showingReturn
+                                  ? destinationCity?.name
+                                  : originCity?.name}
+                              </p>
+                            </div>
+
+                            <div className="flex flex-col items-center px-4">
+                              <p className="text-xs text-background/60 mb-1">
+                                {trip.duration}
+                              </p>
+                              <div className="relative w-24 lg:w-32">
+                                <div className="h-0.5 bg-background/20 w-full" />
+                                <div className="absolute top-1/2 left-0 w-2 h-2 rounded-full bg-primary -translate-y-1/2" />
+                                <div className="absolute top-1/2 right-0 w-2 h-2 rounded-full bg-secondary -translate-y-1/2" />
+                                <Bus className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-primary" />
+                              </div>
+                              <p className="text-xs text-primary mt-1">
+                                Directo
+                              </p>
+                            </div>
+
+                            <div className="text-center flex-1 md:flex-none">
+                              <p className="text-2xl font-bold text-background">
+                                {trip.arrivalTime}
+                              </p>
+                              <p className="text-sm text-background/60">
+                                {showingReturn
+                                  ? originCity?.name
+                                  : destinationCity?.name}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Seats Available */}
+                          <div className="flex items-center gap-2 lg:w-32">
+                            <Users className="h-5 w-5 text-background/60" />
+                            <span
+                              className={cn(
+                                "text-sm font-medium whitespace-nowrap",
+                                trip.availableSeats < 10
+                                  ? "text-destructive"
+                                  : "text-primary",
+                              )}
+                            >
+                              {trip.availableSeats} asientos
                             </span>
                           </div>
-                        </div>
-                      </div>
 
-                      {/* Time Info */}
-                      <div className="flex-1 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6">
-                        <div className="flex w-full md:w-auto justify-between md:justify-start md:flex-1">
-                          <div className="text-center flex-1 md:flex-none">
-                            <p className="text-2xl font-bold text-background">
-                              {trip.departureTime}
-                            </p>
-                            <p className="text-sm text-background/60">
-                              {showingReturn
-                                ? destinationCity?.name
-                                : originCity?.name}
-                            </p>
-                          </div>
-
-                          <div className="flex flex-col items-center px-4">
-                            <p className="text-xs text-background/60 mb-1">
-                              {trip.duration}
-                            </p>
-                            <div className="relative w-24 lg:w-32">
-                              <div className="h-0.5 bg-background/20 w-full" />
-                              <div className="absolute top-1/2 left-0 w-2 h-2 rounded-full bg-primary -translate-y-1/2" />
-                              <div className="absolute top-1/2 right-0 w-2 h-2 rounded-full bg-secondary -translate-y-1/2" />
-                              <Bus className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-primary" />
+                          {/* Price & Action */}
+                          <div className="flex items-center justify-between lg:flex-col lg:items-end gap-4 lg:w-40 w-full">
+                            <div className="text-left lg:text-right">
+                              {/* <p className="text-sm text-background/60 line-through">
+                                Gs. {(trip.price * 1.2).toLocaleString("es-PY")}
+                              </p> */}
+                              <p className="text-2xl font-bold text-secondary">
+                                Gs. {trip.price.toLocaleString("es-PY")}
+                              </p>
+                              <p className="text-xs text-background/60">
+                                por asiento
+                              </p>
                             </div>
-                            <p className="text-xs text-primary mt-1">Directo</p>
-                          </div>
-
-                          <div className="text-center flex-1 md:flex-none">
-                            <p className="text-2xl font-bold text-background">
-                              {trip.arrivalTime}
-                            </p>
-                            <p className="text-sm text-background/60">
-                              {showingReturn
-                                ? originCity?.name
-                                : destinationCity?.name}
-                            </p>
+                            <Button
+                              onClick={() => handleSelectTrip(trip)}
+                              className="bg-secondary hover:bg-secondary/90 text-secondary-foreground transition-all duration-300 transform hover:scale-105 whitespace-nowrap"
+                            >
+                              Seleccionar
+                              <ArrowRight className="h-4 w-4 ml-1" />
+                            </Button>
                           </div>
                         </div>
+                      </div>
 
-                        {/* Seats Available */}
-                        <div className="flex items-center gap-2 lg:w-32">
-                          <Users className="h-5 w-5 text-background/60" />
-                          <span
-                            className={cn(
-                              "text-sm font-medium whitespace-nowrap",
-                              trip.availableSeats < 10
-                                ? "text-destructive"
-                                : "text-primary",
-                            )}
-                          >
-                            {trip.availableSeats} asientos
-                          </span>
-                        </div>
+                      {/* Expandable Details */}
+                      <div className="mt-4 pt-4 border-t border-background/20">
+                        <button
+                          onClick={() =>
+                            setExpandedTrip(
+                              expandedTrip === trip.id ? null : trip.id,
+                            )
+                          }
+                          className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+                        >
+                          Ver detalles
+                          {expandedTrip === trip.id ? (
+                            <ChevronUp className="h-4 w-4" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4" />
+                          )}
+                        </button>
 
-                        {/* Price & Action */}
-                        <div className="flex items-center justify-between lg:flex-col lg:items-end gap-4 lg:w-40 w-full">
-                          <div className="text-left lg:text-right">
-                            <p className="text-sm text-background/60 line-through">
-                              Gs. {(trip.price * 1.2).toLocaleString("es-PY")}
-                            </p>
-                            <p className="text-2xl font-bold text-secondary">
-                              Gs. {trip.price.toLocaleString("es-PY")}
-                            </p>
-                            <p className="text-xs text-background/60">
-                              por asiento
-                            </p>
+                        <div
+                          className={cn(
+                            "overflow-hidden transition-all duration-500",
+                            expandedTrip === trip.id
+                              ? "max-h-40 mt-4"
+                              : "max-h-0",
+                          )}
+                        >
+                          <div className="flex flex-wrap gap-2">
+                            {trip.amenities.map((amenity) => {
+                              const Icon = amenityIcons[amenity];
+                              return (
+                                <Badge
+                                  key={amenity}
+                                  variant="secondary"
+                                  className="flex items-center gap-1.5 bg-background/10 text-background"
+                                >
+                                  {Icon && <Icon className="h-3.5 w-3.5" />}
+                                  {amenity}
+                                </Badge>
+                              );
+                            })}
                           </div>
-                          <Button
-                            onClick={() => handleSelectTrip(trip)}
-                            className="bg-secondary hover:bg-secondary/90 text-secondary-foreground transition-all duration-300 transform hover:scale-105 whitespace-nowrap"
-                          >
-                            Seleccionar
-                            <ArrowRight className="h-4 w-4 ml-1" />
-                          </Button>
                         </div>
                       </div>
                     </div>
-
-                    {/* Expandable Details */}
-                    <div className="mt-4 pt-4 border-t border-background/20">
-                      <button
-                        onClick={() =>
-                          setExpandedTrip(
-                            expandedTrip === trip.id ? null : trip.id,
-                          )
-                        }
-                        className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
-                      >
-                        Ver detalles
-                        {expandedTrip === trip.id ? (
-                          <ChevronUp className="h-4 w-4" />
-                        ) : (
-                          <ChevronDown className="h-4 w-4" />
-                        )}
-                      </button>
-
-                      <div
-                        className={cn(
-                          "overflow-hidden transition-all duration-500",
-                          expandedTrip === trip.id
-                            ? "max-h-40 mt-4"
-                            : "max-h-0",
-                        )}
-                      >
-                        <div className="flex flex-wrap gap-2">
-                          {trip.amenities.map((amenity) => {
-                            const Icon = amenityIcons[amenity];
-                            return (
-                              <Badge
-                                key={amenity}
-                                variant="secondary"
-                                className="flex items-center gap-1.5 bg-background/10 text-background"
-                              >
-                                {Icon && <Icon className="h-3.5 w-3.5" />}
-                                {amenity}
-                              </Badge>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
+                  </Card>
+                ))}
+              </div>
+            )}
 
             {/* Back Button */}
             {showingReturn && (
