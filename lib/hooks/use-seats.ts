@@ -53,7 +53,7 @@ export function useSeats({ serviceId, originId, destinationId }: UseSeatsParams)
               column: s.column,
               floor: f.floor,
               type: "standard", // Simplificado a standard según requerimiento
-              status: s.status === "available" || s.status === "blocked" ? s.status : "occupied",
+              status: s.Estado === "L" ? "available" : "occupied",
               price: s.price || 0, // El backend podría no devolver el precio aquí todavía
             });
           });

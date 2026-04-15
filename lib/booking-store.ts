@@ -60,6 +60,7 @@ export interface BookingState {
   paymentStatus: "pending" | "processing" | "completed" | "failed";
   originTitle: string;
   destinationTitle: string;
+  connectionId: string | null;
 
   setStep: (step: number) => void;
   setTripType: (type: "one-way" | "round-trip") => void;
@@ -82,6 +83,7 @@ export interface BookingState {
   ) => void;
   setOriginTitle: (title: string) => void;
   setDestinationTitle: (title: string) => void;
+  setConnectionId: (id: string | null) => void;
   swapTitles: () => void;
   resetBooking: () => void;
 }
@@ -103,6 +105,7 @@ const initialState = {
   paymentStatus: "pending" as const,
   originTitle: "",
   destinationTitle: "",
+  connectionId: null,
 };
 
 export const useBookingStore = create<BookingState>()(
@@ -192,6 +195,7 @@ export const useBookingStore = create<BookingState>()(
       setPaymentStatus: (paymentStatus) => set({ paymentStatus }),
       setOriginTitle: (originTitle) => set({ originTitle }),
       setDestinationTitle: (destinationTitle) => set({ destinationTitle }),
+      setConnectionId: (connectionId) => set({ connectionId }),
       swapTitles: () => {
         const { originTitle, destinationTitle } = get();
         set({ originTitle: destinationTitle, destinationTitle: originTitle });
@@ -226,6 +230,7 @@ export const useBookingStore = create<BookingState>()(
         paymentStatus: state.paymentStatus,
         originTitle: state.originTitle,
         destinationTitle: state.destinationTitle,
+        connectionId: state.connectionId,
       }),
       // Versión para migraciones futuras
       version: 1,

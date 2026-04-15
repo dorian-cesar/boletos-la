@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   AlertCircle,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -27,6 +28,8 @@ export default function SeatsPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [selectingReturn, setSelectingReturn] = useState(false);
+  const [isBlocking, setIsBlocking] = useState(false);
+  const [blockError, setBlockError] = useState<string | null>(null);
 
   const {
     tripType,
@@ -41,6 +44,7 @@ export default function SeatsPage() {
     totalPrice,
     originTitle,
     destinationTitle,
+    setConnectionId,
   } = useBookingStore();
 
   useEffect(() => {
@@ -53,11 +57,69 @@ export default function SeatsPage() {
     calculateTotal();
   }, [selectedSeats, selectedReturnSeats, calculateTotal]);
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (tripType === "round-trip" && !selectingReturn && selectedReturnTrip) {
       setSelectingReturn(true);
-    } else {
-      router.push("/booking/checkout");
+      return;
+    }
+
+    // Call block API before moving to checkout
+    try {
+      setIsBlocking(true);
+      setBlockError(null);
+
+      const res = await fetch("/api/gds/block", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          serviceId: selectedOutboundTrip?.id,
+          originId: selectedOutboundTrip?.origin,
+          destinationId: selectedOutboundTrip?.destination,
+          seats: selectedSeats.map((s) => s.number).join(", "),
+          // Si es viaje de vuelta, enviar también los datos del regreso
+          ...(tripType === "round-trip" &&
+            selectedReturnTrip && {
+              returnServiceId: selectedReturnTrip.id,
+              returnOriginId: selectedReturnTrip.origin,
+              returnDestinationId: selectedReturnTrip.destination,
+              returnSeats: selectedReturnSeats.map((s) => s.number).join(", "),
+            }),
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Error al bloquear asientos");
+      }
+
+      const data = await res.json();
+
+      // Validación profunda del resultado del GDS
+      const blockData = data.data || data;
+      const isGdsError = blockData.success === false || 
+                         (blockData.providerResult && blockData.providerResult !== "0");
+
+      if (isGdsError) {
+        throw new Error(data.message || blockData.message || "No se pudieron bloquear los asientos (Error del proveedor)");
+      }
+      
+      if (blockData.connectionId) {
+        setConnectionId(blockData.connectionId);
+        router.push("/booking/checkout");
+      } else {
+        // Si no hay connectionId pero la respuesta fue ok, igual procedemos?
+        // El usuario pidió capturarlo.
+        console.warn("No connectionId received in block response", data);
+        router.push("/booking/checkout");
+      }
+    } catch (err: any) {
+      console.error("Block error:", err);
+      setBlockError(
+        err.message ||
+          "No se pudieron bloquear los asientos. Intenta de nuevo.",
+      );
+    } finally {
+      setIsBlocking(false);
     }
   };
 
@@ -145,6 +207,13 @@ export default function SeatsPage() {
                   Solo puedes seleccionar un máximo de 4 asientos por reserva.
                   Por favor, deselecciona algunos asientos.
                 </AlertDescription>
+              </Alert>
+            )}
+
+            {blockError && (
+              <Alert variant="destructive" className="mb-6 animate-fade-in">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{blockError}</AlertDescription>
               </Alert>
             )}
 
@@ -431,15 +500,24 @@ export default function SeatsPage() {
                   {/* Continue Button */}
                   <Button
                     onClick={handleContinue}
-                    disabled={!canContinue}
+                    disabled={!canContinue || isBlocking}
                     className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground h-12 md:h-14 text-base md:text-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
                   >
-                    {tripType === "round-trip" &&
-                    !selectingReturn &&
-                    selectedReturnTrip
-                      ? "Seleccionar Asientos de Regreso"
-                      : "Continuar al Pago"}
-                    <ArrowRight className="h-4 w-4 md:h-5 md:w-5 ml-2" />
+                    {isBlocking ? (
+                      <>
+                        <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                        Bloqueando...
+                      </>
+                    ) : tripType === "round-trip" &&
+                      !selectingReturn &&
+                      selectedReturnTrip ? (
+                      "Seleccionar Asientos de Regreso"
+                    ) : (
+                      "Continuar al Pago"
+                    )}
+                    {!isBlocking && (
+                      <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
+                    )}
                   </Button>
 
                   {!canContinue && (
