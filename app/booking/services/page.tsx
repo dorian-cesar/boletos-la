@@ -314,9 +314,6 @@ export default function ServicesPage() {
                                 <div className="absolute top-1/2 right-0 w-2 h-2 rounded-full bg-secondary -translate-y-1/2" />
                                 <Bus className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-primary" />
                               </div>
-                              <p className="text-xs text-primary mt-1">
-                                Directo
-                              </p>
                             </div>
 
                             <div className="text-center flex-1 md:flex-none">

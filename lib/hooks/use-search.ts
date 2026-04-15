@@ -13,7 +13,11 @@ interface UseSearchResult {
   error: string | null;
 }
 
-export function useSearch({ originId, destinationId, date }: UseSearchParams): UseSearchResult {
+export function useSearch({
+  originId,
+  destinationId,
+  date,
+}: UseSearchParams): UseSearchResult {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,29 +40,57 @@ export function useSearch({ originId, destinationId, date }: UseSearchParams): U
         }
 
         const json = await res.json();
-        
+
         if (!json.success) {
           throw new Error(json.error || "Error en la búsqueda");
         }
 
         const rawTrips = json.data.trips || [];
-        
+
         const mapped: Trip[] = rawTrips.map((t: any) => {
-          // Extract time from "01/04 19:35" -> "19:35"
-          const depTime = t.departureDisplay?.split(" ")[1] || "";
-          const arrTime = t.arrivalDisplay?.split(" ")[1] || "";
-          
-          // Calculate duration if null
+          // Extraer solo la hora (quitar la fecha)
+          const depTime =
+            t.departureDisplay?.split(" ")[1] || t.departureDisplay || "";
+          const arrTime =
+            t.arrivalDisplay?.split(" ")[1] || t.arrivalDisplay || "";
+
+          // Calculate duration
           let durationStr = "N/A";
-          if (t.departureTime && t.raw?.Desembarque) {
-            // This is a bit complex due to formats, but let's try a simple version
-            // Actually, let's just use the display strings if possible or "Variable"
-            durationStr = "Directo"; 
+
+          if (t.departureDisplay && t.arrivalDisplay) {
+            try {
+              const depTimeStr = t.departureDisplay.split(" ")[1]; // "18:45"
+              const arrTimeStr = t.arrivalDisplay.split(" ")[1]; // "08:45"
+
+              const [depH, depM] = depTimeStr.split(":").map(Number);
+              const [arrH, arrM] = arrTimeStr.split(":").map(Number);
+
+              const depTotal = depH * 60 + depM;
+              let arrTotal = arrH * 60 + arrM;
+
+              // Si llega "antes", es día siguiente
+              if (arrTotal < depTotal) {
+                arrTotal += 24 * 60;
+              }
+
+              const diffMins = arrTotal - depTotal;
+
+              const h = Math.floor(diffMins / 60);
+              const m = diffMins % 60;
+
+              durationStr = `${h}h ${m}m`;
+            } catch (e) {
+              console.error("Error calculating duration:", e);
+              durationStr = "Variable";
+            }
           }
 
           // Default amenities
           const amenities = ["Aire Acondicionado", "Baño", "TV"];
-          if (t.serviceClassCode === "CA" || t.serviceClass?.toLowerCase().includes("cama")) {
+          if (
+            t.serviceClassCode === "CA" ||
+            t.serviceClass?.toLowerCase().includes("cama")
+          ) {
             amenities.push("WiFi");
             amenities.push("Enchufes USB");
           }

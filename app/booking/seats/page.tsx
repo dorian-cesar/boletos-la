@@ -39,6 +39,8 @@ export default function SeatsPage() {
     setStep,
     calculateTotal,
     totalPrice,
+    originTitle,
+    destinationTitle,
   } = useBookingStore();
 
   useEffect(() => {
@@ -75,14 +77,8 @@ export default function SeatsPage() {
     ? selectedReturnTrip
     : selectedOutboundTrip;
   const currentDate = selectingReturn ? returnDate : departureDate;
-  const origin = selectingReturn
-    ? selectedReturnTrip?.origin
-    : selectedOutboundTrip?.origin;
-  const destination = selectingReturn
-    ? selectedReturnTrip?.destination
-    : selectedOutboundTrip?.destination;
-  const originCity = cities.find((c) => c.id === origin);
-  const destinationCity = cities.find((c) => c.id === destination);
+  const currentOriginTitle = selectingReturn ? destinationTitle : originTitle;
+  const currentDestinationTitle = selectingReturn ? originTitle : destinationTitle;
 
   if (!mounted) {
     return (
@@ -188,7 +184,7 @@ export default function SeatsPage() {
                       <div className="flex items-center gap-1">
                         <MapPin className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 text-background/60 flex-shrink-0" />
                         <span className="text-[10px] sm:text-xs md:text-sm text-background/60 truncate max-w-[80px] sm:max-w-[100px] md:max-w-[120px]">
-                          {originCity?.name}
+                          {currentOriginTitle}
                         </span>
                       </div>
                     </div>
@@ -209,7 +205,7 @@ export default function SeatsPage() {
                       </p>
                       <div className="flex items-center gap-1">
                         <span className="text-[10px] sm:text-xs md:text-sm text-background/60 truncate max-w-[80px] sm:max-w-[100px] md:max-w-[120px]">
-                          {destinationCity?.name}
+                          {currentDestinationTitle}
                         </span>
                         <MapPin className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 text-background/60 flex-shrink-0" />
                       </div>
