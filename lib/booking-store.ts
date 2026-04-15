@@ -23,7 +23,7 @@ export interface Seat {
   row: number;
   column: number;
   floor: number;
-  type: "standard" | "premium" | "vip";
+  type: "standard";
   status: "available" | "occupied" | "selected";
   price: number;
 }
@@ -319,31 +319,4 @@ export const generateTrips = (
       availableSeats: Math.floor(Math.random() * 25) + 5,
     };
   });
-};
-
-export const generateSeats = (tripId: string, floor: number = 1): Seat[] => {
-  const seats: Seat[] = [];
-  const rows = floor === 1 ? 10 : 8;
-  const columns = 4;
-
-  for (let row = 1; row <= rows; row++) {
-    for (let col = 1; col <= columns; col++) {
-      const isOccupied = Math.random() < 0.3; // 30% ocupados
-      const isPremium = row <= 3;
-      const isVip = floor === 2 && row <= 2;
-
-      seats.push({
-        id: `${tripId}-floor${floor}-${row}-${col}`,
-        number: `${floor === 2 ? "S" : ""}${row}${String.fromCharCode(64 + col)}`,
-        row,
-        column: col,
-        floor,
-        type: isVip ? "vip" : isPremium ? "premium" : "standard",
-        status: isOccupied ? "occupied" : "available",
-        price: 1000,
-      });
-    }
-  }
-
-  return seats;
 };
