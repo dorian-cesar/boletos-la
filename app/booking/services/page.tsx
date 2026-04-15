@@ -24,7 +24,6 @@ import { Badge } from "@/components/ui/badge";
 import { BookingProgress } from "@/components/booking-progress";
 import { useBookingStore, Trip } from "@/lib/booking-store";
 import { useSearch } from "@/lib/hooks/use-search";
-import { useStops } from "@/lib/hooks/use-stops";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
@@ -56,10 +55,11 @@ export default function ServicesPage() {
     selectedReturnTrip,
     setSelectedReturnTrip,
     setStep,
+    originTitle,
+    destinationTitle,
   } = useBookingStore();
 
   const [showingReturn, setShowingReturn] = useState(false);
-  const { stops, loading: stopsLoading } = useStops();
 
   const {
     trips: currentTrips,
@@ -90,11 +90,11 @@ export default function ServicesPage() {
     }
   };
 
-  const originCity = stops.find((c) => c.id === origin);
-  const destinationCity = stops.find((c) => c.id === destination);
+  const originCityName = showingReturn ? destinationTitle : originTitle;
+  const destinationCityName = showingReturn ? originTitle : destinationTitle;
   const trips = currentTrips;
 
-  if (!mounted || stopsLoading) {
+  if (!mounted) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#1a2332] to-[#0f1419]">
         <div className="text-center text-background">
@@ -153,13 +153,9 @@ export default function ServicesPage() {
                     {showingReturn ? "Viaje de Regreso" : "Viaje de Ida"}
                   </p>
                   <div className="flex items-center gap-3 text-2xl font-bold">
-                    <span>
-                      {showingReturn ? destinationCity?.name : originCity?.name}
-                    </span>
+                    <span>{originCityName}</span>
                     <ArrowRight className="h-6 w-6 text-primary" />
-                    <span>
-                      {showingReturn ? originCity?.name : destinationCity?.name}
-                    </span>
+                    <span>{destinationCityName}</span>
                   </div>
                   <p className="text-background/60 mt-1">
                     {format(
@@ -304,9 +300,7 @@ export default function ServicesPage() {
                                 {trip.departureTime}
                               </p>
                               <p className="text-sm text-background/60">
-                                {showingReturn
-                                  ? destinationCity?.name
-                                  : originCity?.name}
+                                {originCityName}
                               </p>
                             </div>
 
@@ -330,9 +324,7 @@ export default function ServicesPage() {
                                 {trip.arrivalTime}
                               </p>
                               <p className="text-sm text-background/60">
-                                {showingReturn
-                                  ? originCity?.name
-                                  : destinationCity?.name}
+                                {destinationCityName}
                               </p>
                             </div>
                           </div>

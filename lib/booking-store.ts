@@ -38,6 +38,11 @@ export interface Passenger {
   phone: string;
 }
 
+export interface Stop {
+  id: string;
+  name: string;
+}
+
 export interface BookingState {
   step: number;
   tripType: "one-way" | "round-trip";
@@ -53,6 +58,8 @@ export interface BookingState {
   totalPrice: number;
   bookingReference: string;
   paymentStatus: "pending" | "processing" | "completed" | "failed";
+  originTitle: string;
+  destinationTitle: string;
 
   setStep: (step: number) => void;
   setTripType: (type: "one-way" | "round-trip") => void;
@@ -73,6 +80,9 @@ export interface BookingState {
   setPaymentStatus: (
     status: "pending" | "processing" | "completed" | "failed",
   ) => void;
+  setOriginTitle: (title: string) => void;
+  setDestinationTitle: (title: string) => void;
+  swapTitles: () => void;
   resetBooking: () => void;
 }
 
@@ -91,6 +101,8 @@ const initialState = {
   totalPrice: 0,
   bookingReference: "",
   paymentStatus: "pending" as const,
+  originTitle: "",
+  destinationTitle: "",
 };
 
 export const useBookingStore = create<BookingState>()(
@@ -178,6 +190,12 @@ export const useBookingStore = create<BookingState>()(
 
       setBookingReference: (bookingReference) => set({ bookingReference }),
       setPaymentStatus: (paymentStatus) => set({ paymentStatus }),
+      setOriginTitle: (originTitle) => set({ originTitle }),
+      setDestinationTitle: (destinationTitle) => set({ destinationTitle }),
+      swapTitles: () => {
+        const { originTitle, destinationTitle } = get();
+        set({ originTitle: destinationTitle, destinationTitle: originTitle });
+      },
 
       resetBooking: () => {
         // Limpiar localStorage al hacer reset
@@ -206,6 +224,8 @@ export const useBookingStore = create<BookingState>()(
         totalPrice: state.totalPrice,
         bookingReference: state.bookingReference,
         paymentStatus: state.paymentStatus,
+        originTitle: state.originTitle,
+        destinationTitle: state.destinationTitle,
       }),
       // Versión para migraciones futuras
       version: 1,

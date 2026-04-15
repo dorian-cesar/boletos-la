@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Calendar,
@@ -95,11 +95,16 @@ function ComingSoonModal({
 
 export function SearchForm() {
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const [originOpen, setOriginOpen] = useState(false);
   const [destinationOpen, setDestinationOpen] = useState(false);
   const [departureDateOpen, setDepartureDateOpen] = useState(false);
   const [returnDateOpen, setReturnDateOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const { stops, loading: stopsLoading, error: stopsError } = useStops();
 
@@ -112,27 +117,59 @@ export function SearchForm() {
     setTripType,
     setOrigin,
     setDestination,
+    setOriginTitle,
+    setDestinationTitle,
+    swapTitles,
     setDepartureDate,
     setReturnDate,
+    originTitle,
+    destinationTitle,
   } = useBookingStore();
+
+  // Populate titles if they are missing but IDs exist (e.g. on page load with persisted state)
+  useEffect(() => {
+    if (!mounted || stops.length === 0) return;
+
+    if (origin && !originTitle) {
+      const stop = stops.find((s) => String(s.id) === String(origin));
+      if (stop) setOriginTitle(stop.name);
+    }
+    if (destination && !destinationTitle) {
+      const stop = stops.find((s) => String(s.id) === String(destination));
+      if (stop) setDestinationTitle(stop.name);
+    }
+  }, [mounted, stops, origin, destination, originTitle, destinationTitle, setOriginTitle, setDestinationTitle]);
 
   const handleSearch = () => {
     if (origin && destination && departureDate) {
-      // setShowModal(true);
       router.push("/booking/services");
     }
   };
 
   const swapCities = () => {
-    const temp = origin;
+    const tempOrigin = origin;
     setOrigin(destination);
-    setDestination(temp);
+    setDestination(tempOrigin);
+    swapTitles();
   };
 
   // Función helper para parsear fechas sin problemas de zona horaria
   const parseDate = (dateString: string) => {
     return parse(dateString, "yyyy-MM-dd", new Date());
   };
+
+  if (!mounted) {
+    return (
+      <div className="w-full flex justify-center px-4">
+        <div className="bg-white/20 backdrop-blur-md rounded-3xl shadow-2xl p-6 lg:p-8 border border-white/30 w-full max-w-7xl h-[400px] flex items-center justify-center">
+          <div className="animate-pulse flex flex-col items-center gap-4 text-white/50">
+            <Bus className="h-12 w-12" />
+            <p>Preparando buscador...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -203,7 +240,7 @@ export function SearchForm() {
                         {stopsLoading
                           ? "Cargando ciudades..."
                           : origin
-                            ? stops.find((c) => c.id === origin)?.name
+                            ? stops.find((c) => String(c.id) === String(origin))?.name
                             : "Seleccione ciudad"}
                       </span>
                     </div>
@@ -234,6 +271,7 @@ export function SearchForm() {
                             value={city.name}
                             onSelect={() => {
                               setOrigin(city.id);
+                              setOriginTitle(city.name);
                               setOriginOpen(false);
                             }}
                             className="cursor-pointer py-3 text-white hover:bg-white/20"
@@ -251,23 +289,23 @@ export function SearchForm() {
                   </Command>
                 </PopoverContent>
               </Popover>
+            </div>
 
-              {/* Swap Button - Mobile (debajo de origen) */}
-              <div className="lg:hidden flex items-center justify-center mt-3">
-                <button
-                  onClick={swapCities}
-                  disabled={stopsLoading}
-                  className={cn(
-                    "w-10 h-10 flex items-center justify-center text-white rounded-full shadow-lg transition-all duration-300 backdrop-blur-sm border border-white/40",
-                    stopsLoading
-                      ? "bg-white/20 cursor-not-allowed opacity-50"
-                      : "bg-white/30 hover:scale-110 hover:bg-white/40",
-                  )}
-                  aria-label="Intercambiar origen y destino"
-                >
-                  <ArrowRightLeft className="h-5 w-5 rotate-90" />
-                </button>
-              </div>
+            {/* Swap Button - Mobile (debajo de origen) */}
+            <div className="lg:hidden flex items-center justify-center mt-3">
+              <button
+                onClick={swapCities}
+                disabled={stopsLoading}
+                className={cn(
+                  "w-10 h-10 flex items-center justify-center text-white rounded-full shadow-lg transition-all duration-300 backdrop-blur-sm border border-white/40",
+                  stopsLoading
+                    ? "bg-white/20 cursor-not-allowed opacity-50"
+                    : "bg-white/30 hover:scale-110 hover:bg-white/40",
+                )}
+                aria-label="Intercambiar origen y destino"
+              >
+                <ArrowRightLeft className="h-5 w-5 rotate-90" />
+              </button>
             </div>
 
             {/* Swap Button - Desktop */}
@@ -318,7 +356,7 @@ export function SearchForm() {
                         {stopsLoading
                           ? "Cargando ciudades..."
                           : destination
-                            ? stops.find((c) => c.id === destination)?.name
+                            ? stops.find((c) => String(c.id) === String(destination))?.name
                             : "Seleccione ciudad"}
                       </span>
                     </div>
@@ -344,13 +382,14 @@ export function SearchForm() {
                       </CommandEmpty>
                       <CommandGroup className="bg-transparent">
                         {stops
-                          .filter((c) => c.id !== origin)
+                          .filter((c) => String(c.id) !== String(origin))
                           .map((city) => (
                             <CommandItem
                               key={city.id}
                               value={city.name}
                               onSelect={() => {
                                 setDestination(city.id);
+                                setDestinationTitle(city.name);
                                 setDestinationOpen(false);
                               }}
                               className="cursor-pointer py-3 text-white hover:bg-white/20"
@@ -498,8 +537,6 @@ export function SearchForm() {
           </div>
         </div>
       </div>
-
-      {/* Coming Soon Modal */}
       <ComingSoonModal isOpen={showModal} onClose={() => setShowModal(false)} />
     </>
   );
