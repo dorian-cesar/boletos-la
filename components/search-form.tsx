@@ -118,7 +118,8 @@ export function SearchForm() {
 
   const handleSearch = () => {
     if (origin && destination && departureDate) {
-      setShowModal(true); // Mostrar modal en lugar de navegar
+      // setShowModal(true);
+      router.push("/booking/services");
     }
   };
 
@@ -470,7 +471,7 @@ export function SearchForm() {
       </div>
 
       {/* Coming Soon Modal */}
-      {/* <ComingSoonModal isOpen={showModal} onClose={() => setShowModal(false)} /> */}
+      <ComingSoonModal isOpen={showModal} onClose={() => setShowModal(false)} />
     </>
   );
 }
