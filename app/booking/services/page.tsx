@@ -106,7 +106,7 @@ export default function ServicesPage() {
             className="mx-auto mb-5 animate-pulse"
             priority
           />
-          <p className="text-muted-foreground">Cargando ciudades...</p>
+          <p className="text-muted-foreground">Cargando servicios...</p>
         </div>
       </div>
     );

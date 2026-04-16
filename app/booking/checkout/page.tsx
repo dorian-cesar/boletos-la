@@ -6,34 +6,22 @@ import { format, parse } from "date-fns";
 import { es } from "date-fns/locale";
 import {
   Bus,
-  MapPin,
   User,
-  Mail,
-  Phone,
   CreditCard,
   Shield,
   Lock,
   CheckCircle2,
   Loader2,
-  AlertCircle,
   Check,
-  X,
   Wallet,
-  FileText,
+  ArrowRight,
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { BookingProgress } from "@/components/booking-progress";
-import { useBookingStore, cities, Passenger } from "@/lib/booking-store";
+import { useBookingStore, cities } from "@/lib/booking-store";
 import { cn } from "@/lib/utils";
 import { encryptData } from "@/lib/pagopar-encrypt";
 import Image from "next/image";
@@ -42,11 +30,6 @@ export default function CheckoutPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [showDocumentHelp, setShowDocumentHelp] = useState(false);
-  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>(
-    {},
-  );
-  const [formInitialized, setFormInitialized] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
     "tarjeta" | "pagopar" | null
   >("pagopar");
@@ -60,8 +43,6 @@ export default function CheckoutPage() {
     selectedSeats,
     selectedReturnSeats,
     passengerDetails,
-    setPassengerDetails,
-    updatePassenger,
     totalPrice,
     setStep,
     setBookingReference,
@@ -69,105 +50,24 @@ export default function CheckoutPage() {
     resetBooking,
   } = useBookingStore();
 
+  // Validar que los pasajeros del store estén completos
+  const isFormValid =
+    passengerDetails.length > 0 &&
+    passengerDetails.every(
+      (p) =>
+        p.firstName.trim().length >= 2 &&
+        p.lastName.trim().length >= 2 &&
+        p.documentNumber.trim().length >= 6 &&
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.email) &&
+        p.phone.replace(/\D/g, "").length >= 9,
+    );
+
+
   const originCity = cities.find((c) => c.id === selectedOutboundTrip?.origin);
   const destinationCity = cities.find(
     (c) => c.id === selectedOutboundTrip?.destination,
   );
-
   const totalPassengers = selectedSeats.length + selectedReturnSeats.length;
-
-  // Validaciones
-  const validateDocument = (doc: string) => {
-    const clean = doc.replace(/[.-]/g, "").toUpperCase();
-    if (clean.length < 6 || clean.length > 12) return false;
-
-    if (clean.includes("-")) {
-      const [ruc, dv] = clean.split("-");
-      if (!/^\d+$/.test(ruc) || ruc.length < 6 || ruc.length > 9) return false;
-      if (!/^[\dK]$/.test(dv)) return false;
-      return true;
-    }
-
-    return /^\d{6,9}$/.test(clean);
-  };
-
-  const formatDocument = (doc: string) => {
-    const clean = doc.replace(/[^0-9kK-]/g, "");
-
-    if (clean.includes("-")) {
-      const parts = clean.split("-");
-      if (parts.length === 2) {
-        const [ruc, dv] = parts;
-        return `${ruc.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}-${dv}`;
-      }
-    }
-
-    if (clean.length > 6) {
-      const body = clean.slice(0, -1);
-      const dv = clean.slice(-1);
-      if (body.length > 0) {
-        return `${body.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}-${dv}`;
-      }
-    }
-
-    return clean;
-  };
-
-  const validateEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
-
-  const validatePhone = (phone: string) => {
-    const clean = phone.replace(/\D/g, "");
-    return clean.length >= 9 && clean.length <= 12;
-  };
-
-  const validateName = (name: string) => {
-    return name.trim().length >= 2;
-  };
-
-  const getFieldError = (fieldName: string, value: string, index: number) => {
-    const fieldId = `${fieldName}-${index}`;
-    if (!touchedFields[fieldId] && value === "") return null;
-
-    switch (fieldName) {
-      case "firstName":
-      case "lastName":
-        if (!validateName(value)) return "Mínimo 2 caracteres";
-        break;
-      case "documentNumber":
-        if (!validateDocument(value)) return "Documento inválido";
-        break;
-      case "email":
-        if (!validateEmail(value)) return "Email inválido";
-        break;
-      case "phone":
-        if (!validatePhone(value)) return "Teléfono inválido (9-12 dígitos)";
-        break;
-    }
-    return null;
-  };
-
-  const isFormValid =
-    passengerDetails.length > 0 &&
-    passengerDetails.every(
-      (p, index) =>
-        validateName(p.firstName) &&
-        validateName(p.lastName) &&
-        validateDocument(p.documentNumber) &&
-        validateEmail(p.email) &&
-        validatePhone(p.phone) &&
-        !getFieldError("firstName", p.firstName, index) &&
-        !getFieldError("lastName", p.lastName, index) &&
-        !getFieldError("documentNumber", p.documentNumber, index) &&
-        !getFieldError("email", p.email, index) &&
-        !getFieldError("phone", p.phone, index),
-    );
-
-  const handleFieldBlur = (fieldName: string, index: number) => {
-    const fieldId = `${fieldName}-${index}`;
-    setTouchedFields((prev) => ({ ...prev, [fieldId]: true }));
-  };
 
   const handlePaymentMethodSelect = (method: "tarjeta" | "pagopar") => {
     setSelectedPaymentMethod(method);
@@ -175,34 +75,9 @@ export default function CheckoutPage() {
 
   const handlePayment = async () => {
     if (passengerDetails.length === 0 || !selectedPaymentMethod) return;
+    if (!isFormValid) return;
 
-    if (!passengerDetails[0]) {
-      alert("Por favor completa los datos del primer pasajero");
-      return;
-    }
-
-    // Marcar todos los campos como tocados para mostrar errores
-    const newTouched: Record<string, boolean> = {};
-    passengerDetails.forEach((_, index) => {
-      ["firstName", "lastName", "documentNumber", "email", "phone"].forEach(
-        (field) => {
-          newTouched[`${field}-${index}`] = true;
-        },
-      );
-    });
-    setTouchedFields(newTouched);
-
-    if (!isFormValid) {
-      const firstError = document.querySelector('[data-error="true"]');
-      if (firstError) {
-        firstError.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-      return;
-    }
-
-    // ✅ PROCESAR PAGO DIRECTAMENTE
     setIsProcessing(true);
-
     try {
       if (selectedPaymentMethod === "tarjeta") {
         const reference = `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
@@ -258,33 +133,8 @@ export default function CheckoutPage() {
   useEffect(() => {
     setMounted(true);
     setStep(3);
+  }, [setStep]);
 
-    if (
-      selectedSeats.length > 0 &&
-      passengerDetails.length === 0 &&
-      !formInitialized
-    ) {
-      const allSeats = [...selectedSeats, ...selectedReturnSeats];
-      const initialPassengers: Passenger[] = allSeats.map((seat, index) => ({
-        seatId: seat.id,
-        seatNumber: seat.number,
-        firstName: "",
-        lastName: "",
-        documentNumber: "",
-        email: "",
-        phone: "",
-      }));
-      setPassengerDetails(initialPassengers);
-      setFormInitialized(true);
-    }
-  }, [
-    selectedSeats,
-    selectedReturnSeats,
-    passengerDetails.length,
-    formInitialized,
-    setPassengerDetails,
-    setStep,
-  ]);
 
   if (!mounted) {
     return (
@@ -337,441 +187,136 @@ export default function CheckoutPage() {
 
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-            {/* Passenger Forms */}
+            {/* Passenger Summary (read-only) */}
             <div className="lg:col-span-2 space-y-6 w-full">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <h2 className="text-xl sm:text-2xl font-bold animate-fade-in text-background">
-                  Datos de los Pasajeros ({totalPassengers})
+                  Resumen de Pasajeros
                 </h2>
-                <Badge
-                  variant="outline"
-                  className="animate-fade-in border-background/30 text-background/80 shrink-0"
-                >
-                  <CheckCircle2 className="h-3 w-3 mr-1" />
-                  Todos los campos son obligatorios
-                </Badge>
+                {!isFormValid && (
+                  <Badge
+                    variant="outline"
+                    className="animate-fade-in border-destructive/50 text-destructive shrink-0"
+                  >
+                    Completa los datos en la página de asientos
+                  </Badge>
+                )}
               </div>
 
-              {passengerDetails.length === 0 ? (
-                <Card className="p-6 animate-fade-in bg-background/5 backdrop-blur-sm border-background/20">
-                  <div className="text-center py-8">
-                    <Loader2 className="h-8 w-8 text-primary mx-auto mb-4 animate-spin" />
-                    <p className="text-background/60">
-                      Inicializando formulario de pasajeros...
-                    </p>
-                  </div>
-                </Card>
-              ) : (
-                // Agrupar pasajeros: Iterar solo por la cantidad de asientos de IDA (o el máximo entre ida y vuelta)
-                Array.from({
-                  length: Math.max(
-                    selectedSeats.length,
-                    selectedReturnSeats.length,
-                  ),
-                }).map((_, index) => {
-                  // Índices en el array plano passengerDetails
-                  const outboundIndex =
-                    index < selectedSeats.length ? index : -1;
-                  const returnIndex =
-                    index < selectedReturnSeats.length
-                      ? selectedSeats.length + index
-                      : -1;
-
-                  // Usamos el outbound como principal, o el return si no hay outbound (caso raro)
-                  const primaryIndex =
-                    outboundIndex !== -1 ? outboundIndex : returnIndex;
-                  const passenger = passengerDetails[primaryIndex];
-
-                  if (!passenger) return null;
-
-                  // Validaciones (usamos el pasajero principal para mostrar errores)
-                  const firstNameError = getFieldError(
-                    "firstName",
-                    passenger.firstName,
-                    primaryIndex,
-                  );
-                  const lastNameError = getFieldError(
-                    "lastName",
-                    passenger.lastName,
-                    primaryIndex,
-                  );
-                  const documentError = getFieldError(
-                    "documentNumber",
-                    passenger.documentNumber,
-                    primaryIndex,
-                  );
-                  const emailError = getFieldError(
-                    "email",
-                    passenger.email,
-                    primaryIndex,
-                  );
-                  const phoneError = getFieldError(
-                    "phone",
-                    passenger.phone,
-                    primaryIndex,
-                  );
-
-                  // Función helper para actualizar todos los registros asociados a este pasajero humano
-                  const handlePassengerUpdate = (
-                    field: keyof Passenger,
-                    value: string,
-                  ) => {
-                    // Actualizar Ida
-                    if (outboundIndex !== -1) {
-                      updatePassenger(outboundIndex, { [field]: value });
-                    }
-                    // Actualizar Vuelta
-                    if (returnIndex !== -1) {
-                      updatePassenger(returnIndex, { [field]: value });
-                    }
-                  };
-
-                  const handleBlur = (field: string) => {
-                    // Marcar como 'touched' ambos índices
-                    if (outboundIndex !== -1)
-                      handleFieldBlur(field, outboundIndex);
-                    if (returnIndex !== -1) handleFieldBlur(field, returnIndex);
-                  };
-
-                  return (
-                    <Card
-                      key={`passenger-group-${index}`}
-                      className="p-4 sm:p-6 animate-fade-in relative overflow-hidden bg-background/5 backdrop-blur-sm border-background/20 w-full"
-                      style={{ animationDelay: `${index * 150}ms` }}
-                    >
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/30 shrink-0">
-                          <User className="h-5 w-5 text-primary" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <h3 className="font-semibold text-background truncate">
-                            Pasajero {index + 1}
-                          </h3>
-                          <div className="flex flex-col sm:flex-row sm:gap-4 text-sm text-background/60">
-                            {outboundIndex !== -1 && (
-                              <span className="flex items-center gap-1">
-                                <span className="bg-primary/20 text-primary text-[10px] px-1.5 py-0.5 rounded uppercase">
-                                  Ida
-                                </span>
-                                Asiento{" "}
-                                {passengerDetails[outboundIndex].seatNumber}
-                              </span>
-                            )}
-                            {returnIndex !== -1 && (
-                              <span className="flex items-center gap-1">
-                                <span className="bg-secondary/20 text-secondary text-[10px] px-1.5 py-0.5 rounded uppercase">
-                                  Vuelta
-                                </span>
-                                Asiento{" "}
-                                {passengerDetails[returnIndex].seatNumber}
-                              </span>
-                            )}
+              {/* Outbound passengers */}
+              {selectedSeats.length > 0 && (
+                <div className="space-y-3">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-primary/80">
+                    Viaje de Ida
+                  </p>
+                  {selectedSeats.map((seat, i) => {
+                    const p = passengerDetails[i];
+                    const hasData = p?.firstName && p?.lastName;
+                    return (
+                      <Card
+                        key={seat.id}
+                        className="p-4 bg-background/5 backdrop-blur-sm border-background/20 animate-fade-in"
+                        style={{ animationDelay: `${i * 80}ms` }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center border border-primary/30 shrink-0">
+                            <User className="h-4 w-4 text-primary" />
                           </div>
-                        </div>
-                        {!firstNameError &&
-                          !lastNameError &&
-                          !documentError &&
-                          !emailError &&
-                          !phoneError &&
-                          passenger.firstName &&
-                          passenger.lastName &&
-                          passenger.documentNumber &&
-                          passenger.email &&
-                          passenger.phone && (
-                            <Badge
-                              variant="secondary"
-                              className="ml-auto bg-green-500/10 text-green-500 border-green-500/30 shrink-0"
-                            >
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-background text-sm truncate">
+                              {hasData
+                                ? `${p.firstName} ${p.lastName}`
+                                : <span className="text-background/40 italic">Sin datos</span>}
+                            </p>
+                            <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-background/60 mt-0.5">
+                              <span className="flex items-center gap-1">
+                                <span className="bg-primary/20 text-primary text-[10px] px-1.5 py-0.5 rounded uppercase font-medium">Ida</span>
+                                Asiento {seat.number}
+                              </span>
+                              {p?.documentNumber && <span>{p.documentNumber}</span>}
+                              {p?.email && <span className="truncate max-w-[150px]">{p.email}</span>}
+                            </div>
+                          </div>
+                          {hasData && (
+                            <Badge variant="secondary" className="ml-auto bg-green-500/10 text-green-500 border-green-500/30 shrink-0 text-xs">
                               <Check className="h-3 w-3 mr-1" />
-                              Completo
+                              OK
                             </Badge>
                           )}
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {/* First Name */}
-                        <div className="space-y-2 w-full">
-                          <Label
-                            htmlFor={`firstName-${index}`}
-                            className="text-background text-sm"
-                          >
-                            Nombre
-                            <span className="text-destructive ml-1">*</span>
-                          </Label>
-                          <div className="relative">
-                            <Input
-                              id={`firstName-${index}`}
-                              placeholder="Ingresa el nombre"
-                              value={passenger.firstName}
-                              onChange={(e) =>
-                                handlePassengerUpdate(
-                                  "firstName",
-                                  e.target.value,
-                                )
-                              }
-                              onBlur={() => handleBlur("firstName")}
-                              className={cn(
-                                "h-12 pr-10 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full",
-                                firstNameError && "border-destructive",
-                                !firstNameError &&
-                                  passenger.firstName &&
-                                  "border-green-500",
-                              )}
-                              data-error={!!firstNameError}
-                            />
-                            {passenger.firstName && (
-                              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                {firstNameError ? (
-                                  <X className="h-5 w-5 text-destructive shrink-0" />
-                                ) : (
-                                  <Check className="h-5 w-5 text-green-500 shrink-0" />
-                                )}
-                              </div>
-                            )}
-                          </div>
-                          {firstNameError && (
-                            <p className="text-sm text-destructive flex items-center gap-1">
-                              <AlertCircle className="h-4 w-4 shrink-0" />
-                              <span className="truncate">{firstNameError}</span>
-                            </p>
-                          )}
                         </div>
-
-                        {/* Last Name */}
-                        <div className="space-y-2 w-full">
-                          <Label
-                            htmlFor={`lastName-${index}`}
-                            className="text-background text-sm"
-                          >
-                            Apellido
-                            <span className="text-destructive ml-1">*</span>
-                          </Label>
-                          <div className="relative">
-                            <Input
-                              id={`lastName-${index}`}
-                              placeholder="Ingresa el apellido"
-                              value={passenger.lastName}
-                              onChange={(e) =>
-                                handlePassengerUpdate(
-                                  "lastName",
-                                  e.target.value,
-                                )
-                              }
-                              onBlur={() => handleBlur("lastName")}
-                              className={cn(
-                                "h-12 pr-10 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full",
-                                lastNameError && "border-destructive",
-                                !lastNameError &&
-                                  passenger.lastName &&
-                                  "border-green-500",
-                              )}
-                              data-error={!!lastNameError}
-                            />
-                            {passenger.lastName && (
-                              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                {lastNameError ? (
-                                  <X className="h-5 w-5 text-destructive shrink-0" />
-                                ) : (
-                                  <Check className="h-5 w-5 text-green-500 shrink-0" />
-                                )}
-                              </div>
-                            )}
-                          </div>
-                          {lastNameError && (
-                            <p className="text-sm text-destructive flex items-center gap-1">
-                              <AlertCircle className="h-4 w-4 shrink-0" />
-                              <span className="truncate">{lastNameError}</span>
-                            </p>
-                          )}
-                        </div>
-
-                        {/* Document Number */}
-                        <div className="space-y-2 w-full">
-                          <div className="flex items-center justify-between">
-                            <Label
-                              htmlFor={`document-${index}`}
-                              className="text-background text-sm"
-                            >
-                              Cédula/RUC
-                              <span className="text-destructive ml-1">*</span>
-                            </Label>
-                            {index === 0 && (
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Button
-                                      type="button"
-                                      variant="ghost"
-                                      size="sm"
-                                      className="h-6 px-2 text-xs text-background/60 hover:text-background hover:bg-background/20 shrink-0"
-                                      onClick={() =>
-                                        setShowDocumentHelp(!showDocumentHelp)
-                                      }
-                                    >
-                                      <AlertCircle className="h-3 w-3 mr-1" />
-                                      Formato
-                                    </Button>
-                                  </TooltipTrigger>
-                                  <TooltipContent className="bg-background/95 backdrop-blur-sm border-background/20">
-                                    <div className="text-sm">
-                                      <p>Ejemplos válidos:</p>
-                                      <p>• Cédula: 4.123.456</p>
-                                      <p>• RUC: 80.012.345-0</p>
-                                    </div>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            )}
-                          </div>
-                          <div className="relative">
-                            <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-background/60 shrink-0" />
-                            <Input
-                              id={`document-${index}`}
-                              placeholder="4.123.456 o 80.012.345-0"
-                              value={passenger.documentNumber}
-                              onChange={(e) =>
-                                handlePassengerUpdate(
-                                  "documentNumber",
-                                  formatDocument(e.target.value),
-                                )
-                              }
-                              onBlur={() => handleBlur("documentNumber")}
-                              className={cn(
-                                "h-12 pl-10 pr-10 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full",
-                                documentError && "border-destructive",
-                                !documentError &&
-                                  passenger.documentNumber &&
-                                  "border-green-500",
-                              )}
-                              data-error={!!documentError}
-                            />
-                            {passenger.documentNumber && (
-                              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                {documentError ? (
-                                  <X className="h-5 w-5 text-destructive shrink-0" />
-                                ) : (
-                                  <Check className="h-5 w-5 text-green-500 shrink-0" />
-                                )}
-                              </div>
-                            )}
-                          </div>
-                          {documentError && (
-                            <p className="text-sm text-destructive flex items-center gap-1">
-                              <AlertCircle className="h-4 w-4 shrink-0" />
-                              <span className="truncate">{documentError}</span>
-                            </p>
-                          )}
-                        </div>
-
-                        {/* Phone */}
-                        <div className="space-y-2 w-full">
-                          <Label
-                            htmlFor={`phone-${index}`}
-                            className="text-background text-sm"
-                          >
-                            Teléfono
-                            <span className="text-destructive ml-1">*</span>
-                          </Label>
-                          <div className="relative">
-                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-background/60 shrink-0" />
-                            <Input
-                              id={`phone-${index}`}
-                              placeholder="0981 123 456"
-                              value={passenger.phone}
-                              onChange={(e) =>
-                                handlePassengerUpdate("phone", e.target.value)
-                              }
-                              onBlur={() => handleBlur("phone")}
-                              className={cn(
-                                "h-12 pl-10 pr-10 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full",
-                                phoneError && "border-destructive",
-                                !phoneError &&
-                                  passenger.phone &&
-                                  "border-green-500",
-                              )}
-                              data-error={!!phoneError}
-                            />
-                            {passenger.phone && (
-                              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                {phoneError ? (
-                                  <X className="h-5 w-5 text-destructive shrink-0" />
-                                ) : (
-                                  <Check className="h-5 w-5 text-green-500 shrink-0" />
-                                )}
-                              </div>
-                            )}
-                          </div>
-                          {phoneError && (
-                            <p className="text-sm text-destructive flex items-center gap-1">
-                              <AlertCircle className="h-4 w-4 shrink-0" />
-                              <span className="truncate">{phoneError}</span>
-                            </p>
-                          )}
-                          {!phoneError && passenger.phone && (
-                            <p className="text-sm text-background/60 truncate">
-                              Formato: 0981 123 456 o 021 123 456
-                            </p>
-                          )}
-                        </div>
-
-                        {/* Email */}
-                        <div className="space-y-2 sm:col-span-2 w-full">
-                          <Label
-                            htmlFor={`email-${index}`}
-                            className="text-background text-sm"
-                          >
-                            Correo Electrónico
-                            <span className="text-destructive ml-1">*</span>
-                          </Label>
-                          <div className="relative">
-                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-background/60 shrink-0" />
-                            <Input
-                              id={`email-${index}`}
-                              name={`booking-passenger-email-${index}`}
-                              type="email"
-                              placeholder="correo@ejemplo.com"
-                              value={passenger.email}
-                              onChange={(e) =>
-                                handlePassengerUpdate("email", e.target.value)
-                              }
-                              onBlur={() => handleBlur("email")}
-                              className={cn(
-                                "h-12 pl-10 pr-10 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full",
-                                emailError && "border-destructive",
-                                !emailError &&
-                                  passenger.email &&
-                                  "border-green-500",
-                              )}
-                              data-error={!!emailError}
-                            />
-                            {passenger.email && (
-                              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                {emailError ? (
-                                  <X className="h-5 w-5 text-destructive shrink-0" />
-                                ) : (
-                                  <Check className="h-5 w-5 text-green-500 shrink-0" />
-                                )}
-                              </div>
-                            )}
-                          </div>
-                          {emailError && (
-                            <p className="text-sm text-destructive flex items-center gap-1">
-                              <AlertCircle className="h-4 w-4 shrink-0" />
-                              <span className="truncate">{emailError}</span>
-                            </p>
-                          )}
-                          {index === 0 && (
-                            <p className="text-xs text-background/60 truncate">
-                              El boleto electrónico será enviado a este correo
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </Card>
-                  );
-                })
+                      </Card>
+                    );
+                  })}
+                </div>
               )}
 
+              {/* Return passengers */}
+              {tripType === "round-trip" && selectedReturnSeats.length > 0 && (
+                <div className="space-y-3">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-secondary/80">
+                    Viaje de Regreso
+                  </p>
+                  {selectedReturnSeats.map((seat, i) => {
+                    const p = passengerDetails[selectedSeats.length + i];
+                    const hasData = p?.firstName && p?.lastName;
+                    return (
+                      <Card
+                        key={seat.id}
+                        className="p-4 bg-background/5 backdrop-blur-sm border-background/20 animate-fade-in"
+                        style={{ animationDelay: `${i * 80}ms` }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-full bg-secondary/10 flex items-center justify-center border border-secondary/30 shrink-0">
+                            <User className="h-4 w-4 text-secondary" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-background text-sm truncate">
+                              {hasData
+                                ? `${p.firstName} ${p.lastName}`
+                                : <span className="text-background/40 italic">Sin datos</span>}
+                            </p>
+                            <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-background/60 mt-0.5">
+                              <span className="flex items-center gap-1">
+                                <span className="bg-secondary/20 text-secondary text-[10px] px-1.5 py-0.5 rounded uppercase font-medium">Vuelta</span>
+                                Asiento {seat.number}
+                              </span>
+                              {p?.email && <span className="truncate max-w-[150px]">{p.email}</span>}
+                            </div>
+                          </div>
+                          {hasData && (
+                            <Badge variant="secondary" className="ml-auto bg-green-500/10 text-green-500 border-green-500/30 shrink-0 text-xs">
+                              <Check className="h-3 w-3 mr-1" />
+                              OK
+                            </Badge>
+                          )}
+                        </div>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
+
+              {!isFormValid && passengerDetails.length > 0 && (
+                <Card className="p-4 bg-destructive/10 border-destructive/30 animate-fade-in">
+                  <div className="flex items-start gap-3">
+                    <ArrowRight className="h-5 w-5 text-destructive mt-0.5 shrink-0 rotate-180" />
+                    <div>
+                      <p className="text-sm font-medium text-destructive">Datos incompletos</p>
+                      <p className="text-xs text-destructive/80 mt-0.5">
+                        Vuelve a la selección de asientos para completar los datos de los pasajeros.
+                      </p>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="mt-2 h-7 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 px-2"
+                        onClick={() => router.push("/booking/seats")}
+                      >
+                        ← Volver a asientos
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              )}
               {/* Payment Section */}
               <Card
                 className="p-4 sm:p-6 animate-fade-in bg-background/5 backdrop-blur-sm border-background/20 w-full"
@@ -939,7 +484,7 @@ export default function CheckoutPage() {
               </Card>
             </div>
 
-            {/* Order Summary */}
+            {/* Order Summary sidebar */}
             <div className="lg:col-span-1 w-full">
               <Card className="p-4 sm:p-6 sticky top-24 animate-slide-in-right bg-background/5 backdrop-blur-sm border-background/20 w-full">
                 <h3 className="text-lg sm:text-xl font-bold mb-6 text-background truncate">

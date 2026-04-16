@@ -14,12 +14,14 @@ import {
   ChevronRight,
   AlertCircle,
   Loader2,
+  UserCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { BookingProgress } from "@/components/booking-progress";
 import { SeatMap } from "@/components/seat-map";
+import { PassengerForm } from "@/components/passenger-form";
 import { useBookingStore, cities } from "@/lib/booking-store";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -39,12 +41,14 @@ export default function SeatsPage() {
     selectedReturnTrip,
     selectedSeats,
     selectedReturnSeats,
+    passengerDetails,
     setStep,
     calculateTotal,
     totalPrice,
     originTitle,
     destinationTitle,
     setConnectionId,
+    initPassengers,
   } = useBookingStore();
 
   useEffect(() => {
@@ -55,7 +59,8 @@ export default function SeatsPage() {
 
   useEffect(() => {
     calculateTotal();
-  }, [selectedSeats, selectedReturnSeats, calculateTotal]);
+    initPassengers();
+  }, [selectedSeats, selectedReturnSeats, calculateTotal, initPassengers]);
 
   const handleContinue = async () => {
     if (tripType === "round-trip" && !selectingReturn && selectedReturnTrip) {
@@ -96,13 +101,18 @@ export default function SeatsPage() {
 
       // Validación profunda del resultado del GDS
       const blockData = data.data || data;
-      const isGdsError = blockData.success === false || 
-                         (blockData.providerResult && blockData.providerResult !== "0");
+      const isGdsError =
+        blockData.success === false ||
+        (blockData.providerResult && blockData.providerResult !== "0");
 
       if (isGdsError) {
-        throw new Error(data.message || blockData.message || "No se pudieron bloquear los asientos (Error del proveedor)");
+        throw new Error(
+          data.message ||
+            blockData.message ||
+            "No se pudieron bloquear los asientos (Error del proveedor)",
+        );
       }
-      
+
       if (blockData.connectionId) {
         setConnectionId(blockData.connectionId);
         router.push("/booking/checkout");
@@ -128,9 +138,26 @@ export default function SeatsPage() {
     ? selectedReturnSeats
     : selectedSeats;
 
-  // Verificar si se puede continuar (mínimo 1 asiento, máximo 4)
+  // Validar que los pasajeros de IDA estén completos
+  const arePassengersComplete =
+    selectedSeats.length > 0 &&
+    selectedSeats.every((_, i) => {
+      const p = passengerDetails[i];
+      if (!p) return false;
+      return (
+        p.firstName.trim().length >= 2 &&
+        p.lastName.trim().length >= 2 &&
+        p.documentNumber.trim().length >= 6 &&
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.email) &&
+        p.phone.replace(/\D/g, "").length >= 9
+      );
+    });
+
+  // Verificar si se puede continuar (mínimo 1 asiento, máximo 4, y pasajeros completos)
   const canContinue =
-    currentSelectedSeats.length > 0 && currentSelectedSeats.length <= 4;
+    currentSelectedSeats.length > 0 &&
+    currentSelectedSeats.length <= 4 &&
+    (selectingReturn || arePassengersComplete);
 
   // Verificar si se ha excedido el límite
   const hasExceededLimit = currentSelectedSeats.length > 4;
@@ -310,6 +337,78 @@ export default function SeatsPage() {
                     isReturn={selectingReturn}
                   />
                 </div>
+
+                {/* Passenger Forms — one per selected outbound seat */}
+                {!selectingReturn && selectedSeats.length > 0 && (
+                  <div className="mt-6 space-y-4">
+                    <div className="flex items-center gap-2">
+                      <UserCheck className="h-5 w-5 text-primary" />
+                      <h3 className="text-base font-semibold text-background">
+                        Datos de los Pasajeros
+                      </h3>
+                      <span className="text-xs text-background/50 ml-1">
+                        ({selectedSeats.length} asiento
+                        {selectedSeats.length > 1 ? "s" : ""})
+                      </span>
+                    </div>
+                    {selectedSeats.map((seat, i) => {
+                      const outboundIndex = i;
+                      const returnSeat = selectedReturnSeats[i] ?? null;
+                      const returnIndex = returnSeat
+                        ? selectedSeats.length + i
+                        : -1;
+                      return (
+                        <PassengerForm
+                          key={seat.id}
+                          passengerNumber={i + 1}
+                          outboundIndex={outboundIndex}
+                          returnIndex={returnIndex}
+                          seatNumber={seat.number}
+                          returnSeatNumber={returnSeat?.number}
+                          animationDelay={i * 80}
+                        />
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* En modo regreso: mostrar resumen de pasajeros asignados */}
+                {selectingReturn && selectedReturnSeats.length > 0 && (
+                  <div className="mt-6">
+                    <div className="flex items-center gap-2 mb-3">
+                      <UserCheck className="h-5 w-5 text-secondary" />
+                      <h3 className="text-base font-semibold text-background">
+                        Pasajeros asignados al regreso
+                      </h3>
+                    </div>
+                    <div className="space-y-2">
+                      {selectedReturnSeats.map((retSeat, i) => {
+                        const passenger =
+                          passengerDetails[selectedSeats.length + i];
+                        return (
+                          <div
+                            key={retSeat.id}
+                            className="flex items-center gap-3 p-3 rounded-lg bg-background/5 border border-secondary/20 animate-fade-in"
+                          >
+                            <div className="w-7 h-7 rounded-full bg-secondary/10 flex items-center justify-center border border-secondary/30 shrink-0 text-xs font-bold text-secondary">
+                              {i + 1}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-background truncate">
+                                {passenger?.firstName
+                                  ? `${passenger.firstName} ${passenger.lastName}`
+                                  : "Sin datos (completa el formulario de ida)"}
+                              </p>
+                              <p className="text-xs text-background/60">
+                                Asiento {retSeat.number}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
                 {/* Navigation for Return */}
                 {tripType === "round-trip" && selectedReturnTrip && (
@@ -506,7 +605,7 @@ export default function SeatsPage() {
                     {isBlocking ? (
                       <>
                         <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                        Bloqueando...
+                        Reservando asiento(s)...
                       </>
                     ) : tripType === "round-trip" &&
                       !selectingReturn &&
@@ -524,7 +623,11 @@ export default function SeatsPage() {
                     <p className="text-xs md:text-sm text-background/70 mt-3 text-center">
                       {hasExceededLimit
                         ? "Máximo 4 asientos permitidos"
-                        : "Selecciona al menos 1 asiento para continuar"}
+                        : currentSelectedSeats.length === 0
+                          ? "Selecciona al menos 1 asiento para continuar"
+                          : !selectingReturn && !arePassengersComplete
+                            ? "Completa los datos de todos los pasajeros"
+                            : "Selecciona los asientos de regreso"}
                     </p>
                   )}
                 </Card>

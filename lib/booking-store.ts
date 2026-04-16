@@ -76,6 +76,7 @@ export interface BookingState {
   removeReturnSeat: (seatId: string) => void;
   setPassengerDetails: (details: Passenger[]) => void;
   updatePassenger: (index: number, data: Partial<Passenger>) => void;
+  initPassengers: () => void;
   calculateTotal: () => void;
   setBookingReference: (ref: string) => void;
   setPaymentStatus: (
@@ -165,6 +166,70 @@ export const useBookingStore = create<BookingState>()(
         const { passengerDetails } = get();
         const updated = [...passengerDetails];
         updated[index] = { ...updated[index], ...data };
+        set({ passengerDetails: updated });
+      },
+
+      initPassengers: () => {
+        const { selectedSeats, selectedReturnSeats, passengerDetails } = get();
+
+        // El array plano resultante: [outbound seats..., return seats...]
+        const totalSlots = selectedSeats.length + selectedReturnSeats.length;
+        if (totalSlots === 0) {
+          set({ passengerDetails: [] });
+          return;
+        }
+
+        const updated: Passenger[] = [];
+
+        // Asientos de IDA
+        for (let i = 0; i < selectedSeats.length; i++) {
+          const seat = selectedSeats[i];
+          const existing = passengerDetails[i];
+          updated.push(
+            existing && existing.seatId === seat.id
+              ? existing
+              : {
+                  seatId: seat.id,
+                  seatNumber: seat.number,
+                  firstName: existing?.firstName ?? "",
+                  lastName: existing?.lastName ?? "",
+                  documentNumber: existing?.documentNumber ?? "",
+                  email: existing?.email ?? "",
+                  phone: existing?.phone ?? "",
+                }
+          );
+        }
+
+        // Asientos de VUELTA — mismos datos del pasajero de ida (por orden)
+        for (let i = 0; i < selectedReturnSeats.length; i++) {
+          const retSeat = selectedReturnSeats[i];
+          // El pasajero correspondiente ya está en updated[i] (el de ida)
+          const outPassenger = updated[i];
+          const existingRet = passengerDetails[selectedSeats.length + i];
+
+          updated.push(
+            existingRet && existingRet.seatId === retSeat.id
+              ? {
+                  ...existingRet,
+                  // Siempre syncronizar con datos del pasajero de ida
+                  firstName: outPassenger?.firstName ?? existingRet.firstName,
+                  lastName: outPassenger?.lastName ?? existingRet.lastName,
+                  documentNumber: outPassenger?.documentNumber ?? existingRet.documentNumber,
+                  email: outPassenger?.email ?? existingRet.email,
+                  phone: outPassenger?.phone ?? existingRet.phone,
+                }
+              : {
+                  seatId: retSeat.id,
+                  seatNumber: retSeat.number,
+                  firstName: outPassenger?.firstName ?? "",
+                  lastName: outPassenger?.lastName ?? "",
+                  documentNumber: outPassenger?.documentNumber ?? "",
+                  email: outPassenger?.email ?? "",
+                  phone: outPassenger?.phone ?? "",
+                }
+          );
+        }
+
         set({ passengerDetails: updated });
       },
 

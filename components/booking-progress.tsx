@@ -61,7 +61,7 @@ export function BookingProgress() {
                 </span>
               </div>
 
-              {/* Connector - Responsive */}
+              {/* Connector - Se muestra para todos excepto el último */}
               {index < steps.length - 1 && (
                 <div className="flex-1 mx-0.5 sm:mx-1 md:mx-2 min-w-[8px]">
                   <div className="h-0.5 sm:h-1 rounded-full overflow-hidden bg-background/10 w-full">
@@ -71,6 +71,15 @@ export function BookingProgress() {
                         step > s.id ? "w-full" : "w-0",
                       )}
                     />
+                  </div>
+                </div>
+              )}
+
+              {/* Connector invisible para mantener el mismo ancho en el último paso */}
+              {index === steps.length - 1 && (
+                <div className="flex-1 mx-0.5 sm:mx-1 md:mx-2 min-w-[8px] opacity-0 pointer-events-none">
+                  <div className="h-0.5 sm:h-1 rounded-full overflow-hidden bg-background/10 w-full">
+                    <div className="h-full w-0" />
                   </div>
                 </div>
               )}
