@@ -16,7 +16,6 @@ import {
   ChevronDown,
   ChevronUp,
   Users,
-  Star,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -252,7 +251,7 @@ export default function ServicesPage() {
                   No se encontraron servicios
                 </p>
                 <p className="text-muted-foreground">
-                  Intenta con otra fecha u otra ruta
+                  Intenta con otra fecha o ruta
                 </p>
               </div>
             ) : (

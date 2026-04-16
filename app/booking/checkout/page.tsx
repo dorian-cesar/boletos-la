@@ -16,6 +16,7 @@ import {
   Wallet,
   ArrowRight,
   MapPin,
+  Timer,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -48,7 +49,25 @@ export default function CheckoutPage() {
     setBookingReference,
     setPaymentStatus,
     resetBooking,
+    originTitle,
+    destinationTitle,
   } = useBookingStore();
+
+  const [timeLeft, setTimeLeft] = useState(8 * 60); // 8 minutos
+
+  useEffect(() => {
+    if (timeLeft <= 0) return;
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft]);
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  };
 
   // Validar que los pasajeros del store estén completos
   const isFormValid =
@@ -62,11 +81,6 @@ export default function CheckoutPage() {
         p.phone.replace(/\D/g, "").length >= 9,
     );
 
-
-  const originCity = cities.find((c) => c.id === selectedOutboundTrip?.origin);
-  const destinationCity = cities.find(
-    (c) => c.id === selectedOutboundTrip?.destination,
-  );
   const totalPassengers = selectedSeats.length + selectedReturnSeats.length;
 
   const handlePaymentMethodSelect = (method: "tarjeta" | "pagopar") => {
@@ -134,7 +148,6 @@ export default function CheckoutPage() {
     setMounted(true);
     setStep(3);
   }, [setStep]);
-
 
   if (!mounted) {
     return (
@@ -224,21 +237,36 @@ export default function CheckoutPage() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="font-medium text-background text-sm truncate">
-                              {hasData
-                                ? `${p.firstName} ${p.lastName}`
-                                : <span className="text-background/40 italic">Sin datos</span>}
+                              {hasData ? (
+                                `${p.firstName} ${p.lastName}`
+                              ) : (
+                                <span className="text-background/40 italic">
+                                  Sin datos
+                                </span>
+                              )}
                             </p>
                             <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-background/60 mt-0.5">
                               <span className="flex items-center gap-1">
-                                <span className="bg-primary/20 text-primary text-[10px] px-1.5 py-0.5 rounded uppercase font-medium">Ida</span>
+                                <span className="bg-primary/20 text-primary text-[10px] px-1.5 py-0.5 rounded uppercase font-medium">
+                                  Ida
+                                </span>
                                 Asiento {seat.number}
                               </span>
-                              {p?.documentNumber && <span>{p.documentNumber}</span>}
-                              {p?.email && <span className="truncate max-w-[150px]">{p.email}</span>}
+                              {p?.documentNumber && (
+                                <span>{p.documentNumber}</span>
+                              )}
+                              {p?.email && (
+                                <span className="truncate max-w-[150px]">
+                                  {p.email}
+                                </span>
+                              )}
                             </div>
                           </div>
                           {hasData && (
-                            <Badge variant="secondary" className="ml-auto bg-green-500/10 text-green-500 border-green-500/30 shrink-0 text-xs">
+                            <Badge
+                              variant="secondary"
+                              className="ml-auto bg-green-500/10 text-green-500 border-green-500/30 shrink-0 text-xs"
+                            >
                               <Check className="h-3 w-3 mr-1" />
                               OK
                             </Badge>
@@ -271,20 +299,33 @@ export default function CheckoutPage() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="font-medium text-background text-sm truncate">
-                              {hasData
-                                ? `${p.firstName} ${p.lastName}`
-                                : <span className="text-background/40 italic">Sin datos</span>}
+                              {hasData ? (
+                                `${p.firstName} ${p.lastName}`
+                              ) : (
+                                <span className="text-background/40 italic">
+                                  Sin datos
+                                </span>
+                              )}
                             </p>
                             <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-background/60 mt-0.5">
                               <span className="flex items-center gap-1">
-                                <span className="bg-secondary/20 text-secondary text-[10px] px-1.5 py-0.5 rounded uppercase font-medium">Vuelta</span>
+                                <span className="bg-secondary/20 text-secondary text-[10px] px-1.5 py-0.5 rounded uppercase font-medium">
+                                  Vuelta
+                                </span>
                                 Asiento {seat.number}
                               </span>
-                              {p?.email && <span className="truncate max-w-[150px]">{p.email}</span>}
+                              {p?.email && (
+                                <span className="truncate max-w-[150px]">
+                                  {p.email}
+                                </span>
+                              )}
                             </div>
                           </div>
                           {hasData && (
-                            <Badge variant="secondary" className="ml-auto bg-green-500/10 text-green-500 border-green-500/30 shrink-0 text-xs">
+                            <Badge
+                              variant="secondary"
+                              className="ml-auto bg-green-500/10 text-green-500 border-green-500/30 shrink-0 text-xs"
+                            >
                               <Check className="h-3 w-3 mr-1" />
                               OK
                             </Badge>
@@ -301,9 +342,12 @@ export default function CheckoutPage() {
                   <div className="flex items-start gap-3">
                     <ArrowRight className="h-5 w-5 text-destructive mt-0.5 shrink-0 rotate-180" />
                     <div>
-                      <p className="text-sm font-medium text-destructive">Datos incompletos</p>
+                      <p className="text-sm font-medium text-destructive">
+                        Datos incompletos
+                      </p>
                       <p className="text-xs text-destructive/80 mt-0.5">
-                        Vuelve a la selección de asientos para completar los datos de los pasajeros.
+                        Vuelve a la selección de asientos para completar los
+                        datos de los pasajeros.
                       </p>
                       <Button
                         variant="ghost"
@@ -487,9 +531,15 @@ export default function CheckoutPage() {
             {/* Order Summary sidebar */}
             <div className="lg:col-span-1 w-full">
               <Card className="p-4 sm:p-6 sticky top-24 animate-slide-in-right bg-background/5 backdrop-blur-sm border-background/20 w-full">
-                <h3 className="text-lg sm:text-xl font-bold mb-6 text-background truncate">
-                  Resumen de Compra
-                </h3>
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg sm:text-xl font-bold text-background truncate">
+                    Resumen de Compra
+                  </h3>
+                  <div className="flex items-center text-orange-500 bg-orange-500/10 px-3 py-1.5 rounded-md font-mono text-lg font-bold border border-orange-500/30">
+                    <Timer className="w-5 h-5 mr-2 animate-pulse" />
+                    {formatTime(timeLeft)}
+                  </div>
+                </div>
 
                 {/* Outbound Trip */}
                 <div className="mb-6 pb-6 border-b border-background/20">
@@ -523,7 +573,7 @@ export default function CheckoutPage() {
                     <p className="flex justify-between gap-2">
                       <span className="text-background/60 shrink-0">Ruta</span>
                       <span className="text-background truncate text-right">
-                        {originCity?.name} - {destinationCity?.name}
+                        {originTitle} - {destinationTitle}
                       </span>
                     </p>
                     <p className="flex justify-between gap-2">
@@ -583,7 +633,7 @@ export default function CheckoutPage() {
                           Ruta
                         </span>
                         <span className="text-background truncate text-right">
-                          {destinationCity?.name} - {originCity?.name}
+                          {destinationTitle} - {originTitle}
                         </span>
                       </p>
                       <p className="flex justify-between gap-2">
@@ -611,29 +661,10 @@ export default function CheckoutPage() {
                 <div className="space-y-3 mb-6 pb-6 border-b border-background/20">
                   <p className="flex justify-between text-sm gap-2">
                     <span className="text-background/60 shrink-0">
-                      Subtotal ({totalPassengers} asiento
-                      {totalPassengers > 1 ? "s" : ""})
+                      Asientos ({totalPassengers})
                     </span>
                     <span className="text-background truncate text-right">
-                      Gs.{" "}
-                      {Math.round(totalPrice * 0.82).toLocaleString("es-PY")}
-                    </span>
-                  </p>
-                  <p className="flex justify-between text-sm gap-2">
-                    <span className="text-background/60 shrink-0">
-                      IVA (10%)
-                    </span>
-                    <span className="text-background truncate text-right">
-                      Gs. {Math.round(totalPrice * 0.1).toLocaleString("es-PY")}
-                    </span>
-                  </p>
-                  <p className="flex justify-between text-sm gap-2">
-                    <span className="text-background/60 shrink-0">
-                      Servicio (8%)
-                    </span>
-                    <span className="text-background truncate text-right">
-                      Gs.{" "}
-                      {Math.round(totalPrice * 0.08).toLocaleString("es-PY")}
+                      Gs. {totalPrice.toLocaleString("es-PY")}
                     </span>
                   </p>
                 </div>
@@ -657,11 +688,14 @@ export default function CheckoutPage() {
                     !isFormValid ||
                     passengerDetails.length === 0 ||
                     !selectedPaymentMethod ||
-                    isProcessing
+                    isProcessing ||
+                    timeLeft <= 0
                   }
                   className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground h-12 sm:h-14 text-base sm:text-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
                 >
-                  {isProcessing ? (
+                  {timeLeft <= 0 ? (
+                    "Reserva caducada"
+                  ) : isProcessing ? (
                     <>
                       <Loader2 className="h-5 w-5 mr-2 animate-spin shrink-0" />
                       <span className="truncate">

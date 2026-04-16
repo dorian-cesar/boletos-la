@@ -55,7 +55,7 @@ function validateEmail(email: string): boolean {
 }
 
 function validatePhone(phone: string): boolean {
-  return phone.replace(/\D/g, "").length >= 9;
+  return phone.replace(/\D/g, "").length >= 8;
 }
 
 function validateName(name: string): boolean {
@@ -138,7 +138,7 @@ export function PassengerForm({
         return !validateEmail(value) ? "Email inválido" : null;
       case "phone":
         return !validatePhone(value)
-          ? "Teléfono inválido (mín. 9 dígitos)"
+          ? "Teléfono inválido (mín. 8 dígitos)"
           : null;
       default:
         return null;
@@ -449,7 +449,10 @@ export function PassengerForm({
                 {isCreating ? (
                   <Loader2 className="h-3 w-3 animate-spin" />
                 ) : (
-                  <><Save className="h-3 w-3 mr-1" />Guardar</>
+                  <>
+                    <Save className="h-3 w-3 mr-1" />
+                    Guardar
+                  </>
                 )}
               </Button>
             ) : (
@@ -460,7 +463,8 @@ export function PassengerForm({
                 onClick={() => setIsEditing(true)}
                 className="h-6 px-2 text-[11px] text-green-400 hover:text-green-300 hover:bg-green-500/10 shrink-0"
               >
-                <Pencil className="h-3 w-3 mr-1" />Editar
+                <Pencil className="h-3 w-3 mr-1" />
+                Editar
               </Button>
             )}
           </div>
@@ -501,10 +505,15 @@ export function PassengerForm({
                   className={cn(
                     "h-11 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full",
                     firstNameError && "border-destructive",
-                    !firstNameError && passenger.firstName && "border-green-500",
+                    !firstNameError &&
+                      passenger.firstName &&
+                      "border-green-500",
                   )}
                 />
-                <FieldIcon hasError={!!firstNameError} hasValue={!!passenger.firstName} />
+                <FieldIcon
+                  hasError={!!firstNameError}
+                  hasValue={!!passenger.firstName}
+                />
               </FieldWrapper>
 
               {/* Apellido */}
@@ -526,7 +535,10 @@ export function PassengerForm({
                     !lastNameError && passenger.lastName && "border-green-500",
                   )}
                 />
-                <FieldIcon hasError={!!lastNameError} hasValue={!!passenger.lastName} />
+                <FieldIcon
+                  hasError={!!lastNameError}
+                  hasValue={!!passenger.lastName}
+                />
               </FieldWrapper>
 
               {/* Teléfono */}
@@ -602,9 +614,15 @@ export function PassengerForm({
                 className="w-full h-10 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium"
               >
                 {isCreating ? (
-                  <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Registrando pasajero...</>
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Registrando pasajero...
+                  </>
                 ) : (
-                  <><UserCheck className="h-4 w-4 mr-2" />Registrar pasajero</>
+                  <>
+                    <UserCheck className="h-4 w-4 mr-2" />
+                    Registrar pasajero
+                  </>
                 )}
               </Button>
             )}
