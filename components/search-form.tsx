@@ -138,7 +138,16 @@ export function SearchForm() {
       const stop = stops.find((s) => String(s.id) === String(destination));
       if (stop) setDestinationTitle(stop.name);
     }
-  }, [mounted, stops, origin, destination, originTitle, destinationTitle, setOriginTitle, setDestinationTitle]);
+  }, [
+    mounted,
+    stops,
+    origin,
+    destination,
+    originTitle,
+    destinationTitle,
+    setOriginTitle,
+    setDestinationTitle,
+  ]);
 
   const handleSearch = () => {
     if (origin && destination && departureDate) {
@@ -156,6 +165,13 @@ export function SearchForm() {
   // Función helper para parsear fechas sin problemas de zona horaria
   const parseDate = (dateString: string) => {
     return parse(dateString, "yyyy-MM-dd", new Date());
+  };
+
+  // Helper para obtener hoy sin hora (medianoche local)
+  const today = () => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
   };
 
   if (!mounted) {
@@ -177,7 +193,7 @@ export function SearchForm() {
         className="w-full flex justify-center px-4 animate-scale-in"
         style={{ animationDelay: "0.6s" }}
       >
-        <div className="bg-white/20 backdrop-blur-md rounded-3xl shadow-2xl p-6 lg:p-8 border border-white/30 relative overflow-hidden w-full max-w-7xl">
+        <div className="bg-white/40 backdrop-blur-md rounded-3xl shadow-2xl p-6 lg:p-8 border border-white/30 relative overflow-hidden w-full max-w-7xl">
           {/* Efecto de vidrio con gradiente sutil */}
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl pointer-events-none" />
 
@@ -231,7 +247,7 @@ export function SearchForm() {
                       "w-full justify-between h-14 text-left font-normal transition-all duration-300 backdrop-blur-sm",
                       stopsLoading
                         ? "bg-white/20 border-white/30 cursor-not-allowed opacity-60"
-                        : "bg-white/30 border-white/40 hover:border-white/60 hover:bg-white/40",
+                        : "bg-white/10 border-white/40 hover:border-white/60 hover:bg-white/40",
                     )}
                   >
                     <div className="flex items-center gap-3 min-w-0">
@@ -240,7 +256,8 @@ export function SearchForm() {
                         {stopsLoading
                           ? "Cargando ciudades..."
                           : origin
-                            ? stops.find((c) => String(c.id) === String(origin))?.name
+                            ? stops.find((c) => String(c.id) === String(origin))
+                                ?.name
                             : "Seleccione ciudad"}
                       </span>
                     </div>
@@ -356,7 +373,9 @@ export function SearchForm() {
                         {stopsLoading
                           ? "Cargando ciudades..."
                           : destination
-                            ? stops.find((c) => String(c.id) === String(destination))?.name
+                            ? stops.find(
+                                (c) => String(c.id) === String(destination),
+                              )?.name
                             : "Seleccione ciudad"}
                       </span>
                     </div>
@@ -455,7 +474,7 @@ export function SearchForm() {
                         setDepartureDateOpen(false);
                       }
                     }}
-                    disabled={(date) => date < new Date()}
+                    disabled={(date) => date < today()}
                     initialFocus
                     className="bg-transparent"
                   />
@@ -507,7 +526,7 @@ export function SearchForm() {
                       }}
                       disabled={(date) =>
                         date <
-                        (departureDate ? parseDate(departureDate) : new Date())
+                        (departureDate ? parseDate(departureDate) : today())
                       }
                       initialFocus
                       className="bg-transparent"
