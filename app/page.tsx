@@ -20,20 +20,8 @@ export default function HomePage() {
       storeState.selectedSeats.length > 0 ||
       storeState.selectedReturnSeats.length > 0
     ) {
-      console.log("🏠 Home Page - Limpiando booking store para nueva búsqueda");
-
       // Reset completo para nueva búsqueda
       storeState.resetBooking();
-
-      // Verificar que se limpió
-      const newState = useBookingStore.getState();
-      console.log("✅ Estado después de limpiar:");
-      console.log("- selectedSeats:", newState.selectedSeats.length);
-      console.log(
-        "- selectedReturnSeats:",
-        newState.selectedReturnSeats.length,
-      );
-      console.log("- step:", newState.step);
     }
   }, []); // Empty dependency array = solo se ejecuta una vez al montar
 

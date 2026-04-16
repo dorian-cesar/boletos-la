@@ -68,12 +68,12 @@ function ComingSoonModal({
           </div>
 
           {/* Title */}
-          <h3 className="text-3xl font-bold text-white mb-4">
+          <h3 className="text-3xl font-bold text-gray-300 mb-4">
             ¡Próximamente en <span className="text-primary">Paraguay</span>!
           </h3>
 
           {/* Description */}
-          <p className="text-white/70 mb-8">
+          <p className="text-gray-400 mb-8">
             Estamos trabajando para traerte la mejor experiencia de compra de
             pasajes de bus. Muy pronto podrás reservar tus viajes por todo el
             país.
@@ -178,8 +178,8 @@ export function SearchForm() {
     return (
       <div className="w-full flex justify-center px-4">
         <div className="bg-white/20 backdrop-blur-md rounded-3xl shadow-2xl p-6 lg:p-8 border border-white/30 w-full max-w-7xl h-[400px] flex items-center justify-center">
-          <div className="animate-pulse flex flex-col items-center gap-4 text-white/50">
-            <Bus className="h-12 w-12" />
+          <div className="animate-pulse flex flex-col items-center gap-4 text-gray-400">
+            <Bus className="h-12 w-12 text-gray-400" />
             <p>Preparando buscador...</p>
           </div>
         </div>
@@ -205,8 +205,8 @@ export function SearchForm() {
                 className={cn(
                   "px-6 py-2 rounded-full font-medium transition-all duration-300 relative",
                   tripType === "one-way"
-                    ? "bg-white/20 text-white shadow-lg"
-                    : "text-white/80 hover:text-white hover:bg-white/5",
+                    ? "bg-white/20 text-gray-800 shadow-lg"
+                    : "text-gray-600 hover:text-gray-800 hover:bg-white/5",
                 )}
               >
                 Solo Ida
@@ -216,8 +216,8 @@ export function SearchForm() {
                 className={cn(
                   "px-6 py-2 rounded-full font-medium transition-all duration-300 relative",
                   tripType === "round-trip"
-                    ? "bg-white/20 text-white shadow-lg"
-                    : "text-white/80 hover:text-white hover:bg-white/5",
+                    ? "bg-white/20 text-gray-800 shadow-lg"
+                    : "text-gray-600 hover:text-gray-800 hover:bg-white/5",
                 )}
               >
                 Ida y Vuelta
@@ -229,7 +229,7 @@ export function SearchForm() {
           <div className="flex flex-col lg:flex-row gap-4 lg:gap-3 relative z-10 items-stretch lg:items-end">
             {/* Origin */}
             <div className="flex-1 min-w-0">
-              <Label className="text-sm font-medium text-white/90 mb-2 block">
+              <Label className="text-sm font-medium text-gray-700 mb-2 block">
                 Origen
               </Label>
               <Popover
@@ -251,8 +251,8 @@ export function SearchForm() {
                     )}
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <MapPin className="h-5 w-5 text-white flex-shrink-0" />
-                      <span className={cn("text-white truncate")}>
+                      <MapPin className="h-5 w-5 text-gray-600 flex-shrink-0" />
+                      <span className={cn("text-gray-700 truncate")}>
                         {stopsLoading
                           ? "Cargando ciudades..."
                           : origin
@@ -261,7 +261,7 @@ export function SearchForm() {
                             : "Seleccione ciudad"}
                       </span>
                     </div>
-                    <ChevronDown className="h-4 w-4 text-white/70 flex-shrink-0" />
+                    <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
@@ -271,10 +271,10 @@ export function SearchForm() {
                   <Command className="bg-transparent">
                     <CommandInput
                       placeholder="Buscar ciudad..."
-                      className="h-12 bg-transparent border-b border-white/40 text-white placeholder:text-white/70"
+                      className="h-12 bg-transparent border-b border-white/40 text-gray-700 placeholder:text-gray-500"
                     />
                     <CommandList>
-                      <CommandEmpty className="text-white/70">
+                      <CommandEmpty className="text-gray-500">
                         {stopsLoading
                           ? "Cargando ciudades..."
                           : stopsError
@@ -291,9 +291,9 @@ export function SearchForm() {
                               setOriginTitle(city.name);
                               setOriginOpen(false);
                             }}
-                            className="cursor-pointer py-3 text-white hover:bg-white/20"
+                            className="cursor-pointer py-3 text-gray-700 hover:bg-white/20"
                           >
-                            <MapPin className="h-4 w-4 mr-2 text-white flex-shrink-0" />
+                            <MapPin className="h-4 w-4 mr-2 text-gray-500 flex-shrink-0" />
                             <div className="min-w-0">
                               <p className="font-medium truncate">
                                 {city.name}
@@ -314,7 +314,7 @@ export function SearchForm() {
                 onClick={swapCities}
                 disabled={stopsLoading}
                 className={cn(
-                  "w-10 h-10 flex items-center justify-center text-white rounded-full shadow-lg transition-all duration-300 backdrop-blur-sm border border-white/40",
+                  "w-10 h-10 flex items-center justify-center text-gray-600 rounded-full shadow-lg transition-all duration-300 backdrop-blur-sm border border-white/40",
                   stopsLoading
                     ? "bg-white/20 cursor-not-allowed opacity-50"
                     : "bg-white/30 hover:scale-110 hover:bg-white/40",
@@ -332,7 +332,7 @@ export function SearchForm() {
                   onClick={swapCities}
                   disabled={stopsLoading}
                   className={cn(
-                    "w-10 h-10 flex items-center justify-center text-white rounded-full shadow-lg transition-all duration-300 backdrop-blur-sm border border-white/40",
+                    "w-10 h-10 flex items-center justify-center text-gray-600 rounded-full shadow-lg transition-all duration-300 backdrop-blur-sm border border-white/40",
                     stopsLoading
                       ? "bg-white/20 cursor-not-allowed opacity-50"
                       : "bg-white/30 hover:scale-110 hover:bg-white/40",
@@ -346,7 +346,7 @@ export function SearchForm() {
 
             {/* Destination */}
             <div className="flex-1 min-w-0">
-              <Label className="text-sm font-medium text-white/90 mb-2 block">
+              <Label className="text-sm font-medium text-gray-700 mb-2 block">
                 Destino
               </Label>
               <Popover
@@ -368,8 +368,8 @@ export function SearchForm() {
                     )}
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <MapPin className="h-5 w-5 text-white flex-shrink-0" />
-                      <span className={cn("text-white truncate")}>
+                      <MapPin className="h-5 w-5 text-gray-600 flex-shrink-0" />
+                      <span className={cn("text-gray-700 truncate")}>
                         {stopsLoading
                           ? "Cargando ciudades..."
                           : destination
@@ -379,7 +379,7 @@ export function SearchForm() {
                             : "Seleccione ciudad"}
                       </span>
                     </div>
-                    <ChevronDown className="h-4 w-4 text-white/70 flex-shrink-0" />
+                    <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
@@ -389,10 +389,10 @@ export function SearchForm() {
                   <Command className="bg-transparent">
                     <CommandInput
                       placeholder="Buscar ciudad..."
-                      className="h-12 bg-transparent border-b border-white/40 text-white placeholder:text-white/70"
+                      className="h-12 bg-transparent border-b border-white/40 text-gray-700 placeholder:text-gray-500"
                     />
                     <CommandList>
-                      <CommandEmpty className="text-white/70">
+                      <CommandEmpty className="text-gray-500">
                         {stopsLoading
                           ? "Cargando ciudades..."
                           : stopsError
@@ -411,9 +411,9 @@ export function SearchForm() {
                                 setDestinationTitle(city.name);
                                 setDestinationOpen(false);
                               }}
-                              className="cursor-pointer py-3 text-white hover:bg-white/20"
+                              className="cursor-pointer py-3 text-gray-700 hover:bg-white/20"
                             >
-                              <MapPin className="h-4 w-4 mr-2 text-white flex-shrink-0" />
+                              <MapPin className="h-4 w-4 mr-2 text-gray-500 flex-shrink-0" />
                               <div className="min-w-0">
                                 <p className="font-medium truncate">
                                   {city.name}
@@ -430,7 +430,7 @@ export function SearchForm() {
 
             {/* Fecha de Ida */}
             <div className="flex-1 min-w-0">
-              <Label className="text-sm font-medium text-white/90 mb-2 block">
+              <Label className="text-sm font-medium text-gray-700 mb-2 block">
                 Fecha de Ida
               </Label>
               <Popover
@@ -443,11 +443,11 @@ export function SearchForm() {
                     className="w-full justify-between h-14 text-left font-normal bg-white/30 border-white/40 hover:border-white/60 hover:bg-white/40 transition-all duration-300 backdrop-blur-sm"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <Calendar className="h-5 w-5 text-white flex-shrink-0" />
+                      <Calendar className="h-5 w-5 text-gray-600 flex-shrink-0" />
                       <span
                         className={cn(
-                          !departureDate && "text-white/70",
-                          "text-white truncate",
+                          !departureDate && "text-gray-500",
+                          "text-gray-700 truncate",
                         )}
                       >
                         {departureDate
@@ -485,7 +485,7 @@ export function SearchForm() {
             {/* Fecha de Vuelta */}
             {tripType === "round-trip" && (
               <div className="flex-1 min-w-0 animate-in fade-in slide-in-from-right-5 duration-500">
-                <Label className="text-sm font-medium text-white/90 mb-2 block">
+                <Label className="text-sm font-medium text-gray-700 mb-2 block">
                   Fecha de Vuelta
                 </Label>
                 <Popover open={returnDateOpen} onOpenChange={setReturnDateOpen}>
@@ -495,11 +495,11 @@ export function SearchForm() {
                       className="w-full justify-between h-14 text-left font-normal bg-white/30 border-white/40 hover:border-white/60 hover:bg-white/40 transition-all duration-300 backdrop-blur-sm"
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <Calendar className="h-5 w-5 text-white flex-shrink-0" />
+                        <Calendar className="h-5 w-5 text-gray-600 flex-shrink-0" />
                         <span
                           className={cn(
-                            !returnDate && "text-white/70",
-                            "text-white truncate",
+                            !returnDate && "text-gray-500",
+                            "text-gray-700 truncate",
                           )}
                         >
                           {returnDate
@@ -548,10 +548,10 @@ export function SearchForm() {
                 !departureDate ||
                 (tripType === "round-trip" && !returnDate)
               }
-              className="bg-white/30 hover:bg-white/40 text-white h-12 px-12 text-lg font-semibold rounded-full shadow-lg transition-all duration-300 backdrop-blur-sm border border-white/40 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:transform-none disabled:hover:bg-white/30"
+              className="bg-white/30 hover:bg-white/40 text-gray-700 h-12 px-12 text-lg font-semibold rounded-full shadow-lg transition-all duration-300 backdrop-blur-sm border border-white/40 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:transform-none disabled:hover:bg-white/30"
             >
               Buscar Pasajes
-              <ArrowRight className="h-5 w-5 shrink-0" />
+              <ArrowRight className="h-5 w-5 shrink-0 text-gray-700" />
             </Button>
           </div>
         </div>
