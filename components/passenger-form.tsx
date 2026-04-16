@@ -6,7 +6,9 @@ import {
   ChevronDown,
   Loader2,
   Mail,
+  Pencil,
   Phone,
+  Save,
   Search,
   User,
   UserCheck,
@@ -19,7 +21,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useBookingStore, Passenger } from "@/lib/booking-store";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+// ── Tipos de documento ────────────────────────────────────────────────────────
+
+interface DocTypeItem {
+  Codigo: string;
+  Descripcion: string;
+}
+
+const FALLBACK_DOC_TYPES: DocTypeItem[] = [
+  { Codigo: "C", Descripcion: "C.I. Paraguaya" },
+  { Codigo: "D", Descripcion: "D.N.I." },
+  { Codigo: "P", Descripcion: "Pasaporte" },
+  { Codigo: "R", Descripcion: "RUC" },
+];
 
 // ── Tipos ─────────────────────────────────────────────────────────────────────
 
@@ -31,14 +47,6 @@ interface PassengerFormProps {
   returnSeatNumber?: string;
   animationDelay?: number;
 }
-
-type DocType = "D" | "R" | "P";
-
-const DOC_TYPES: { value: DocType; label: string }[] = [
-  { value: "D", label: "Cédula" },
-  { value: "R", label: "RUC" },
-  { value: "P", label: "Pasaporte" },
-];
 
 // ── Validaciones ──────────────────────────────────────────────────────────────
 
@@ -54,6 +62,18 @@ function validateName(name: string): boolean {
   return name.trim().length >= 2;
 }
 
+/** El GDS a veces devuelve un objeto pasajero "vacío" cuando no existe.
+ *  Se detecta por HD_ID=="0" o por nombres con el marcador XML de espacio vacío. */
+function isEmptyPassenger(p: Record<string, string>): boolean {
+  const XML_EMPTY = '{"xml:space":"preserve"}';
+  return (
+    p.HD_ID === "0" ||
+    p.PasNom === XML_EMPTY ||
+    p.PasApe === XML_EMPTY ||
+    (!p.PasNom?.trim() && !p.PasApe?.trim())
+  );
+}
+
 // ── Componente ────────────────────────────────────────────────────────────────
 
 export function PassengerForm({
@@ -66,8 +86,26 @@ export function PassengerForm({
 }: PassengerFormProps) {
   const { passengerDetails, updatePassenger } = useBookingStore();
 
+  // Doc types dinámicos
+  const [docTypes, setDocTypes] = useState<DocTypeItem[]>(FALLBACK_DOC_TYPES);
+  const [loadingDocTypes, setLoadingDocTypes] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/gds/doc-types")
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.success && json.data?.docTypes?.length) {
+          setDocTypes(json.data.docTypes);
+        }
+      })
+      .catch(() => {
+        /* usa fallback */
+      })
+      .finally(() => setLoadingDocTypes(false));
+  }, []);
+
   // Estado de búsqueda
-  const [docType, setDocType] = useState<DocType>("D");
+  const [docType, setDocType] = useState("C"); // C.I. Paraguaya por defecto
   const [docNumber, setDocNumber] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -77,7 +115,10 @@ export function PassengerForm({
   const [searchError, setSearchError] = useState<string | null>(null);
 
   // Estado de campos adicionales (solo visibles tras búsqueda)
-  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
+  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>(
+    {},
+  );
+  const [isEditing, setIsEditing] = useState(false);
 
   const passenger = passengerDetails[outboundIndex];
   if (!passenger) return null;
@@ -96,16 +137,28 @@ export function PassengerForm({
       case "email":
         return !validateEmail(value) ? "Email inválido" : null;
       case "phone":
-        return !validatePhone(value) ? "Teléfono inválido (mín. 9 dígitos)" : null;
+        return !validatePhone(value)
+          ? "Teléfono inválido (mín. 9 dígitos)"
+          : null;
       default:
         return null;
     }
   };
 
   /** Actualiza IDA y (si existe) VUELTA simultáneamente */
-  const handleUpdate = (field: keyof Passenger, value: string) => {
-    updatePassenger(outboundIndex, { [field]: value });
-    if (returnIndex !== -1) updatePassenger(returnIndex, { [field]: value });
+  const handleUpdate = (
+    field: keyof Passenger,
+    value: string | { codigo: string; nombre: string },
+  ) => {
+    updatePassenger(outboundIndex, { [field]: value } as Partial<Passenger>);
+    if (returnIndex !== -1)
+      updatePassenger(returnIndex, { [field]: value } as Partial<Passenger>);
+  };
+
+  /** Helper para guardar el docType seleccionado en el store */
+  const saveDocType = (codigo: string) => {
+    const found = docTypes.find((d) => d.Codigo === codigo);
+    handleUpdate("docType", { codigo, nombre: found?.Descripcion ?? codigo });
   };
 
   /** Aplica datos encontrados/creados al store */
@@ -119,8 +172,15 @@ export function PassengerForm({
     handleUpdate("lastName", data.lastName);
     handleUpdate("phone", data.phone);
     handleUpdate("documentNumber", data.docNumber);
+    // Guardar el docType actual seleccionado
+    saveDocType(docType);
     // Marcar todos como tocados para mostrar validación inmediata
-    setTouchedFields({ firstName: true, lastName: true, phone: true, email: true });
+    setTouchedFields({
+      firstName: true,
+      lastName: true,
+      phone: true,
+      email: true,
+    });
   };
 
   // ── Búsqueda de pasajero ──────────────────────────────────────────────────
@@ -135,23 +195,40 @@ export function PassengerForm({
       const res = await fetch("/api/gds/passenger", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ docType, docNumber: docNumber.replace(/[.\-\s]/g, "") }),
+        body: JSON.stringify({
+          docType,
+          docNumber: docNumber.replace(/[.\-\s]/g, ""),
+        }),
       });
 
       const json = await res.json();
 
-      if (json.success && json.data?.passenger) {
+      if (!res.ok) {
+        // Error HTTP del proxy (autenticación, red, etc.)
+        setSearchError(json.error || "Error al buscar pasajero");
+        setSearchStatus("error");
+      } else if (json.success && json.data?.passenger) {
         const p = json.data.passenger;
-        applyPassengerData({
-          firstName: toTitleCase(p.PasNom || ""),
-          lastName: toTitleCase(p.PasApe || ""),
-          phone: p.Telefono || "",
-          docNumber: p.DocNro || docNumber,
-        });
-        setSearchStatus("found");
-      } else {
-        // Pasajero no existe → dejar campos en blanco para que ingrese
+        if (isEmptyPassenger(p)) {
+          // El GDS devuelve un objeto vacío cuando el pasajero no existe
+          setSearchStatus("not_found");
+        } else {
+          // Pasajero encontrado con datos reales
+          applyPassengerData({
+            firstName: toTitleCase(p.PasNom || ""),
+            lastName: toTitleCase(p.PasApe || ""),
+            phone: p.Telefono || "",
+            docNumber: p.DocNro || docNumber,
+          });
+          setSearchStatus("found");
+        }
+      } else if (json.success && json.data?.passenger === null) {
+        // Respuesta exitosa pero pasajero no registrado en el sistema
         setSearchStatus("not_found");
+      } else {
+        // Respuesta inesperada del backend
+        setSearchError(json.error || "Respuesta inesperada del servidor");
+        setSearchStatus("error");
       }
     } catch {
       setSearchError("Error de conexión al buscar pasajero");
@@ -186,7 +263,9 @@ export function PassengerForm({
       if (json.success || json.data?.success) {
         setSearchStatus("created");
       } else {
-        setSearchError(json.error || json.data?.error || "Error al registrar pasajero");
+        setSearchError(
+          json.error || json.data?.error || "Error al registrar pasajero",
+        );
         setSearchStatus("error");
       }
     } catch {
@@ -269,7 +348,9 @@ export function PassengerForm({
             <select
               value={docType}
               onChange={(e) => {
-                setDocType(e.target.value as DocType);
+                const codigo = e.target.value;
+                setDocType(codigo);
+                saveDocType(codigo);
                 setSearchStatus("idle");
                 setDocNumber("");
                 handleUpdate("documentNumber", "");
@@ -277,13 +358,22 @@ export function PassengerForm({
                 handleUpdate("lastName", "");
                 handleUpdate("phone", "");
               }}
-              className="h-11 pl-3 pr-8 rounded-md bg-background/10 border border-background/30 text-background text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50"
+              disabled={loadingDocTypes}
+              className="h-11 pl-3 pr-8 rounded-md bg-background/10 border border-background/30 text-background text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
             >
-              {DOC_TYPES.map((d) => (
-                <option key={d.value} value={d.value} className="bg-[#1a2332] text-white">
-                  {d.label}
-                </option>
-              ))}
+              {loadingDocTypes ? (
+                <option value="">Cargando...</option>
+              ) : (
+                docTypes.map((d) => (
+                  <option
+                    key={d.Codigo}
+                    value={d.Codigo}
+                    className="bg-[#1a2332] text-white"
+                  >
+                    {d.Descripcion}
+                  </option>
+                ))
+              )}
             </select>
             <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-background/60 pointer-events-none" />
           </div>
@@ -291,9 +381,7 @@ export function PassengerForm({
           {/* DocNumber input */}
           <div className="relative flex-1">
             <Input
-              placeholder={
-                docType === "D" ? "N° de cédula" : docType === "R" ? "N° de RUC" : "N° de pasaporte"
-              }
+              placeholder="N° de documento"
               value={docNumber}
               onChange={(e) => {
                 setDocNumber(e.target.value);
@@ -341,13 +429,47 @@ export function PassengerForm({
 
         {/* Status banner */}
         {searchStatus === "found" && (
-          <StatusBanner
-            type="success"
-            message={`Pasajero encontrado: ${passenger.firstName} ${passenger.lastName}`}
-          />
+          <div className="flex items-center justify-between gap-2 text-xs px-3 py-2 rounded-lg border border-green-500/30 bg-green-500/10 animate-fade-in">
+            <span className="flex items-center gap-1.5 text-green-400">
+              <Check className="h-3.5 w-3.5 shrink-0" />
+              Pasajero encontrado: {passenger.firstName} {passenger.lastName}
+            </span>
+            {isEditing ? (
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                onClick={async () => {
+                  await handleCreate();
+                  setIsEditing(false);
+                }}
+                disabled={isCreating}
+                className="h-6 px-2 text-[11px] text-green-400 hover:text-green-300 hover:bg-green-500/10 shrink-0"
+              >
+                {isCreating ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <><Save className="h-3 w-3 mr-1" />Guardar</>
+                )}
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                onClick={() => setIsEditing(true)}
+                className="h-6 px-2 text-[11px] text-green-400 hover:text-green-300 hover:bg-green-500/10 shrink-0"
+              >
+                <Pencil className="h-3 w-3 mr-1" />Editar
+              </Button>
+            )}
+          </div>
         )}
         {searchStatus === "created" && (
-          <StatusBanner type="success" message="Pasajero registrado correctamente" />
+          <StatusBanner
+            type="success"
+            message="Pasajero registrado correctamente"
+          />
         )}
         {searchStatus === "not_found" && (
           <StatusBanner
@@ -369,7 +491,6 @@ export function PassengerForm({
                 label="Nombre"
                 error={firstNameError}
                 hasValue={!!passenger.firstName}
-                readOnly={searchStatus === "found" || searchStatus === "created"}
               >
                 <Input
                   id={`firstName-${passengerNumber}`}
@@ -377,13 +498,10 @@ export function PassengerForm({
                   value={passenger.firstName}
                   onChange={(e) => handleUpdate("firstName", e.target.value)}
                   onBlur={() => markTouched("firstName")}
-                  readOnly={searchStatus === "found" || searchStatus === "created"}
                   className={cn(
                     "h-11 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full",
                     firstNameError && "border-destructive",
                     !firstNameError && passenger.firstName && "border-green-500",
-                    (searchStatus === "found" || searchStatus === "created") &&
-                      "opacity-80 cursor-default",
                   )}
                 />
                 <FieldIcon hasError={!!firstNameError} hasValue={!!passenger.firstName} />
@@ -395,7 +513,6 @@ export function PassengerForm({
                 label="Apellido"
                 error={lastNameError}
                 hasValue={!!passenger.lastName}
-                readOnly={searchStatus === "found" || searchStatus === "created"}
               >
                 <Input
                   id={`lastName-${passengerNumber}`}
@@ -403,13 +520,10 @@ export function PassengerForm({
                   value={passenger.lastName}
                   onChange={(e) => handleUpdate("lastName", e.target.value)}
                   onBlur={() => markTouched("lastName")}
-                  readOnly={searchStatus === "found" || searchStatus === "created"}
                   className={cn(
                     "h-11 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full",
                     lastNameError && "border-destructive",
                     !lastNameError && passenger.lastName && "border-green-500",
-                    (searchStatus === "found" || searchStatus === "created") &&
-                      "opacity-80 cursor-default",
                   )}
                 />
                 <FieldIcon hasError={!!lastNameError} hasValue={!!passenger.lastName} />
@@ -435,7 +549,10 @@ export function PassengerForm({
                     !phoneError && passenger.phone && "border-green-500",
                   )}
                 />
-                <FieldIcon hasError={!!phoneError} hasValue={!!passenger.phone} />
+                <FieldIcon
+                  hasError={!!phoneError}
+                  hasValue={!!passenger.phone}
+                />
               </FieldWrapper>
 
               {/* Email (full width) */}
@@ -444,7 +561,11 @@ export function PassengerForm({
                 label="Correo Electrónico"
                 error={emailError}
                 hasValue={!!passenger.email}
-                hint={passengerNumber === 1 ? "El boleto se enviará aquí" : undefined}
+                hint={
+                  passengerNumber === 1
+                    ? "El boleto se enviará aquí"
+                    : undefined
+                }
                 className="sm:col-span-2"
               >
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-background/60 shrink-0" />
@@ -461,11 +582,14 @@ export function PassengerForm({
                     !emailError && passenger.email && "border-green-500",
                   )}
                 />
-                <FieldIcon hasError={!!emailError} hasValue={!!passenger.email} />
+                <FieldIcon
+                  hasError={!!emailError}
+                  hasValue={!!passenger.email}
+                />
               </FieldWrapper>
             </div>
 
-            {/* Botón registrar — solo si no se encontró aún */}
+            {/* Botón registrar — no encontrado; Botón guardar cambios — encontrado + editando */}
             {searchStatus === "not_found" && (
               <Button
                 type="button"
@@ -478,15 +602,9 @@ export function PassengerForm({
                 className="w-full h-10 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium"
               >
                 {isCreating ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Registrando pasajero...
-                  </>
+                  <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Registrando pasajero...</>
                 ) : (
-                  <>
-                    <UserCheck className="h-4 w-4 mr-2" />
-                    Registrar pasajero
-                  </>
+                  <><UserCheck className="h-4 w-4 mr-2" />Registrar pasajero</>
                 )}
               </Button>
             )}
@@ -566,7 +684,13 @@ function FieldWrapper({
   );
 }
 
-function FieldIcon({ hasError, hasValue }: { hasError: boolean; hasValue: boolean }) {
+function FieldIcon({
+  hasError,
+  hasValue,
+}: {
+  hasError: boolean;
+  hasValue: boolean;
+}) {
   if (!hasValue) return null;
   return (
     <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">

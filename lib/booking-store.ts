@@ -34,6 +34,7 @@ export interface Passenger {
   firstName: string;
   lastName: string;
   documentNumber: string;
+  docType: { codigo: string; nombre: string };
   email: string;
   phone: string;
 }
@@ -194,6 +195,7 @@ export const useBookingStore = create<BookingState>()(
                   firstName: existing?.firstName ?? "",
                   lastName: existing?.lastName ?? "",
                   documentNumber: existing?.documentNumber ?? "",
+                  docType: existing?.docType ?? { codigo: "", nombre: "" },
                   email: existing?.email ?? "",
                   phone: existing?.phone ?? "",
                 }
@@ -211,10 +213,10 @@ export const useBookingStore = create<BookingState>()(
             existingRet && existingRet.seatId === retSeat.id
               ? {
                   ...existingRet,
-                  // Siempre syncronizar con datos del pasajero de ida
                   firstName: outPassenger?.firstName ?? existingRet.firstName,
                   lastName: outPassenger?.lastName ?? existingRet.lastName,
                   documentNumber: outPassenger?.documentNumber ?? existingRet.documentNumber,
+                  docType: outPassenger?.docType ?? existingRet.docType,
                   email: outPassenger?.email ?? existingRet.email,
                   phone: outPassenger?.phone ?? existingRet.phone,
                 }
@@ -224,6 +226,7 @@ export const useBookingStore = create<BookingState>()(
                   firstName: outPassenger?.firstName ?? "",
                   lastName: outPassenger?.lastName ?? "",
                   documentNumber: outPassenger?.documentNumber ?? "",
+                  docType: outPassenger?.docType ?? { codigo: "", nombre: "" },
                   email: outPassenger?.email ?? "",
                   phone: outPassenger?.phone ?? "",
                 }
