@@ -22,7 +22,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { BookingProgress } from "@/components/booking-progress";
 import { SeatMap } from "@/components/seat-map";
 import { PassengerForm } from "@/components/passenger-form";
-import { useBookingStore, cities } from "@/lib/booking-store";
+import { useBookingStore } from "@/lib/booking-store";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
