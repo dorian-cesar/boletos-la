@@ -26,6 +26,7 @@ export interface Seat {
   type: "standard";
   status: "available" | "occupied" | "selected" | "blocked";
   price: number;
+  qualityCode?: string; // Código de calidad del asiento (ej: "CA") — requerido por GDS /sell
 }
 
 export interface Passenger {

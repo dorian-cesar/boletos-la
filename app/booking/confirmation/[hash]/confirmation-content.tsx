@@ -14,17 +14,13 @@ import {
   Clock,
   User,
   Home,
-  Share2,
-  Printer,
   Copy,
   Check,
   FileText,
   Loader2,
   AlertCircle,
   Wallet,
-  CreditCard,
   Send,
-  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -67,6 +63,9 @@ export default function ConfirmationPageContent({
   const [ticketPreviewData, setTicketPreviewData] = useState<any>(null);
   const [generatedTickets, setGeneratedTickets] = useState<TicketData[]>([]);
 
+  // Mapa seatNumber → ticketNumber asignado por el GDS tras /sell exitoso
+  const [gdsTicketNumbers, setGdsTicketNumbers] = useState<Record<string, string>>({});
+
   // UN SOLO ESTADO PARA CONTROLAR TODAS LAS ACCIONES
   const [processing, setProcessing] = useState<{
     type: "all-tickets" | "single-ticket" | "email-all" | "email-single" | null;
@@ -106,6 +105,7 @@ export default function ConfirmationPageContent({
     setPaymentStatus: setStorePaymentStatus,
     originTitle,
     destinationTitle,
+    connectionId,
   } = useBookingStore();
 
   const primaryPassenger = passengerDetails[0];
@@ -185,15 +185,12 @@ export default function ConfirmationPageContent({
 
         // Preparar payload EXACTO como lo espera el backend externo
         const payload = {
-          reservaCodigo: `${bookingReference}-${passengerSeat}`,
+          reservaCodigo: gdsTicketNumbers[passengerSeat] || `${bookingReference}-${passengerSeat}`,
           horaSalida: trip.departureTime,
-          origen:
-            (isOutbound ? originTitle : destinationTitle) ||
-            trip.origin,
+          origen: (isOutbound ? originTitle : destinationTitle) || trip.origin,
           horaLlegada: trip.arrivalTime,
           destino:
-            (isOutbound ? destinationTitle : originTitle) ||
-            trip.destination,
+            (isOutbound ? destinationTitle : originTitle) || trip.destination,
           fechaViaje: format(
             parse(
               (isOutbound ? departureDate : returnDate) || "",
@@ -366,15 +363,12 @@ export default function ConfirmationPageContent({
 
       // Preparar payload
       const payload = {
-        reservaCodigo: `${bookingReference}-${passengerSeat}`,
+        reservaCodigo: gdsTicketNumbers[passengerSeat] || `${bookingReference}-${passengerSeat}`,
         horaSalida: trip.departureTime,
-        origen:
-          (isOutbound ? originTitle : destinationTitle) ||
-          trip.origin,
+        origen: (isOutbound ? originTitle : destinationTitle) || trip.origin,
         horaLlegada: trip.arrivalTime,
         destino:
-          (isOutbound ? destinationTitle : originTitle) ||
-          trip.destination,
+          (isOutbound ? destinationTitle : originTitle) || trip.destination,
         fechaViaje: format(
           parse(
             (isOutbound ? departureDate : returnDate) || "",
@@ -475,11 +469,10 @@ export default function ConfirmationPageContent({
     ) => {
       const payload = {
         emailDestino: primaryPassenger.email,
-        reservaCodigo: `${bookingReference}-${seat.number}`,
+        reservaCodigo: gdsTicketNumbers[seat.number] || `${bookingReference}-${seat.number}`,
         horaSalida: trip.departureTime,
         origen:
-          (label === "Ida" ? originTitle : destinationTitle) ||
-          trip.origin,
+          (label === "Ida" ? originTitle : destinationTitle) || trip.origin,
         horaLlegada: trip.arrivalTime,
         destino:
           (label === "Ida" ? destinationTitle : originTitle) ||
@@ -499,7 +492,8 @@ export default function ConfirmationPageContent({
         empresa: trip.company,
         servicioTipo: trip.busType,
         asientos: seat.number,
-        terminal: (label === "Ida" ? originTitle : destinationTitle) || "Terminal",
+        terminal:
+          (label === "Ida" ? originTitle : destinationTitle) || "Terminal",
         puerta: Math.floor(Math.random() * 20 + 1).toString(),
         pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
         documento: passenger.documentNumber || "Sin documento",
@@ -621,6 +615,7 @@ export default function ConfirmationPageContent({
   // =====================================================================
   const sendConfirmationEmail = async (
     passengerEmail: string,
+    ticketOverrides?: { ticketMap: Record<string, string>; firstTicket: string },
   ): Promise<boolean> => {
     if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) {
       console.warn("⚠️ No hay datos suficientes para enviar email");
@@ -638,11 +633,10 @@ export default function ConfirmationPageContent({
     ) => {
       const payload = {
         emailDestino: passengerEmail, // Siempre enviamos al email del comprador principal por ahora
-        reservaCodigo: `${bookingReference}-${seat.number}`,
+        reservaCodigo: ticketOverrides?.ticketMap[seat.number] || ticketOverrides?.firstTicket || gdsTicketNumbers[seat.number] || `${bookingReference}-${seat.number}`,
         horaSalida: trip.departureTime,
         origen:
-          (label === "Ida" ? originTitle : destinationTitle) ||
-          trip.origin,
+          (label === "Ida" ? originTitle : destinationTitle) || trip.origin,
         horaLlegada: trip.arrivalTime,
         destino:
           (label === "Ida" ? destinationTitle : originTitle) ||
@@ -662,7 +656,8 @@ export default function ConfirmationPageContent({
         empresa: trip.company,
         servicioTipo: trip.busType,
         asientos: seat.number,
-        terminal: (label === "Ida" ? originTitle : destinationTitle) || "Terminal",
+        terminal:
+          (label === "Ida" ? originTitle : destinationTitle) || "Terminal",
         puerta: Math.floor(Math.random() * 20 + 1).toString(),
         pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
         documento: passenger.documentNumber || "Sin documento",
@@ -797,7 +792,7 @@ export default function ConfirmationPageContent({
       // La API de email generará el PDF automáticamente
       const payload = {
         emailDestino: passenger.email,
-        reservaCodigo: `${bookingReference}-${passengerSeat}`,
+        reservaCodigo: gdsTicketNumbers[passengerSeat] || `${bookingReference}-${passengerSeat}`,
         horaSalida: selectedOutboundTrip.departureTime,
         origen: originTitle || selectedOutboundTrip.origin,
         horaLlegada: selectedOutboundTrip.arrivalTime,
@@ -851,6 +846,117 @@ export default function ConfirmationPageContent({
       // Desactivar loader
       setProcessing({ type: null, passengerIndex: null });
     }
+  };
+
+  // =====================================================================
+  // VENDER ASIENTOS EN GDS TRAS PAGO EXITOSO
+  // =====================================================================
+  const sellGdsSeats = async () => {
+    if (!selectedOutboundTrip) {
+      console.warn("[sell] No hay viaje de ida, se omite venta GDS");
+      return { ticketMap: {} as Record<string, string>, firstTicket: null };
+    }
+
+    // Acumula todos los ticketNumbers por seatNumber
+    const ticketMap: Record<string, string> = {};
+
+    // Helper para llamar al endpoint por cada tramo
+    const callSell = async (
+      trip: NonNullable<typeof selectedOutboundTrip>,
+      seats: typeof selectedSeats,
+      passengers: typeof passengerDetails,
+      offset: number,
+    ) => {
+      const seatPayloads = seats.map((seat, i) => {
+        const passenger = passengers[offset + i];
+        return {
+          seat: seat.number,
+          qualityCode: seat.qualityCode ?? "CA",
+          amount: seat.price || trip.price || 0,
+          docType: passenger?.docType?.codigo || "D",
+          docNumber: passenger?.documentNumber || "0",
+        };
+      });
+
+      const payload = {
+        company: trip.company,
+        serviceId: trip.id,
+        connectionId: connectionId ?? undefined,
+        originId: trip.origin,
+        destinationId: trip.destination,
+        ticketCount: seats.length,
+        totalAmount: seats.reduce((acc, s) => acc + (s.price || trip.price || 0), 0),
+        seats: seatPayloads,
+      };
+
+      console.log("[sell] Payload GDS:", JSON.stringify(payload));
+
+      const res = await fetch("/api/gds/sell", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error("[sell] Error HTTP del GDS:", JSON.stringify(data));
+        return;
+      }
+
+      // Validar CodigoError: "0" = éxito, cualquier otro = error del GDS
+      const codigoError = data?.data?.raw?.CodigoError;
+      if (codigoError !== undefined && codigoError !== "0") {
+        const desc = data?.data?.raw?.Descripcion || "Error desconocido";
+        console.error(`[sell] GDS rechazó la venta — CodigoError=${codigoError}: ${desc}`);
+        return;
+      }
+
+      // Mapear ticketNumbers[i] → seats[i].number
+      const ticketNumbers: string[] = data?.data?.ticketNumbers ?? [];
+      seats.forEach((seat, i) => {
+        if (ticketNumbers[i]) {
+          ticketMap[seat.number] = ticketNumbers[i];
+        }
+      });
+
+      console.log("[sell] Asientos vendidos — ticketNumbers:", ticketNumbers);
+    };
+
+    try {
+      // IDA
+      if (selectedSeats.length > 0) {
+        await callSell(selectedOutboundTrip, selectedSeats, passengerDetails, 0);
+      }
+
+      // VUELTA
+      if (selectedReturnTrip && selectedReturnSeats.length > 0) {
+        await callSell(
+          selectedReturnTrip,
+          selectedReturnSeats,
+          passengerDetails,
+          selectedSeats.length,
+        );
+      }
+
+      // Persistir el mapa en estado para que los PDFs/emails lo usen
+      if (Object.keys(ticketMap).length > 0) {
+        setGdsTicketNumbers(ticketMap);
+
+        // El primer ticketNumber de ida es el bookingReference oficial del GDS
+        const firstTicket = Object.values(ticketMap)[0];
+        if (firstTicket) {
+          setBookingReference(firstTicket);
+          console.log("[sell] bookingReference asignado al ticketNumber:", firstTicket);
+        }
+      }
+    } catch (error: any) {
+      console.error("[sell] Error inesperado al vender asientos:", error.message);
+    }
+
+    // Retornar los valores frescos para quien llama (evitar stale closure)
+    const firstTicket = Object.values(ticketMap)[0] ?? null;
+    return { ticketMap, firstTicket };
   };
 
   // =====================================================================
@@ -921,13 +1027,19 @@ export default function ConfirmationPageContent({
       cancelado: false,
     });
 
-    // 4. Enviar email de confirmación automático
+    // 4. Vender asientos en el GDS
+    const sellResult = await sellGdsSeats();
+
+    // 5. Enviar email de confirmación automático
     if (primaryPassenger?.email) {
       console.log("Enviando email automático para pago con tarjeta...");
-      await sendConfirmationEmail(primaryPassenger.email);
+      await sendConfirmationEmail(
+        primaryPassenger.email,
+        sellResult.firstTicket ? sellResult : undefined,
+      );
     }
 
-    // 5. Guardar en base de datos
+    // 6. Guardar en base de datos
     saveTarjetaBookingToDatabase();
   };
 
@@ -962,10 +1074,16 @@ export default function ConfirmationPageContent({
             setStorePaymentStatus("completed");
           }
 
+          // Vender asientos en el GDS
+          const sellResult = await sellGdsSeats();
+
           // Enviar email de confirmación automático
           if (primaryPassenger?.email) {
             console.log("Enviando email automático para pago Pagopar...");
-            await sendConfirmationEmail(primaryPassenger.email);
+            await sendConfirmationEmail(
+              primaryPassenger.email,
+              sellResult.firstTicket ? sellResult : undefined,
+            );
           }
 
           await saveBookingToDatabase(payment, hash);
@@ -1540,9 +1658,7 @@ export default function ConfirmationPageContent({
                         <p className="text-3xl font-bold text-background">
                           {selectedOutboundTrip.arrivalTime}
                         </p>
-                        <p className="text-background/60">
-                          {destinationTitle}
-                        </p>
+                        <p className="text-background/60">{destinationTitle}</p>
                       </div>
                     </div>
 
@@ -1640,9 +1756,7 @@ export default function ConfirmationPageContent({
                           <p className="text-3xl font-bold text-background">
                             {selectedReturnTrip.arrivalTime}
                           </p>
-                          <p className="text-background/60">
-                            {originTitle}
-                          </p>
+                          <p className="text-background/60">{originTitle}</p>
                         </div>
                       </div>
 

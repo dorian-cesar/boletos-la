@@ -13,7 +13,11 @@ interface UseSeatsResult {
   error: string | null;
 }
 
-export function useSeats({ serviceId, originId, destinationId }: UseSeatsParams): UseSeatsResult {
+export function useSeats({
+  serviceId,
+  originId,
+  destinationId,
+}: UseSeatsParams): UseSeatsResult {
   const [seats, setSeats] = useState<Seat[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +32,11 @@ export function useSeats({ serviceId, originId, destinationId }: UseSeatsParams)
         setLoading(true);
         setError(null);
 
-        const params = new URLSearchParams({ serviceId, originId, destinationId });
+        const params = new URLSearchParams({
+          serviceId,
+          originId,
+          destinationId,
+        });
         const res = await fetch(`/api/gds/seats?${params.toString()}`);
 
         if (!res.ok) {
@@ -36,9 +44,12 @@ export function useSeats({ serviceId, originId, destinationId }: UseSeatsParams)
         }
 
         const json = await res.json();
-        
+
         if (json.status !== "success") {
-          throw new Error(json.error?.message || "Error al obtener disponibilidad de asientos");
+          throw new Error(
+            json.error?.message ||
+              "Error al obtener disponibilidad de asientos",
+          );
         }
 
         const floors = json.data.floors || [];
@@ -55,6 +66,7 @@ export function useSeats({ serviceId, originId, destinationId }: UseSeatsParams)
               type: "standard", // Simplificado a standard según requerimiento
               status: s.Estado === "L" ? "available" : "occupied",
               price: s.price || 0, // El backend podría no devolver el precio aquí todavía
+              qualityCode: s.calidad || undefined,
             });
           });
         });
