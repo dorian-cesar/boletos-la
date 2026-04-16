@@ -409,43 +409,6 @@ export default function SeatsPage() {
                     </div>
                   </div>
                 )}
-
-                {/* Navigation for Return */}
-                {tripType === "round-trip" && selectedReturnTrip && (
-                  <div className="flex flex-col sm:flex-row justify-between gap-3 mt-6">
-                    <Button
-                      variant="outline"
-                      onClick={() => setSelectingReturn(false)}
-                      disabled={!selectingReturn}
-                      className={cn(
-                        "border-background/20 text-background hover:bg-background/10 w-full sm:w-auto",
-                        !selectingReturn && "opacity-50",
-                      )}
-                    >
-                      <ChevronLeft className="h-4 w-4 mr-2" />
-                      Asientos de Ida
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => setSelectingReturn(true)}
-                      disabled={
-                        selectingReturn ||
-                        selectedSeats.length === 0 ||
-                        selectedSeats.length > 4
-                      }
-                      className={cn(
-                        "border-background/20 text-background hover:bg-background/10 w-full sm:w-auto",
-                        (selectingReturn ||
-                          selectedSeats.length === 0 ||
-                          selectedSeats.length > 4) &&
-                          "opacity-50",
-                      )}
-                    >
-                      Asientos de Regreso
-                      <ChevronRight className="h-4 w-4 ml-2" />
-                    </Button>
-                  </div>
-                )}
               </div>
 
               {/* Summary Sidebar */}
