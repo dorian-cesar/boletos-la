@@ -422,7 +422,7 @@ export default function ServicesPage() {
                     setShowingReturn(false);
                     setSelectedOutboundTrip(null);
                   }}
-                  className="border-background/20 text-background hover:bg-background/10"
+                  className="border-background/20 text-background bg-background/10 hover:bg-background/20"
                 >
                   Volver a seleccionar ida
                 </Button>
