@@ -342,9 +342,9 @@ export function PassengerForm({
 
       {/* ── Búsqueda por documento ── */}
       <div className="space-y-3">
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           {/* DocType selector */}
-          <div className="relative shrink-0">
+          <div className="relative w-full sm:w-auto sm:shrink-0">
             <select
               value={docType}
               onChange={(e) => {
@@ -359,7 +359,7 @@ export function PassengerForm({
                 handleUpdate("phone", "");
               }}
               disabled={loadingDocTypes}
-              className="h-11 pl-3 pr-8 rounded-md bg-background/10 border border-background/30 text-background text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
+              className="h-11 pl-3 pr-8 rounded-md bg-background/10 border border-background/30 text-background text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 w-full"
             >
               {loadingDocTypes ? (
                 <option value="">Cargando...</option>
@@ -379,7 +379,7 @@ export function PassengerForm({
           </div>
 
           {/* DocNumber input */}
-          <div className="relative flex-1">
+          <div className="relative flex-1 w-full sm:w-auto">
             <Input
               placeholder="N° de documento"
               value={docNumber}
@@ -390,7 +390,7 @@ export function PassengerForm({
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleSearch();
               }}
-              className="h-11 pr-10 bg-background/10 border-background/30 text-background placeholder:text-background/40"
+              className="h-11 pr-10 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full"
               disabled={isSearching}
             />
             {docNumber && (
@@ -416,7 +416,7 @@ export function PassengerForm({
             type="button"
             onClick={handleSearch}
             disabled={!docNumber.trim() || isSearching}
-            className="h-11 px-3 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 shrink-0"
+            className="h-11 px-3 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 w-full sm:w-auto sm:shrink-0"
             variant="outline"
           >
             {isSearching ? (
@@ -426,7 +426,6 @@ export function PassengerForm({
             )}
           </Button>
         </div>
-
         {/* Status banner */}
         {searchStatus === "found" && (
           <div className="flex items-center justify-between gap-2 text-xs px-3 py-2 rounded-lg border border-green-500/30 bg-green-500/10 animate-fade-in">

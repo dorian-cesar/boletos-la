@@ -104,12 +104,9 @@ export default function ConfirmationPageContent({
     resetBooking,
     setBookingReference,
     setPaymentStatus: setStorePaymentStatus,
+    originTitle,
+    destinationTitle,
   } = useBookingStore();
-
-  const originCity = cities.find((c) => c.id === selectedOutboundTrip?.origin);
-  const destinationCity = cities.find(
-    (c) => c.id === selectedOutboundTrip?.destination,
-  );
 
   const primaryPassenger = passengerDetails[0];
 
@@ -191,11 +188,11 @@ export default function ConfirmationPageContent({
           reservaCodigo: `${bookingReference}-${passengerSeat}`,
           horaSalida: trip.departureTime,
           origen:
-            (isOutbound ? originCity?.name : destinationCity?.name) ||
+            (isOutbound ? originTitle : destinationTitle) ||
             trip.origin,
           horaLlegada: trip.arrivalTime,
           destino:
-            (isOutbound ? destinationCity?.name : originCity?.name) ||
+            (isOutbound ? destinationTitle : originTitle) ||
             trip.destination,
           fechaViaje: format(
             parse(
@@ -212,7 +209,7 @@ export default function ConfirmationPageContent({
           empresa: trip.company,
           servicioTipo: trip.busType,
           asientos: passengerSeat, // Solo el asiento de este pasajero
-          terminal: `Terminal de Ómnibus de ${isOutbound ? originCity?.name : destinationCity?.name}`,
+          terminal: (isOutbound ? originTitle : destinationTitle) || "Terminal",
           puerta: Math.floor(Math.random() * 20 + 1).toString(),
           pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
           documento: passenger.documentNumber || "Sin documento",
@@ -372,11 +369,11 @@ export default function ConfirmationPageContent({
         reservaCodigo: `${bookingReference}-${passengerSeat}`,
         horaSalida: trip.departureTime,
         origen:
-          (isOutbound ? originCity?.name : destinationCity?.name) ||
+          (isOutbound ? originTitle : destinationTitle) ||
           trip.origin,
         horaLlegada: trip.arrivalTime,
         destino:
-          (isOutbound ? destinationCity?.name : originCity?.name) ||
+          (isOutbound ? destinationTitle : originTitle) ||
           trip.destination,
         fechaViaje: format(
           parse(
@@ -393,7 +390,7 @@ export default function ConfirmationPageContent({
         empresa: trip.company,
         servicioTipo: trip.busType,
         asientos: passengerSeat,
-        terminal: `Terminal de Ómnibus de ${isOutbound ? originCity?.name : destinationCity?.name}`,
+        terminal: (isOutbound ? originTitle : destinationTitle) || "Terminal",
         puerta: Math.floor(Math.random() * 20 + 1).toString(),
         pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
         documento: passenger.documentNumber || "Sin documento",
@@ -481,11 +478,11 @@ export default function ConfirmationPageContent({
         reservaCodigo: `${bookingReference}-${seat.number}`,
         horaSalida: trip.departureTime,
         origen:
-          (label === "Ida" ? originCity?.name : destinationCity?.name) ||
+          (label === "Ida" ? originTitle : destinationTitle) ||
           trip.origin,
         horaLlegada: trip.arrivalTime,
         destino:
-          (label === "Ida" ? destinationCity?.name : originCity?.name) ||
+          (label === "Ida" ? destinationTitle : originTitle) ||
           trip.destination,
         fechaViaje: format(
           parse(
@@ -502,7 +499,7 @@ export default function ConfirmationPageContent({
         empresa: trip.company,
         servicioTipo: trip.busType,
         asientos: seat.number,
-        terminal: `Terminal de Ómnibus de ${label === "Ida" ? originCity?.name : destinationCity?.name}`,
+        terminal: (label === "Ida" ? originTitle : destinationTitle) || "Terminal",
         puerta: Math.floor(Math.random() * 20 + 1).toString(),
         pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
         documento: passenger.documentNumber || "Sin documento",
@@ -644,11 +641,11 @@ export default function ConfirmationPageContent({
         reservaCodigo: `${bookingReference}-${seat.number}`,
         horaSalida: trip.departureTime,
         origen:
-          (label === "Ida" ? originCity?.name : destinationCity?.name) ||
+          (label === "Ida" ? originTitle : destinationTitle) ||
           trip.origin,
         horaLlegada: trip.arrivalTime,
         destino:
-          (label === "Ida" ? destinationCity?.name : originCity?.name) ||
+          (label === "Ida" ? destinationTitle : originTitle) ||
           trip.destination,
         fechaViaje: format(
           parse(
@@ -665,7 +662,7 @@ export default function ConfirmationPageContent({
         empresa: trip.company,
         servicioTipo: trip.busType,
         asientos: seat.number,
-        terminal: `Terminal de Ómnibus de ${label === "Ida" ? originCity?.name : destinationCity?.name}`,
+        terminal: (label === "Ida" ? originTitle : destinationTitle) || "Terminal",
         puerta: Math.floor(Math.random() * 20 + 1).toString(),
         pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
         documento: passenger.documentNumber || "Sin documento",
@@ -802,9 +799,9 @@ export default function ConfirmationPageContent({
         emailDestino: passenger.email,
         reservaCodigo: `${bookingReference}-${passengerSeat}`,
         horaSalida: selectedOutboundTrip.departureTime,
-        origen: originCity?.name || selectedOutboundTrip.origin,
+        origen: originTitle || selectedOutboundTrip.origin,
         horaLlegada: selectedOutboundTrip.arrivalTime,
-        destino: destinationCity?.name || selectedOutboundTrip.destination,
+        destino: destinationTitle || selectedOutboundTrip.destination,
         fechaViaje: format(
           parse(departureDate || "", "yyyy-MM-dd", new Date()),
           "d 'de' MMMM, yyyy",
@@ -816,7 +813,7 @@ export default function ConfirmationPageContent({
         empresa: selectedOutboundTrip.company,
         servicioTipo: selectedOutboundTrip.busType,
         asientos: passengerSeat,
-        terminal: `Terminal de Ómnibus de ${originCity?.name}`,
+        terminal: originTitle || "Terminal",
         puerta: Math.floor(Math.random() * 20 + 1).toString(),
         pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
         documento: passenger.documentNumber || "Sin documento",
@@ -1332,7 +1329,7 @@ export default function ConfirmationPageContent({
               <div className="space-y-3">
                 <p className="text-background/80">
                   <span className="font-medium text-background">Ruta:</span>{" "}
-                  {originCity?.name} → {destinationCity?.name}
+                  {originTitle} → {destinationTitle}
                 </p>
                 <p className="text-background/80">
                   <span className="font-medium text-background">Fecha:</span>{" "}
@@ -1532,7 +1529,7 @@ export default function ConfirmationPageContent({
                         <p className="text-3xl font-bold text-background">
                           {selectedOutboundTrip.departureTime}
                         </p>
-                        <p className="text-background/60">{originCity?.name}</p>
+                        <p className="text-background/60">{originTitle}</p>
                       </div>
                       <div className="flex-1 flex items-center">
                         <div className="w-full h-0.5 bg-background/20 relative">
@@ -1544,7 +1541,7 @@ export default function ConfirmationPageContent({
                           {selectedOutboundTrip.arrivalTime}
                         </p>
                         <p className="text-background/60">
-                          {destinationCity?.name}
+                          {destinationTitle}
                         </p>
                       </div>
                     </div>
@@ -1599,7 +1596,7 @@ export default function ConfirmationPageContent({
                     <span className="font-medium text-background">
                       Terminal de salida:
                     </span>{" "}
-                    Terminal de Ómnibus de {originCity?.name}
+                    {originTitle}
                   </p>
                   <p className="text-background/60">
                     <span className="font-medium text-background">Puerta:</span>{" "}
@@ -1631,7 +1628,7 @@ export default function ConfirmationPageContent({
                             {selectedReturnTrip.departureTime}
                           </p>
                           <p className="text-background/60">
-                            {destinationCity?.name}
+                            {destinationTitle}
                           </p>
                         </div>
                         <div className="flex-1 flex items-center">
@@ -1644,7 +1641,7 @@ export default function ConfirmationPageContent({
                             {selectedReturnTrip.arrivalTime}
                           </p>
                           <p className="text-background/60">
-                            {originCity?.name}
+                            {originTitle}
                           </p>
                         </div>
                       </div>
@@ -1701,7 +1698,7 @@ export default function ConfirmationPageContent({
                       <span className="font-medium text-background">
                         Terminal de salida:
                       </span>{" "}
-                      Terminal de Ómnibus de {destinationCity?.name}
+                      {destinationTitle}
                     </p>
                     <p className="text-background/60">
                       <span className="font-medium text-background">
@@ -1812,23 +1809,9 @@ export default function ConfirmationPageContent({
                 </h3>
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-background/60">Subtotal</span>
+                    <span className="text-background/60">Asientos</span>
                     <span className="text-background">
-                      Gs.{" "}
-                      {Math.round(totalPrice * 0.82).toLocaleString("es-PY")}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-background/60">IVA (10%)</span>
-                    <span className="text-background">
-                      Gs. {Math.round(totalPrice * 0.1).toLocaleString("es-PY")}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-background/60">Servicio (8%)</span>
-                    <span className="text-background">
-                      Gs.{" "}
-                      {Math.round(totalPrice * 0.08).toLocaleString("es-PY")}
+                      Gs. {totalPrice.toLocaleString("es-PY")}
                     </span>
                   </div>
                   <div className="pt-3 border-t border-background/20 flex justify-between font-bold text-lg">

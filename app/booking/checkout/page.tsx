@@ -53,21 +53,7 @@ export default function CheckoutPage() {
     destinationTitle,
   } = useBookingStore();
 
-  const [timeLeft, setTimeLeft] = useState(8 * 60); // 8 minutos
-
-  useEffect(() => {
-    if (timeLeft <= 0) return;
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [timeLeft]);
-
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m}:${s.toString().padStart(2, "0")}`;
-  };
+  const [isExpired, setIsExpired] = useState(false);
 
   // Validar que los pasajeros del store estén completos
   const isFormValid =
@@ -531,14 +517,11 @@ export default function CheckoutPage() {
             {/* Order Summary sidebar */}
             <div className="lg:col-span-1 w-full">
               <Card className="p-4 sm:p-6 sticky top-24 animate-slide-in-right bg-background/5 backdrop-blur-sm border-background/20 w-full">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg sm:text-xl font-bold text-background truncate">
+                <div className="flex flex-col items-start gap-4 mb-6">
+                  <h3 className="text-lg sm:text-xl font-bold text-background truncate w-full">
                     Resumen de Compra
                   </h3>
-                  <div className="flex items-center text-orange-500 bg-orange-500/10 px-3 py-1.5 rounded-md font-mono text-lg font-bold border border-orange-500/30">
-                    <Timer className="w-5 h-5 mr-2 animate-pulse" />
-                    {formatTime(timeLeft)}
-                  </div>
+                  <CheckoutTimer onExpire={() => setIsExpired(true)} />
                 </div>
 
                 {/* Outbound Trip */}
@@ -689,11 +672,11 @@ export default function CheckoutPage() {
                     passengerDetails.length === 0 ||
                     !selectedPaymentMethod ||
                     isProcessing ||
-                    timeLeft <= 0
+                    isExpired
                   }
                   className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground h-12 sm:h-14 text-base sm:text-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
                 >
-                  {timeLeft <= 0 ? (
+                  {isExpired ? (
                     "Reserva caducada"
                   ) : isProcessing ? (
                     <>
@@ -748,6 +731,40 @@ export default function CheckoutPage() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// ── Subcomponentes ────────────────────────────────────────────────────────────
+
+function CheckoutTimer({ onExpire }: { onExpire: () => void }) {
+  const [seconds, setSeconds] = useState(8 * 60);
+
+  useEffect(() => {
+    if (seconds <= 0) {
+      onExpire();
+      return;
+    }
+    const interval = setInterval(() => {
+      setSeconds((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [seconds, onExpire]);
+
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+
+  return (
+    <div className="flex items-center gap-3 bg-emerald-500/15 border-2 border-emerald-500/40 px-4 py-2 rounded-2xl shadow-[0_0_25px_rgba(16,185,129,0.2)] transition-all animate-fade-in hover:scale-[1.02]">
+      <div className="relative shrink-0">
+        <Timer className="w-5 h-5 text-emerald-400" />
+        <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,1)] border-2 border-[#1a2332]" />
+      </div>
+      <div className="flex flex-col min-w-[65px]">
+        <span className="text-xl font-black font-mono text-center text-emerald-400 tabular-nums leading-none drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]">
+          {m}:{s.toString().padStart(2, "0")}
+        </span>
+      </div>
     </div>
   );
 }

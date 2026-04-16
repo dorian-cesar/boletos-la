@@ -1,4 +1,3 @@
-import { Loader2, Bus } from "lucide-react";
 import { BookingProgress } from "@/components/booking-progress";
 import Image from "next/image";
 
