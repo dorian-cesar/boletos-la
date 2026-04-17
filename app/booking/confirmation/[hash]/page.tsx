@@ -1,23 +1,36 @@
-import { Suspense } from "react";
-import ConfirmationPageContent from "./confirmation-content";
+"use client";
+
+import { use, useState } from "react";
 import ConfirmationLoading from "../confirmation-loading";
+import ConfirmationPageContent from "./confirmation-content";
 
 interface ConfirmationPageProps {
-  params: Promise<{
-    hash: string;
-  }>;
+  params: Promise<{ hash: string }>;
 }
 
-export const dynamic = "force-dynamic";
+export default function ConfirmationPage({ params }: ConfirmationPageProps) {
+  const { hash } = use(params);
+  const [ready, setReady] = useState<{
+    paymentDetails: any;
+    isTarjetaPayment: boolean;
+  } | null>(null);
 
-export default async function ConfirmationPage({
-  params,
-}: ConfirmationPageProps) {
-  const { hash } = await params;
+  if (!ready) {
+    return (
+      <ConfirmationLoading
+        hash={hash}
+        onReady={(paymentDetails, isTarjeta) =>
+          setReady({ paymentDetails, isTarjetaPayment: isTarjeta })
+        }
+      />
+    );
+  }
 
   return (
-    <Suspense fallback={<ConfirmationLoading />}>
-      <ConfirmationPageContent hash={hash} />
-    </Suspense>
+    <ConfirmationPageContent
+      hash={hash}
+      paymentDetails={ready.paymentDetails}
+      isTarjetaPayment={ready.isTarjetaPayment}
+    />
   );
 }

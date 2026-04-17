@@ -46,8 +46,6 @@ export default function CheckoutPage() {
     passengerDetails,
     totalPrice,
     setStep,
-    setBookingReference,
-    setPaymentStatus,
     resetBooking,
     originTitle,
     destinationTitle,
@@ -80,20 +78,12 @@ export default function CheckoutPage() {
     setIsProcessing(true);
     try {
       if (selectedPaymentMethod === "tarjeta") {
-        const reference = `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-        setBookingReference(reference);
-        setPaymentStatus("completed");
-
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
         router.push("/booking/confirmation/tarjeta");
       } else if (selectedPaymentMethod === "pagopar") {
         const primaryPassenger = passengerDetails[0];
-        if (!primaryPassenger) {
-          throw new Error("No hay datos del pasajero");
-        }
+        if (!primaryPassenger) throw new Error("No hay datos del pasajero");
 
-        const paymentData = {
+        const encryptedData = encryptData({
           montoTotal: totalPrice,
           datosComprador: {
             nombre: primaryPassenger.firstName,
@@ -102,10 +92,7 @@ export default function CheckoutPage() {
             telefono: primaryPassenger.phone.replace(/\D/g, ""),
             ruc: primaryPassenger.documentNumber,
           },
-        };
-
-        console.log("📤 Enviando a Pagopar:", paymentData);
-        const encryptedData = encryptData(paymentData);
+        });
 
         const response = await fetch("/api/pagopar/init", {
           method: "POST",
@@ -114,7 +101,6 @@ export default function CheckoutPage() {
         });
 
         const result = await response.json();
-        console.log("📥 Respuesta Pagopar:", result);
 
         if (result.success === true && result.hash) {
           localStorage.setItem("pagopar_last_hash", result.hash);

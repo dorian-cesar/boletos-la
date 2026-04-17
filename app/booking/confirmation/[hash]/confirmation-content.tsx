@@ -19,7 +19,6 @@ import {
   FileText,
   Loader2,
   AlertCircle,
-  Wallet,
   Send,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -36,6 +35,8 @@ import Image from "next/image";
 
 interface ConfirmationPageContentProps {
   hash: string;
+  paymentDetails: any;
+  isTarjetaPayment: boolean;
 }
 
 // Interfaz para los datos del boleto
@@ -51,6 +52,8 @@ interface TicketData {
 
 export default function ConfirmationPageContent({
   hash,
+  paymentDetails,
+  isTarjetaPayment,
 }: ConfirmationPageContentProps) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -63,26 +66,11 @@ export default function ConfirmationPageContent({
   const [ticketPreviewData, setTicketPreviewData] = useState<any>(null);
   const [generatedTickets, setGeneratedTickets] = useState<TicketData[]>([]);
 
-  // Mapa seatNumber → ticketNumber asignado por el GDS tras /sell exitoso
-  const [gdsTicketNumbers, setGdsTicketNumbers] = useState<
-    Record<string, string>
-  >({});
-
   // UN SOLO ESTADO PARA CONTROLAR TODAS LAS ACCIONES
   const [processing, setProcessing] = useState<{
     type: "all-tickets" | "single-ticket" | "email-all" | "email-single" | null;
     passengerIndex?: number | null;
   }>({ type: null, passengerIndex: null });
-
-  // ESTADOS PARA PAGO
-  const [pagoparHash, setPagoparHash] = useState<string | null>(hash);
-  const [paymentStatus, setPaymentStatus] = useState<
-    "checking" | "paid" | "pending" | "failed" | "cancelled"
-  >("checking");
-  const [paymentDetails, setPaymentDetails] = useState<any>(null);
-  const [savingToDB, setSavingToDB] = useState(false);
-  const [showPaymentStatus, setShowPaymentStatus] = useState(true);
-  const [isTarjetaPayment, setIsTarjetaPayment] = useState(false);
 
   // ESTADO PARA EMAIL AUTOMÁTICO
   const [autoEmailStatus, setAutoEmailStatus] = useState<
@@ -103,11 +91,8 @@ export default function ConfirmationPageContent({
     bookingReference,
     setStep,
     resetBooking,
-    setBookingReference,
-    setPaymentStatus: setStorePaymentStatus,
     originTitle,
     destinationTitle,
-    connectionId,
   } = useBookingStore();
 
   const primaryPassenger = passengerDetails[0];
@@ -188,7 +173,7 @@ export default function ConfirmationPageContent({
         // Preparar payload EXACTO como lo espera el backend externo
         const payload = {
           reservaCodigo:
-            gdsTicketNumbers[`${label}-${passengerSeat}`] ||
+            seatsArray[seatIndex]?.ticketNumber ||
             `${bookingReference}-${passengerSeat}`,
           horaSalida: trip.departureTime,
           origen: (isOutbound ? originTitle : destinationTitle) || trip.origin,
@@ -365,7 +350,7 @@ export default function ConfirmationPageContent({
       // Preparar payload
       const payload = {
         reservaCodigo:
-          gdsTicketNumbers[`${label}-${passengerSeat}`] ||
+          seatsArray[seatIndex]?.ticketNumber ||
           `${bookingReference}-${passengerSeat}`,
         horaSalida: trip.departureTime,
         origen: (isOutbound ? originTitle : destinationTitle) || trip.origin,
@@ -473,7 +458,7 @@ export default function ConfirmationPageContent({
       const payload = {
         emailDestino: primaryPassenger.email,
         reservaCodigo:
-          gdsTicketNumbers[`${label}-${seat.number}`] ||
+          seat.ticketNumber ||
           `${bookingReference}-${seat.number}`,
         horaSalida: trip.departureTime,
         origen:
@@ -620,10 +605,6 @@ export default function ConfirmationPageContent({
   // =====================================================================
   const sendConfirmationEmail = async (
     passengerEmail: string,
-    ticketOverrides?: {
-      ticketMap: Record<string, string>;
-      firstTicket: string;
-    },
   ): Promise<boolean> => {
     if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) {
       console.warn("⚠️ No hay datos suficientes para enviar email");
@@ -640,11 +621,9 @@ export default function ConfirmationPageContent({
       total: number,
     ) => {
       const payload = {
-        emailDestino: passengerEmail, // Siempre enviamos al email del comprador principal por ahora
+        emailDestino: passengerEmail,
         reservaCodigo:
-          ticketOverrides?.ticketMap[`${label}-${seat.number}`] ||
-          ticketOverrides?.firstTicket ||
-          gdsTicketNumbers[`${label}-${seat.number}`] ||
+          seat.ticketNumber ||
           `${bookingReference}-${seat.number}`,
         horaSalida: trip.departureTime,
         origen:
@@ -793,8 +772,11 @@ export default function ConfirmationPageContent({
 
     try {
       // Buscar el asiento correspondiente
+      const seatIndex = isOutbound ? passengerIndex : passengerIndex - selectedSeats.length;
+      const seatsArray = isOutbound ? selectedSeats : selectedReturnSeats;
+      const seatObj = seatsArray[seatIndex];
       const passengerSeat =
-        selectedSeats[passengerIndex]?.number ||
+        seatObj?.number ||
         passenger.seatNumber ||
         `A${passengerIndex + 1}`;
 
@@ -803,30 +785,30 @@ export default function ConfirmationPageContent({
         totalPrice / passengerDetails.length,
       );
 
-      // Preparar payload para la API de email
-      // AHORA NO NECESITAMOS GENERAR EL PDF PRIMERO
-      // La API de email generará el PDF automáticamente
+      const trip = isOutbound ? selectedOutboundTrip : selectedReturnTrip;
+      if (!trip) return;
+
       const payload = {
         emailDestino: passenger.email,
         reservaCodigo:
-          gdsTicketNumbers[`${label}-${passengerSeat}`] ||
+          seatObj?.ticketNumber ||
           `${bookingReference}-${passengerSeat}`,
-        horaSalida: selectedOutboundTrip.departureTime,
-        origen: originTitle || selectedOutboundTrip.origin,
-        horaLlegada: selectedOutboundTrip.arrivalTime,
-        destino: destinationTitle || selectedOutboundTrip.destination,
+        horaSalida: trip.departureTime,
+        origen: (isOutbound ? originTitle : destinationTitle) || trip.origin,
+        horaLlegada: trip.arrivalTime,
+        destino: (isOutbound ? destinationTitle : originTitle) || trip.destination,
         fechaViaje: format(
-          parse(departureDate || "", "yyyy-MM-dd", new Date()),
+          parse((isOutbound ? departureDate : returnDate) || "", "yyyy-MM-dd", new Date()),
           "d 'de' MMMM, yyyy",
           {
             locale: es,
           },
         ),
-        duracion: selectedOutboundTrip.duration,
-        empresa: selectedOutboundTrip.company,
-        servicioTipo: selectedOutboundTrip.busType,
+        duracion: trip.duration,
+        empresa: trip.company,
+        servicioTipo: trip.busType,
         asientos: passengerSeat,
-        terminal: originTitle || "Terminal",
+        terminal: (isOutbound ? originTitle : destinationTitle) || "Terminal",
         puerta: Math.floor(Math.random() * 20 + 1).toString(),
         pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
         documento: passenger.documentNumber || "Sin documento",
@@ -866,399 +848,24 @@ export default function ConfirmationPageContent({
     }
   };
 
-  // =====================================================================
-  // VENDER ASIENTOS EN GDS TRAS PAGO EXITOSO
-  // =====================================================================
-  const sellGdsSeats = async () => {
-    if (!selectedOutboundTrip) {
-      console.warn("[sell] No hay viaje de ida, se omite venta GDS");
-      return { ticketMap: {} as Record<string, string>, firstTicket: null };
-    }
+  const autoEmailFiredRef = useRef(false);
 
-    // Acumula todos los ticketNumbers por seatNumber
-    const ticketMap: Record<string, string> = {};
-
-    // Helper para llamar al endpoint por cada tramo
-    const callSell = async (
-      trip: NonNullable<typeof selectedOutboundTrip>,
-      seats: typeof selectedSeats,
-      passengers: typeof passengerDetails,
-      offset: number,
-      label: string,
-    ) => {
-      const seatPayloads = seats.map((seat, i) => {
-        const passenger = passengers[offset + i];
-        return {
-          seat: seat.number,
-          qualityCode: seat.qualityCode ?? "CA",
-          amount: seat.price || trip.price || 0,
-          docType: passenger?.docType?.codigo || "D",
-          docNumber: passenger?.documentNumber || "0",
-        };
-      });
-
-      const payload = {
-        company: trip.company,
-        serviceId: trip.id,
-        connectionId: connectionId ?? undefined,
-        originId: trip.origin,
-        destinationId: trip.destination,
-        ticketCount: seats.length,
-        totalAmount: seats.reduce(
-          (acc, s) => acc + (s.price || trip.price || 0),
-          0,
-        ),
-        seats: seatPayloads,
-      };
-
-      console.log(`[sell] Payload GDS (${label}):`, JSON.stringify(payload));
-
-      const res = await fetch("/api/gds/sell", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        console.error(
-          `[sell] Error HTTP del GDS (${label}):`,
-          JSON.stringify(data),
-        );
-        return;
-      }
-
-      // Validar CodigoError: "0" = éxito, cualquier otro = error del GDS
-      const codigoError = data?.data?.raw?.CodigoError;
-      if (codigoError !== undefined && codigoError !== "0") {
-        const desc = data?.data?.raw?.Descripcion || "Error desconocido";
-        console.error(
-          `[sell] GDS rechazó la venta (${label}) — CodigoError=${codigoError}: ${desc}`,
-        );
-        return;
-      }
-
-      // Mapear ticketNumbers[i] → `${label}-${seats[i].number}`
-      const ticketNumbers: string[] = data?.data?.ticketNumbers ?? [];
-      seats.forEach((seat, i) => {
-        if (ticketNumbers[i]) {
-          ticketMap[`${label}-${seat.number}`] = ticketNumbers[i];
-        }
-      });
-
-      console.log(
-        `[sell] Asientos vendidos (${label}) — ticketNumbers:`,
-        ticketNumbers,
-      );
-    };
-
-    try {
-      // IDA
-      if (selectedSeats.length > 0) {
-        await callSell(
-          selectedOutboundTrip,
-          selectedSeats,
-          passengerDetails,
-          0,
-          "Ida",
-        );
-      }
-
-      // VUELTA
-      if (selectedReturnTrip && selectedReturnSeats.length > 0) {
-        await callSell(
-          selectedReturnTrip,
-          selectedReturnSeats,
-          passengerDetails,
-          selectedSeats.length,
-          "Vuelta",
-        );
-      }
-
-      // Persistir el mapa en estado para que los PDFs/emails lo usen
-      if (Object.keys(ticketMap).length > 0) {
-        setGdsTicketNumbers(ticketMap);
-
-        // El primer ticketNumber de ida es el bookingReference oficial del GDS
-        const firstTicket = Object.values(ticketMap)[0];
-        if (firstTicket) {
-          setBookingReference(firstTicket);
-          console.log(
-            "[sell] bookingReference asignado al ticketNumber:",
-            firstTicket,
-          );
-        }
-      }
-    } catch (error: any) {
-      console.error(
-        "[sell] Error inesperado al vender asientos:",
-        error.message,
-      );
-    }
-
-    // Retornar los valores frescos para quien llama (evitar stale closure)
-    const firstTicket = Object.values(ticketMap)[0] ?? null;
-    return { ticketMap, firstTicket };
-  };
-
-  // =====================================================================
-  // DETECTAR TIPO DE PAGO AL CARGAR
-  // =====================================================================
-  const processingRef = useRef(false);
-
-  // DETECTAR TIPO DE PAGO AL CARGAR
   useEffect(() => {
-    if (processingRef.current) return;
-    processingRef.current = true;
-
-    console.log("🔗 Hash recibido en la URL:", hash);
-
     setMounted(true);
     setStep(4);
-
-    // DETECCIÓN DE PAGO CON TARJETA
-    if (hash === "tarjeta") {
-      console.log("💳 PAGO CON TARJETA DETECTADO");
-      handleTarjetaPayment();
-      return;
-    }
-
-    // Lógica para Pagopar (con hash válido)
-    if (hash && hash !== "undefined" && hash !== "null" && hash !== "tarjeta") {
-      console.log("Hash válido recibido de Pagopar:", hash);
-      setPagoparHash(hash);
-      verifyPagoparPayment(hash);
-      localStorage.removeItem("pagopar_last_hash");
-    } else {
-      const savedHash = localStorage.getItem("pagopar_last_hash");
-      if (savedHash) {
-        console.log("Hash encontrado en localStorage:", savedHash);
-        setPagoparHash(savedHash);
-        verifyPagoparPayment(savedHash);
-        localStorage.removeItem("pagopar_last_hash");
-      } else {
-        console.log("No se encontró hash");
-        setPaymentStatus("failed");
-      }
-    }
-  }, [setStep, hash]);
-
-  // FUNCIÓN PARA PAGO CON TARJETA
-  const handleTarjetaPayment = async () => {
-    setIsTarjetaPayment(true);
-
-    // 1. Crear referencia de reserva si no existe
-    if (!bookingReference) {
-      const newReference = `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-      setBookingReference(newReference);
-      setStorePaymentStatus("completed");
-    }
-
-    // 2. Marcar como pagado
-    setPaymentStatus("paid");
     setShowConfetti(true);
     setTimeout(() => setShowConfetti(false), 5000);
 
-    // 3. Configurar detalles de pago con tarjeta
-    setPaymentDetails({
-      forma_pago: "Tarjeta de Crédito/Débito",
-      fecha_pago: new Date().toISOString(),
-      numero_pedido: `TARJ-${Date.now().toString(36).toUpperCase()}`,
-      monto: totalPrice.toString(),
-      pagado: true,
-      cancelado: false,
-    });
-
-    // 4. Vender asientos en el GDS
-    const sellResult = await sellGdsSeats();
-
-    // 5. Enviar email de confirmación automático
-    if (primaryPassenger?.email) {
-      console.log("Enviando email automático para pago con tarjeta...");
-      await sendConfirmationEmail(
-        primaryPassenger.email,
-        sellResult.firstTicket ? sellResult : undefined,
-      );
+    if (!autoEmailFiredRef.current && primaryPassenger?.email) {
+      autoEmailFiredRef.current = true;
+      sendConfirmationEmail(primaryPassenger.email);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    // 6. Guardar en base de datos
-    saveTarjetaBookingToDatabase();
-  };
 
-  // FUNCIÓN PARA VERIFICAR PAGO CON PAGOPAR
-  const verifyPagoparPayment = async (hash: string) => {
-    try {
-      console.log("Consultando estado en Pagopar con hash:", hash);
 
-      const response = await fetch("/api/pagopar/check-status", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ hash_pedido: hash }),
-      });
 
-      const data = await response.json();
-      console.log("Respuesta de consulta Pagopar:", data);
-
-      if (data.respuesta === true && data.resultado?.[0]) {
-        const payment = data.resultado[0];
-        setPaymentDetails(payment);
-
-        if (payment.pagado === true) {
-          // PAGO EXITOSO
-          console.log("PAGO CONFIRMADO POR PAGOPAR");
-          setPaymentStatus("paid");
-          setShowConfetti(true);
-          setTimeout(() => setShowConfetti(false), 5000);
-
-          if (!bookingReference) {
-            const newReference = `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-            setBookingReference(newReference);
-            setStorePaymentStatus("completed");
-          }
-
-          // Vender asientos en el GDS
-          const sellResult = await sellGdsSeats();
-
-          // Enviar email de confirmación automático
-          if (primaryPassenger?.email) {
-            console.log("Enviando email automático para pago Pagopar...");
-            await sendConfirmationEmail(
-              primaryPassenger.email,
-              sellResult.firstTicket ? sellResult : undefined,
-            );
-          }
-
-          await saveBookingToDatabase(payment, hash);
-        } else if (payment.cancelado === true) {
-          // PAGO CANCELADO
-          console.log("PAGO CANCELADO");
-          setPaymentStatus("cancelled");
-        } else if (payment.fecha_pago === null && payment.pagado === false) {
-          console.log("PAGO NO REALIZADO - Usuario no completó el pago");
-          setPaymentStatus("failed");
-        } else {
-          // Caso inesperado
-          console.log("Estado desconocido del pago");
-          setPaymentStatus("failed");
-        }
-      } else {
-        console.log("No se pudo verificar el pago");
-        setPaymentStatus("failed");
-      }
-    } catch (error: any) {
-      console.error("Error verificando pago:", error);
-      setPaymentStatus("failed");
-    }
-  };
-
-  // GUARDAR RESERVA EN BASE DE DATOS PARA PAGOPAR
-  const saveBookingToDatabase = async (payment: any, hash: string) => {
-    try {
-      setSavingToDB(true);
-
-      const bookingData = {
-        reference: bookingReference,
-        pagoparHash: hash,
-        pagoparOrderId: payment.numero_pedido,
-        status: "paid",
-        paymentMethod: payment.forma_pago,
-        paymentDate: payment.fecha_pago,
-        amount: payment.monto,
-        passengerCount: passengerDetails.length,
-        totalPrice,
-        departureDate,
-        returnDate,
-        passengerDetails,
-        tripDetails: {
-          outbound: selectedOutboundTrip,
-          return: selectedReturnTrip,
-          seats: selectedSeats,
-          returnSeats: selectedReturnSeats,
-        },
-      };
-
-      console.log("Guardando reserva Pagopar en BD:", bookingData);
-
-      // const response = await fetch("/api/bookings", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(bookingData),
-      // });
-
-      // if (response.ok) {
-      //   console.log("Reserva Pagopar guardada exitosamente");
-      // toast.success("Reserva guardada exitosamente", {
-      //   id: savingToast,
-      //   duration: 3000,
-      // });
-      // } else {
-      //   console.error("Error guardando reserva Pagopar");
-      //   toast.error("Error guardando reserva", {
-      //     id: savingToast,
-      //     duration: 5000,
-      //   });
-      // }
-    } catch (error) {
-      console.error("Error guardando reserva Pagopar:", error);
-    } finally {
-      setSavingToDB(false);
-    }
-  };
-
-  // GUARDAR RESERVA EN BASE DE DATOS PARA TARJETA
-  const saveTarjetaBookingToDatabase = async () => {
-    try {
-      setSavingToDB(true);
-
-      const bookingData = {
-        reference: bookingReference,
-        pagoparHash: null,
-        pagoparOrderId: `TARJ-${Date.now().toString(36).toUpperCase()}`,
-        status: "paid",
-        paymentMethod: "Tarjeta de Crédito/Débito",
-        paymentDate: new Date().toISOString(),
-        amount: totalPrice,
-        passengerCount: passengerDetails.length,
-        totalPrice,
-        departureDate,
-        returnDate,
-        passengerDetails,
-        tripDetails: {
-          outbound: selectedOutboundTrip,
-          return: selectedReturnTrip,
-          seats: selectedSeats,
-          returnSeats: selectedReturnSeats,
-        },
-      };
-
-      console.log("Guardando reserva con tarjeta en BD:", bookingData);
-
-      // const response = await fetch("/api/bookings", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(bookingData),
-      // });
-
-      // if (response.ok) {
-      //   console.log("Reserva con tarjeta guardada exitosamente");
-      // toast.success("Reserva con tarjeta guardada", {
-      //   id: savingToast,
-      //   duration: 3000,
-      // });
-      // } else {
-      //   console.error("Error guardando reserva con tarjeta");
-      //   toast.error("Error guardando reserva", {
-      //     id: savingToast,
-      //     duration: 5000,
-      //   });
-      // }
-    } catch (error) {
-      console.error("Error guardando reserva con tarjeta:", error);
-    } finally {
-      setSavingToDB(false);
-    }
-  };
 
   const handleCopyReference = () => {
     if (bookingReference) {
@@ -1272,16 +879,6 @@ export default function ConfirmationPageContent({
   const handleNewBooking = () => {
     resetBooking();
     router.push("/");
-  };
-
-  // COMPLETAR PAGO EN PAGOPAR
-  const handleCompletePayment = () => {
-    if (pagoparHash) {
-      localStorage.removeItem("pagopar_last_hash");
-      setTimeout(() => {
-        window.location.href = `https://www.pagopar.com/pagos/${pagoparHash}`;
-      }, 500);
-    }
   };
 
   if (!mounted) {
@@ -1302,12 +899,7 @@ export default function ConfirmationPageContent({
     );
   }
 
-  // Si no hay selectedOutboundTrip pero ya tenemos estado de pago, mostrar error
   if (!selectedOutboundTrip) {
-    console.log(
-      "No hay selectedOutboundTrip, pero paymentStatus es:",
-      paymentStatus,
-    );
 
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#1a2332] to-[#0f1419]">
@@ -1342,9 +934,6 @@ export default function ConfirmationPageContent({
                     </p>
                     <p className="text-xs text-amber-400">Hash: {hash}</p>
                     <p className="text-xs text-amber-400">
-                      Estado pago: {paymentStatus}
-                    </p>
-                    <p className="text-xs text-amber-400">
                       Fecha: {new Date().toLocaleString()}
                     </p>
                   </div>
@@ -1377,147 +966,8 @@ export default function ConfirmationPageContent({
     );
   }
 
-  const canShowActions = bookingReference && paymentStatus === "paid";
+  const canShowActions = !!bookingReference;
 
-  // Renderizar contenido según estado de pago
-  const renderPaymentStatus = () => {
-    switch (paymentStatus) {
-      case "checking":
-        return (
-          <div className="mb-6 animate-fade-in">
-            <Card className="p-6 bg-blue-500/10 backdrop-blur-sm border-blue-500/30">
-              <div className="flex items-center gap-4">
-                <Loader2 className="h-8 w-8 text-blue-400 animate-spin" />
-                <div className="flex-1">
-                  <h3 className="font-semibold text-blue-300">
-                    Verificando estado del pago...
-                  </h3>
-                  <p className="text-sm text-blue-400">
-                    Estamos consultando el estado de tu transacción.
-                  </p>
-                </div>
-              </div>
-            </Card>
-          </div>
-        );
-
-      case "pending":
-        return (
-          <div className="mb-6 animate-fade-in">
-            <Card className="p-6 bg-yellow-500/10 backdrop-blur-sm border-yellow-500/30">
-              <div className="flex items-start gap-4">
-                <AlertCircle className="h-8 w-8 text-yellow-400 mt-0.5 flex-shrink-0" />
-                <div className="flex-1">
-                  <h3 className="font-semibold text-yellow-300 mb-2">
-                    Pago pendiente
-                  </h3>
-                  <p className="text-sm text-yellow-400 mb-4">
-                    Tu pedido está esperando el pago. Por favor, completa el
-                    pago en Pagopar para confirmar tu reserva.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Button
-                      onClick={handleCompletePayment}
-                      className="bg-purple-600 hover:bg-purple-700"
-                    >
-                      <Wallet className="h-4 w-4 mr-2" />
-                      Completar pago en Pagopar
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </div>
-        );
-
-      case "cancelled":
-      case "failed":
-        return (
-          <div className="mb-6 animate-fade-in">
-            <Card className="p-6 bg-amber-500/10 backdrop-blur-sm border-amber-500/30">
-              <div className="flex items-start gap-4">
-                <AlertCircle className="h-8 w-8 text-amber-400 mt-0.5 flex-shrink-0" />
-                <div className="flex-1">
-                  <h3 className="font-semibold text-amber-300 mb-2">
-                    Pago no completado
-                  </h3>
-                  <p className="text-sm text-amber-400 mb-4">
-                    No detectamos un pago exitoso para esta reserva. El pedido
-                    en Pagopar está pendiente pero no se realizó el pago.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Button
-                      onClick={() => {
-                        router.push("/booking/checkout");
-                      }}
-                      className="bg-purple-600 hover:bg-purple-700"
-                    >
-                      <Wallet className="h-4 w-4" />
-                      Intentar pago nuevamente
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </div>
-        );
-
-      default:
-        return null;
-    }
-  };
-
-  // Si el pago no está confirmado, mostrar solo el estado
-  if (paymentStatus !== "paid") {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background">
-        {/* Background Effects */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
-          <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-secondary/10 rounded-full blur-[100px]" />
-        </div>
-
-        <div className="relative z-10">
-          <BookingProgress />
-          <div className="container mx-auto px-4 py-8">
-            {renderPaymentStatus()}
-
-            {/* Mostrar información de la reserva aunque no esté pagada */}
-            <Card className="p-6 mb-6 bg-background/5 backdrop-blur-sm border-background/20">
-              <h3 className="text-xl font-bold mb-4 text-background">
-                Detalles de tu reserva
-              </h3>
-              <div className="space-y-3">
-                <p className="text-background/80">
-                  <span className="font-medium text-background">Ruta:</span>{" "}
-                  {originTitle} → {destinationTitle}
-                </p>
-                <p className="text-background/80">
-                  <span className="font-medium text-background">Fecha:</span>{" "}
-                  {format(
-                    parse(departureDate || "", "yyyy-MM-dd", new Date()),
-                    "dd/MM/yyyy",
-                  )}
-                </p>
-                <p className="text-background/80">
-                  <span className="font-medium text-background">
-                    Pasajeros:
-                  </span>{" "}
-                  {passengerDetails.length}
-                </p>
-                <p className="text-background/80">
-                  <span className="font-medium text-background">Total:</span>{" "}
-                  Gs. {totalPrice.toLocaleString("es-PY")}
-                </p>
-              </div>
-            </Card>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Si el pago está confirmado, mostrar la página completa
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background relative overflow-hidden">
       {/* Background Effects */}
@@ -1557,9 +1007,6 @@ export default function ConfirmationPageContent({
         <BookingProgress />
 
         <div className="container mx-auto px-4 py-8">
-          {/* Mostrar estado de pago */}
-          {showPaymentStatus && renderPaymentStatus()}
-
           {/* Notificación de email automático */}
           {/* {autoEmailStatus !== "idle" && (
             <div className="mb-6 animate-fade-in">

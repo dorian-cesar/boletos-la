@@ -27,6 +27,7 @@ export interface Seat {
   status: "available" | "occupied" | "selected" | "blocked";
   price: number;
   qualityCode?: string; // Código de calidad del asiento (ej: "CA") — requerido por GDS /sell
+  ticketNumber?: string; // Número de ticket asignado por el GDS tras /sell exitoso
 }
 
 export interface Passenger {
@@ -87,6 +88,7 @@ export interface BookingState {
   setOriginTitle: (title: string) => void;
   setDestinationTitle: (title: string) => void;
   setConnectionId: (id: string | null) => void;
+  assignTicketNumbers: (ticketMap: Record<string, string>) => void;
   swapTitles: () => void;
   resetBooking: () => void;
 }
@@ -265,6 +267,19 @@ export const useBookingStore = create<BookingState>()(
       setOriginTitle: (originTitle) => set({ originTitle }),
       setDestinationTitle: (destinationTitle) => set({ destinationTitle }),
       setConnectionId: (connectionId) => set({ connectionId }),
+      assignTicketNumbers: (ticketMap) => {
+        const { selectedSeats, selectedReturnSeats } = get();
+        set({
+          selectedSeats: selectedSeats.map((seat) => ({
+            ...seat,
+            ticketNumber: ticketMap[`Ida-${seat.number}`] ?? seat.ticketNumber,
+          })),
+          selectedReturnSeats: selectedReturnSeats.map((seat) => ({
+            ...seat,
+            ticketNumber: ticketMap[`Vuelta-${seat.number}`] ?? seat.ticketNumber,
+          })),
+        });
+      },
       swapTitles: () => {
         const { originTitle, destinationTitle } = get();
         set({ originTitle: destinationTitle, destinationTitle: originTitle });
