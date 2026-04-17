@@ -39,6 +39,11 @@ export interface Passenger {
   docType: { codigo: string; nombre: string };
   email: string;
   phone: string;
+  occupation: string;
+  birthDate: string;
+  gender: string;
+  nationality: string;
+  country: string;
 }
 
 export interface Stop {
@@ -201,6 +206,11 @@ export const useBookingStore = create<BookingState>()(
                   docType: existing?.docType ?? { codigo: "", nombre: "" },
                   email: existing?.email ?? "",
                   phone: existing?.phone ?? "",
+                  occupation: existing?.occupation ?? "",
+                  birthDate: existing?.birthDate ?? "",
+                  gender: existing?.gender ?? "M",
+                  nationality: existing?.nationality ?? "",
+                  country: existing?.country ?? "",
                 }
           );
         }
@@ -222,6 +232,11 @@ export const useBookingStore = create<BookingState>()(
                   docType: outPassenger?.docType ?? existingRet.docType,
                   email: outPassenger?.email ?? existingRet.email,
                   phone: outPassenger?.phone ?? existingRet.phone,
+                  occupation: outPassenger?.occupation ?? existingRet.occupation,
+                  birthDate: outPassenger?.birthDate ?? existingRet.birthDate,
+                  gender: outPassenger?.gender ?? existingRet.gender,
+                  nationality: outPassenger?.nationality ?? existingRet.nationality,
+                  country: outPassenger?.country ?? existingRet.country,
                 }
               : {
                   seatId: retSeat.id,
@@ -232,6 +247,11 @@ export const useBookingStore = create<BookingState>()(
                   docType: outPassenger?.docType ?? { codigo: "", nombre: "" },
                   email: outPassenger?.email ?? "",
                   phone: outPassenger?.phone ?? "",
+                  occupation: outPassenger?.occupation ?? "",
+                  birthDate: outPassenger?.birthDate ?? "",
+                  gender: outPassenger?.gender ?? "M",
+                  nationality: outPassenger?.nationality ?? "",
+                  country: outPassenger?.country ?? "",
                 }
           );
         }

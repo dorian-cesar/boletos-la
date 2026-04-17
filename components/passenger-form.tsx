@@ -22,6 +22,19 @@ import { Label } from "@/components/ui/label";
 import { useBookingStore, Passenger } from "@/lib/booking-store";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 
 // ── Tipos de documento ────────────────────────────────────────────────────────
 
@@ -90,6 +103,16 @@ export function PassengerForm({
   const [docTypes, setDocTypes] = useState<DocTypeItem[]>(FALLBACK_DOC_TYPES);
   const [loadingDocTypes, setLoadingDocTypes] = useState(true);
 
+  // Países dinámicos
+  const [countries, setCountries] = useState<
+    { id: string; Codigo: string; Descripcion: string }[]
+  >([]);
+  const [loadingCountries, setLoadingCountries] = useState(true);
+
+  // Combobox toggles
+  const [nationalityOpen, setNationalityOpen] = useState(false);
+  const [countryOpen, setCountryOpen] = useState(false);
+
   useEffect(() => {
     fetch("/api/gds/doc-types")
       .then((r) => r.json())
@@ -102,6 +125,16 @@ export function PassengerForm({
         /* usa fallback */
       })
       .finally(() => setLoadingDocTypes(false));
+
+    fetch("/api/gds/countries")
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.success && json.data?.countries?.length) {
+          setCountries(json.data.countries);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoadingCountries(false));
   }, []);
 
   // Estado de búsqueda
@@ -121,7 +154,46 @@ export function PassengerForm({
   const [isEditing, setIsEditing] = useState(false);
 
   const passenger = passengerDetails[outboundIndex];
+
+  // Estado local para inputs de texto (previene re-renders lentos en cada tecla)
+  const [localData, setLocalData] = useState({
+    firstName: passenger?.firstName || "",
+    lastName: passenger?.lastName || "",
+    phone: passenger?.phone || "",
+    email: passenger?.email || "",
+    occupation: passenger?.occupation || "",
+    birthDate: passenger?.birthDate || "",
+  });
+
+  // Sincronizar el estado local si el estado global cambia (ej. al buscar un pasajero)
+  useEffect(() => {
+    setLocalData({
+      firstName: passenger?.firstName || "",
+      lastName: passenger?.lastName || "",
+      phone: passenger?.phone || "",
+      email: passenger?.email || "",
+      occupation: passenger?.occupation || "",
+      birthDate: passenger?.birthDate || "",
+    });
+  }, [
+    passenger?.firstName,
+    passenger?.lastName,
+    passenger?.phone,
+    passenger?.email,
+    passenger?.occupation,
+    passenger?.birthDate,
+  ]);
+
   if (!passenger) return null;
+
+  const handleLocalChange = (field: keyof typeof localData, value: string) => {
+    setLocalData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleLocalBlur = (field: keyof typeof localData, value: string) => {
+    handleUpdate(field as any, value);
+    markTouched(field);
+  };
 
   // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -167,11 +239,22 @@ export function PassengerForm({
     lastName: string;
     phone: string;
     docNumber: string;
+    occupation: string;
+    birthDate: string;
+    gender: string;
+    nationality: string;
+    country: string;
   }) => {
     handleUpdate("firstName", data.firstName);
     handleUpdate("lastName", data.lastName);
     handleUpdate("phone", data.phone);
     handleUpdate("documentNumber", data.docNumber);
+    handleUpdate("occupation", data.occupation);
+    handleUpdate("birthDate", data.birthDate);
+    handleUpdate("gender", data.gender);
+    handleUpdate("nationality", data.nationality);
+    handleUpdate("country", data.country);
+
     // Guardar el docType actual seleccionado
     saveDocType(docType);
     // Marcar todos como tocados para mostrar validación inmediata
@@ -180,6 +263,30 @@ export function PassengerForm({
       lastName: true,
       phone: true,
       email: true,
+    });
+  };
+
+  /** Limpia datos cuando no se encuentra al pasajero */
+  const clearPassengerData = () => {
+    handleUpdate("firstName", "");
+    handleUpdate("lastName", "");
+    handleUpdate("phone", "");
+    handleUpdate("email", "");
+    handleUpdate("occupation", "");
+    handleUpdate("birthDate", "");
+    handleUpdate("gender", "");
+    handleUpdate("nationality", "");
+    handleUpdate("country", "");
+    handleUpdate("documentNumber", docNumber);
+    saveDocType(docType);
+
+    setLocalData({
+      firstName: "",
+      lastName: "",
+      phone: "",
+      email: "",
+      occupation: "",
+      birthDate: "",
     });
   };
 
@@ -212,19 +319,36 @@ export function PassengerForm({
         if (isEmptyPassenger(p)) {
           // El GDS devuelve un objeto vacío cuando el pasajero no existe
           setSearchStatus("not_found");
+          clearPassengerData();
         } else {
           // Pasajero encontrado con datos reales
+          const birthDateRaw = p.FecNacimiento || p.FecNac || p.FchNac || p.FechaNac || p.birthDate || "";
+          // Convert from YYYY/MM/DD to YYYY-MM-DD for the HTML date input
+          const formattedBirthDate = birthDateRaw ? birthDateRaw.replace(/\//g, "-") : "";
+          
+          const rawNac = p.PasNac || p.Nacionalidad || p.nationality || "";
+          const parsedNac = rawNac.includes("xml:space") ? "" : rawNac;
+
+          const rawCountry = p.PaisResidencia || p.Pais || p.country || "";
+          const parsedCountry = rawCountry.includes("xml:space") ? "" : rawCountry;
+
           applyPassengerData({
-            firstName: toTitleCase(p.PasNom || ""),
-            lastName: toTitleCase(p.PasApe || ""),
-            phone: p.Telefono || "",
-            docNumber: p.DocNro || docNumber,
+            firstName: toTitleCase(p.PasNom || p.name || p.firstName || ""),
+            lastName: toTitleCase(p.PasApe || p.lastName || ""),
+            phone: p.Telefono || p.phone || "",
+            docNumber: p.DocNro || p.docNumber || docNumber,
+            occupation: p.Ocupacion || p.occupation || "",
+            birthDate: formattedBirthDate,
+            gender: p.Sexo || p.Sex || p.gender || "",
+            nationality: parsedNac,
+            country: parsedCountry,
           });
           setSearchStatus("found");
         }
       } else if (json.success && json.data?.passenger === null) {
         // Respuesta exitosa pero pasajero no registrado en el sistema
         setSearchStatus("not_found");
+        clearPassengerData();
       } else {
         // Respuesta inesperada del backend
         setSearchError(json.error || "Respuesta inesperada del servidor");
@@ -255,6 +379,13 @@ export function PassengerForm({
           lastName: passenger.lastName,
           name: passenger.firstName,
           phone: passenger.phone,
+          occupation: passenger.occupation || "EMPLEADO",
+          birthDate: passenger.birthDate
+            ? passenger.birthDate.replace(/-/g, "/")
+            : "1991/06/08",
+          gender: passenger.gender || "M",
+          nationality: passenger.nationality || "PA",
+          country: passenger.country || "PA",
         }),
       });
 
@@ -427,11 +558,14 @@ export function PassengerForm({
           </Button>
         </div>
         {/* Status banner */}
-        {searchStatus === "found" && (
+        {(searchStatus === "found" || searchStatus === "created") && (
           <div className="flex items-center justify-between gap-2 text-xs px-3 py-2 rounded-lg border border-green-500/30 bg-green-500/10 animate-fade-in">
             <span className="flex items-center gap-1.5 text-green-400">
               <Check className="h-3.5 w-3.5 shrink-0" />
-              Pasajero encontrado: {passenger.firstName} {passenger.lastName}
+              {searchStatus === "created"
+                ? "Pasajero registrado correctamente:"
+                : "Pasajero encontrado:"}{" "}
+              {passenger.firstName} {passenger.lastName}
             </span>
             {isEditing ? (
               <Button
@@ -468,12 +602,6 @@ export function PassengerForm({
             )}
           </div>
         )}
-        {searchStatus === "created" && (
-          <StatusBanner
-            type="success"
-            message="Pasajero registrado correctamente"
-          />
-        )}
         {searchStatus === "not_found" && (
           <StatusBanner
             type="info"
@@ -498,14 +626,16 @@ export function PassengerForm({
                 <Input
                   id={`firstName-${passengerNumber}`}
                   placeholder="Nombre"
-                  value={passenger.firstName}
-                  onChange={(e) => handleUpdate("firstName", e.target.value)}
-                  onBlur={() => markTouched("firstName")}
+                  value={localData.firstName}
+                  onChange={(e) =>
+                    handleLocalChange("firstName", e.target.value)
+                  }
+                  onBlur={(e) => handleLocalBlur("firstName", e.target.value)}
                   className={cn(
                     "h-11 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full",
                     firstNameError && "border-destructive",
                     !firstNameError &&
-                      passenger.firstName &&
+                      localData.firstName &&
                       "border-green-500",
                   )}
                 />
@@ -525,13 +655,15 @@ export function PassengerForm({
                 <Input
                   id={`lastName-${passengerNumber}`}
                   placeholder="Apellido"
-                  value={passenger.lastName}
-                  onChange={(e) => handleUpdate("lastName", e.target.value)}
-                  onBlur={() => markTouched("lastName")}
+                  value={localData.lastName}
+                  onChange={(e) =>
+                    handleLocalChange("lastName", e.target.value)
+                  }
+                  onBlur={(e) => handleLocalBlur("lastName", e.target.value)}
                   className={cn(
                     "h-11 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full",
                     lastNameError && "border-destructive",
-                    !lastNameError && passenger.lastName && "border-green-500",
+                    !lastNameError && localData.lastName && "border-green-500",
                   )}
                 />
                 <FieldIcon
@@ -551,13 +683,13 @@ export function PassengerForm({
                 <Input
                   id={`phone-${passengerNumber}`}
                   placeholder="0981 123 456"
-                  value={passenger.phone}
-                  onChange={(e) => handleUpdate("phone", e.target.value)}
-                  onBlur={() => markTouched("phone")}
+                  value={localData.phone}
+                  onChange={(e) => handleLocalChange("phone", e.target.value)}
+                  onBlur={(e) => handleLocalBlur("phone", e.target.value)}
                   className={cn(
                     "h-11 pl-10 pr-10 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full",
                     phoneError && "border-destructive",
-                    !phoneError && passenger.phone && "border-green-500",
+                    !phoneError && localData.phone && "border-green-500",
                   )}
                 />
                 <FieldIcon
@@ -584,19 +716,228 @@ export function PassengerForm({
                   id={`email-${passengerNumber}`}
                   type="email"
                   placeholder="correo@ejemplo.com"
-                  value={passenger.email}
-                  onChange={(e) => handleUpdate("email", e.target.value)}
-                  onBlur={() => markTouched("email")}
+                  value={localData.email}
+                  onChange={(e) => handleLocalChange("email", e.target.value)}
+                  onBlur={(e) => handleLocalBlur("email", e.target.value)}
                   className={cn(
                     "h-11 pl-10 pr-10 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full",
                     emailError && "border-destructive",
-                    !emailError && passenger.email && "border-green-500",
+                    !emailError && localData.email && "border-green-500",
                   )}
                 />
                 <FieldIcon
                   hasError={!!emailError}
                   hasValue={!!passenger.email}
                 />
+              </FieldWrapper>
+
+              {/* Ocupación */}
+              <FieldWrapper
+                id={`occupation-${passengerNumber}`}
+                label="Ocupación / Profesión"
+                error={null}
+                hasValue={!!passenger.occupation}
+              >
+                <Input
+                  id={`occupation-${passengerNumber}`}
+                  placeholder="Ej. Empleado"
+                  value={localData.occupation}
+                  onChange={(e) =>
+                    handleLocalChange("occupation", e.target.value)
+                  }
+                  onBlur={(e) => handleLocalBlur("occupation", e.target.value)}
+                  className="h-11 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full"
+                />
+              </FieldWrapper>
+
+              {/* Fecha de Nacimiento */}
+              <FieldWrapper
+                id={`birthDate-${passengerNumber}`}
+                label="Fecha de Nacimiento"
+                error={null}
+                hasValue={!!passenger.birthDate}
+              >
+                <Input
+                  id={`birthDate-${passengerNumber}`}
+                  type="date"
+                  value={localData.birthDate}
+                  onChange={(e) =>
+                    handleLocalChange("birthDate", e.target.value)
+                  }
+                  onBlur={(e) => handleLocalBlur("birthDate", e.target.value)}
+                  className="h-11 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full [color-scheme:dark]"
+                />
+              </FieldWrapper>
+
+              {/* Sexo */}
+              <FieldWrapper
+                id={`gender-${passengerNumber}`}
+                label="Género"
+                error={null}
+                hasValue={!!passenger.gender}
+              >
+                <div className="relative w-full">
+                  <select
+                    value={passenger.gender}
+                    onChange={(e) => handleUpdate("gender", e.target.value)}
+                    className="h-11 pl-3 pr-8 rounded-md bg-background/10 border border-background/30 text-background text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 w-full"
+                  >
+                    <option
+                      value=""
+                      disabled
+                      className="bg-[#1a2332] text-white/50"
+                    >
+                      Seleccione género
+                    </option>
+                    <option value="M" className="bg-[#1a2332] text-white">
+                      Masculino
+                    </option>
+                    <option value="F" className="bg-[#1a2332] text-white">
+                      Femenino
+                    </option>
+                    <option value="N" className="bg-[#1a2332] text-white">
+                      Prefiero no decir
+                    </option>
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-background/60 pointer-events-none" />
+                </div>
+              </FieldWrapper>
+
+              {/* Nacionalidad */}
+              <FieldWrapper
+                id={`nationality-${passengerNumber}`}
+                label="Nacionalidad"
+                error={null}
+                hasValue={!!passenger.nationality}
+              >
+                <Popover
+                  open={nationalityOpen}
+                  onOpenChange={setNationalityOpen}
+                >
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={nationalityOpen}
+                      className="w-full justify-between h-11 bg-background/10 border border-background/30 text-background hover:bg-background/20 font-normal"
+                    >
+                      <span className="truncate">
+                        {passenger.nationality
+                          ? countries.find(
+                              (c) => c.Codigo === passenger.nationality,
+                            )?.Descripcion
+                          : "Seleccione Nacionalidad"}
+                      </span>
+                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-[--radix-popover-trigger-width] p-0 bg-[#1a2332] border border-white/20"
+                    align="start"
+                  >
+                    <Command className="bg-transparent">
+                      <CommandInput
+                        placeholder="Buscar nacionalidad..."
+                        className="text-white border-white/20 h-9"
+                      />
+                      <CommandList className="max-h-[200px]">
+                        <CommandEmpty className="text-white/60 p-4 text-sm text-center">
+                          No encontrado.
+                        </CommandEmpty>
+                        <CommandGroup>
+                          {countries.map((c) => (
+                            <CommandItem
+                              key={c.id}
+                              value={c.Descripcion}
+                              onSelect={() => {
+                                handleUpdate("nationality", c.Codigo);
+                                setNationalityOpen(false);
+                              }}
+                              className="text-white hover:bg-white/10 cursor-pointer"
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  passenger.nationality === c.Codigo
+                                    ? "opacity-100 text-primary"
+                                    : "opacity-0",
+                                )}
+                              />
+                              {c.Descripcion}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </FieldWrapper>
+
+              {/* País */}
+              <FieldWrapper
+                id={`country-${passengerNumber}`}
+                label="País de Residencia"
+                error={null}
+                hasValue={!!passenger.country}
+              >
+                <Popover open={countryOpen} onOpenChange={setCountryOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={countryOpen}
+                      className="w-full justify-between h-11 bg-background/10 border border-background/30 text-background hover:bg-background/20 font-normal"
+                    >
+                      <span className="truncate">
+                        {passenger.country
+                          ? countries.find(
+                              (c) => c.Codigo === passenger.country,
+                            )?.Descripcion
+                          : "Seleccione País"}
+                      </span>
+                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-[--radix-popover-trigger-width] p-0 bg-[#1a2332] border border-white/20"
+                    align="start"
+                  >
+                    <Command className="bg-transparent">
+                      <CommandInput
+                        placeholder="Buscar país..."
+                        className="text-white border-white/20 h-9"
+                      />
+                      <CommandList className="max-h-[200px]">
+                        <CommandEmpty className="text-white/60 p-4 text-sm text-center">
+                          No encontrado.
+                        </CommandEmpty>
+                        <CommandGroup>
+                          {countries.map((c) => (
+                            <CommandItem
+                              key={c.id}
+                              value={c.Descripcion}
+                              onSelect={() => {
+                                handleUpdate("country", c.Codigo);
+                                setCountryOpen(false);
+                              }}
+                              className="text-white hover:bg-white/10 cursor-pointer"
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  passenger.country === c.Codigo
+                                    ? "opacity-100 text-primary"
+                                    : "opacity-0",
+                                )}
+                              />
+                              {c.Descripcion}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </FieldWrapper>
             </div>
 

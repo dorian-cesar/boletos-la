@@ -4,7 +4,18 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { docType, docNumber, lastName, name, phone } = body;
+    const {
+      docType,
+      docNumber,
+      lastName,
+      name,
+      phone,
+      occupation,
+      birthDate,
+      gender,
+      nationality,
+      country,
+    } = body;
 
     if (!docType || !docNumber || !lastName || !name) {
       return NextResponse.json(
@@ -59,17 +70,17 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Campos requeridos del pasajero; los opcionales se envían vacíos
+    // Campos asegurados (se envían sus valores o un dato por defecto válido para el GDS)
     const payload = {
       docType,
       docNumber,
       lastName: lastName.toUpperCase(),
       name: name.toUpperCase(),
-      occupation: "",
-      birthDate: "",
-      gender: "",
-      nationality: "",
-      country: "PA",
+      occupation: occupation || "EMPLEADO",
+      birthDate: birthDate || "1991/06/08",
+      gender: gender || "M",
+      nationality: nationality || "PA",
+      country: country || "PA",
       phone: phone?.replace(/\D/g, "") || "",
     };
 
