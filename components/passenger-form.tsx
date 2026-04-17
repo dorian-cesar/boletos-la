@@ -87,6 +87,13 @@ function isEmptyPassenger(p: Record<string, string>): boolean {
   );
 }
 
+function sanitizeGdsValue(val: any): string {
+  if (!val) return "";
+  if (typeof val === "object") return "";
+  if (typeof val === "string" && val.includes("xml:space")) return "";
+  return String(val).trim();
+}
+
 // ── Componente ────────────────────────────────────────────────────────────────
 
 export function PassengerForm({
@@ -326,20 +333,27 @@ export function PassengerForm({
           // Convert from YYYY/MM/DD to YYYY-MM-DD for the HTML date input
           const formattedBirthDate = birthDateRaw ? birthDateRaw.replace(/\//g, "-") : "";
           
-          const rawNac = p.PasNac || p.Nacionalidad || p.nationality || "";
-          const parsedNac = rawNac.includes("xml:space") ? "" : rawNac;
+          const rawNac = p.PasNac || p.Nacionalidad || p.nationality;
+          const parsedNac = sanitizeGdsValue(rawNac);
 
-          const rawCountry = p.PaisResidencia || p.Pais || p.country || "";
-          const parsedCountry = rawCountry.includes("xml:space") ? "" : rawCountry;
+          const rawCountry = p.PaisResidencia || p.Pais || p.country;
+          const parsedCountry = sanitizeGdsValue(rawCountry);
+
+          let parsedGender = sanitizeGdsValue(p.Sexo || p.Sex || p.gender);
+          if (parsedGender && parsedGender.length > 1) {
+            if (parsedGender.toUpperCase().startsWith("M")) parsedGender = "M";
+            else if (parsedGender.toUpperCase().startsWith("F")) parsedGender = "F";
+            else parsedGender = "N";
+          }
 
           applyPassengerData({
-            firstName: toTitleCase(p.PasNom || p.name || p.firstName || ""),
-            lastName: toTitleCase(p.PasApe || p.lastName || ""),
-            phone: p.Telefono || p.phone || "",
-            docNumber: p.DocNro || p.docNumber || docNumber,
-            occupation: p.Ocupacion || p.occupation || "",
+            firstName: toTitleCase(sanitizeGdsValue(p.PasNom || p.name || p.firstName)),
+            lastName: toTitleCase(sanitizeGdsValue(p.PasApe || p.lastName)),
+            phone: sanitizeGdsValue(p.Telefono || p.phone),
+            docNumber: sanitizeGdsValue(p.DocNro || p.docNumber) || docNumber,
+            occupation: sanitizeGdsValue(p.Ocupacion || p.occupation),
             birthDate: formattedBirthDate,
-            gender: p.Sexo || p.Sex || p.gender || "",
+            gender: parsedGender,
             nationality: parsedNac,
             country: parsedCountry,
           });

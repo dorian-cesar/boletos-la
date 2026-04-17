@@ -188,120 +188,89 @@ export default function CheckoutPage() {
                 )}
               </div>
 
-              {/* Outbound passengers */}
+              {/* Passengers Grouped View */}
               {selectedSeats.length > 0 && (
                 <div className="space-y-3">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-primary/80">
-                    Viaje de Ida
-                  </p>
-                  {selectedSeats.map((seat, i) => {
+                  {selectedSeats.map((outboundSeat, i) => {
                     const p = passengerDetails[i];
+                    const returnSeat = selectedReturnSeats[i];
                     const hasData = p?.firstName && p?.lastName;
+                    
                     return (
                       <Card
-                        key={seat.id}
+                        key={`passenger-${i}`}
                         className="p-4 bg-background/5 backdrop-blur-sm border-background/20 animate-fade-in"
                         style={{ animationDelay: `${i * 80}ms` }}
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center border border-primary/30 shrink-0">
-                            <User className="h-4 w-4 text-primary" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-background text-sm truncate">
-                              {hasData ? (
-                                `${p.firstName} ${p.lastName}`
-                              ) : (
-                                <span className="text-background/40 italic">
-                                  Sin datos
-                                </span>
-                              )}
-                            </p>
-                            <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-background/60 mt-0.5">
-                              <span className="flex items-center gap-1">
-                                <span className="bg-primary/20 text-primary text-[10px] px-1.5 py-0.5 rounded uppercase font-medium">
-                                  Ida
-                                </span>
-                                Asiento {seat.number}
-                              </span>
-                              {p?.documentNumber && (
-                                <span>{p.documentNumber}</span>
-                              )}
-                              {p?.email && (
-                                <span className="truncate max-w-[150px]">
-                                  {p.email}
-                                </span>
-                              )}
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/30 shrink-0">
+                              <User className="h-5 w-5 text-primary" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className="font-bold text-background text-base truncate">
+                                  {hasData ? (
+                                    `${p.firstName} ${p.lastName}`
+                                  ) : (
+                                    <span className="text-background/40 italic font-normal">
+                                      Sin datos
+                                    </span>
+                                  )}
+                                </p>
+                                {hasData && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="bg-green-500/10 text-green-500 border-green-500/30 shrink-0 text-[10px] px-1.5 py-0"
+                                  >
+                                    <Check className="h-3 w-3 mr-1" />
+                                    OK
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-background/60 mt-1">
+                                {p?.documentNumber && (
+                                  <span className="flex items-center gap-1.5">
+                                    <span>C.I. {p.documentNumber}</span>
+                                  </span>
+                                )}
+                                {p?.email && (
+                                  <span className="flex items-center gap-1.5 truncate max-w-[160px] sm:max-w-[200px]">
+                                    <span className="w-1 h-1 rounded-full bg-background/30" />
+                                    <span className="truncate">{p.email}</span>
+                                  </span>
+                                )}
+                                {p?.phone && (
+                                  <span className="flex items-center gap-1.5">
+                                    <span className="w-1 h-1 rounded-full bg-background/30" />
+                                    <span>{p.phone}</span>
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           </div>
-                          {hasData && (
-                            <Badge
-                              variant="secondary"
-                              className="ml-auto bg-green-500/10 text-green-500 border-green-500/30 shrink-0 text-xs"
-                            >
-                              <Check className="h-3 w-3 mr-1" />
-                              OK
-                            </Badge>
-                          )}
-                        </div>
-                      </Card>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* Return passengers */}
-              {tripType === "round-trip" && selectedReturnSeats.length > 0 && (
-                <div className="space-y-3">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-secondary/80">
-                    Viaje de Regreso
-                  </p>
-                  {selectedReturnSeats.map((seat, i) => {
-                    const p = passengerDetails[selectedSeats.length + i];
-                    const hasData = p?.firstName && p?.lastName;
-                    return (
-                      <Card
-                        key={seat.id}
-                        className="p-4 bg-background/5 backdrop-blur-sm border-background/20 animate-fade-in"
-                        style={{ animationDelay: `${i * 80}ms` }}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-full bg-secondary/10 flex items-center justify-center border border-secondary/30 shrink-0">
-                            <User className="h-4 w-4 text-secondary" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-background text-sm truncate">
-                              {hasData ? (
-                                `${p.firstName} ${p.lastName}`
-                              ) : (
-                                <span className="text-background/40 italic">
-                                  Sin datos
-                                </span>
-                              )}
-                            </p>
-                            <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-background/60 mt-0.5">
-                              <span className="flex items-center gap-1">
-                                <span className="bg-secondary/20 text-secondary text-[10px] px-1.5 py-0.5 rounded uppercase font-medium">
-                                  Vuelta
-                                </span>
-                                Asiento {seat.number}
+                          
+                          {/* Asientos */}
+                          <div className="flex flex-col gap-2 shrink-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-background/10">
+                            <div className="flex items-center gap-2">
+                              <span className="bg-primary/20 text-primary text-[10px] px-2 py-0.5 rounded uppercase font-bold w-16 text-center border border-primary/20">
+                                Ida
                               </span>
-                              {p?.email && (
-                                <span className="truncate max-w-[150px]">
-                                  {p.email}
-                                </span>
-                              )}
+                              <span className="text-sm font-medium text-background">
+                                Asiento {outboundSeat.number}
+                              </span>
                             </div>
+                            {returnSeat && (
+                              <div className="flex items-center gap-2">
+                                <span className="bg-secondary/20 text-secondary text-[10px] px-2 py-0.5 rounded uppercase font-bold w-16 text-center border border-secondary/20">
+                                  Regreso
+                                </span>
+                                <span className="text-sm font-medium text-background">
+                                  Asiento {returnSeat.number}
+                                </span>
+                              </div>
+                            )}
                           </div>
-                          {hasData && (
-                            <Badge
-                              variant="secondary"
-                              className="ml-auto bg-green-500/10 text-green-500 border-green-500/30 shrink-0 text-xs"
-                            >
-                              <Check className="h-3 w-3 mr-1" />
-                              OK
-                            </Badge>
-                          )}
                         </div>
                       </Card>
                     );

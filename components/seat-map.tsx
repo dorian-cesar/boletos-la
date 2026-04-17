@@ -50,7 +50,8 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
       isReturn ? removeReturnSeat(seat.id) : removeSeat(seat.id);
       if (showMaxAlert) setShowMaxAlert(false);
     } else {
-      if (currentSelectedSeats.length >= 4) {
+      const maxAllowed = isReturn ? selectedSeats.length : 4;
+      if (currentSelectedSeats.length >= maxAllowed) {
         setShowMaxAlert(true);
         setTimeout(() => setShowMaxAlert(false), 3000);
         return;
@@ -100,7 +101,9 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
         <Alert variant="destructive" className="mb-4 animate-fade-in">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            Solo puedes seleccionar un máximo de 4 asientos por reserva.
+            {isReturn 
+              ? `Solo puedes seleccionar un máximo de ${selectedSeats.length} asiento(s) de vuelta (igual a la ida).`
+              : "Solo puedes seleccionar un máximo de 4 asientos por reserva."}
           </AlertDescription>
         </Alert>
       )}
@@ -203,9 +206,10 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
                           (s) => s.id === seat.id,
                         )}
                         isDisabled={
-                          currentSelectedSeats.length >= 4 &&
+                          currentSelectedSeats.length >= (isReturn ? selectedSeats.length : 4) &&
                           !currentSelectedSeats.some((s) => s.id === seat.id)
                         }
+                        maxLimit={isReturn ? selectedSeats.length : 4}
                         onClick={() => handleSeatClick(seat)}
                       />
                     </div>
@@ -232,13 +236,13 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
             <p
               className={cn(
                 "font-bold text-2xl text-primary transition-colors duration-300",
-                currentSelectedSeats.length > 4 &&
+                currentSelectedSeats.length > (isReturn ? selectedSeats.length : 4) &&
                   "text-destructive animate-pulse",
               )}
             >
               {currentSelectedSeats.length}
               <span className="text-base font-normal text-background/60 ml-1">
-                /4
+                /{isReturn ? selectedSeats.length : 4}
               </span>
             </p>
           </div>
@@ -286,6 +290,7 @@ interface SeatButtonProps {
   seat: Seat;
   isSelected: boolean;
   isDisabled?: boolean;
+  maxLimit?: number;
   onClick: () => void;
 }
 
@@ -293,6 +298,7 @@ function SeatButton({
   seat,
   isSelected,
   isDisabled = false,
+  maxLimit = 4,
   onClick,
 }: SeatButtonProps) {
   const isOccupied = seat.status === "occupied";
@@ -331,7 +337,7 @@ function SeatButton({
         isBlocked
           ? "No disponible"
           : isDisabled && !isOccupied && !isSelected
-            ? "Límite máximo alcanzado (4 asientos)"
+            ? `Límite máximo alcanzado (${maxLimit} asientos)`
             : `Asiento ${seat.number} - Gs. ${price.toLocaleString("es-PY")}`
       }
     >

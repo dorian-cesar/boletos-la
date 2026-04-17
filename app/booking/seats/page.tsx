@@ -186,14 +186,16 @@ export default function SeatsPage() {
       );
     });
 
+  const maxAllowed = selectingReturn ? selectedSeats.length : 4;
+
   // Verificar si se puede continuar (mínimo 1 asiento, máximo 4, y pasajeros completos)
   const canContinue =
     currentSelectedSeats.length > 0 &&
-    currentSelectedSeats.length <= 4 &&
+    currentSelectedSeats.length <= maxAllowed &&
     (selectingReturn || arePassengersComplete);
 
   // Verificar si se ha excedido el límite
-  const hasExceededLimit = currentSelectedSeats.length > 4;
+  const hasExceededLimit = currentSelectedSeats.length > maxAllowed;
 
   const currentTrip = selectingReturn
     ? selectedReturnTrip
@@ -264,7 +266,9 @@ export default function SeatsPage() {
               <Alert variant="destructive" className="mb-6 animate-fade-in">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  Solo puedes seleccionar un máximo de 4 asientos por reserva.
+                  {selectingReturn
+                    ? `Solo puedes seleccionar un máximo de ${selectedSeats.length} asiento(s) en tu viaje de regreso. `
+                    : `Solo puedes seleccionar un máximo de 4 asientos por reserva. `}
                   Por favor, deselecciona algunos asientos.
                 </AlertDescription>
               </Alert>
@@ -460,12 +464,12 @@ export default function SeatsPage() {
                       <div
                         className={cn(
                           "text-xs md:text-sm font-medium",
-                          currentSelectedSeats.length > 4
+                          hasExceededLimit
                             ? "text-destructive animate-pulse"
                             : "text-primary",
                         )}
                       >
-                        {currentSelectedSeats.length}/4
+                        {currentSelectedSeats.length}/{maxAllowed}
                       </div>
                     </div>
                   </div>
@@ -550,9 +554,9 @@ export default function SeatsPage() {
                                 .map((s) => s.number)
                                 .join(", ")
                             : "Sin seleccionar"}
-                          {selectedReturnSeats.length > 4 && (
+                          {selectedReturnSeats.length > selectedSeats.length && (
                             <span className="text-destructive text-xs ml-2">
-                              (máximo 4)
+                              (máximo {selectedSeats.length})
                             </span>
                           )}
                         </p>
@@ -618,7 +622,7 @@ export default function SeatsPage() {
                   {!canContinue && (
                     <p className="text-xs md:text-sm text-background/70 mt-3 text-center">
                       {hasExceededLimit
-                        ? "Máximo 4 asientos permitidos"
+                        ? `Máximo ${maxAllowed} asientos permitidos`
                         : currentSelectedSeats.length === 0
                           ? "Selecciona al menos 1 asiento para continuar"
                           : !selectingReturn && !arePassengersComplete
