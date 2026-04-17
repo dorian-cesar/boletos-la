@@ -458,8 +458,7 @@ export default function ConfirmationPageContent({
       const payload = {
         emailDestino: primaryPassenger.email,
         reservaCodigo:
-          seat.ticketNumber ||
-          `${bookingReference}-${seat.number}`,
+          seat.ticketNumber || `${bookingReference}-${seat.number}`,
         horaSalida: trip.departureTime,
         origen:
           (label === "Ida" ? originTitle : destinationTitle) || trip.origin,
@@ -623,8 +622,7 @@ export default function ConfirmationPageContent({
       const payload = {
         emailDestino: passengerEmail,
         reservaCodigo:
-          seat.ticketNumber ||
-          `${bookingReference}-${seat.number}`,
+          seat.ticketNumber || `${bookingReference}-${seat.number}`,
         horaSalida: trip.departureTime,
         origen:
           (label === "Ida" ? originTitle : destinationTitle) || trip.origin,
@@ -772,13 +770,13 @@ export default function ConfirmationPageContent({
 
     try {
       // Buscar el asiento correspondiente
-      const seatIndex = isOutbound ? passengerIndex : passengerIndex - selectedSeats.length;
+      const seatIndex = isOutbound
+        ? passengerIndex
+        : passengerIndex - selectedSeats.length;
       const seatsArray = isOutbound ? selectedSeats : selectedReturnSeats;
       const seatObj = seatsArray[seatIndex];
       const passengerSeat =
-        seatObj?.number ||
-        passenger.seatNumber ||
-        `A${passengerIndex + 1}`;
+        seatObj?.number || passenger.seatNumber || `A${passengerIndex + 1}`;
 
       // Calcular precio por pasajero
       const pricePerPassenger = Math.round(
@@ -791,14 +789,18 @@ export default function ConfirmationPageContent({
       const payload = {
         emailDestino: passenger.email,
         reservaCodigo:
-          seatObj?.ticketNumber ||
-          `${bookingReference}-${passengerSeat}`,
+          seatObj?.ticketNumber || `${bookingReference}-${passengerSeat}`,
         horaSalida: trip.departureTime,
         origen: (isOutbound ? originTitle : destinationTitle) || trip.origin,
         horaLlegada: trip.arrivalTime,
-        destino: (isOutbound ? destinationTitle : originTitle) || trip.destination,
+        destino:
+          (isOutbound ? destinationTitle : originTitle) || trip.destination,
         fechaViaje: format(
-          parse((isOutbound ? departureDate : returnDate) || "", "yyyy-MM-dd", new Date()),
+          parse(
+            (isOutbound ? departureDate : returnDate) || "",
+            "yyyy-MM-dd",
+            new Date(),
+          ),
           "d 'de' MMMM, yyyy",
           {
             locale: es,
@@ -860,12 +862,8 @@ export default function ConfirmationPageContent({
       autoEmailFiredRef.current = true;
       sendConfirmationEmail(primaryPassenger.email);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-
-
-
 
   const handleCopyReference = () => {
     if (bookingReference) {
@@ -900,7 +898,6 @@ export default function ConfirmationPageContent({
   }
 
   if (!selectedOutboundTrip) {
-
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#1a2332] to-[#0f1419]">
         {/* Background Effects */}
@@ -1007,59 +1004,6 @@ export default function ConfirmationPageContent({
         <BookingProgress />
 
         <div className="container mx-auto px-4 py-8">
-          {/* Notificación de email automático */}
-          {/* {autoEmailStatus !== "idle" && (
-            <div className="mb-6 animate-fade-in">
-              <Card
-                className={`p-4 backdrop-blur-sm border ${
-                  autoEmailStatus === "sent"
-                    ? "bg-green-500/10 border-green-500/30"
-                    : autoEmailStatus === "sending"
-                      ? "bg-blue-500/10 border-blue-500/30"
-                      : "bg-amber-500/10 border-amber-500/30"
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  {autoEmailStatus === "sent" ? (
-                    <CheckCircle2 className="h-6 w-6 text-green-400" />
-                  ) : autoEmailStatus === "sending" ? (
-                    <Loader2 className="h-6 w-6 text-blue-400 animate-spin" />
-                  ) : (
-                    <AlertCircle className="h-6 w-6 text-amber-400" />
-                  )}
-                  <div className="flex-1">
-                    <p
-                      className={`font-medium ${
-                        autoEmailStatus === "sent"
-                          ? "text-green-300"
-                          : autoEmailStatus === "sending"
-                            ? "text-blue-300"
-                            : "text-amber-300"
-                      }`}
-                    >
-                      {autoEmailStatus === "sending"
-                        ? "Enviando boleto por email..."
-                        : autoEmailStatus === "sent"
-                          ? "Boleto enviado al correo electrónico"
-                          : "⚠️ No se pudo enviar el email automáticamente"}
-                    </p>
-                    <p
-                      className={`text-sm ${
-                        autoEmailStatus === "sent"
-                          ? "text-green-400"
-                          : autoEmailStatus === "sending"
-                            ? "text-blue-400"
-                            : "text-amber-400"
-                      }`}
-                    >
-                      {autoEmailMessage}
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            </div>
-          )} */}
-
           {/* Success Header */}
           <div className="text-center mb-12 animate-bounce-in">
             <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-primary/30">
@@ -1111,6 +1055,31 @@ export default function ConfirmationPageContent({
                     {primaryPassenger.documentNumber}
                   </span>
                 </p>
+              </div>
+            )}
+            {/* Notificación de email automático */}
+            {autoEmailStatus === "sending" && (
+              <div className="flex items-center justify-center gap-2 mb-5 mt-6 animate-fade-in bg-blue-500/10 border border-blue-500/30 text-blue-300 py-2 px-4 rounded-full w-max mx-auto">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="text-sm font-medium">
+                  {autoEmailMessage || "Enviando emails..."}
+                </span>
+              </div>
+            )}
+            {autoEmailStatus === "sent" && (
+              <div className="flex items-center justify-center gap-2 mb-5 mt-6 animate-fade-in bg-green-500/10 border border-green-500/30 text-green-300 py-2 px-4 rounded-full w-max mx-auto">
+                <CheckCircle2 className="h-4 w-4" />
+                <span className="text-sm font-medium">
+                  Emails enviados exitosamente
+                </span>
+              </div>
+            )}
+            {autoEmailStatus === "failed" && (
+              <div className="flex items-center justify-center gap-2 mb-5 mt-6 animate-fade-in bg-destructive/10 border border-destructive/30 text-destructive py-2 px-4 rounded-full w-max mx-auto">
+                <AlertCircle className="h-4 w-4" />
+                <span className="text-sm font-medium px-2">
+                  {autoEmailMessage || "No se pudo enviar el email"}
+                </span>
               </div>
             )}
           </div>
