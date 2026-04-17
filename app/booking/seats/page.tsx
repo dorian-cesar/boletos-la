@@ -73,6 +73,7 @@ export default function SeatsPage() {
       setIsBlocking(true);
       setBlockError(null);
 
+      // 1. Bloqueo para asientos de ida
       const res = await fetch("/api/gds/block", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -81,25 +82,17 @@ export default function SeatsPage() {
           originId: selectedOutboundTrip?.origin,
           destinationId: selectedOutboundTrip?.destination,
           seats: selectedSeats.map((s) => s.number).join(", "),
-          // Si es viaje de vuelta, enviar también los datos del regreso
-          ...(tripType === "round-trip" &&
-            selectedReturnTrip && {
-              returnServiceId: selectedReturnTrip.id,
-              returnOriginId: selectedReturnTrip.origin,
-              returnDestinationId: selectedReturnTrip.destination,
-              returnSeats: selectedReturnSeats.map((s) => s.number).join(", "),
-            }),
         }),
       });
 
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error || "Error al bloquear asientos");
+        throw new Error(err.error || "Error al bloquear asientos de ida");
       }
 
       const data = await res.json();
 
-      // Validación profunda del resultado del GDS
+      // Validación profunda del resultado del GDS para la ida
       const blockData = data.data || data;
       const isGdsError =
         blockData.success === false ||
@@ -109,16 +102,56 @@ export default function SeatsPage() {
         throw new Error(
           data.message ||
             blockData.message ||
-            "No se pudieron bloquear los asientos (Error del proveedor)",
+            "No se pudieron bloquear los asientos de ida (Error del proveedor)",
         );
       }
 
-      if (blockData.connectionId) {
-        setConnectionId(blockData.connectionId);
+      let finalConnectionId = blockData.connectionId;
+
+      // 2. Bloqueo para asientos de vuelta (si aplica)
+      if (tripType === "round-trip" && selectedReturnTrip && selectedReturnSeats.length > 0) {
+        const returnRes = await fetch("/api/gds/block", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            serviceId: selectedReturnTrip.id,
+            originId: selectedReturnTrip.origin,
+            destinationId: selectedReturnTrip.destination,
+            seats: selectedReturnSeats.map((s) => s.number).join(", "),
+            ...(finalConnectionId && { connectionId: finalConnectionId }),
+          }),
+        });
+
+        if (!returnRes.ok) {
+          const err = await returnRes.json();
+          throw new Error(err.error || "Error al bloquear asientos de regreso");
+        }
+
+        const returnData = await returnRes.json();
+        const returnBlockData = returnData.data || returnData;
+        const isReturnGdsError =
+          returnBlockData.success === false ||
+          (returnBlockData.providerResult && returnBlockData.providerResult !== "0");
+
+        if (isReturnGdsError) {
+          throw new Error(
+            returnData.message ||
+              returnBlockData.message ||
+              "No se pudieron bloquear los asientos de regreso (Error del proveedor)",
+          );
+        }
+
+        // Si el provider devuelve otro connectionId en el regreso, lo actualizamos.
+        if (returnBlockData.connectionId) {
+          finalConnectionId = returnBlockData.connectionId;
+        }
+      }
+
+      if (finalConnectionId) {
+        setConnectionId(finalConnectionId);
         router.push("/booking/checkout");
       } else {
-        // Si no hay connectionId pero la respuesta fue ok, igual procedemos?
-        // El usuario pidió capturarlo.
+        // Si no hay connectionId pero la respuesta fue ok, igual procedemos
         console.warn("No connectionId received in block response", data);
         router.push("/booking/checkout");
       }

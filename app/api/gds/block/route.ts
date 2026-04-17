@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { serviceId, originId, destinationId, seats } = body;
+    const { serviceId, originId, destinationId, seats, connectionId } = body;
 
     if (!serviceId || !originId || !destinationId || !seats) {
       return NextResponse.json(
@@ -74,6 +74,7 @@ export async function POST(req: NextRequest) {
           originId,
           destinationId,
           seats, // Podría ser un string o un array dependiendo de cómo lo mande el frontend
+          ...(connectionId && { connectionId }),
         }),
       },
     );
