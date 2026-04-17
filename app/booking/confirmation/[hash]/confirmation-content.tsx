@@ -64,7 +64,9 @@ export default function ConfirmationPageContent({
   const [generatedTickets, setGeneratedTickets] = useState<TicketData[]>([]);
 
   // Mapa seatNumber → ticketNumber asignado por el GDS tras /sell exitoso
-  const [gdsTicketNumbers, setGdsTicketNumbers] = useState<Record<string, string>>({});
+  const [gdsTicketNumbers, setGdsTicketNumbers] = useState<
+    Record<string, string>
+  >({});
 
   // UN SOLO ESTADO PARA CONTROLAR TODAS LAS ACCIONES
   const [processing, setProcessing] = useState<{
@@ -185,7 +187,9 @@ export default function ConfirmationPageContent({
 
         // Preparar payload EXACTO como lo espera el backend externo
         const payload = {
-          reservaCodigo: gdsTicketNumbers[`${label}-${passengerSeat}`] || `${bookingReference}-${passengerSeat}`,
+          reservaCodigo:
+            gdsTicketNumbers[`${label}-${passengerSeat}`] ||
+            `${bookingReference}-${passengerSeat}`,
           horaSalida: trip.departureTime,
           origen: (isOutbound ? originTitle : destinationTitle) || trip.origin,
           horaLlegada: trip.arrivalTime,
@@ -314,9 +318,6 @@ export default function ConfirmationPageContent({
   // =====================================================================
   // FUNCIÓN PARA DESCARGAR UN BOLETO ESPECÍFICO
   // =====================================================================
-  // =====================================================================
-  // FUNCIÓN PARA DESCARGAR UN BOLETO ESPECÍFICO
-  // =====================================================================
   const handleDownloadSingleTicket = async (passengerIndex: number) => {
     const passenger = passengerDetails[passengerIndex];
     if (!selectedOutboundTrip || !bookingReference || !passenger) {
@@ -363,7 +364,9 @@ export default function ConfirmationPageContent({
 
       // Preparar payload
       const payload = {
-        reservaCodigo: gdsTicketNumbers[`${label}-${passengerSeat}`] || `${bookingReference}-${passengerSeat}`,
+        reservaCodigo:
+          gdsTicketNumbers[`${label}-${passengerSeat}`] ||
+          `${bookingReference}-${passengerSeat}`,
         horaSalida: trip.departureTime,
         origen: (isOutbound ? originTitle : destinationTitle) || trip.origin,
         horaLlegada: trip.arrivalTime,
@@ -469,7 +472,9 @@ export default function ConfirmationPageContent({
     ) => {
       const payload = {
         emailDestino: primaryPassenger.email,
-        reservaCodigo: gdsTicketNumbers[`${label}-${seat.number}`] || `${bookingReference}-${seat.number}`,
+        reservaCodigo:
+          gdsTicketNumbers[`${label}-${seat.number}`] ||
+          `${bookingReference}-${seat.number}`,
         horaSalida: trip.departureTime,
         origen:
           (label === "Ida" ? originTitle : destinationTitle) || trip.origin,
@@ -615,7 +620,10 @@ export default function ConfirmationPageContent({
   // =====================================================================
   const sendConfirmationEmail = async (
     passengerEmail: string,
-    ticketOverrides?: { ticketMap: Record<string, string>; firstTicket: string },
+    ticketOverrides?: {
+      ticketMap: Record<string, string>;
+      firstTicket: string;
+    },
   ): Promise<boolean> => {
     if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) {
       console.warn("⚠️ No hay datos suficientes para enviar email");
@@ -633,7 +641,11 @@ export default function ConfirmationPageContent({
     ) => {
       const payload = {
         emailDestino: passengerEmail, // Siempre enviamos al email del comprador principal por ahora
-        reservaCodigo: ticketOverrides?.ticketMap[`${label}-${seat.number}`] || ticketOverrides?.firstTicket || gdsTicketNumbers[`${label}-${seat.number}`] || `${bookingReference}-${seat.number}`,
+        reservaCodigo:
+          ticketOverrides?.ticketMap[`${label}-${seat.number}`] ||
+          ticketOverrides?.firstTicket ||
+          gdsTicketNumbers[`${label}-${seat.number}`] ||
+          `${bookingReference}-${seat.number}`,
         horaSalida: trip.departureTime,
         origen:
           (label === "Ida" ? originTitle : destinationTitle) || trip.origin,
@@ -796,7 +808,9 @@ export default function ConfirmationPageContent({
       // La API de email generará el PDF automáticamente
       const payload = {
         emailDestino: passenger.email,
-        reservaCodigo: gdsTicketNumbers[`${label}-${passengerSeat}`] || `${bookingReference}-${passengerSeat}`,
+        reservaCodigo:
+          gdsTicketNumbers[`${label}-${passengerSeat}`] ||
+          `${bookingReference}-${passengerSeat}`,
         horaSalida: selectedOutboundTrip.departureTime,
         origen: originTitle || selectedOutboundTrip.origin,
         horaLlegada: selectedOutboundTrip.arrivalTime,
@@ -890,7 +904,10 @@ export default function ConfirmationPageContent({
         originId: trip.origin,
         destinationId: trip.destination,
         ticketCount: seats.length,
-        totalAmount: seats.reduce((acc, s) => acc + (s.price || trip.price || 0), 0),
+        totalAmount: seats.reduce(
+          (acc, s) => acc + (s.price || trip.price || 0),
+          0,
+        ),
         seats: seatPayloads,
       };
 
@@ -905,7 +922,10 @@ export default function ConfirmationPageContent({
       const data = await res.json();
 
       if (!res.ok) {
-        console.error(`[sell] Error HTTP del GDS (${label}):`, JSON.stringify(data));
+        console.error(
+          `[sell] Error HTTP del GDS (${label}):`,
+          JSON.stringify(data),
+        );
         return;
       }
 
@@ -913,7 +933,9 @@ export default function ConfirmationPageContent({
       const codigoError = data?.data?.raw?.CodigoError;
       if (codigoError !== undefined && codigoError !== "0") {
         const desc = data?.data?.raw?.Descripcion || "Error desconocido";
-        console.error(`[sell] GDS rechazó la venta (${label}) — CodigoError=${codigoError}: ${desc}`);
+        console.error(
+          `[sell] GDS rechazó la venta (${label}) — CodigoError=${codigoError}: ${desc}`,
+        );
         return;
       }
 
@@ -925,13 +947,22 @@ export default function ConfirmationPageContent({
         }
       });
 
-      console.log(`[sell] Asientos vendidos (${label}) — ticketNumbers:`, ticketNumbers);
+      console.log(
+        `[sell] Asientos vendidos (${label}) — ticketNumbers:`,
+        ticketNumbers,
+      );
     };
 
     try {
       // IDA
       if (selectedSeats.length > 0) {
-        await callSell(selectedOutboundTrip, selectedSeats, passengerDetails, 0, "Ida");
+        await callSell(
+          selectedOutboundTrip,
+          selectedSeats,
+          passengerDetails,
+          0,
+          "Ida",
+        );
       }
 
       // VUELTA
@@ -941,7 +972,7 @@ export default function ConfirmationPageContent({
           selectedReturnSeats,
           passengerDetails,
           selectedSeats.length,
-          "Vuelta"
+          "Vuelta",
         );
       }
 
@@ -953,11 +984,17 @@ export default function ConfirmationPageContent({
         const firstTicket = Object.values(ticketMap)[0];
         if (firstTicket) {
           setBookingReference(firstTicket);
-          console.log("[sell] bookingReference asignado al ticketNumber:", firstTicket);
+          console.log(
+            "[sell] bookingReference asignado al ticketNumber:",
+            firstTicket,
+          );
         }
       }
     } catch (error: any) {
-      console.error("[sell] Error inesperado al vender asientos:", error.message);
+      console.error(
+        "[sell] Error inesperado al vender asientos:",
+        error.message,
+      );
     }
 
     // Retornar los valores frescos para quien llama (evitar stale closure)

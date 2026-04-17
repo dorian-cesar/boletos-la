@@ -124,7 +124,7 @@ export default function CheckoutPage() {
         }
       }
     } catch (error: any) {
-      console.error("❌ Error procesando pago:", error);
+      console.error("Error procesando pago:", error);
       setIsProcessing(false);
       alert(`Error: ${error.message || "Por favor intenta nuevamente."}`);
     }

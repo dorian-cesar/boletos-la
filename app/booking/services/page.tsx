@@ -208,16 +208,6 @@ export default function ServicesPage() {
                   ? "Buscando servicios..."
                   : `${trips.length} servicios disponibles`}
               </h2>
-              {/* {!searchLoading && trips.length > 0 && (
-                <div className="flex items-center gap-2">
-                  <Badge
-                    variant="outline"
-                    className="bg-primary/10 text-primary border-primary/30 whitespace-nowrap"
-                  >
-                    Mejor precio
-                  </Badge>
-                </div>
-              )} */}
             </div>
 
             {searchLoading ? (
@@ -282,12 +272,6 @@ export default function ServicesPage() {
                             <p className="text-sm text-background/60">
                               {trip.busType}
                             </p>
-                            {/* <div className="flex items-center gap-1 mt-1">
-                              <Star className="h-3 w-3 text-secondary fill-secondary" />
-                              <span className="text-xs text-background/60">
-                                4.5
-                              </span>
-                            </div> */}
                           </div>
                         </div>
 
@@ -343,9 +327,6 @@ export default function ServicesPage() {
                           {/* Price & Action */}
                           <div className="flex items-center justify-between lg:flex-col lg:items-end gap-4 lg:w-40 w-full">
                             <div className="text-left lg:text-right">
-                              {/* <p className="text-sm text-background/60 line-through">
-                                Gs. {(trip.price * 1.2).toLocaleString("es-PY")}
-                              </p> */}
                               <p className="text-2xl font-bold text-secondary">
                                 Gs. {trip.price.toLocaleString("es-PY")}
                               </p>
