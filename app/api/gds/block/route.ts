@@ -8,7 +8,9 @@ export async function POST(req: NextRequest) {
 
     if (!serviceId || !originId || !destinationId || !seats) {
       return NextResponse.json(
-        { error: "Faltan parámetros: serviceId, originId, destinationId, seats" },
+        {
+          error: "Faltan parámetros: serviceId, originId, destinationId, seats",
+        },
         { status: 400 },
       );
     }

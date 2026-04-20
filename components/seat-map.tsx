@@ -23,6 +23,7 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
     removeReturnSeat,
     selectedOutboundTrip,
     selectedReturnTrip,
+    failedSeats,
   } = useBookingStore();
 
   const currentTrip = isReturn ? selectedReturnTrip : selectedOutboundTrip;
@@ -89,7 +90,17 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
     );
   }
 
-  const floorSeats = realSeats.filter((s) => s.floor === activeFloor);
+  const currentTripFailed = currentTrip ? failedSeats[currentTrip.id] || [] : [];
+
+  const floorSeats = realSeats
+    .map((s) => {
+      if (currentTripFailed.includes(s.number)) {
+        return { ...s, status: "occupied" as const };
+      }
+      return s;
+    })
+    .filter((s) => s.floor === activeFloor);
+
   const rows = [...new Set(floorSeats.map((s) => s.row))].sort((a, b) => a - b);
   const maxColumns =
     floorSeats.length > 0 ? Math.max(...floorSeats.map((s) => s.column)) : 4;

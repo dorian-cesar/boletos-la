@@ -78,6 +78,7 @@ export interface BookingState {
   outboundConnectionId: string | null;
   returnConnectionId: string | null;
   paymentResult: PaymentResult | null;
+  failedSeats: Record<string, string[]>;
 
   setStep: (step: number) => void;
   setTripType: (type: "one-way" | "round-trip") => void;
@@ -104,6 +105,8 @@ export interface BookingState {
   setOutboundConnectionId: (id: string | null) => void;
   setReturnConnectionId: (id: string | null) => void;
   setPaymentResult: (result: PaymentResult | null) => void;
+  addFailedSeats: (tripId: string, seatNumbers: string[]) => void;
+  clearFailedSeats: (tripId: string) => void;
   assignTicketNumbers: (ticketMap: Record<string, string>) => void;
   swapTitles: () => void;
   resetBooking: () => void;
@@ -129,6 +132,7 @@ const initialState = {
   outboundConnectionId: null,
   returnConnectionId: null,
   paymentResult: null,
+  failedSeats: {},
 };
 
 export const useBookingStore = create<BookingState>()(
@@ -305,6 +309,22 @@ export const useBookingStore = create<BookingState>()(
       setOutboundConnectionId: (outboundConnectionId) => set({ outboundConnectionId }),
       setReturnConnectionId: (returnConnectionId) => set({ returnConnectionId }),
       setPaymentResult: (paymentResult) => set({ paymentResult }),
+      addFailedSeats: (tripId, seatNumbers) => {
+        const { failedSeats } = get();
+        const currentFailed = failedSeats[tripId] || [];
+        set({
+          failedSeats: {
+            ...failedSeats,
+            [tripId]: [...new Set([...currentFailed, ...seatNumbers])],
+          },
+        });
+      },
+      clearFailedSeats: (tripId) => {
+        const { failedSeats } = get();
+        const updated = { ...failedSeats };
+        delete updated[tripId];
+        set({ failedSeats: updated });
+      },
       assignTicketNumbers: (ticketMap) => {
         const { selectedSeats, selectedReturnSeats } = get();
         set({
@@ -356,6 +376,7 @@ export const useBookingStore = create<BookingState>()(
         outboundConnectionId: state.outboundConnectionId,
         returnConnectionId: state.returnConnectionId,
         paymentResult: state.paymentResult,
+        failedSeats: state.failedSeats,
       }),
       // Versión para migraciones futuras
       version: 1,

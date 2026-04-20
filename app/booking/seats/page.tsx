@@ -48,6 +48,9 @@ export default function SeatsPage() {
     destinationTitle,
     setOutboundConnectionId,
     setReturnConnectionId,
+    addFailedSeats,
+    removeSeat,
+    removeReturnSeat,
     initPassengers,
   } = useBookingStore();
 
@@ -104,40 +107,48 @@ export default function SeatsPage() {
       await Promise.allSettled(saveTasks);
 
       // 1. Bloqueo para asientos de ida
-      const res = await fetch("/api/gds/block", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          serviceId: selectedOutboundTrip?.id,
-          originId: selectedOutboundTrip?.origin,
-          destinationId: selectedOutboundTrip?.destination,
-          seats: selectedSeats.map((s) => s.number).join(", "),
-        }),
-      });
+      try {
+        const res = await fetch("/api/gds/block", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            serviceId: selectedOutboundTrip?.id,
+            originId: selectedOutboundTrip?.origin,
+            destinationId: selectedOutboundTrip?.destination,
+            seats: selectedSeats.map((s) => s.number).join(", "),
+          }),
+        });
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Error al bloquear asientos de ida");
-      }
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || "Error al bloquear asientos de ida");
+        }
 
-      const data = await res.json();
+        const data = await res.json();
+        const blockData = data.data || data;
+        const isGdsError =
+          blockData.success === false ||
+          (blockData.providerResult && blockData.providerResult !== "0");
 
-      // Validación profunda del resultado del GDS para la ida
-      const blockData = data.data || data;
-      const isGdsError =
-        blockData.success === false ||
-        (blockData.providerResult && blockData.providerResult !== "0");
+        if (isGdsError) {
+          throw new Error(
+            "No se pudo reservar el asiento, por favor intente con otro",
+          );
+        }
 
-      if (isGdsError) {
-        throw new Error(
-          data.message ||
-            blockData.message ||
-            "No se pudieron bloquear los asientos de ida (Error del proveedor)",
-        );
-      }
-
-      if (blockData.connectionId) {
-        setOutboundConnectionId(blockData.connectionId);
+        if (blockData.connectionId) {
+          setOutboundConnectionId(blockData.connectionId);
+        }
+      } catch (err: any) {
+        // Error específico en la IDA
+        if (selectedOutboundTrip) {
+          addFailedSeats(
+            selectedOutboundTrip.id,
+            selectedSeats.map((s) => s.number),
+          );
+          selectedSeats.forEach((s) => removeSeat(s.id));
+        }
+        throw err; // Re-lanzar para que lo atrape el catch principal y muestre el mensaje
       }
 
       // 2. Bloqueo para asientos de vuelta (si aplica)
@@ -146,39 +157,51 @@ export default function SeatsPage() {
         selectedReturnTrip &&
         selectedReturnSeats.length > 0
       ) {
-        const returnRes = await fetch("/api/gds/block", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            serviceId: selectedReturnTrip.id,
-            originId: selectedReturnTrip.origin,
-            destinationId: selectedReturnTrip.destination,
-            seats: selectedReturnSeats.map((s) => s.number).join(", "),
-          }),
-        });
+        try {
+          const returnRes = await fetch("/api/gds/block", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              serviceId: selectedReturnTrip.id,
+              originId: selectedReturnTrip.origin,
+              destinationId: selectedReturnTrip.destination,
+              seats: selectedReturnSeats.map((s) => s.number).join(", "),
+            }),
+          });
 
-        if (!returnRes.ok) {
-          const err = await returnRes.json();
-          throw new Error(err.error || "Error al bloquear asientos de regreso");
-        }
+          if (!returnRes.ok) {
+            const err = await returnRes.json();
+            throw new Error(
+              err.error || "Error al bloquear asientos de regreso",
+            );
+          }
 
-        const returnData = await returnRes.json();
-        const returnBlockData = returnData.data || returnData;
-        const isReturnGdsError =
-          returnBlockData.success === false ||
-          (returnBlockData.providerResult &&
-            returnBlockData.providerResult !== "0");
+          const returnData = await returnRes.json();
+          const returnBlockData = returnData.data || returnData;
+          const isReturnGdsError =
+            returnBlockData.success === false ||
+            (returnBlockData.providerResult &&
+              returnBlockData.providerResult !== "0");
 
-        if (isReturnGdsError) {
-          throw new Error(
-            returnData.message ||
-              returnBlockData.message ||
-              "No se pudieron bloquear los asientos de regreso (Error del proveedor)",
-          );
-        }
+          if (isReturnGdsError) {
+            throw new Error(
+              "No se pudo reservar el asiento, por favor intente con otro",
+            );
+          }
 
-        if (returnBlockData.connectionId) {
-          setReturnConnectionId(returnBlockData.connectionId);
+          if (returnBlockData.connectionId) {
+            setReturnConnectionId(returnBlockData.connectionId);
+          }
+        } catch (err: any) {
+          // Error específico en la VUELTA
+          if (selectedReturnTrip) {
+            addFailedSeats(
+              selectedReturnTrip.id,
+              selectedReturnSeats.map((s) => s.number),
+            );
+            selectedReturnSeats.forEach((s) => removeReturnSeat(s.id));
+          }
+          throw err;
         }
       }
 
@@ -187,7 +210,7 @@ export default function SeatsPage() {
       console.error("Block error:", err);
       setBlockError(
         err.message ||
-          "No se pudieron bloquear los asientos. Intenta de nuevo.",
+          "No se pudieron reservar los asientos. Por favor intenta con otros.",
       );
     } finally {
       setIsBlocking(false);
@@ -221,6 +244,13 @@ export default function SeatsPage() {
     currentSelectedSeats.length > 0 &&
     currentSelectedSeats.length <= maxAllowed &&
     (selectingReturn || arePassengersComplete);
+
+  // Limpiar error de bloqueo cuando el botón se vuelve a habilitar (nueva selección válida)
+  useEffect(() => {
+    if (canContinue && blockError) {
+      setBlockError(null);
+    }
+  }, [canContinue, blockError]);
 
   // Verificar si se ha excedido el límite
   const hasExceededLimit = currentSelectedSeats.length > maxAllowed;
@@ -299,13 +329,6 @@ export default function SeatsPage() {
                     : `Solo puedes seleccionar un máximo de 4 asientos por reserva. `}
                   Por favor, deselecciona algunos asientos.
                 </AlertDescription>
-              </Alert>
-            )}
-
-            {blockError && (
-              <Alert variant="destructive" className="mb-6 animate-fade-in">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{blockError}</AlertDescription>
               </Alert>
             )}
 
@@ -660,6 +683,18 @@ export default function SeatsPage() {
                       <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
                     )}
                   </Button>
+
+                  {blockError && (
+                    <Alert
+                      variant="destructive"
+                      className="mt-4 animate-fade-in py-2"
+                    >
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription className="text-xs mt-1">
+                        {blockError}
+                      </AlertDescription>
+                    </Alert>
+                  )}
 
                   {!canContinue && (
                     <p className="text-xs md:text-sm text-background/70 mt-3 text-center">
