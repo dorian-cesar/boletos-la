@@ -51,6 +51,13 @@ export interface Stop {
   name: string;
 }
 
+export interface PaymentResult {
+  monto: string;
+  pagado: boolean;
+  token: string;
+  hash_pedido: string;
+}
+
 export interface BookingState {
   step: number;
   tripType: "one-way" | "round-trip";
@@ -70,6 +77,7 @@ export interface BookingState {
   destinationTitle: string;
   outboundConnectionId: string | null;
   returnConnectionId: string | null;
+  paymentResult: PaymentResult | null;
 
   setStep: (step: number) => void;
   setTripType: (type: "one-way" | "round-trip") => void;
@@ -95,6 +103,7 @@ export interface BookingState {
   setDestinationTitle: (title: string) => void;
   setOutboundConnectionId: (id: string | null) => void;
   setReturnConnectionId: (id: string | null) => void;
+  setPaymentResult: (result: PaymentResult | null) => void;
   assignTicketNumbers: (ticketMap: Record<string, string>) => void;
   swapTitles: () => void;
   resetBooking: () => void;
@@ -119,6 +128,7 @@ const initialState = {
   destinationTitle: "",
   outboundConnectionId: null,
   returnConnectionId: null,
+  paymentResult: null,
 };
 
 export const useBookingStore = create<BookingState>()(
@@ -294,6 +304,7 @@ export const useBookingStore = create<BookingState>()(
       setDestinationTitle: (destinationTitle) => set({ destinationTitle }),
       setOutboundConnectionId: (outboundConnectionId) => set({ outboundConnectionId }),
       setReturnConnectionId: (returnConnectionId) => set({ returnConnectionId }),
+      setPaymentResult: (paymentResult) => set({ paymentResult }),
       assignTicketNumbers: (ticketMap) => {
         const { selectedSeats, selectedReturnSeats } = get();
         set({
@@ -344,6 +355,7 @@ export const useBookingStore = create<BookingState>()(
         destinationTitle: state.destinationTitle,
         outboundConnectionId: state.outboundConnectionId,
         returnConnectionId: state.returnConnectionId,
+        paymentResult: state.paymentResult,
       }),
       // Versión para migraciones futuras
       version: 1,

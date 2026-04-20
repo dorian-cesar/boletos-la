@@ -41,6 +41,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
     bookingReference,
     setBookingReference,
     setPaymentStatus: setStorePaymentStatus,
+    setPaymentResult,
     assignTicketNumbers,
   } = useBookingStore();
 
@@ -143,6 +144,27 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
 
         let finalRef = ref;
 
+        const simDate = format(new Date(), "yyyy-MM-dd HH:mm:ss");
+        const simHash = Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
+        const simToken = Array.from({ length: 40 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
+        
+        const simulatedPaymentDetails = {
+            pagado: true,
+            forma_pago: "Tarjetas de crédito",
+            fecha_pago: simDate,
+            monto: totalPrice.toFixed(2),
+            fecha_maxima_pago: simDate,
+            hash_pedido: simHash,
+            numero_pedido: Math.floor(10000000 + Math.random() * 90000000).toString(),
+            cancelado: false,
+            forma_pago_identificador: "9",
+            token: simToken,
+            mensaje_resultado_pago: {
+                titulo: "Pedido pagado exitosamente",
+                descripcion: ""
+            }
+        };
+
         if (selectedOutboundTrip) {
           const ticketMap = await sellGdsSeats({
             outboundTrip: selectedOutboundTrip,
@@ -162,23 +184,20 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
             }
           }
           await sendEmailAlertsInBackground(
-            { forma_pago: "Tarjeta de Crédito/Débito" },
+            simulatedPaymentDetails,
             finalRef,
             ticketMap,
           );
         }
 
-        onReady(
-          {
-            forma_pago: "Tarjeta de Crédito/Débito",
-            fecha_pago: new Date().toISOString(),
-            numero_pedido: `TARJ-${Date.now().toString(36).toUpperCase()}`,
-            monto: totalPrice.toString(),
-            pagado: true,
-            cancelado: false,
-          },
-          true,
-        );
+        setPaymentResult({
+          monto: simulatedPaymentDetails.monto,
+          pagado: simulatedPaymentDetails.pagado,
+          token: simulatedPaymentDetails.token,
+          hash_pedido: simulatedPaymentDetails.hash_pedido,
+        });
+
+        onReady(simulatedPaymentDetails, true);
         return;
       }
 
@@ -244,6 +263,13 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               }
               await sendEmailAlertsInBackground(payment, finalRef, ticketMap);
             }
+
+            setPaymentResult({
+              monto: String(payment.monto),
+              pagado: payment.pagado,
+              token: String(payment.token),
+              hash_pedido: String(payment.hash_pedido),
+            });
 
             onReady(payment, false);
           } else if (payment.cancelado === true) {

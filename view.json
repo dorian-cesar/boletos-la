@@ -2,178 +2,15 @@
     "state": {
         "step": 4,
         "tripType": "round-trip",
-        "origin": "430",
-        "destination": "511",
-        "departureDate": "2026-04-17",
-        "returnDate": "2026-04-21",
-        "selectedOutboundTrip": {
-            "id": "76653",
-            "origin": "430",
-            "destination": "511",
-            "date": "2026-04-17",
-            "departureTime": "19:35",
-            "arrivalTime": "08:25",
-            "duration": "12h 50m",
-            "price": 400000,
-            "busType": "cama",
-            "company": "EPA",
-            "amenities": [
-                "Aire Acondicionado",
-                "Baño",
-                "TV",
-                "WiFi",
-                "Enchufes USB"
-            ],
-            "availableSeats": 42
-        },
-        "selectedReturnTrip": {
-            "id": "76690",
-            "origin": "511",
-            "destination": "430",
-            "date": "2026-04-21",
-            "departureTime": "16:05",
-            "arrivalTime": "05:45",
-            "duration": "13h 40m",
-            "price": 65000,
-            "busType": "semi-cama",
-            "company": "EPA",
-            "amenities": [
-                "Aire Acondicionado",
-                "Baño",
-                "TV",
-                "WiFi",
-                "Enchufes USB"
-            ],
-            "availableSeats": 52
-        },
-        "selectedSeats": [
-            {
-                "id": "1-7-2",
-                "number": "28",
-                "row": 7,
-                "column": 2,
-                "floor": 1,
-                "type": "standard",
-                "status": "selected",
-                "price": 400000,
-                "qualityCode": "CA"
-            },
-            {
-                "id": "1-7-1",
-                "number": "27",
-                "row": 7,
-                "column": 1,
-                "floor": 1,
-                "type": "standard",
-                "status": "selected",
-                "price": 400000,
-                "qualityCode": "CA"
-            }
-        ],
-        "selectedReturnSeats": [
-            {
-                "id": "1-9-1",
-                "number": "41",
-                "row": 9,
-                "column": 1,
-                "floor": 1,
-                "type": "standard",
-                "status": "selected",
-                "price": 65000,
-                "qualityCode": "SE"
-            },
-            {
-                "id": "1-9-2",
-                "number": "42",
-                "row": 9,
-                "column": 2,
-                "floor": 1,
-                "type": "standard",
-                "status": "selected",
-                "price": 65000,
-                "qualityCode": "SE"
-            }
-        ],
-        "passengerDetails": [
-            {
-                "seatId": "1-7-2",
-                "seatNumber": "28",
-                "firstName": "Test",
-                "lastName": "User",
-                "documentNumber": "12345678",
-                "docType": {
-                    "codigo": "C",
-                    "nombre": "C.I. Paraguaya"
-                },
-                "email": "dwigodski@wit.la",
-                "phone": "0975664778"
-            },
-            {
-                "seatId": "1-7-1",
-                "seatNumber": "27",
-                "firstName": "Juan Carlos",
-                "lastName": "Garcia",
-                "documentNumber": "12345678",
-                "docType": {
-                    "codigo": "D",
-                    "nombre": "D.N.I."
-                },
-                "email": "dwigodski@wit.la",
-                "phone": "0981123456"
-            },
-            {
-                "seatId": "1-9-1",
-                "seatNumber": "41",
-                "firstName": "Test",
-                "lastName": "User",
-                "documentNumber": "12345678",
-                "docType": {
-                    "codigo": "C",
-                    "nombre": "C.I. Paraguaya"
-                },
-                "email": "dwigodski@wit.la",
-                "phone": "0975664778"
-            },
-            {
-                "seatId": "1-9-2",
-                "seatNumber": "42",
-                "firstName": "Juan Carlos",
-                "lastName": "Garcia",
-                "documentNumber": "12345678",
-                "docType": {
-                    "codigo": "D",
-                    "nombre": "D.N.I."
-                },
-                "email": "dwigodski@wit.la",
-                "phone": "0981123456"
-            }
-        ],
-        "totalPrice": 930000,
-        "bookingReference": "70030020000005",
-        "paymentStatus": "completed",
-        "originTitle": "Terminal Encarnacion",
-        "destinationTitle": "Terminal Pacheco",
-        "connectionId": "5714314"
-    },
-    "version": 1
-}
-
-
-
-venta exitosa de 2 boletos - ida y vuelta:
-{
-    "state": {
-        "step": 4,
-        "tripType": "round-trip",
         "origin": "555",
         "destination": "551",
-        "departureDate": "2026-04-23",
+        "departureDate": "2026-04-22",
         "returnDate": "2026-04-29",
         "selectedOutboundTrip": {
-            "id": "74807",
+            "id": "74797",
             "origin": "555",
             "destination": "551",
-            "date": "2026-04-23",
+            "date": "2026-04-22",
             "departureTime": "02:40",
             "arrivalTime": "04:50",
             "duration": "2h 10m",
@@ -188,12 +25,12 @@ venta exitosa de 2 boletos - ida y vuelta:
             "availableSeats": 50
         },
         "selectedReturnTrip": {
-            "id": "76080",
+            "id": "75218",
             "origin": "551",
             "destination": "555",
             "date": "2026-04-29",
-            "departureTime": "17:00",
-            "arrivalTime": "19:10",
+            "departureTime": "13:00",
+            "arrivalTime": "15:10",
             "duration": "2h 10m",
             "price": 40000,
             "busType": "comun",
@@ -207,36 +44,60 @@ venta exitosa de 2 boletos - ida y vuelta:
         },
         "selectedSeats": [
             {
-                "id": "1-8-5",
-                "number": "25",
-                "row": 8,
+                "id": "1-12-5",
+                "number": "41",
+                "row": 12,
                 "column": 5,
                 "floor": 1,
                 "type": "standard",
                 "status": "selected",
                 "price": 40000,
                 "qualityCode": "CO",
-                "ticketNumber": "70030020000025"
+                "ticketNumber": "70030020000029"
+            },
+            {
+                "id": "1-12-4",
+                "number": "42",
+                "row": 12,
+                "column": 4,
+                "floor": 1,
+                "type": "standard",
+                "status": "selected",
+                "price": 40000,
+                "qualityCode": "CO",
+                "ticketNumber": "70030020000030"
             }
         ],
         "selectedReturnSeats": [
             {
-                "id": "1-13-5",
-                "number": "45",
-                "row": 13,
+                "id": "1-7-4",
+                "number": "22",
+                "row": 7,
+                "column": 4,
+                "floor": 1,
+                "type": "standard",
+                "status": "selected",
+                "price": 40000,
+                "qualityCode": "CO",
+                "ticketNumber": "70030020000027"
+            },
+            {
+                "id": "1-7-5",
+                "number": "21",
+                "row": 7,
                 "column": 5,
                 "floor": 1,
                 "type": "standard",
                 "status": "selected",
                 "price": 40000,
                 "qualityCode": "CO",
-                "ticketNumber": "70030020000026"
+                "ticketNumber": "70030020000028"
             }
         ],
         "passengerDetails": [
             {
-                "seatId": "1-8-5",
-                "seatNumber": "25",
+                "seatId": "1-12-5",
+                "seatNumber": "41",
                 "firstName": "Juan",
                 "lastName": "Test",
                 "documentNumber": "87654321",
@@ -253,8 +114,26 @@ venta exitosa de 2 boletos - ida y vuelta:
                 "country": "CL"
             },
             {
-                "seatId": "1-13-5",
-                "seatNumber": "45",
+                "seatId": "1-12-4",
+                "seatNumber": "42",
+                "firstName": "Test",
+                "lastName": "User",
+                "documentNumber": "12345678",
+                "docType": {
+                    "codigo": "C",
+                    "nombre": "C.I. Paraguaya"
+                },
+                "email": "dwigodski@wit.la",
+                "phone": "0975664778",
+                "occupation": "EMPLEADO",
+                "birthDate": "1987-02-20",
+                "gender": "M",
+                "nationality": "PY",
+                "country": "PY"
+            },
+            {
+                "seatId": "1-7-4",
+                "seatNumber": "22",
                 "firstName": "Juan",
                 "lastName": "Test",
                 "documentNumber": "87654321",
@@ -269,15 +148,39 @@ venta exitosa de 2 boletos - ida y vuelta:
                 "gender": "M",
                 "nationality": "CL",
                 "country": "CL"
+            },
+            {
+                "seatId": "1-7-5",
+                "seatNumber": "21",
+                "firstName": "Test",
+                "lastName": "User",
+                "documentNumber": "12345678",
+                "docType": {
+                    "codigo": "C",
+                    "nombre": "C.I. Paraguaya"
+                },
+                "email": "dwigodski@wit.la",
+                "phone": "0975664778",
+                "occupation": "EMPLEADO",
+                "birthDate": "1987-02-20",
+                "gender": "M",
+                "nationality": "PY",
+                "country": "PY"
             }
         ],
-        "totalPrice": 80000,
-        "bookingReference": "70030020000025",
+        "totalPrice": 160000,
+        "bookingReference": "70030020000029",
         "paymentStatus": "completed",
         "originTitle": "Aduana Argentina",
         "destinationTitle": "Banco Itau",
-        "outboundConnectionId": "6790268",
-        "returnConnectionId": "5848170"
+        "outboundConnectionId": "7300674",
+        "returnConnectionId": "7928270",
+        "paymentResult": {
+            "monto": "160000.00",
+            "pagado": true,
+            "token": "a447c70677966af62038bcde69e13241f573fe6f",
+            "hash_pedido": "010652015fba6951417bf01ce869b258615514f5c60f646900f6e95b5df01275"
+        }
     },
     "version": 1
 }
