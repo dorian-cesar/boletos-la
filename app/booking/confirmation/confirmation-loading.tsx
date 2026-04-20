@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { format, parse } from "date-fns";
+import { es } from "date-fns/locale";
 import { BookingProgress } from "@/components/booking-progress";
 import { useBookingStore } from "@/lib/booking-store";
 import { sellGdsSeats } from "@/lib/gds-sell";
@@ -24,6 +26,10 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
   const [pagoparHash, setPagoparHash] = useState<string | null>(null);
 
   const {
+    departureDate,
+    returnDate,
+    originTitle,
+    destinationTitle,
     selectedOutboundTrip,
     selectedReturnTrip,
     selectedSeats,
@@ -37,6 +43,76 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
     assignTicketNumbers,
   } = useBookingStore();
 
+  const primaryPassenger = passengerDetails[0];
+
+  const sendEmailAlertsInBackground = async (
+    paymentDetails: any,
+    activeRef: string,
+    tickets: Record<string, string>
+  ) => {
+    if (!primaryPassenger?.email || !selectedOutboundTrip) return;
+
+    const getTicketNumber = (label: string, seatNumber: string) => {
+      return tickets[`${label}-${seatNumber}`] || `${activeRef}-${seatNumber}`;
+    };
+
+    const sendTripEmail = async (trip: any, seat: any, passenger: any, label: string) => {
+      const payload = {
+        emailDestino: primaryPassenger.email,
+        reservaCodigo: getTicketNumber(label, seat.number),
+        horaSalida: trip.departureTime,
+        origen: (label === "Ida" ? originTitle : destinationTitle) || trip.origin,
+        horaLlegada: trip.arrivalTime,
+        destino: (label === "Ida" ? destinationTitle : originTitle) || trip.destination,
+        fechaViaje: format(
+          parse((label === "Ida" ? departureDate : returnDate) || "", "yyyy-MM-dd", new Date()),
+          "d 'de' MMMM, yyyy",
+          { locale: es }
+        ),
+        duracion: trip.duration,
+        empresa: trip.company,
+        servicioTipo: trip.busType,
+        asientos: seat.number,
+        terminal: (label === "Ida" ? originTitle : destinationTitle) || "Terminal",
+        puerta: Math.floor(Math.random() * 20 + 1).toString(),
+        pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
+        documento: passenger.documentNumber || "Sin documento",
+        telefono: passenger.phone || "Sin teléfono",
+        subtotal: `Gs. ${Math.round(seat.price * 0.82).toLocaleString("es-PY")}`,
+        iva: `Gs. ${Math.round(seat.price * 0.1).toLocaleString("es-PY")}`,
+        cargoServicio: `Gs. ${Math.round(seat.price * 0.08).toLocaleString("es-PY")}`,
+        total: `Gs. ${seat.price.toLocaleString("es-PY")}`,
+        pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
+        metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
+      };
+
+      try {
+        await fetch("/api/tickets/send-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } catch (err) {
+        console.error("Error enviando email:", err);
+      }
+    };
+
+    const tasks: Promise<void>[] = [];
+    selectedSeats.forEach((seat, idx) => {
+      const pass = passengerDetails[idx];
+      if (pass) tasks.push(sendTripEmail(selectedOutboundTrip, seat, pass, "Ida"));
+    });
+
+    if (selectedReturnTrip && selectedReturnSeats.length > 0) {
+      selectedReturnSeats.forEach((seat, idx) => {
+        const pass = passengerDetails[selectedSeats.length + idx];
+        if (pass) tasks.push(sendTripEmail(selectedReturnTrip, seat, pass, "Vuelta"));
+      });
+    }
+
+    await Promise.allSettled(tasks);
+  };
+
   useEffect(() => {
     if (processingRef.current) return;
     processingRef.current = true;
@@ -48,6 +124,8 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
         setBookingReference(ref);
         setStorePaymentStatus("completed");
+        
+        let finalRef = ref;
 
         if (selectedOutboundTrip) {
           const ticketMap = await sellGdsSeats({
@@ -61,8 +139,12 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           if (Object.keys(ticketMap).length > 0) {
             assignTicketNumbers(ticketMap);
             const first = Object.values(ticketMap)[0];
-            if (first) setBookingReference(first);
+            if (first) {
+              setBookingReference(first);
+              finalRef = first;
+            }
           }
+          await sendEmailAlertsInBackground({ forma_pago: "Tarjeta de Crédito/Débito" }, finalRef, ticketMap);
         }
 
         onReady(
@@ -105,9 +187,10 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           const payment = data.resultado[0];
 
           if (payment.pagado === true) {
-            if (!bookingReference) {
-              const ref = `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-              setBookingReference(ref);
+            let finalRef = bookingReference;
+            if (!finalRef) {
+              finalRef = `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+              setBookingReference(finalRef);
             }
             setStorePaymentStatus("completed");
 
@@ -123,8 +206,12 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               if (Object.keys(ticketMap).length > 0) {
                 assignTicketNumbers(ticketMap);
                 const first = Object.values(ticketMap)[0];
-                if (first) setBookingReference(first);
+                if (first) {
+                  setBookingReference(first);
+                  finalRef = first;
+                }
               }
+              await sendEmailAlertsInBackground(payment, finalRef, ticketMap);
             }
 
             onReady(payment, false);

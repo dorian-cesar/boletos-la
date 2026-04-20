@@ -428,9 +428,6 @@ export default function ConfirmationPageContent({
   // =====================================================================
   // FUNCIÓN PARA ENVIAR EMAIL A TODOS LOS PASAJEROS
   // =====================================================================
-  // =====================================================================
-  // FUNCIÓN PARA ENVIAR EMAIL A TODOS LOS PASAJEROS
-  // =====================================================================
   const handleSendEmail = async () => {
     if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) return;
 
@@ -600,153 +597,6 @@ export default function ConfirmationPageContent({
   };
 
   // =====================================================================
-  // 6. FUNCIÓN PARA ENVIAR EMAIL DE CONFIRMACIÓN AUTOMÁTICO
-  // =====================================================================
-  const sendConfirmationEmail = async (
-    passengerEmail: string,
-  ): Promise<boolean> => {
-    if (!selectedOutboundTrip || !bookingReference || !primaryPassenger) {
-      console.warn("⚠️ No hay datos suficientes para enviar email");
-      return false;
-    }
-
-    // Helper interno para enviar un email específico
-    const sendTripEmail = async (
-      trip: Trip,
-      seat: Seat,
-      passenger: Passenger,
-      label: string,
-      index: number,
-      total: number,
-    ) => {
-      const payload = {
-        emailDestino: passengerEmail,
-        reservaCodigo:
-          seat.ticketNumber || `${bookingReference}-${seat.number}`,
-        horaSalida: trip.departureTime,
-        origen:
-          (label === "Ida" ? originTitle : destinationTitle) || trip.origin,
-        horaLlegada: trip.arrivalTime,
-        destino:
-          (label === "Ida" ? destinationTitle : originTitle) ||
-          trip.destination,
-        fechaViaje: format(
-          parse(
-            (label === "Ida" ? departureDate : returnDate) || "",
-            "yyyy-MM-dd",
-            new Date(),
-          ),
-          "d 'de' MMMM, yyyy",
-          {
-            locale: es,
-          },
-        ),
-        duracion: trip.duration,
-        empresa: trip.company,
-        servicioTipo: trip.busType,
-        asientos: seat.number,
-        terminal:
-          (label === "Ida" ? originTitle : destinationTitle) || "Terminal",
-        puerta: Math.floor(Math.random() * 20 + 1).toString(),
-        pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
-        documento: passenger.documentNumber || "Sin documento",
-        telefono: passenger.phone || "Sin teléfono",
-        subtotal: `Gs. ${Math.round(seat.price * 0.82).toLocaleString("es-PY")}`,
-        iva: `Gs. ${Math.round(seat.price * 0.1).toLocaleString("es-PY")}`,
-        cargoServicio: `Gs. ${Math.round(seat.price * 0.08).toLocaleString("es-PY")}`,
-        total: `Gs. ${seat.price.toLocaleString("es-PY")}`,
-        pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
-        metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
-      };
-
-      const response = await fetch("/api/tickets/send-email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
-        throw new Error(
-          result.message || `Error al enviar el email de ${label}`,
-        );
-      }
-
-      console.log(
-        `✅ Email (${label}) enviado exitosamente para ${passenger.firstName}:`,
-        result,
-      );
-    };
-
-    try {
-      setAutoEmailStatus("sending");
-      setAutoEmailMessage("Iniciando envío de boletos...");
-
-      // 1. Enviar IDA (Individualmente)
-      for (const [index, seat] of selectedSeats.entries()) {
-        const passenger = passengerDetails[index];
-        if (!passenger) continue;
-
-        setAutoEmailMessage(
-          `Enviando boleto de Ida (${index + 1}/${selectedSeats.length})...`,
-        );
-        await sendTripEmail(
-          selectedOutboundTrip,
-          seat,
-          passenger,
-          "Ida",
-          index,
-          selectedSeats.length,
-        );
-      }
-
-      // 2. Enviar VUELTA (Individualmente, si existe)
-      if (selectedReturnTrip && selectedReturnSeats.length > 0) {
-        for (const [index, seat] of selectedReturnSeats.entries()) {
-          // El pasajero de vuelta está desplazado en el array passengerDetails
-          const passengerIndex = selectedSeats.length + index;
-          const passenger = passengerDetails[passengerIndex];
-          if (!passenger) continue;
-
-          setAutoEmailMessage(
-            `Enviando boleto de Vuelta (${index + 1}/${selectedReturnSeats.length})...`,
-          );
-          await sendTripEmail(
-            selectedReturnTrip,
-            seat,
-            passenger,
-            "Vuelta",
-            index,
-            selectedReturnSeats.length,
-          );
-        }
-      }
-
-      setAutoEmailStatus("sent");
-      setAutoEmailMessage("Todos los boletos fueron enviados");
-
-      return true;
-    } catch (error: any) {
-      console.error("Error enviando email automático:", error);
-
-      let errorMessage = "Error al enviar el email automático";
-      if (error.name === "AbortError") {
-        errorMessage = "Timeout: El envío de email tardó demasiado";
-      } else if (error.message.includes("network")) {
-        errorMessage = "Error de red al enviar el email";
-      }
-
-      setAutoEmailStatus("failed");
-      setAutoEmailMessage(errorMessage);
-
-      return false;
-    }
-  };
-
-  // =====================================================================
   // FUNCIÓN PARA ENVIAR EMAIL A UN PASAJERO ESPECÍFICO
   // =====================================================================
   const handleSendEmailToPassenger = async (passengerIndex: number) => {
@@ -850,18 +700,11 @@ export default function ConfirmationPageContent({
     }
   };
 
-  const autoEmailFiredRef = useRef(false);
-
   useEffect(() => {
     setMounted(true);
     setStep(4);
     setShowConfetti(true);
     setTimeout(() => setShowConfetti(false), 5000);
-
-    if (!autoEmailFiredRef.current && primaryPassenger?.email) {
-      autoEmailFiredRef.current = true;
-      sendConfirmationEmail(primaryPassenger.email);
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -1055,31 +898,6 @@ export default function ConfirmationPageContent({
                     {primaryPassenger.documentNumber}
                   </span>
                 </p>
-              </div>
-            )}
-            {/* Notificación de email automático */}
-            {autoEmailStatus === "sending" && (
-              <div className="flex items-center justify-center gap-2 mb-5 mt-6 animate-fade-in bg-blue-500/10 border border-blue-500/30 text-blue-300 py-2 px-4 rounded-full w-max mx-auto">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span className="text-sm font-medium">
-                  {autoEmailMessage || "Enviando emails..."}
-                </span>
-              </div>
-            )}
-            {autoEmailStatus === "sent" && (
-              <div className="flex items-center justify-center gap-2 mb-5 mt-6 animate-fade-in bg-green-500/10 border border-green-500/30 text-green-300 py-2 px-4 rounded-full w-max mx-auto">
-                <CheckCircle2 className="h-4 w-4" />
-                <span className="text-sm font-medium">
-                  Emails enviados exitosamente
-                </span>
-              </div>
-            )}
-            {autoEmailStatus === "failed" && (
-              <div className="flex items-center justify-center gap-2 mb-5 mt-6 animate-fade-in bg-destructive/10 border border-destructive/30 text-destructive py-2 px-4 rounded-full w-max mx-auto">
-                <AlertCircle className="h-4 w-4" />
-                <span className="text-sm font-medium px-2">
-                  {autoEmailMessage || "No se pudo enviar el email"}
-                </span>
               </div>
             )}
           </div>

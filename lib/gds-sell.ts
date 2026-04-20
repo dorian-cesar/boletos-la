@@ -13,34 +13,42 @@ export async function sellGdsSeats(params: SellParams): Promise<Record<string, s
   const { outboundTrip, returnTrip, outboundSeats, returnSeats, passengers, connectionId } = params;
   const ticketMap: Record<string, string> = {};
 
-  const callSell = async (
-    trip: Trip,
-    seats: Seat[],
-    offset: number,
-    label: string,
-  ) => {
-    const seatPayloads = seats.map((seat, i) => {
-      const passenger = passengers[offset + i];
-      return {
-        seat: seat.number,
-        qualityCode: seat.qualityCode ?? "CA",
-        amount: seat.price || trip.price || 0,
-        docType: passenger?.docType?.codigo || "D",
-        docNumber: passenger?.documentNumber || "0",
-      };
-    });
+  const allSeats: { seat: Seat; isReturn: boolean }[] = [
+    ...outboundSeats.map((seat) => ({ seat, isReturn: false })),
+    ...(returnTrip ? returnSeats.map((seat) => ({ seat, isReturn: true })) : []),
+  ];
 
-    const payload = {
-      company: trip.company,
-      serviceId: trip.id,
-      connectionId: connectionId ?? undefined,
-      originId: trip.origin,
-      destinationId: trip.destination,
-      ticketCount: seats.length,
-      totalAmount: seats.reduce((acc, s) => acc + (s.price || trip.price || 0), 0),
-      seats: seatPayloads,
+  if (allSeats.length === 0) return ticketMap;
+
+  const seatPayloads = allSeats.map((item, i) => {
+    const passenger = passengers[i];
+    const trip = item.isReturn ? returnTrip! : outboundTrip;
+    return {
+      seat: item.seat.number,
+      qualityCode: item.seat.qualityCode ?? "CA",
+      amount: item.seat.price || trip.price || 0,
+      docType: passenger?.docType?.codigo || "D",
+      docNumber: passenger?.documentNumber || "0",
     };
+  });
 
+  const totalAmount = allSeats.reduce((acc, item) => {
+    const trip = item.isReturn ? returnTrip! : outboundTrip;
+    return acc + (item.seat.price || trip.price || 0);
+  }, 0);
+
+  const payload = {
+    company: outboundTrip.company,
+    serviceId: outboundTrip.id,
+    connectionId: connectionId ?? undefined,
+    originId: outboundTrip.origin,
+    destinationId: outboundTrip.destination,
+    ticketCount: allSeats.length,
+    totalAmount,
+    seats: seatPayloads,
+  };
+
+  try {
     const res = await fetch("/api/gds/sell", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -50,35 +58,24 @@ export async function sellGdsSeats(params: SellParams): Promise<Record<string, s
     const data = await res.json();
 
     if (!res.ok) {
-      console.error(`[sell] Error HTTP (${label}):`, JSON.stringify(data));
-      return;
+      console.error("[sell] Error HTTP:", JSON.stringify(data));
+      return ticketMap;
     }
 
     const codigoError = data?.data?.raw?.CodigoError;
     if (codigoError !== undefined && codigoError !== "0") {
       const desc = data?.data?.raw?.Descripcion || "Error desconocido";
-      console.error(`[sell] GDS rechazó (${label}) CodigoError=${codigoError}: ${desc}`);
-      return;
+      console.error(`[sell] GDS rechazó CodigoError=${codigoError}: ${desc}`);
+      return ticketMap;
     }
 
     const ticketNumbers: string[] = data?.data?.ticketNumbers ?? [];
-    seats.forEach((seat, i) => {
+    allSeats.forEach((item, i) => {
       if (ticketNumbers[i]) {
-        ticketMap[`${label}-${seat.number}`] = ticketNumbers[i];
+        const label = item.isReturn ? "Vuelta" : "Ida";
+        ticketMap[`${label}-${item.seat.number}`] = ticketNumbers[i];
       }
     });
-  };
-
-  const tasks: Promise<void>[] = [];
-  if (outboundSeats.length > 0) {
-    tasks.push(callSell(outboundTrip, outboundSeats, 0, "Ida"));
-  }
-  if (returnTrip && returnSeats.length > 0) {
-    tasks.push(callSell(returnTrip, returnSeats, outboundSeats.length, "Vuelta"));
-  }
-
-  try {
-    await Promise.allSettled(tasks);
   } catch (error: any) {
     console.error("[sell] Error inesperado:", error.message);
   }

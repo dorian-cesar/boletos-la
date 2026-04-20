@@ -26,7 +26,7 @@ export interface Seat {
   type: "standard";
   status: "available" | "occupied" | "selected" | "blocked";
   price: number;
-  qualityCode?: string; // Código de calidad del asiento (ej: "CA") — requerido por GDS /sell
+  qualityCode: string; // Código de calidad del asiento (ej: "CA") — requerido por GDS /sell
   ticketNumber?: string; // Número de ticket asignado por el GDS tras /sell exitoso
 }
 
@@ -211,7 +211,7 @@ export const useBookingStore = create<BookingState>()(
                   gender: existing?.gender ?? "M",
                   nationality: existing?.nationality ?? "",
                   country: existing?.country ?? "",
-                }
+                },
           );
         }
 
@@ -228,14 +228,17 @@ export const useBookingStore = create<BookingState>()(
                   ...existingRet,
                   firstName: outPassenger?.firstName ?? existingRet.firstName,
                   lastName: outPassenger?.lastName ?? existingRet.lastName,
-                  documentNumber: outPassenger?.documentNumber ?? existingRet.documentNumber,
+                  documentNumber:
+                    outPassenger?.documentNumber ?? existingRet.documentNumber,
                   docType: outPassenger?.docType ?? existingRet.docType,
                   email: outPassenger?.email ?? existingRet.email,
                   phone: outPassenger?.phone ?? existingRet.phone,
-                  occupation: outPassenger?.occupation ?? existingRet.occupation,
+                  occupation:
+                    outPassenger?.occupation ?? existingRet.occupation,
                   birthDate: outPassenger?.birthDate ?? existingRet.birthDate,
                   gender: outPassenger?.gender ?? existingRet.gender,
-                  nationality: outPassenger?.nationality ?? existingRet.nationality,
+                  nationality:
+                    outPassenger?.nationality ?? existingRet.nationality,
                   country: outPassenger?.country ?? existingRet.country,
                 }
               : {
@@ -252,7 +255,7 @@ export const useBookingStore = create<BookingState>()(
                   gender: outPassenger?.gender ?? "M",
                   nationality: outPassenger?.nationality ?? "",
                   country: outPassenger?.country ?? "",
-                }
+                },
           );
         }
 
@@ -296,7 +299,8 @@ export const useBookingStore = create<BookingState>()(
           })),
           selectedReturnSeats: selectedReturnSeats.map((seat) => ({
             ...seat,
-            ticketNumber: ticketMap[`Vuelta-${seat.number}`] ?? seat.ticketNumber,
+            ticketNumber:
+              ticketMap[`Vuelta-${seat.number}`] ?? seat.ticketNumber,
           })),
         });
       },
