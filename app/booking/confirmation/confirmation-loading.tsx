@@ -35,7 +35,8 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
     selectedSeats,
     selectedReturnSeats,
     passengerDetails,
-    connectionId,
+    outboundConnectionId,
+    returnConnectionId,
     totalPrice,
     bookingReference,
     setBookingReference,
@@ -149,7 +150,8 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
             outboundSeats: selectedSeats,
             returnSeats: selectedReturnSeats,
             passengers: passengerDetails,
-            connectionId,
+            outboundConnectionId,
+            returnConnectionId,
           });
           if (Object.keys(ticketMap).length > 0) {
             assignTicketNumbers(ticketMap);
@@ -198,7 +200,19 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
         });
         const data = await res.json();
 
-        if (data.respuesta === true && data.resultado?.[0]) {
+        if (
+          data.respuesta === true &&
+          data.resultado === "Sin datos que mostrar"
+        ) {
+          setStatus("failed");
+          return;
+        }
+
+        if (
+          data.respuesta === true &&
+          Array.isArray(data.resultado) &&
+          data.resultado.length > 0
+        ) {
           const payment = data.resultado[0];
 
           if (payment.pagado === true) {
@@ -217,7 +231,8 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 outboundSeats: selectedSeats,
                 returnSeats: selectedReturnSeats,
                 passengers: passengerDetails,
-                connectionId,
+                outboundConnectionId,
+                returnConnectionId,
               });
               if (Object.keys(ticketMap).length > 0) {
                 assignTicketNumbers(ticketMap);

@@ -6,12 +6,11 @@ import { format, parse } from "date-fns";
 import { es } from "date-fns/locale";
 import {
   ArrowRight,
+  ArrowLeft,
   Bus,
   MapPin,
   Clock,
   Users,
-  ChevronLeft,
-  ChevronRight,
   AlertCircle,
   Loader2,
   UserCheck,
@@ -47,7 +46,8 @@ export default function SeatsPage() {
     totalPrice,
     originTitle,
     destinationTitle,
-    setConnectionId,
+    setOutboundConnectionId,
+    setReturnConnectionId,
     initPassengers,
   } = useBookingStore();
 
@@ -136,7 +136,9 @@ export default function SeatsPage() {
         );
       }
 
-      let finalConnectionId = blockData.connectionId;
+      if (blockData.connectionId) {
+        setOutboundConnectionId(blockData.connectionId);
+      }
 
       // 2. Bloqueo para asientos de vuelta (si aplica)
       if (
@@ -152,7 +154,6 @@ export default function SeatsPage() {
             originId: selectedReturnTrip.origin,
             destinationId: selectedReturnTrip.destination,
             seats: selectedReturnSeats.map((s) => s.number).join(", "),
-            ...(finalConnectionId && { connectionId: finalConnectionId }),
           }),
         });
 
@@ -176,20 +177,12 @@ export default function SeatsPage() {
           );
         }
 
-        // Si el provider devuelve otro connectionId en el regreso, lo actualizamos.
         if (returnBlockData.connectionId) {
-          finalConnectionId = returnBlockData.connectionId;
+          setReturnConnectionId(returnBlockData.connectionId);
         }
       }
 
-      if (finalConnectionId) {
-        setConnectionId(finalConnectionId);
-        router.push("/booking/checkout");
-      } else {
-        // Si no hay connectionId pero la respuesta fue ok, igual procedemos
-        console.warn("No connectionId received in block response", data);
-        router.push("/booking/checkout");
-      }
+      router.push("/booking/checkout");
     } catch (err: any) {
       console.error("Block error:", err);
       setBlockError(
@@ -481,6 +474,19 @@ export default function SeatsPage() {
                     </div>
                   </div>
                 )}
+
+                <div className="mt-8 flex justify-start">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      router.push("/booking/services");
+                    }}
+                    className="border-background/20 text-background bg-background/10 hover:bg-background/20"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Volver a seleccionar servicio
+                  </Button>
+                </div>
               </div>
 
               {/* Summary Sidebar */}

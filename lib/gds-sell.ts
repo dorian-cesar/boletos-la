@@ -6,7 +6,8 @@ interface SellParams {
   outboundSeats: Seat[];
   returnSeats: Seat[];
   passengers: Passenger[];
-  connectionId?: string | null;
+  outboundConnectionId?: string | null;
+  returnConnectionId?: string | null;
 }
 
 // Función auxiliar para formatear los asientos a enviar al /sell
@@ -24,7 +25,7 @@ const buildSeatPayloads = (seats: Seat[], trip: Trip, paxList: Passenger[]) => {
 };
 
 export async function sellGdsSeats(params: SellParams): Promise<Record<string, string>> {
-  const { outboundTrip, returnTrip, outboundSeats, returnSeats, passengers, connectionId } = params;
+  const { outboundTrip, returnTrip, outboundSeats, returnSeats, passengers, outboundConnectionId, returnConnectionId } = params;
   const ticketMap: Record<string, string> = {};
 
   if (!outboundSeats.length) return ticketMap;
@@ -33,7 +34,7 @@ export async function sellGdsSeats(params: SellParams): Promise<Record<string, s
   const outboundPayload = {
     company: outboundTrip.company,
     serviceId: outboundTrip.id,
-    connectionId: connectionId ?? undefined,
+    connectionId: outboundConnectionId ?? undefined,
     originId: outboundTrip.origin,
     destinationId: outboundTrip.destination,
     ticketCount: outboundSeats.length,
@@ -58,7 +59,7 @@ export async function sellGdsSeats(params: SellParams): Promise<Record<string, s
     const returnPayload = {
       company: returnTrip.company,
       serviceId: returnTrip.id,
-      connectionId: connectionId ?? undefined,
+      connectionId: returnConnectionId ?? undefined,
       originId: returnTrip.origin,
       destinationId: returnTrip.destination,
       ticketCount: returnSeats.length,

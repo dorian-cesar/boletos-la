@@ -68,7 +68,8 @@ export interface BookingState {
   paymentStatus: "pending" | "processing" | "completed" | "failed";
   originTitle: string;
   destinationTitle: string;
-  connectionId: string | null;
+  outboundConnectionId: string | null;
+  returnConnectionId: string | null;
 
   setStep: (step: number) => void;
   setTripType: (type: "one-way" | "round-trip") => void;
@@ -92,7 +93,8 @@ export interface BookingState {
   ) => void;
   setOriginTitle: (title: string) => void;
   setDestinationTitle: (title: string) => void;
-  setConnectionId: (id: string | null) => void;
+  setOutboundConnectionId: (id: string | null) => void;
+  setReturnConnectionId: (id: string | null) => void;
   assignTicketNumbers: (ticketMap: Record<string, string>) => void;
   swapTitles: () => void;
   resetBooking: () => void;
@@ -115,7 +117,8 @@ const initialState = {
   paymentStatus: "pending" as const,
   originTitle: "",
   destinationTitle: "",
-  connectionId: null,
+  outboundConnectionId: null,
+  returnConnectionId: null,
 };
 
 export const useBookingStore = create<BookingState>()(
@@ -289,7 +292,8 @@ export const useBookingStore = create<BookingState>()(
       setPaymentStatus: (paymentStatus) => set({ paymentStatus }),
       setOriginTitle: (originTitle) => set({ originTitle }),
       setDestinationTitle: (destinationTitle) => set({ destinationTitle }),
-      setConnectionId: (connectionId) => set({ connectionId }),
+      setOutboundConnectionId: (outboundConnectionId) => set({ outboundConnectionId }),
+      setReturnConnectionId: (returnConnectionId) => set({ returnConnectionId }),
       assignTicketNumbers: (ticketMap) => {
         const { selectedSeats, selectedReturnSeats } = get();
         set({
@@ -338,7 +342,8 @@ export const useBookingStore = create<BookingState>()(
         paymentStatus: state.paymentStatus,
         originTitle: state.originTitle,
         destinationTitle: state.destinationTitle,
-        connectionId: state.connectionId,
+        outboundConnectionId: state.outboundConnectionId,
+        returnConnectionId: state.returnConnectionId,
       }),
       // Versión para migraciones futuras
       version: 1,

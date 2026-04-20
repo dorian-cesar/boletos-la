@@ -157,3 +157,45 @@
     },
     "version": 1
 }
+
+
+
+/sell ida y vuelta:
+ida:
+{
+    "company": "EPA",
+    "serviceId": "75693",
+    "connectionId": "1612691",
+    "originId": "555",
+    "destinationId": "551",
+    "ticketCount": 1,
+    "totalAmount": 40000,
+    "seats": [
+        {
+            "seat": "22",
+            "qualityCode": "CO",
+            "amount": 40000,
+            "docType": "C",
+            "docNumber": "87654321"
+        }
+    ]
+}
+vuelta:
+{
+    "company": "NSA",
+    "serviceId": "74333",
+    "connectionId": "1612691",
+    "originId": "551",
+    "destinationId": "555",
+    "ticketCount": 1,
+    "totalAmount": 50600,
+    "seats": [
+        {
+            "seat": "17",
+            "qualityCode": "CO",
+            "amount": 50600,
+            "docType": "C",
+            "docNumber": "87654321"
+        }
+    ]
+}
