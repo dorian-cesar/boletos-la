@@ -181,11 +181,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
       }
 
       // Pagopar
-      let resolvedHash = hash;
-      if (!resolvedHash || ["undefined", "null"].includes(resolvedHash)) {
-        resolvedHash = localStorage.getItem("pagopar_last_hash") ?? "";
-      }
-      localStorage.removeItem("pagopar_last_hash");
+      const resolvedHash = localStorage.getItem("pagopar_last_hash") ?? "";
 
       if (!resolvedHash) {
         setStatus("failed");
@@ -206,6 +202,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           const payment = data.resultado[0];
 
           if (payment.pagado === true) {
+            localStorage.removeItem("pagopar_last_hash");
             let finalRef = bookingReference;
             if (!finalRef) {
               finalRef = `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
@@ -313,7 +310,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                     }}
                     className="bg-purple-600 hover:bg-purple-700"
                   >
-                    <Wallet className="h-4 w-4 mr-2" />
+                    <Wallet className="h-4 w-4" />
                     Completar pago en Pagopar
                   </Button>
                 </div>
