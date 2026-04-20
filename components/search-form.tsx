@@ -258,7 +258,7 @@ export function SearchForm() {
                           : origin
                             ? stops.find((c) => String(c.id) === String(origin))
                                 ?.name
-                            : "Elegí ciudad"}
+                            : "Selecciona origen"}
                       </span>
                     </div>
                     <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" />
@@ -376,7 +376,7 @@ export function SearchForm() {
                             ? stops.find(
                                 (c) => String(c.id) === String(destination),
                               )?.name
-                            : "Elegí ciudad"}
+                            : "Selecciona destino"}
                       </span>
                     </div>
                     <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" />
@@ -454,7 +454,7 @@ export function SearchForm() {
                           ? format(parseDate(departureDate), "dd MMM yyyy", {
                               locale: es,
                             })
-                          : "Elegí"}
+                          : "Selecciona fecha"}
                       </span>
                     </div>
                   </Button>
@@ -506,7 +506,7 @@ export function SearchForm() {
                             ? format(parseDate(returnDate), "dd MMM yyyy", {
                                 locale: es,
                               })
-                            : "Elegí"}
+                            : "Selecciona fecha"}
                         </span>
                       </div>
                     </Button>
