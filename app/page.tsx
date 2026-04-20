@@ -22,6 +22,7 @@ export default function HomePage() {
     ) {
       // Reset completo para nueva búsqueda
       storeState.resetBooking();
+      localStorage.removeItem("pagopar_last_hash");
     }
   }, []); // Empty dependency array = solo se ejecuta una vez al montar
 

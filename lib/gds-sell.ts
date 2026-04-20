@@ -24,6 +24,60 @@ const buildSeatPayloads = (seats: Seat[], trip: Trip, paxList: Passenger[]) => {
   });
 };
 
+const MAX_RETRIES = 3;
+
+async function doSellWithRetry(payload: any, label: string) {
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const res = await fetch("/api/gds/sell", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      
+      let isError = false;
+      let logMsg = "";
+
+      if (!res.ok) {
+        isError = true;
+        logMsg = `HTTP Error ${res.status}: ${JSON.stringify(data.error || data)}`;
+      } else {
+        const rawCode = data?.data?.raw?.CodigoError;
+        if (rawCode !== undefined && String(rawCode) !== "0") {
+          isError = true;
+          logMsg = `GDS CodigoError=${rawCode}: ${data?.data?.raw?.Descripcion}`;
+        }
+      }
+
+      if (isError) {
+        console.warn(`[sell ${label}] Intento ${attempt}/${MAX_RETRIES} falló. ${logMsg}`);
+        if (attempt < MAX_RETRIES) {
+          // Esperar 1.5s antes del próximo intento
+          await new Promise(r => setTimeout(r, 1500));
+          continue;
+        }
+        // Si agotamos intentos, retornamos el error para que la interfaz lo trate
+        return { res, data, label };
+      }
+
+      // Éxito
+      console.log(`[sell ${label}] Venta exitosa en el intento ${attempt}`);
+      return { res, data, label };
+
+    } catch (error: any) {
+      console.error(`[sell ${label}] Excepción en intento ${attempt}/${MAX_RETRIES}:`, error);
+      if (attempt < MAX_RETRIES) {
+        await new Promise(r => setTimeout(r, 1500));
+        continue;
+      }
+      throw error; 
+    }
+  }
+  throw new Error("Lógica de reintentos fallida");
+}
+
 export async function sellGdsSeats(params: SellParams): Promise<Record<string, string>> {
   const { outboundTrip, returnTrip, outboundSeats, returnSeats, passengers, outboundConnectionId, returnConnectionId } = params;
   const ticketMap: Record<string, string> = {};
@@ -46,11 +100,7 @@ export async function sellGdsSeats(params: SellParams): Promise<Record<string, s
 
   // Venta de Ida
   tasks.push(
-    fetch("/api/gds/sell", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(outboundPayload),
-    }).then(res => res.json().then(data => ({ res, data, label: "Ida", seatsObj: outboundSeats })))
+    doSellWithRetry(outboundPayload, "Ida").then(result => ({ ...result, seatsObj: outboundSeats }))
   );
 
   // Venta de Vuelta
@@ -68,11 +118,7 @@ export async function sellGdsSeats(params: SellParams): Promise<Record<string, s
     };
 
     tasks.push(
-      fetch("/api/gds/sell", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(returnPayload),
-      }).then(res => res.json().then(data => ({ res, data, label: "Vuelta", seatsObj: returnSeats })))
+      doSellWithRetry(returnPayload, "Vuelta").then(result => ({ ...result, seatsObj: returnSeats }))
     );
   }
 
@@ -83,14 +129,14 @@ export async function sellGdsSeats(params: SellParams): Promise<Record<string, s
       const { res, data, label, seatsObj } = result.value;
 
       if (!res.ok) {
-        console.error(`[sell ${label}] Error HTTP:`, JSON.stringify(data));
+        console.error(`[sell ${label}] Error HTTP definitivo:`, JSON.stringify(data));
         return;
       }
 
       const codigoError = data?.data?.raw?.CodigoError;
-      if (codigoError !== undefined && codigoError !== "0") {
+      if (codigoError !== undefined && String(codigoError) !== "0") {
         const desc = data?.data?.raw?.Descripcion || "Error desconocido";
-        console.error(`[sell ${label}] GDS rechazó CodigoError=${codigoError}: ${desc}`);
+        console.error(`[sell ${label}] GDS rechazó definitivo CodigoError=${codigoError}: ${desc}`);
         return;
       }
 
@@ -101,7 +147,7 @@ export async function sellGdsSeats(params: SellParams): Promise<Record<string, s
         }
       });
     } else {
-      console.error("[sell] Error en red / excepcion:", result.reason);
+      console.error("[sell] Error en red / excepcion definitiva:", result.reason);
     }
   });
 

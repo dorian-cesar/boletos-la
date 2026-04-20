@@ -160,42 +160,124 @@
 
 
 
-/sell ida y vuelta:
-ida:
+venta exitosa de 2 boletos - ida y vuelta:
 {
-    "company": "EPA",
-    "serviceId": "75693",
-    "connectionId": "1612691",
-    "originId": "555",
-    "destinationId": "551",
-    "ticketCount": 1,
-    "totalAmount": 40000,
-    "seats": [
-        {
-            "seat": "22",
-            "qualityCode": "CO",
-            "amount": 40000,
-            "docType": "C",
-            "docNumber": "87654321"
-        }
-    ]
-}
-vuelta:
-{
-    "company": "NSA",
-    "serviceId": "74333",
-    "connectionId": "1612691",
-    "originId": "551",
-    "destinationId": "555",
-    "ticketCount": 1,
-    "totalAmount": 50600,
-    "seats": [
-        {
-            "seat": "17",
-            "qualityCode": "CO",
-            "amount": 50600,
-            "docType": "C",
-            "docNumber": "87654321"
-        }
-    ]
+    "state": {
+        "step": 4,
+        "tripType": "round-trip",
+        "origin": "555",
+        "destination": "551",
+        "departureDate": "2026-04-23",
+        "returnDate": "2026-04-29",
+        "selectedOutboundTrip": {
+            "id": "74807",
+            "origin": "555",
+            "destination": "551",
+            "date": "2026-04-23",
+            "departureTime": "02:40",
+            "arrivalTime": "04:50",
+            "duration": "2h 10m",
+            "price": 40000,
+            "busType": "comun",
+            "company": "EPA",
+            "amenities": [
+                "Aire Acondicionado",
+                "Baño",
+                "TV"
+            ],
+            "availableSeats": 50
+        },
+        "selectedReturnTrip": {
+            "id": "76080",
+            "origin": "551",
+            "destination": "555",
+            "date": "2026-04-29",
+            "departureTime": "17:00",
+            "arrivalTime": "19:10",
+            "duration": "2h 10m",
+            "price": 40000,
+            "busType": "comun",
+            "company": "EPA",
+            "amenities": [
+                "Aire Acondicionado",
+                "Baño",
+                "TV"
+            ],
+            "availableSeats": 50
+        },
+        "selectedSeats": [
+            {
+                "id": "1-8-5",
+                "number": "25",
+                "row": 8,
+                "column": 5,
+                "floor": 1,
+                "type": "standard",
+                "status": "selected",
+                "price": 40000,
+                "qualityCode": "CO",
+                "ticketNumber": "70030020000025"
+            }
+        ],
+        "selectedReturnSeats": [
+            {
+                "id": "1-13-5",
+                "number": "45",
+                "row": 13,
+                "column": 5,
+                "floor": 1,
+                "type": "standard",
+                "status": "selected",
+                "price": 40000,
+                "qualityCode": "CO",
+                "ticketNumber": "70030020000026"
+            }
+        ],
+        "passengerDetails": [
+            {
+                "seatId": "1-8-5",
+                "seatNumber": "25",
+                "firstName": "Juan",
+                "lastName": "Test",
+                "documentNumber": "87654321",
+                "docType": {
+                    "codigo": "C",
+                    "nombre": "C.I. Paraguaya"
+                },
+                "email": "dwigodski@wit.la",
+                "phone": "123456789",
+                "occupation": "EMPLEADO",
+                "birthDate": "1985-07-15",
+                "gender": "M",
+                "nationality": "CL",
+                "country": "CL"
+            },
+            {
+                "seatId": "1-13-5",
+                "seatNumber": "45",
+                "firstName": "Juan",
+                "lastName": "Test",
+                "documentNumber": "87654321",
+                "docType": {
+                    "codigo": "C",
+                    "nombre": "C.I. Paraguaya"
+                },
+                "email": "dwigodski@wit.la",
+                "phone": "123456789",
+                "occupation": "EMPLEADO",
+                "birthDate": "1985-07-15",
+                "gender": "M",
+                "nationality": "CL",
+                "country": "CL"
+            }
+        ],
+        "totalPrice": 80000,
+        "bookingReference": "70030020000025",
+        "paymentStatus": "completed",
+        "originTitle": "Aduana Argentina",
+        "destinationTitle": "Banco Itau",
+        "outboundConnectionId": "6790268",
+        "returnConnectionId": "5848170"
+    },
+    "version": 1
 }
