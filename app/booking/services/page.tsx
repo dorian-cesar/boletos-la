@@ -16,6 +16,7 @@ import {
   ChevronDown,
   ChevronUp,
   Users,
+  ArrowLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -394,7 +395,24 @@ export default function ServicesPage() {
               </div>
             )}
 
-            {/* Back Button */}
+            {/* Botones de navegación */}
+            {/* Botón para volver a seleccionar servicio en viaje de ida */}
+            {!showingReturn && !selectedOutboundTrip && (
+              <div className="mt-8 flex justify-start">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    router.push("/");
+                  }}
+                  className="border-background/20 text-background bg-background/10 hover:bg-background/20"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Volver a buscar servicios
+                </Button>
+              </div>
+            )}
+
+            {/* Botón para volver a seleccionar ida en viaje de vuelta */}
             {showingReturn && (
               <div className="mt-8 flex justify-start">
                 <Button
@@ -405,6 +423,7 @@ export default function ServicesPage() {
                   }}
                   className="border-background/20 text-background bg-background/10 hover:bg-background/20"
                 >
+                  <ArrowLeft className="h-4 w-4" />
                   Volver a seleccionar ida
                 </Button>
               </div>
