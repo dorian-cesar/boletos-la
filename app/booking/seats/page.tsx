@@ -14,6 +14,7 @@ import {
   AlertCircle,
   Loader2,
   UserCheck,
+  Calendar,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -335,85 +336,173 @@ export default function SeatsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Seat Selection */}
               <div className="lg:col-span-2">
-                {/* Trip Info */}
-                <Card className="p-3 sm:p-4 md:p-6 mb-6 animate-fade-in bg-background/5 backdrop-blur-sm border-background/20 overflow-hidden w-full">
-                  {/* Primera fila: Empresa y tipo de viaje */}
-                  <div className="flex flex-row items-center justify-between w-full mb-3 pb-2 border-b border-background/10">
-                    <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
-                      <Bus className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-primary flex-shrink-0" />
-                      <span className="font-bold text-xs sm:text-sm md:text-base lg:text-lg text-background truncate">
-                        {currentTrip?.company}
-                      </span>
-                      <span className="text-[10px] sm:text-xs md:text-sm text-background/60 truncate hidden sm:inline">
-                        {currentTrip?.busType}
-                      </span>
-                    </div>
-                    <span
-                      className={cn(
-                        "px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium flex-shrink-0",
-                        selectingReturn
-                          ? "bg-secondary/10 text-secondary border border-secondary/30"
-                          : "bg-primary/10 text-primary border border-primary/30",
-                      )}
-                    >
-                      {selectingReturn ? "Regreso" : "Ida"}
-                    </span>
-                  </div>
-
-                  {/* Segunda fila: Horarios y ciudades */}
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 w-full">
-                    {/* Bloque izquierdo: Hora salida y origen */}
-                    <div className="flex flex-row sm:flex-col items-baseline sm:items-start justify-between w-full sm:w-auto gap-1 sm:gap-0">
-                      <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-background">
-                        {currentTrip?.departureTime}
-                      </p>
-                      <div className="flex items-center gap-1">
-                        <MapPin className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 text-background/60 flex-shrink-0" />
-                        <span className="text-[10px] sm:text-xs md:text-sm text-background/60 truncate max-w-[80px] sm:max-w-[100px] md:max-w-[120px]">
-                          {currentOriginTitle}
+                {/* Trip Info Card */}
+                <div className="animate-fade-in">
+                  {/* Vista Desktop (Original restaurada) */}
+                  <Card className="hidden sm:block p-4 md:p-6 mb-6 bg-background/5 backdrop-blur-sm border-background/20 overflow-hidden w-full">
+                    <div className="flex flex-row items-center justify-between w-full mb-3 pb-2 border-b border-background/10">
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <Bus className="h-5 w-5 md:h-6 md:w-6 text-primary flex-shrink-0" />
+                        <span className="font-bold text-sm md:text-base lg:text-lg text-background truncate">
+                          {currentTrip?.company}
+                        </span>
+                        <span className="text-xs md:text-sm text-background/60 truncate">
+                          {currentTrip?.busType}
                         </span>
                       </div>
-                    </div>
-
-                    {/* Bloque central: Duración */}
-                    <div className="flex flex-row sm:flex-col items-center justify-center gap-1 sm:gap-0 w-full sm:w-auto px-2">
-                      <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 text-background/60 flex-shrink-0" />
-                      <span className="text-[10px] sm:text-xs text-background/60 whitespace-nowrap">
-                        {currentTrip?.duration}
-                      </span>
-                      <div className="hidden sm:block w-12 sm:w-16 h-0.5 bg-background/20 mt-1" />
-                    </div>
-
-                    {/* Bloque derecho: Hora llegada y destino */}
-                    <div className="flex flex-row sm:flex-col items-baseline sm:items-end justify-between w-full sm:w-auto gap-1 sm:gap-0">
-                      <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-background">
-                        {currentTrip?.arrivalTime}
-                      </p>
-                      <div className="flex items-center gap-1">
-                        <span className="text-[10px] sm:text-xs md:text-sm text-background/60 truncate max-w-[80px] sm:max-w-[100px] md:max-w-[120px]">
-                          {currentDestinationTitle}
-                        </span>
-                        <MapPin className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 text-background/60 flex-shrink-0" />
-                      </div>
-                    </div>
-
-                    {/* Bloque fecha y precio */}
-                    <div className="flex flex-row items-center justify-between sm:flex-col sm:items-end w-full sm:w-auto gap-2 sm:gap-0 sm:ml-0 lg:ml-4 mt-2 sm:mt-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-background/10 sm:border-0">
-                      <p className="text-[10px] sm:text-xs md:text-sm text-background/60">
-                        {format(
-                          parse(currentDate || "", "yyyy-MM-dd", new Date()),
-                          "EEE d MMM",
-                          {
-                            locale: es,
-                          },
+                      <span
+                        className={cn(
+                          "px-3 py-1 rounded-full text-xs font-medium flex-shrink-0",
+                          selectingReturn
+                            ? "bg-secondary/10 text-secondary border border-secondary/30"
+                            : "bg-primary/10 text-primary border border-primary/30",
                         )}
-                      </p>
-                      <p className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-secondary whitespace-nowrap">
-                        Gs. {currentTrip?.price.toLocaleString("es-PY")}
-                      </p>
+                      >
+                        {selectingReturn ? "Regreso" : "Ida"}
+                      </span>
                     </div>
-                  </div>
-                </Card>
+
+                    <div className="flex flex-row items-center justify-between gap-3 w-full">
+                      {/* Salida */}
+                      <div className="flex flex-col items-start gap-0">
+                        <p className="text-lg md:text-xl lg:text-2xl font-bold text-background">
+                          {currentTrip?.departureTime}
+                        </p>
+                        <div className="flex items-center gap-1">
+                          <MapPin className="h-3 w-3 md:h-4 md:w-4 text-background/60 flex-shrink-0" />
+                          <span className="text-xs md:text-sm text-background/60 truncate max-w-[100px] md:max-w-[120px]">
+                            {currentOriginTitle}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Duración */}
+                      <div className="flex flex-col items-center justify-center gap-0 px-2 leading-tight">
+                        <Clock className="h-3.5 w-3.5 md:h-4 md:w-4 text-background/60 flex-shrink-0" />
+                        <span className="text-xs text-background/60 whitespace-nowrap">
+                          {currentTrip?.duration}
+                        </span>
+                        <div className="w-16 h-0.5 bg-background/20 mt-1" />
+                      </div>
+
+                      {/* Llegada */}
+                      <div className="flex flex-col items-end gap-0">
+                        <p className="text-lg md:text-xl lg:text-2xl font-bold text-background">
+                          {currentTrip?.arrivalTime}
+                        </p>
+                        <div className="flex items-center gap-1">
+                          <span className="text-xs md:text-sm text-background/60 truncate max-w-[100px] md:max-w-[120px]">
+                            {currentDestinationTitle}
+                          </span>
+                          <MapPin className="h-3 w-3 md:h-4 md:w-4 text-background/60 flex-shrink-0" />
+                        </div>
+                      </div>
+
+                      {/* Fecha y Precio */}
+                      <div className="flex flex-col items-end lg:ml-4 border-l border-background/10 pl-4">
+                        <p className="text-xs md:text-sm text-background/60">
+                          {format(
+                            parse(currentDate || "", "yyyy-MM-dd", new Date()),
+                            "EEE d MMM",
+                            { locale: es },
+                          )}
+                        </p>
+                        <p className="text-base md:text-lg lg:text-xl font-bold text-secondary whitespace-nowrap">
+                          Gs. {currentTrip?.price.toLocaleString("es-PY")}
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+
+                  {/* Vista Mobile (Optimización nueva) */}
+                  <Card className="sm:hidden p-4 mb-6 bg-background/5 backdrop-blur-md border-background/20 overflow-hidden w-full relative">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
+                    <div className="flex items-center justify-between gap-4 mb-6 relative z-10">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0">
+                          <Bus className="h-5 w-5 text-primary" />
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="font-bold text-sm text-background truncate">
+                            {currentTrip?.company}
+                          </h3>
+                          <p className="text-[10px] text-background/50 truncate">
+                            {currentTrip?.busType}
+                          </p>
+                        </div>
+                      </div>
+                      <div
+                        className={cn(
+                          "px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider shrink-0 border",
+                          selectingReturn
+                            ? "bg-secondary/10 text-secondary border-secondary/30"
+                            : "bg-primary/10 text-primary border-primary/30",
+                        )}
+                      >
+                        {selectingReturn ? "Regreso" : "Ida"}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-4 relative z-10">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-1">
+                          <p className="text-xs font-medium text-background/40 uppercase tracking-widest leading-none">
+                            Salida
+                          </p>
+                          <p className="text-2xl font-bold text-background leading-none">
+                            {currentTrip?.departureTime}
+                          </p>
+                          <div className="flex items-center gap-1">
+                            <MapPin className="h-3 w-3 text-primary shrink-0" />
+                            <span className="text-sm text-background/70 truncate max-w-[120px]">
+                              {currentOriginTitle}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="text-right space-y-1">
+                          <p className="text-xs font-medium text-background/40 uppercase tracking-widest leading-none">
+                            Llegada
+                          </p>
+                          <p className="text-2xl font-bold text-background leading-none">
+                            {currentTrip?.arrivalTime}
+                          </p>
+                          <div className="flex items-center gap-1 justify-end">
+                            <span className="text-sm text-background/70 truncate max-w-[120px]">
+                              {currentDestinationTitle}
+                            </span>
+                            <MapPin className="h-3 w-3 text-secondary shrink-0" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-3 border-t border-background/10">
+                        <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-1.5">
+                            <Calendar className="h-3.5 w-3.5 text-background/40" />
+                            <span className="text-xs text-background/60">
+                              {format(
+                                parse(currentDate || "", "yyyy-MM-dd", new Date()),
+                                "d MMM",
+                                { locale: es },
+                              )}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Clock className="h-3.5 w-3.5 text-background/40" />
+                            <span className="text-xs text-background/60">
+                              {currentTrip?.duration}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xl font-black text-secondary leading-none">
+                            Gs. {currentTrip?.price.toLocaleString("es-PY")}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                </div>
 
                 {/* Seat Map */}
                 <div
@@ -498,7 +587,7 @@ export default function SeatsPage() {
                   </div>
                 )}
 
-                <div className="mt-8 flex justify-start">
+                <div className="mt-8 hidden sm:flex justify-start">
                   <Button
                     variant="outline"
                     onClick={() => {
@@ -708,6 +797,20 @@ export default function SeatsPage() {
                     </p>
                   )}
                 </Card>
+
+                {/* Botón Volver (Solo Mobile) */}
+                <div className="mt-4 sm:hidden flex justify-center w-full px-2">
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      router.push("/booking/services");
+                    }}
+                    className="text-background/60 hover:text-background hover:bg-background/5 w-full bg-background/5 border border-background/10 h-12"
+                  >
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Volver a seleccionar servicio
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

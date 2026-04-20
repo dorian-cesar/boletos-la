@@ -862,25 +862,29 @@ export default function ConfirmationPageContent({
             </p>
 
             {/* Booking Reference */}
-            <div className="inline-flex items-center gap-3 bg-background/10 backdrop-blur-sm rounded-full px-6 py-3 border border-background/20">
-              <FileText className="h-5 w-5 text-primary" />
-              <span className="text-background/60">Código de reserva:</span>
-              <span className="font-bold text-xl text-primary">
-                {bookingReference}
-              </span>
-              {bookingReference && (
-                <button
-                  onClick={handleCopyReference}
-                  className="p-1 hover:bg-background/20 rounded transition-colors"
-                  title="Copiar código"
-                >
-                  {copied ? (
-                    <Check className="h-5 w-5 text-green-500" />
-                  ) : (
-                    <Copy className="h-5 w-5 text-background/60" />
-                  )}
-                </button>
-              )}
+            <div className="inline-flex flex-col sm:flex-row items-center gap-2 sm:gap-3 bg-background/10 backdrop-blur-sm rounded-[2.5rem] sm:rounded-full px-8 py-5 sm:py-3 border border-background/20">
+              <div className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-primary" />
+                <span className="text-background/60 text-sm sm:text-base">Código de reserva:</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="font-bold text-2xl sm:text-xl text-primary tracking-wider">
+                  {bookingReference}
+                </span>
+                {bookingReference && (
+                  <button
+                    onClick={handleCopyReference}
+                    className="p-1 hover:bg-background/20 rounded transition-colors"
+                    title="Copiar código"
+                  >
+                    {copied ? (
+                      <Check className="h-5 w-5 text-green-500" />
+                    ) : (
+                      <Copy className="h-5 w-5 text-background/60" />
+                    )}
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Passenger Info */}
