@@ -48,7 +48,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
   const sendEmailAlertsInBackground = async (
     paymentDetails: any,
     activeRef: string,
-    tickets: Record<string, string>
+    tickets: Record<string, string>,
   ) => {
     if (!primaryPassenger?.email || !selectedOutboundTrip) return;
 
@@ -56,24 +56,37 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
       return tickets[`${label}-${seatNumber}`] || `${activeRef}-${seatNumber}`;
     };
 
-    const sendTripEmail = async (trip: any, seat: any, passenger: any, label: string) => {
+    const sendTripEmail = async (
+      trip: any,
+      seat: any,
+      passenger: any,
+      label: string,
+    ) => {
       const payload = {
         emailDestino: primaryPassenger.email,
         reservaCodigo: getTicketNumber(label, seat.number),
         horaSalida: trip.departureTime,
-        origen: (label === "Ida" ? originTitle : destinationTitle) || trip.origin,
+        origen:
+          (label === "Ida" ? originTitle : destinationTitle) || trip.origin,
         horaLlegada: trip.arrivalTime,
-        destino: (label === "Ida" ? destinationTitle : originTitle) || trip.destination,
+        destino:
+          (label === "Ida" ? destinationTitle : originTitle) ||
+          trip.destination,
         fechaViaje: format(
-          parse((label === "Ida" ? departureDate : returnDate) || "", "yyyy-MM-dd", new Date()),
+          parse(
+            (label === "Ida" ? departureDate : returnDate) || "",
+            "yyyy-MM-dd",
+            new Date(),
+          ),
           "d 'de' MMMM, yyyy",
-          { locale: es }
+          { locale: es },
         ),
         duracion: trip.duration,
         empresa: trip.company,
         servicioTipo: trip.busType,
         asientos: seat.number,
-        terminal: (label === "Ida" ? originTitle : destinationTitle) || "Terminal",
+        terminal:
+          (label === "Ida" ? originTitle : destinationTitle) || "Terminal",
         puerta: Math.floor(Math.random() * 20 + 1).toString(),
         pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
         documento: passenger.documentNumber || "Sin documento",
@@ -100,13 +113,15 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
     const tasks: Promise<void>[] = [];
     selectedSeats.forEach((seat, idx) => {
       const pass = passengerDetails[idx];
-      if (pass) tasks.push(sendTripEmail(selectedOutboundTrip, seat, pass, "Ida"));
+      if (pass)
+        tasks.push(sendTripEmail(selectedOutboundTrip, seat, pass, "Ida"));
     });
 
     if (selectedReturnTrip && selectedReturnSeats.length > 0) {
       selectedReturnSeats.forEach((seat, idx) => {
         const pass = passengerDetails[selectedSeats.length + idx];
-        if (pass) tasks.push(sendTripEmail(selectedReturnTrip, seat, pass, "Vuelta"));
+        if (pass)
+          tasks.push(sendTripEmail(selectedReturnTrip, seat, pass, "Vuelta"));
       });
     }
 
@@ -124,7 +139,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
         setBookingReference(ref);
         setStorePaymentStatus("completed");
-        
+
         let finalRef = ref;
 
         if (selectedOutboundTrip) {
@@ -144,7 +159,11 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               finalRef = first;
             }
           }
-          await sendEmailAlertsInBackground({ forma_pago: "Tarjeta de Crédito/Débito" }, finalRef, ticketMap);
+          await sendEmailAlertsInBackground(
+            { forma_pago: "Tarjeta de Crédito/Débito" },
+            finalRef,
+            ticketMap,
+          );
         }
 
         onReady(
@@ -319,7 +338,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                     onClick={() => router.push("/booking/checkout")}
                     className="bg-purple-600 hover:bg-purple-700"
                   >
-                    <Wallet className="h-4 w-4 mr-2" />
+                    <Wallet className="h-4 w-4" />
                     Intentar pago nuevamente
                   </Button>
                 </div>
