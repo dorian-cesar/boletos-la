@@ -203,16 +203,14 @@ export function Footer() {
               <h5 className="text-sm font-medium mb-3 text-background/80">
                 Medios de Pago
               </h5>
-              <div className="flex items-center gap-2">
-                <div className="px-3 py-2 bg-background/10 rounded text-xs font-medium">
-                  Pagopar
-                </div>
-                <div className="px-3 py-2 bg-background/10 rounded text-xs font-medium">
-                  Visa
-                </div>
-                <div className="px-3 py-2 bg-background/10 rounded text-xs font-medium">
-                  Mastercard
-                </div>
+              <div className="flex items-center">
+                <Image 
+                  src="/logos/logo-pagopar-blanco.svg" 
+                  alt="Pagopar" 
+                  width={100} 
+                  height={32} 
+                  className="h-8 w-auto opacity-80 hover:opacity-100 transition-opacity"
+                />
               </div>
             </div>
           </div>

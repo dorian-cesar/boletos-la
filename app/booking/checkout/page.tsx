@@ -325,38 +325,38 @@ export default function CheckoutPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 w-full">
                   <Card
                     className={cn(
-                      "p-4 cursor-pointer transition-all duration-200 border-2 bg-background/5 backdrop-blur-sm w-full",
+                      "p-4 cursor-pointer transition-all duration-200 border-2 bg-background/5 backdrop-blur-sm w-full relative",
                       selectedPaymentMethod === "tarjeta"
                         ? "border-blue-500 bg-blue-500/10"
                         : "border-background/30 hover:border-blue-500",
                     )}
                     onClick={() => handlePaymentMethodSelect("tarjeta")}
                   >
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-12 h-8 bg-blue-500 rounded flex items-center justify-center shrink-0">
-                        <CreditCard className="h-4 w-4 text-white" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-background truncate">
-                          Simulación de Pago (Tarjeta)
+                    {selectedPaymentMethod === "tarjeta" && (
+                      <CheckCircle2 className="h-5 w-5 text-green-500 absolute top-4 right-4" />
+                    )}
+                    <div className="pr-8">
+                      <div className="h-7 mb-2 flex items-center">
+                        <div className="w-10 h-6 bg-blue-500 rounded flex items-center justify-center shrink-0">
+                          <CreditCard className="h-3.5 w-3.5 text-white" />
+                        </div>
+                        <p className="ml-2 font-medium text-background truncate text-sm">
+                          Tarjeta de Crédito / Débito
                         </p>
-                        <p className="text-xs text-background/60 truncate">
-                          Simulación de pago inmediato
-                        </p>
                       </div>
-                      {selectedPaymentMethod === "tarjeta" && (
-                        <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0 self-start" />
-                      )}
+                      <p className="text-xs text-background/60 leading-relaxed">
+                        Pago inmediato y seguro con tu tarjeta
+                      </p>
                     </div>
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-1 mt-4">
                       {[
-                        "Pago instantáneo",
-                        "Sin redirección",
-                        "Simulación",
+                        "Visa",
+                        "Mastercard",
+                        "American Express",
                       ].map((card) => (
                         <span
                           key={card}
-                          className="text-xs px-2 py-1 bg-background/10 rounded text-background/80 truncate"
+                          className="text-[10px] px-2 py-1 bg-background/10 rounded text-background/80 truncate"
                         >
                           {card}
                         </span>
@@ -366,36 +366,36 @@ export default function CheckoutPage() {
 
                   <Card
                     className={cn(
-                      "p-4 cursor-pointer transition-all duration-200 border-2 bg-background/5 backdrop-blur-sm w-full",
+                      "p-4 cursor-pointer transition-all duration-200 border-2 bg-background/5 backdrop-blur-sm w-full relative",
                       selectedPaymentMethod === "pagopar"
                         ? "border-purple-500 bg-purple-500/10"
                         : "border-background/30 hover:border-purple-500",
                     )}
                     onClick={() => handlePaymentMethodSelect("pagopar")}
                   >
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-12 h-8 bg-purple-600 rounded flex items-center justify-center shrink-0">
-                        <Wallet className="h-4 w-4 text-white" />
+                    {selectedPaymentMethod === "pagopar" && (
+                      <CheckCircle2 className="h-5 w-5 text-green-500 absolute top-4 right-4" />
+                    )}
+                    <div className="pr-8">
+                      <div className="h-7 mb-2 flex items-center">
+                        <Image
+                          src="/logos/logo-pagopar-blanco.svg"
+                          alt="Pagopar"
+                          width={110}
+                          height={30}
+                          className="h-full w-auto"
+                        />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-background truncate">
-                          Pagopar
-                        </p>
-                        <p className="text-xs text-background/60 truncate">
-                          Pago con tarjeta, transferencia o billetera
-                          electrónica
-                        </p>
-                      </div>
-                      {selectedPaymentMethod === "pagopar" && (
-                        <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0 self-start" />
-                      )}
+                      <p className="text-xs text-background/60 leading-relaxed">
+                        Pago con tarjeta, transferencia o billetera electrónica
+                      </p>
                     </div>
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-1 mt-4">
                       {["Tarjetas", "Transferencia", "Billetera"].map(
                         (option) => (
                           <span
                             key={option}
-                            className="text-xs px-2 py-1 bg-background/10 rounded text-background/80 truncate"
+                            className="text-[10px] px-2 py-1 bg-background/10 rounded text-background/80 truncate"
                           >
                             {option}
                           </span>
@@ -432,12 +432,15 @@ export default function CheckoutPage() {
                     selectedPaymentMethod === "pagopar" && (
                       <div className="space-y-3">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                          <div className="flex items-center gap-2 min-w-0">
-                            <Wallet className="h-5 w-5 text-purple-500 shrink-0" />
-                            <span className="text-sm font-medium text-background truncate">
-                              Pagopar
-                            </span>
-                          </div>
+                        <div className="flex items-center">
+                          <Image
+                            src="/logos/logo-pagopar-blanco.svg"
+                            alt="Pagopar"
+                            width={110}
+                            height={32}
+                            className="h-7 w-auto"
+                          />
+                        </div>
                           <Badge
                             variant="outline"
                             className="bg-background/10 border-background/30 text-background/80 shrink-0 self-start sm:self-auto"
