@@ -68,10 +68,40 @@ export default function SeatsPage() {
       return;
     }
 
-    // Call block API before moving to checkout
     try {
       setIsBlocking(true);
       setBlockError(null);
+
+      // Auto-guardar pasajeros antes de bloquear
+      const saveTasks = selectedSeats.map(async (_, i) => {
+        const p = passengerDetails[i];
+        if (!p || !p.documentNumber || !p.firstName || !p.lastName) return;
+
+        try {
+          await fetch("/api/gds/passenger/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              docType: p.docType?.codigo || "C",
+              docNumber: p.documentNumber.replace(/[.\-\s]/g, ""),
+              lastName: p.lastName,
+              name: p.firstName,
+              phone: p.phone,
+              occupation: p.occupation || "EMPLEADO",
+              birthDate: p.birthDate
+                ? p.birthDate.replace(/-/g, "/")
+                : "1991/06/08",
+              gender: p.gender || "M",
+              nationality: p.nationality || "PA",
+              country: p.country || "PA",
+            }),
+          });
+        } catch (error) {
+          console.error("Error auto-guardando pasajero:", error);
+        }
+      });
+
+      await Promise.allSettled(saveTasks);
 
       // 1. Bloqueo para asientos de ida
       const res = await fetch("/api/gds/block", {
@@ -109,7 +139,11 @@ export default function SeatsPage() {
       let finalConnectionId = blockData.connectionId;
 
       // 2. Bloqueo para asientos de vuelta (si aplica)
-      if (tripType === "round-trip" && selectedReturnTrip && selectedReturnSeats.length > 0) {
+      if (
+        tripType === "round-trip" &&
+        selectedReturnTrip &&
+        selectedReturnSeats.length > 0
+      ) {
         const returnRes = await fetch("/api/gds/block", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -131,7 +165,8 @@ export default function SeatsPage() {
         const returnBlockData = returnData.data || returnData;
         const isReturnGdsError =
           returnBlockData.success === false ||
-          (returnBlockData.providerResult && returnBlockData.providerResult !== "0");
+          (returnBlockData.providerResult &&
+            returnBlockData.providerResult !== "0");
 
         if (isReturnGdsError) {
           throw new Error(
@@ -554,7 +589,8 @@ export default function SeatsPage() {
                                 .map((s) => s.number)
                                 .join(", ")
                             : "Sin seleccionar"}
-                          {selectedReturnSeats.length > selectedSeats.length && (
+                          {selectedReturnSeats.length >
+                            selectedSeats.length && (
                             <span className="text-destructive text-xs ml-2">
                               (máximo {selectedSeats.length})
                             </span>
