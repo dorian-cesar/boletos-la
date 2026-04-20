@@ -50,7 +50,7 @@ export function Footer() {
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div>
               <h3 className="text-2xl md:text-3xl font-bold mb-2">
-                Recibe <span className="text-primary">ofertas exclusivas</span>
+                Recibí <span className="text-primary">ofertas exclusivas</span>
               </h3>
               <p className="text-background/60">
                 Suscríbete y obtén descuentos especiales en tus próximos viajes.
@@ -89,7 +89,7 @@ export function Footer() {
               />
             </Link>
             <p className="text-background/60 mb-6 leading-relaxed">
-              Tu plataforma de confianza para reservar pasajes de bus en todo
+              Tu plataforma de confianza para reservar boletos de bus en todo
               Paraguay. Viaja seguro, viaja con nosotros.
             </p>
             <div className="flex items-center gap-4">

@@ -75,7 +75,7 @@ function ComingSoonModal({
           {/* Description */}
           <p className="text-gray-400 mb-8">
             Estamos trabajando para traerte la mejor experiencia de compra de
-            pasajes de bus. Muy pronto podrás reservar tus viajes por todo el
+            boletos de bus. Muy pronto podrás reservar tus viajes por todo el
             país.
           </p>
 
@@ -258,7 +258,7 @@ export function SearchForm() {
                           : origin
                             ? stops.find((c) => String(c.id) === String(origin))
                                 ?.name
-                            : "Seleccione ciudad"}
+                            : "Elegí ciudad"}
                       </span>
                     </div>
                     <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" />
@@ -270,7 +270,7 @@ export function SearchForm() {
                 >
                   <Command className="bg-transparent">
                     <CommandInput
-                      placeholder="Buscar ciudad..."
+                      placeholder="Buscá ciudad..."
                       className="h-12 bg-transparent border-b border-white/40 text-gray-700 placeholder:text-gray-500"
                     />
                     <CommandList>
@@ -376,7 +376,7 @@ export function SearchForm() {
                             ? stops.find(
                                 (c) => String(c.id) === String(destination),
                               )?.name
-                            : "Seleccione ciudad"}
+                            : "Elegí ciudad"}
                       </span>
                     </div>
                     <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" />
@@ -388,7 +388,7 @@ export function SearchForm() {
                 >
                   <Command className="bg-transparent">
                     <CommandInput
-                      placeholder="Buscar ciudad..."
+                      placeholder="Buscá ciudad..."
                       className="h-12 bg-transparent border-b border-white/40 text-gray-700 placeholder:text-gray-500"
                     />
                     <CommandList>
@@ -454,7 +454,7 @@ export function SearchForm() {
                           ? format(parseDate(departureDate), "dd MMM yyyy", {
                               locale: es,
                             })
-                          : "Seleccionar"}
+                          : "Elegí"}
                       </span>
                     </div>
                   </Button>
@@ -506,7 +506,7 @@ export function SearchForm() {
                             ? format(parseDate(returnDate), "dd MMM yyyy", {
                                 locale: es,
                               })
-                            : "Seleccionar"}
+                            : "Elegí"}
                         </span>
                       </div>
                     </Button>
@@ -550,7 +550,7 @@ export function SearchForm() {
               }
               className="bg-white/30 hover:bg-white/40 text-gray-700 h-12 px-12 text-lg font-semibold rounded-full shadow-lg transition-all duration-300 backdrop-blur-sm border border-white/40 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:transform-none disabled:hover:bg-white/30"
             >
-              Buscar Pasajes
+              Buscar Boletos
               <ArrowRight className="h-5 w-5 shrink-0 text-gray-700" />
             </Button>
           </div>

@@ -2,14 +2,18 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, X, Phone, Mail, MapPin, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 export function Header() {
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  const isHome = pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -79,49 +83,45 @@ export function Header() {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-8">
-              <Link
-                href="/"
-                className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
-              >
-                Inicio
-              </Link>
-              <Link
-                href="#destinos"
-                className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
-              >
-                Destinos
-              </Link>
-              <Link
-                href="#servicios"
-                className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
-              >
-                Servicios
-              </Link>
-              <Link
-                href="#empresas"
-                className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
-              >
-                Empresas
-              </Link>
-              <Link
-                href="#contacto"
-                className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
-              >
-                Contacto
-              </Link>
-            </nav>
+            {isHome && (
+              <nav className="hidden lg:flex items-center gap-8">
+                <Link
+                  href="/"
+                  className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
+                >
+                  Inicio
+                </Link>
+                <Link
+                  href="#destinos"
+                  className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
+                >
+                  Destinos
+                </Link>
+                <Link
+                  href="#servicios"
+                  className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
+                >
+                  Servicios
+                </Link>
+                <Link
+                  href="#empresas"
+                  className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
+                >
+                  Empresas
+                </Link>
+                <Link
+                  href="#contacto"
+                  className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
+                >
+                  Contacto
+                </Link>
+              </nav>
+            )}
 
             {/* CTA Button */}
             <div className="hidden lg:flex items-center gap-4">
-              <Button
-                variant="outline"
-                className="border-[#00c7cc] text-[#00c7cc] hover:bg-[#00c7cc] hover:text-white transition-all duration-300 bg-transparent"
-              >
+              <Button className="bg-[#ffaa00] hover:bg-[#ffaa00]/90 text-black transition-all duration-300 transform hover:scale-105 border-0">
                 Mis Viajes
-              </Button>
-              <Button className="bg-[#ffaa00] hover:bg-[#ffaa00]/90 text-black transition-all duration-300 transform hover:scale-105">
-                Reservar Pasaje
               </Button>
             </div>
 
@@ -147,45 +147,43 @@ export function Header() {
           )}
         >
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-4">
-            <Link
-              href="/"
-              className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
-            >
-              Inicio
-            </Link>
-            <Link
-              href="#destinos"
-              className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
-            >
-              Destinos
-            </Link>
-            <Link
-              href="#servicios"
-              className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
-            >
-              Servicios
-            </Link>
-            <Link
-              href="#empresas"
-              className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
-            >
-              Empresas
-            </Link>
-            <Link
-              href="#contacto"
-              className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
-            >
-              Contacto
-            </Link>
+            {isHome && (
+              <>
+                <Link
+                  href="/"
+                  className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
+                >
+                  Inicio
+                </Link>
+                <Link
+                  href="#destinos"
+                  className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
+                >
+                  Destinos
+                </Link>
+                <Link
+                  href="#servicios"
+                  className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
+                >
+                  Servicios
+                </Link>
+                <Link
+                  href="#empresas"
+                  className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
+                >
+                  Empresas
+                </Link>
+                <Link
+                  href="#contacto"
+                  className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
+                >
+                  Contacto
+                </Link>
+              </>
+            )}
             <div className="flex flex-col gap-2 pt-4 border-t border-white/20">
-              <Button
-                variant="outline"
-                className="w-full border-[#00c7cc] text-[#00c7cc] bg-transparent"
-              >
+              <Button className="w-full bg-[#ffaa00] text-black border-0">
                 Mis Viajes
-              </Button>
-              <Button className="w-full bg-[#ffaa00] text-black">
-                Reservar Pasaje
               </Button>
             </div>
           </nav>

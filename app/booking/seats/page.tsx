@@ -670,7 +670,7 @@ export default function SeatsPage() {
                     {isBlocking ? (
                       <>
                         <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                        Reservando asiento(s)...
+                        Reservando boletos...
                       </>
                     ) : tripType === "round-trip" &&
                       !selectingReturn &&
@@ -701,10 +701,10 @@ export default function SeatsPage() {
                       {hasExceededLimit
                         ? `Máximo ${maxAllowed} asientos permitidos`
                         : currentSelectedSeats.length === 0
-                          ? "Selecciona al menos 1 asiento para continuar"
+                          ? "Elegí al menos 1 asiento para continuar"
                           : !selectingReturn && !arePassengersComplete
-                            ? "Completa los datos de todos los pasajeros"
-                            : "Selecciona los asientos de regreso"}
+                            ? "Completá los datos de todos los pasajeros"
+                            : "Elegí los asientos de regreso"}
                     </p>
                   )}
                 </Card>

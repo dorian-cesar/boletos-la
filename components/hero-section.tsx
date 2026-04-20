@@ -115,7 +115,7 @@ export function HeroSection() {
             className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto animate-fade-in-up"
             style={{ animationDelay: "0.4s" }}
           >
-            Reserva tus pasajes de bus de forma rápida y segura. Las mejores
+            Reservá tus boletos de bus de forma rápida y segura. Las mejores
             empresas, los mejores precios.
           </p>
         </div>

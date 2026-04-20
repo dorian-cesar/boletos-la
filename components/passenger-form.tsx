@@ -619,7 +619,7 @@ export function PassengerForm({
         {searchStatus === "not_found" && (
           <StatusBanner
             type="info"
-            message="Pasajero no encontrado. Completa los datos para registrarlo."
+            message="Pasajero no encontrado. Completá los datos para registrarlo."
           />
         )}
         {searchStatus === "error" && searchError && (
@@ -801,7 +801,7 @@ export function PassengerForm({
                       disabled
                       className="bg-[#1a2332] text-white/50"
                     >
-                      Seleccione género
+                      Elegí género
                     </option>
                     <option value="M" className="bg-[#1a2332] text-white">
                       Masculino
@@ -840,7 +840,7 @@ export function PassengerForm({
                           ? countries.find(
                               (c) => c.Codigo === passenger.nationality,
                             )?.Descripcion
-                          : "Seleccione Nacionalidad"}
+                          : "Elegí Nacionalidad"}
                       </span>
                       <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -851,7 +851,7 @@ export function PassengerForm({
                   >
                     <Command className="bg-transparent">
                       <CommandInput
-                        placeholder="Buscar nacionalidad..."
+                        placeholder="Buscá nacionalidad..."
                         className="text-white border-white/20 h-9"
                       />
                       <CommandList className="max-h-[200px]">
@@ -907,7 +907,7 @@ export function PassengerForm({
                           ? countries.find(
                               (c) => c.Codigo === passenger.country,
                             )?.Descripcion
-                          : "Seleccione País"}
+                          : "Elegí País"}
                       </span>
                       <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -918,7 +918,7 @@ export function PassengerForm({
                   >
                     <Command className="bg-transparent">
                       <CommandInput
-                        placeholder="Buscar país..."
+                        placeholder="Buscá país..."
                         className="text-white border-white/20 h-9"
                       />
                       <CommandList className="max-h-[200px]">
