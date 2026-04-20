@@ -441,7 +441,7 @@ export function PassengerForm({
 
   return (
     <Card
-      className="p-4 sm:p-5 animate-fade-in bg-background/5 backdrop-blur-sm border-background/20 w-full"
+      className="p-3 sm:p-5 animate-fade-in bg-background/5 backdrop-blur-sm border-background/20 w-full"
       style={{ animationDelay: `${animationDelay}ms` }}
     >
       {/* Header */}
@@ -629,7 +629,7 @@ export function PassengerForm({
         {/* ── Campos adicionales (solo visibles tras búsqueda) ── */}
         {showFields && (
           <div className="space-y-3 pt-1">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 min-w-0">
               {/* Nombre */}
               <FieldWrapper
                 id={`firstName-${passengerNumber}`}
@@ -779,7 +779,7 @@ export function PassengerForm({
                     handleLocalChange("birthDate", e.target.value)
                   }
                   onBlur={(e) => handleLocalBlur("birthDate", e.target.value)}
-                  className="h-11 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full [color-scheme:dark]"
+                  className="h-11 bg-background/10 border-background/30 text-background placeholder:text-background/40 w-full max-w-full overflow-hidden [color-scheme:dark]"
                 />
               </FieldWrapper>
 
