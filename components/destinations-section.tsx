@@ -225,15 +225,15 @@ export function DestinationsSection() {
               {/* Contenedor clickeable para toda la tarjeta */}
               <div
                 className="absolute inset-0 cursor-pointer"
-                onClick={() => handleSearchServices(destination.name)}
+                // onClick={() => handleSearchServices(destination.name)}
                 role="button"
                 tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    handleSearchServices(destination.name);
-                  }
-                }}
+                // onKeyDown={(e) => {
+                //   if (e.key === "Enter" || e.key === " ") {
+                //     e.preventDefault();
+                //     handleSearchServices(destination.name);
+                //   }
+                // }}
                 aria-label={`Buscar servicios de Asunción a ${destination.name} para hoy`}
               >
                 {/* Image with enhanced effects */}
@@ -288,10 +288,10 @@ export function DestinationsSection() {
                 <div className="mt-4 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                   <Button
                     className="w-full bg-[#00c7cc] hover:bg-[#00c7cc]/90 text-white"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSearchServices(destination.name);
-                    }}
+                    // onClick={(e) => {
+                    //   e.stopPropagation();
+                    //   handleSearchServices(destination.name);
+                    // }}
                   >
                     Ver Servicios
                     <ArrowRight className="h-4 w-4 ml-2" />
