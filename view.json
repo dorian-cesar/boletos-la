@@ -4,15 +4,15 @@
         "tripType": "round-trip",
         "origin": "555",
         "destination": "551",
-        "departureDate": "2026-04-22",
+        "departureDate": "2026-04-21",
         "returnDate": "2026-04-29",
         "selectedOutboundTrip": {
-            "id": "74797",
+            "id": "76900",
             "origin": "555",
             "destination": "551",
-            "date": "2026-04-22",
-            "departureTime": "02:40",
-            "arrivalTime": "04:50",
+            "date": "2026-04-21",
+            "departureTime": "18:40",
+            "arrivalTime": "20:50",
             "duration": "2h 10m",
             "price": 40000,
             "busType": "comun",
@@ -25,12 +25,12 @@
             "availableSeats": 50
         },
         "selectedReturnTrip": {
-            "id": "75218",
+            "id": "75219",
             "origin": "551",
             "destination": "555",
             "date": "2026-04-29",
-            "departureTime": "13:00",
-            "arrivalTime": "15:10",
+            "departureTime": "09:00",
+            "arrivalTime": "11:10",
             "duration": "2h 10m",
             "price": 40000,
             "busType": "comun",
@@ -44,17 +44,31 @@
         },
         "selectedSeats": [
             {
-                "id": "1-12-5",
-                "number": "41",
-                "row": 12,
+                "id": "1-8-4",
+                "number": "26",
+                "row": 8,
+                "column": 4,
+                "floor": 1,
+                "type": "standard",
+                "status": "selected",
+                "price": 40000,
+                "qualityCode": "CO",
+                "ticketNumber": "70030020000039"
+            },
+            {
+                "id": "1-8-5",
+                "number": "25",
+                "row": 8,
                 "column": 5,
                 "floor": 1,
                 "type": "standard",
                 "status": "selected",
                 "price": 40000,
                 "qualityCode": "CO",
-                "ticketNumber": "70030020000029"
-            },
+                "ticketNumber": "70030020000040"
+            }
+        ],
+        "selectedReturnSeats": [
             {
                 "id": "1-12-4",
                 "number": "42",
@@ -65,39 +79,25 @@
                 "status": "selected",
                 "price": 40000,
                 "qualityCode": "CO",
-                "ticketNumber": "70030020000030"
-            }
-        ],
-        "selectedReturnSeats": [
-            {
-                "id": "1-7-4",
-                "number": "22",
-                "row": 7,
-                "column": 4,
-                "floor": 1,
-                "type": "standard",
-                "status": "selected",
-                "price": 40000,
-                "qualityCode": "CO",
-                "ticketNumber": "70030020000027"
+                "ticketNumber": "70030020000037"
             },
             {
-                "id": "1-7-5",
-                "number": "21",
-                "row": 7,
+                "id": "1-12-5",
+                "number": "41",
+                "row": 12,
                 "column": 5,
                 "floor": 1,
                 "type": "standard",
                 "status": "selected",
                 "price": 40000,
                 "qualityCode": "CO",
-                "ticketNumber": "70030020000028"
+                "ticketNumber": "70030020000038"
             }
         ],
         "passengerDetails": [
             {
-                "seatId": "1-12-5",
-                "seatNumber": "41",
+                "seatId": "1-8-4",
+                "seatNumber": "26",
                 "firstName": "Juan",
                 "lastName": "Test",
                 "documentNumber": "87654321",
@@ -114,8 +114,8 @@
                 "country": "CL"
             },
             {
-                "seatId": "1-12-4",
-                "seatNumber": "42",
+                "seatId": "1-8-5",
+                "seatNumber": "25",
                 "firstName": "Test",
                 "lastName": "User",
                 "documentNumber": "12345678",
@@ -132,8 +132,8 @@
                 "country": "PY"
             },
             {
-                "seatId": "1-7-4",
-                "seatNumber": "22",
+                "seatId": "1-12-4",
+                "seatNumber": "42",
                 "firstName": "Juan",
                 "lastName": "Test",
                 "documentNumber": "87654321",
@@ -150,8 +150,8 @@
                 "country": "CL"
             },
             {
-                "seatId": "1-7-5",
-                "seatNumber": "21",
+                "seatId": "1-12-5",
+                "seatNumber": "41",
                 "firstName": "Test",
                 "lastName": "User",
                 "documentNumber": "12345678",
@@ -169,18 +169,19 @@
             }
         ],
         "totalPrice": 160000,
-        "bookingReference": "70030020000029",
+        "bookingReference": "70030020000039",
         "paymentStatus": "completed",
         "originTitle": "Aduana Argentina",
         "destinationTitle": "Banco Itau",
-        "outboundConnectionId": "7300674",
-        "returnConnectionId": "7928270",
+        "outboundConnectionId": "9947069",
+        "returnConnectionId": "9976787",
         "paymentResult": {
             "monto": "160000.00",
             "pagado": true,
-            "token": "a447c70677966af62038bcde69e13241f573fe6f",
-            "hash_pedido": "010652015fba6951417bf01ce869b258615514f5c60f646900f6e95b5df01275"
-        }
+            "token": "21437fe68f169181718b436b2c00e9c3fdc1eb4e",
+            "hash_pedido": "486739ea143e9ff3ac3539512a77ec48f8aca111570173779124bc4fa5204421"
+        },
+        "failedSeats": {}
     },
     "version": 1
 }

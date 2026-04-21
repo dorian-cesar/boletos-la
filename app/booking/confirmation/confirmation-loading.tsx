@@ -130,6 +130,113 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
     await Promise.allSettled(tasks);
   };
 
+  const saveTicketsInBackground = async (
+    paymentDetails: any,
+    activeRef: string,
+    tickets: Record<string, string>,
+  ) => {
+    if (!selectedOutboundTrip) return;
+
+    const saveTripTickets = async (
+      trip: any,
+      seats: any[],
+      label: string,
+      passengerStartIndex: number,
+      connId: string,
+      origin: string,
+      dest: string,
+      date: string
+    ) => {
+      const tasks = seats.map(async (seat, idx) => {
+        const passenger = passengerDetails[passengerStartIndex + idx];
+        if (!passenger) return;
+
+        const ticketNumber = tickets[`${label}-${seat.number}`] || `${activeRef}-${seat.number}`;
+
+        const payload = {
+          ticket_number: ticketNumber,
+          connection_id: connId,
+          first_name: passenger.firstName,
+          last_name: passenger.lastName,
+          document_number: passenger.documentNumber,
+          document_type_code: passenger.docType?.codigo || "N/A",
+          document_type_name: passenger.docType?.nombre || "N/A",
+          email: passenger.email || primaryPassenger?.email,
+          phone: passenger.phone || primaryPassenger?.phone,
+          occupation: passenger.occupation || "N/A",
+          birth_date: passenger.birthDate,
+          gender: passenger.gender,
+          nationality: passenger.nationality,
+          country: passenger.country,
+          seat_id: seat.id,
+          seat_number: seat.number,
+          seat_row: seat.row,
+          seat_column: seat.column,
+          seat_floor: seat.floor,
+          seat_type: seat.type,
+          seat_status: "occupied",
+          quality_code: seat.qualityCode,
+          trip_id: trip.id,
+          origin_id: trip.origin,
+          destination_id: trip.destination,
+          origin_title: origin,
+          destination_title: dest,
+          departure_date: date,
+          departure_time: trip.departureTime.includes(":") && trip.departureTime.split(":").length === 2 ? `${trip.departureTime}:00` : trip.departureTime,
+          arrival_time: trip.arrivalTime.includes(":") && trip.arrivalTime.split(":").length === 2 ? `${trip.arrivalTime}:00` : trip.arrivalTime,
+          duration: trip.duration,
+          bus_type: trip.busType,
+          company: trip.company,
+          seat_price: seat.price,
+          total_booking_price: totalPrice,
+          payment_status: "completed",
+          payment_amount: seat.price,
+          payment_paid: paymentDetails.pagado,
+          payment_token: String(paymentDetails.token || ""),
+          payment_hash: String(paymentDetails.hash_pedido || ""),
+        };
+
+        try {
+          await fetch("/api/tickets/save", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+        } catch (err) {
+          console.error("Error saving ticket to analytics:", err);
+        }
+      });
+
+      await Promise.allSettled(tasks);
+    };
+
+    // Ida
+    await saveTripTickets(
+      selectedOutboundTrip,
+      selectedSeats,
+      "Ida",
+      0,
+      outboundConnectionId || "",
+      originTitle || "",
+      destinationTitle || "",
+      departureDate || ""
+    );
+
+    // Vuelta
+    if (selectedReturnTrip && selectedReturnSeats.length > 0) {
+      await saveTripTickets(
+        selectedReturnTrip,
+        selectedReturnSeats,
+        "Vuelta",
+        selectedSeats.length,
+        returnConnectionId || "",
+        destinationTitle || "",
+        originTitle || "",
+        returnDate || ""
+      );
+    }
+  };
+
   useEffect(() => {
     if (processingRef.current) return;
     processingRef.current = true;
@@ -184,6 +291,11 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
             }
           }
           await sendEmailAlertsInBackground(
+            simulatedPaymentDetails,
+            finalRef,
+            ticketMap,
+          );
+          await saveTicketsInBackground(
             simulatedPaymentDetails,
             finalRef,
             ticketMap,
@@ -262,6 +374,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 }
               }
               await sendEmailAlertsInBackground(payment, finalRef, ticketMap);
+              await saveTicketsInBackground(payment, finalRef, ticketMap);
             }
 
             setPaymentResult({
