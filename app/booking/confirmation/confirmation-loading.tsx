@@ -11,6 +11,7 @@ import { AlertCircle, Loader2, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
+import QRCode from "qrcode";
 
 interface Props {
   hash: string;
@@ -64,9 +65,14 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
       passenger: any,
       label: string,
     ) => {
+      const reservaCodigo = getTicketNumber(label, seat.number);
+
+      // Generar QR en base64
+      const qrBase64 = await QRCode.toDataURL(reservaCodigo);
+
       const payload = {
         emailDestino: primaryPassenger.email,
-        reservaCodigo: getTicketNumber(label, seat.number),
+        reservaCodigo,
         horaSalida: trip.departureTime,
         origen:
           (label === "Ida" ? originTitle : destinationTitle) || trip.origin,
@@ -87,11 +93,11 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
         empresa: trip.company,
         servicioTipo: trip.busType,
         asientos: seat.number,
-        terminal:
-          (label === "Ida" ? originTitle : destinationTitle) || "Terminal",
         puerta: Math.floor(Math.random() * 20 + 1).toString(),
         pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
         documento: passenger.documentNumber || "Sin documento",
+        email: passenger.email || "Sin email",
+        fechaNacimiento: passenger.birthDate || "01/01/1990",
         telefono: passenger.phone || "Sin teléfono",
         subtotal: `Gs. ${Math.round(seat.price * 0.82).toLocaleString("es-PY")}`,
         iva: `Gs. ${Math.round(seat.price * 0.1).toLocaleString("es-PY")}`,
@@ -99,6 +105,13 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
         total: `Gs. ${seat.price.toLocaleString("es-PY")}`,
         pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
+        // NUEVOS CAMPOS
+        numeroFactura: paymentDetails?.numero_pedido || reservaCodigo,
+        fechaVenta: format(new Date(), "dd/MM/yyyy HH:mm"),
+        asiento: seat.number,
+        servicio: trip.busType,
+        qrBase64: qrBase64,
+        cdc: "0180012667000100100012341202404221100000000",
       };
 
       try {
@@ -145,13 +158,14 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
       connId: string,
       origin: string,
       dest: string,
-      date: string
+      date: string,
     ) => {
       const tasks = seats.map(async (seat, idx) => {
         const passenger = passengerDetails[passengerStartIndex + idx];
         if (!passenger) return;
 
-        const ticketNumber = tickets[`${label}-${seat.number}`] || `${activeRef}-${seat.number}`;
+        const ticketNumber =
+          tickets[`${label}-${seat.number}`] || `${activeRef}-${seat.number}`;
 
         const payload = {
           ticket_number: ticketNumber,
@@ -168,11 +182,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           gender: passenger.gender,
           nationality: passenger.nationality,
           country: passenger.country,
-          seat_id: seat.id,
           seat_number: seat.number,
-          seat_row: seat.row,
-          seat_column: seat.column,
-          seat_floor: seat.floor,
           seat_type: seat.type,
           seat_status: "occupied",
           quality_code: seat.qualityCode,
@@ -182,8 +192,16 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           origin_title: origin,
           destination_title: dest,
           departure_date: date,
-          departure_time: trip.departureTime.includes(":") && trip.departureTime.split(":").length === 2 ? `${trip.departureTime}:00` : trip.departureTime,
-          arrival_time: trip.arrivalTime.includes(":") && trip.arrivalTime.split(":").length === 2 ? `${trip.arrivalTime}:00` : trip.arrivalTime,
+          departure_time:
+            trip.departureTime.includes(":") &&
+            trip.departureTime.split(":").length === 2
+              ? `${trip.departureTime}:00`
+              : trip.departureTime,
+          arrival_time:
+            trip.arrivalTime.includes(":") &&
+            trip.arrivalTime.split(":").length === 2
+              ? `${trip.arrivalTime}:00`
+              : trip.arrivalTime,
           duration: trip.duration,
           bus_type: trip.busType,
           company: trip.company,
@@ -219,7 +237,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
       outboundConnectionId || "",
       originTitle || "",
       destinationTitle || "",
-      departureDate || ""
+      departureDate || "",
     );
 
     // Vuelta
@@ -232,7 +250,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
         returnConnectionId || "",
         destinationTitle || "",
         originTitle || "",
-        returnDate || ""
+        returnDate || "",
       );
     }
   };
@@ -252,24 +270,30 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
         let finalRef = ref;
 
         const simDate = format(new Date(), "yyyy-MM-dd HH:mm:ss");
-        const simHash = Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
-        const simToken = Array.from({ length: 40 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
-        
+        const simHash = Array.from({ length: 64 }, () =>
+          Math.floor(Math.random() * 16).toString(16),
+        ).join("");
+        const simToken = Array.from({ length: 40 }, () =>
+          Math.floor(Math.random() * 16).toString(16),
+        ).join("");
+
         const simulatedPaymentDetails = {
-            pagado: true,
-            forma_pago: "Tarjetas de crédito",
-            fecha_pago: simDate,
-            monto: totalPrice.toFixed(2),
-            fecha_maxima_pago: simDate,
-            hash_pedido: simHash,
-            numero_pedido: Math.floor(10000000 + Math.random() * 90000000).toString(),
-            cancelado: false,
-            forma_pago_identificador: "9",
-            token: simToken,
-            mensaje_resultado_pago: {
-                titulo: "Pedido pagado exitosamente",
-                descripcion: ""
-            }
+          pagado: true,
+          forma_pago: "Tarjetas de crédito",
+          fecha_pago: simDate,
+          monto: totalPrice.toFixed(2),
+          fecha_maxima_pago: simDate,
+          hash_pedido: simHash,
+          numero_pedido: Math.floor(
+            10000000 + Math.random() * 90000000,
+          ).toString(),
+          cancelado: false,
+          forma_pago_identificador: "9",
+          token: simToken,
+          mensaje_resultado_pago: {
+            titulo: "Pedido pagado exitosamente",
+            descripcion: "",
+          },
         };
 
         if (selectedOutboundTrip) {

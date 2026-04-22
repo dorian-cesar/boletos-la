@@ -21,6 +21,7 @@ import {
   AlertCircle,
   Send,
 } from "lucide-react";
+import QRCode from "qrcode";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { BookingProgress } from "@/components/booking-progress";
@@ -165,6 +166,13 @@ export default function ConfirmationPageContent({
           passenger.seatNumber ||
           `A${index + 1}`;
 
+        const reservaCodigo =
+          seatsArray[seatIndex]?.ticketNumber ||
+          `${bookingReference}-${passengerSeat}`;
+
+        // Generar QR en base64
+        const qrBase64 = await QRCode.toDataURL(reservaCodigo);
+
         // Calcular precio por pasajero
         const pricePerPassenger = Math.round(
           totalPrice / passengerDetails.length,
@@ -172,9 +180,7 @@ export default function ConfirmationPageContent({
 
         // Preparar payload EXACTO como lo espera el backend externo
         const payload = {
-          reservaCodigo:
-            seatsArray[seatIndex]?.ticketNumber ||
-            `${bookingReference}-${passengerSeat}`,
+          reservaCodigo,
           horaSalida: trip.departureTime,
           origen: (isOutbound ? originTitle : destinationTitle) || trip.origin,
           horaLlegada: trip.arrivalTime,
@@ -195,10 +201,11 @@ export default function ConfirmationPageContent({
           empresa: trip.company,
           servicioTipo: trip.busType,
           asientos: passengerSeat, // Solo el asiento de este pasajero
-          terminal: (isOutbound ? originTitle : destinationTitle) || "Terminal",
           puerta: Math.floor(Math.random() * 20 + 1).toString(),
           pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
           documento: passenger.documentNumber || "Sin documento",
+          email: passenger.email || "Sin email",
+          fechaNacimiento: passenger.birthDate || "01/01/1990",
           telefono: passenger.phone || "Sin teléfono",
           subtotal: `Gs. ${Math.round(pricePerPassenger * 0.82).toLocaleString("es-PY")}`,
           iva: `Gs. ${Math.round(pricePerPassenger * 0.1).toLocaleString("es-PY")}`,
@@ -206,6 +213,13 @@ export default function ConfirmationPageContent({
           total: `Gs. ${pricePerPassenger.toLocaleString("es-PY")}`,
           pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
           metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
+          // NUEVOS CAMPOS
+          numeroFactura: paymentDetails?.numero_pedido || reservaCodigo,
+          fechaVenta: format(new Date(), "dd/MM/yyyy HH:mm"),
+          asiento: passengerSeat,
+          servicio: trip.busType,
+          qrBase64: qrBase64,
+          cdc: "0180012667000100100012341202404221100000000",
         };
 
         console.log(
@@ -342,6 +356,13 @@ export default function ConfirmationPageContent({
         passenger.seatNumber ||
         `A${passengerIndex + 1}`;
 
+      const reservaCodigo =
+        seatsArray[seatIndex]?.ticketNumber ||
+        `${bookingReference}-${passengerSeat}`;
+
+      // Generar QR en base64
+      const qrBase64 = await QRCode.toDataURL(reservaCodigo);
+
       // Calcular precio por pasajero
       const pricePerPassenger = Math.round(
         totalPrice / passengerDetails.length,
@@ -349,9 +370,7 @@ export default function ConfirmationPageContent({
 
       // Preparar payload
       const payload = {
-        reservaCodigo:
-          seatsArray[seatIndex]?.ticketNumber ||
-          `${bookingReference}-${passengerSeat}`,
+        reservaCodigo,
         horaSalida: trip.departureTime,
         origen: (isOutbound ? originTitle : destinationTitle) || trip.origin,
         horaLlegada: trip.arrivalTime,
@@ -372,10 +391,11 @@ export default function ConfirmationPageContent({
         empresa: trip.company,
         servicioTipo: trip.busType,
         asientos: passengerSeat,
-        terminal: (isOutbound ? originTitle : destinationTitle) || "Terminal",
         puerta: Math.floor(Math.random() * 20 + 1).toString(),
         pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
         documento: passenger.documentNumber || "Sin documento",
+        email: passenger.email || "Sin email",
+        fechaNacimiento: passenger.birthDate || "01/01/1990",
         telefono: passenger.phone || "Sin teléfono",
         subtotal: `Gs. ${Math.round(pricePerPassenger * 0.82).toLocaleString("es-PY")}`,
         iva: `Gs. ${Math.round(pricePerPassenger * 0.1).toLocaleString("es-PY")}`,
@@ -383,6 +403,13 @@ export default function ConfirmationPageContent({
         total: `Gs. ${pricePerPassenger.toLocaleString("es-PY")}`,
         pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
+        // NUEVOS CAMPOS
+        numeroFactura: paymentDetails?.numero_pedido || reservaCodigo,
+        fechaVenta: format(new Date(), "dd/MM/yyyy HH:mm"),
+        asiento: passengerSeat,
+        servicio: trip.busType,
+        qrBase64: qrBase64,
+        cdc: "0180012667000100100012341202404221100000000",
       };
 
       console.log(
@@ -452,10 +479,15 @@ export default function ConfirmationPageContent({
       index: number,
       total: number,
     ) => {
+      const reservaCodigo =
+        seat.ticketNumber || `${bookingReference}-${seat.number}`;
+
+      // Generar QR en base64
+      const qrBase64 = await QRCode.toDataURL(reservaCodigo);
+
       const payload = {
         emailDestino: primaryPassenger.email,
-        reservaCodigo:
-          seat.ticketNumber || `${bookingReference}-${seat.number}`,
+        reservaCodigo,
         horaSalida: trip.departureTime,
         origen:
           (label === "Ida" ? originTitle : destinationTitle) || trip.origin,
@@ -478,11 +510,11 @@ export default function ConfirmationPageContent({
         empresa: trip.company,
         servicioTipo: trip.busType,
         asientos: seat.number,
-        terminal:
-          (label === "Ida" ? originTitle : destinationTitle) || "Terminal",
         puerta: Math.floor(Math.random() * 20 + 1).toString(),
         pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
         documento: passenger.documentNumber || "Sin documento",
+        email: passenger.email || "Sin email",
+        fechaNacimiento: passenger.birthDate || "01/01/1990",
         telefono: passenger.phone || "Sin teléfono",
         subtotal: `Gs. ${Math.round(seat.price * 0.82).toLocaleString("es-PY")}`,
         iva: `Gs. ${Math.round(seat.price * 0.1).toLocaleString("es-PY")}`,
@@ -490,6 +522,13 @@ export default function ConfirmationPageContent({
         total: `Gs. ${seat.price.toLocaleString("es-PY")}`,
         pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
+        // NUEVOS CAMPOS
+        numeroFactura: paymentDetails?.numero_pedido || reservaCodigo,
+        fechaVenta: format(new Date(), "dd/MM/yyyy HH:mm"),
+        asiento: seat.number,
+        servicio: trip.busType,
+        qrBase64: qrBase64,
+        cdc: "0180012667000100100012341202404221100000000",
       };
 
       console.log(
@@ -636,10 +675,15 @@ export default function ConfirmationPageContent({
       const trip = isOutbound ? selectedOutboundTrip : selectedReturnTrip;
       if (!trip) return;
 
+      const reservaCodigo =
+        seatObj?.ticketNumber || `${bookingReference}-${passengerSeat}`;
+
+      // Generar QR en base64
+      const qrBase64 = await QRCode.toDataURL(reservaCodigo);
+
       const payload = {
         emailDestino: passenger.email,
-        reservaCodigo:
-          seatObj?.ticketNumber || `${bookingReference}-${passengerSeat}`,
+        reservaCodigo,
         horaSalida: trip.departureTime,
         origen: (isOutbound ? originTitle : destinationTitle) || trip.origin,
         horaLlegada: trip.arrivalTime,
@@ -660,10 +704,11 @@ export default function ConfirmationPageContent({
         empresa: trip.company,
         servicioTipo: trip.busType,
         asientos: passengerSeat,
-        terminal: (isOutbound ? originTitle : destinationTitle) || "Terminal",
         puerta: Math.floor(Math.random() * 20 + 1).toString(),
         pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
         documento: passenger.documentNumber || "Sin documento",
+        email: passenger.email || "Sin email",
+        fechaNacimiento: passenger.birthDate || "01/01/1990",
         telefono: passenger.phone || "Sin teléfono",
         subtotal: `Gs. ${Math.round(pricePerPassenger * 0.82).toLocaleString("es-PY")}`,
         iva: `Gs. ${Math.round(pricePerPassenger * 0.1).toLocaleString("es-PY")}`,
@@ -671,6 +716,13 @@ export default function ConfirmationPageContent({
         total: `Gs. ${pricePerPassenger.toLocaleString("es-PY")}`,
         pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
+        // NUEVOS CAMPOS
+        numeroFactura: paymentDetails?.numero_pedido || reservaCodigo,
+        fechaVenta: format(new Date(), "dd/MM/yyyy HH:mm"),
+        asiento: passengerSeat,
+        servicio: trip.busType,
+        qrBase64: qrBase64,
+        cdc: "0180012667000100100012341202404221100000000",
       };
 
       console.log(`📧 Enviando boleto a ${passenger.email}...`);
@@ -865,7 +917,9 @@ export default function ConfirmationPageContent({
             <div className="inline-flex flex-col sm:flex-row items-center gap-2 sm:gap-3 bg-background/10 backdrop-blur-sm rounded-[2.5rem] sm:rounded-full px-8 py-5 sm:py-3 border border-background/20">
               <div className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-primary" />
-                <span className="text-background/60 text-sm sm:text-base">Código de reserva:</span>
+                <span className="text-background/60 text-sm sm:text-base">
+                  Código de reserva:
+                </span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="font-bold text-2xl sm:text-xl text-primary tracking-wider">

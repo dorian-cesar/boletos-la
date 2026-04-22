@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 const EXTERNAL_EMAIL_API_URL =
   "https://pdf-mail.dev-wit.com/api/mail/send-ticket";
 
+// const EXTERNAL_EMAIL_API_URL = "http://localhost:3001/api/mail/send-ticket";
+
 export async function POST(request: NextRequest) {
   try {
     // 1. Obtener datos del frontend
@@ -20,67 +22,72 @@ export async function POST(request: NextRequest) {
     // 3. Validar datos mínimos requeridos por el backend externo
     const requiredFields = [
       "reservaCodigo",
-      "horaSalida",
       "origen",
-      "horaLlegada",
       "destino",
       "fechaViaje",
+      "horaSalida",
+      "horaLlegada",
       "duracion",
-      "empresa",
-      "servicioTipo",
-      "asientos",
-      "terminal",
-      "puerta",
+      "asiento",
+      "servicio",
       "pasajeroNombre",
       "documento",
-      "telefono",
-      "subtotal",
-      "iva",
-      "cargoServicio",
+      "email",
+      "fechaNacimiento",
       "total",
-      "pagoFecha",
-      "metodoPago",
+      "cdc",
+      "qrBase64",
+      "numeroFactura",
+      "fechaVenta",
     ];
 
     const missingFields = requiredFields.filter((field) => !body[field]);
 
     if (missingFields.length > 0) {
+      console.error(
+        "Campos requeridos faltantes en send-email:",
+        missingFields,
+      );
       return NextResponse.json(
         {
           success: false,
           message: `Campos requeridos faltantes: ${missingFields.join(", ")}`,
+          missingFields,
         },
         { status: 400 },
       );
     }
 
     // 4. Preparar payload para el backend externo
-    // El backend externo ahora generará el PDF automáticamente
+    // Limpiar el QR de prefijos si existen
+    const cleanQrBase64 = body.qrBase64.replace(
+      /^data:image\/[a-z]+;base64,/,
+      "",
+    );
+
     const externalPayload = {
-      templateName: "ticket-boleto", // Template fijo para boletos
+      templateName: "ticket-boleto",
       emailDestino: body.emailDestino,
+      logo: "logo-santaniana-blanco.png",
+      type: "boletos",
       reservaCodigo: body.reservaCodigo,
-      horaSalida: body.horaSalida,
+      numeroFactura: body.numeroFactura,
+      fechaVenta: body.fechaVenta,
       origen: body.origen,
-      horaLlegada: body.horaLlegada,
       destino: body.destino,
       fechaViaje: body.fechaViaje,
+      horaSalida: body.horaSalida,
+      horaLlegada: body.horaLlegada,
       duracion: body.duracion,
-      empresa: body.empresa,
-      servicioTipo: body.servicioTipo,
-      asientos: body.asientos,
-      // terminal: body.terminal,
-      terminal: "",
-      puerta: body.puerta,
+      asiento: body.asiento,
+      servicio: body.servicio,
       pasajeroNombre: body.pasajeroNombre,
       documento: body.documento,
-      telefono: body.telefono,
-      subtotal: body.subtotal,
-      iva: body.iva,
-      cargoServicio: body.cargoServicio,
+      email: body.email,
+      fechaNacimiento: body.fechaNacimiento,
       total: body.total,
-      pagoFecha: body.pagoFecha,
-      metodoPago: body.metodoPago,
+      cdc: body.cdc,
+      qrBase64: cleanQrBase64,
     };
 
     console.log("📧 Enviando email a backend externo:", {
