@@ -201,7 +201,6 @@ export default function ConfirmationPageContent({
           empresa: trip.company,
           servicioTipo: trip.busType,
           asientos: passengerSeat, // Solo el asiento de este pasajero
-          puerta: Math.floor(Math.random() * 20 + 1).toString(),
           pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
           documento: passenger.documentNumber || "Sin documento",
           email: passenger.email || "Sin email",
@@ -391,7 +390,6 @@ export default function ConfirmationPageContent({
         empresa: trip.company,
         servicioTipo: trip.busType,
         asientos: passengerSeat,
-        puerta: Math.floor(Math.random() * 20 + 1).toString(),
         pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
         documento: passenger.documentNumber || "Sin documento",
         email: passenger.email || "Sin email",
@@ -510,7 +508,6 @@ export default function ConfirmationPageContent({
         empresa: trip.company,
         servicioTipo: trip.busType,
         asientos: seat.number,
-        puerta: Math.floor(Math.random() * 20 + 1).toString(),
         pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
         documento: passenger.documentNumber || "Sin documento",
         email: passenger.email || "Sin email",
@@ -704,7 +701,6 @@ export default function ConfirmationPageContent({
         empresa: trip.company,
         servicioTipo: trip.busType,
         asientos: passengerSeat,
-        puerta: Math.floor(Math.random() * 20 + 1).toString(),
         pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
         documento: passenger.documentNumber || "Sin documento",
         email: passenger.email || "Sin email",
@@ -1045,13 +1041,9 @@ export default function ConfirmationPageContent({
                 <div className="mt-4 pt-4 border-t border-background/20 text-sm">
                   <p className="text-background/60">
                     <span className="font-medium text-background">
-                      Terminal de salida:
+                      Parada de salida:
                     </span>{" "}
                     {originTitle}
-                  </p>
-                  <p className="text-background/60">
-                    <span className="font-medium text-background">Puerta:</span>{" "}
-                    {Math.floor(Math.random() * 12) + 1}
                   </p>
                 </div>
               </Card>
@@ -1145,15 +1137,9 @@ export default function ConfirmationPageContent({
                   <div className="mt-4 pt-4 border-t border-background/20 text-sm">
                     <p className="text-background/60">
                       <span className="font-medium text-background">
-                        Terminal de salida:
+                        Parada de salida:
                       </span>{" "}
                       {destinationTitle}
-                    </p>
-                    <p className="text-background/60">
-                      <span className="font-medium text-background">
-                        Puerta:
-                      </span>{" "}
-                      {Math.floor(Math.random() * 12) + 1}
                     </p>
                   </div>
                 </Card>

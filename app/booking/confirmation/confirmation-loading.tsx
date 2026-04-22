@@ -93,7 +93,6 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
         empresa: trip.company,
         servicioTipo: trip.busType,
         asientos: seat.number,
-        puerta: Math.floor(Math.random() * 20 + 1).toString(),
         pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
         documento: passenger.documentNumber || "Sin documento",
         email: passenger.email || "Sin email",
