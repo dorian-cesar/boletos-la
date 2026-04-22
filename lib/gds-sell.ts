@@ -24,58 +24,20 @@ const buildSeatPayloads = (seats: Seat[], trip: Trip, paxList: Passenger[]) => {
   });
 };
 
-const MAX_RETRIES = 3;
+async function doSell(payload: any, label: string) {
+  try {
+    const res = await fetch("/api/gds/sell", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
-async function doSellWithRetry(payload: any, label: string) {
-  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-    try {
-      const res = await fetch("/api/gds/sell", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-      
-      let isError = false;
-      let logMsg = "";
-
-      if (!res.ok) {
-        isError = true;
-        logMsg = `HTTP Error ${res.status}: ${JSON.stringify(data.error || data)}`;
-      } else {
-        const rawCode = data?.data?.raw?.CodigoError;
-        if (rawCode !== undefined && String(rawCode) !== "0") {
-          isError = true;
-          logMsg = `GDS CodigoError=${rawCode}: ${data?.data?.raw?.Descripcion}`;
-        }
-      }
-
-      if (isError) {
-        console.warn(`[sell ${label}] Intento ${attempt}/${MAX_RETRIES} falló. ${logMsg}`);
-        if (attempt < MAX_RETRIES) {
-          // Esperar 1.5s antes del próximo intento
-          await new Promise(r => setTimeout(r, 1500));
-          continue;
-        }
-        // Si agotamos intentos, retornamos el error para que la interfaz lo trate
-        return { res, data, label };
-      }
-
-      // Éxito
-      console.log(`[sell ${label}] Venta exitosa en el intento ${attempt}`);
-      return { res, data, label };
-
-    } catch (error: any) {
-      console.error(`[sell ${label}] Excepción en intento ${attempt}/${MAX_RETRIES}:`, error);
-      if (attempt < MAX_RETRIES) {
-        await new Promise(r => setTimeout(r, 1500));
-        continue;
-      }
-      throw error; 
-    }
+    const data = await res.json();
+    return { res, data, label };
+  } catch (error: any) {
+    console.error(`[sell ${label}] Excepción en la llamada a /sell:`, error);
+    throw error;
   }
-  throw new Error("Lógica de reintentos fallida");
 }
 
 export async function sellGdsSeats(params: SellParams): Promise<Record<string, string>> {
@@ -100,7 +62,7 @@ export async function sellGdsSeats(params: SellParams): Promise<Record<string, s
 
   // Venta de Ida
   tasks.push(
-    doSellWithRetry(outboundPayload, "Ida").then(result => ({ ...result, seatsObj: outboundSeats }))
+    doSell(outboundPayload, "Ida").then(result => ({ ...result, seatsObj: outboundSeats }))
   );
 
   // Venta de Vuelta
@@ -118,7 +80,7 @@ export async function sellGdsSeats(params: SellParams): Promise<Record<string, s
     };
 
     tasks.push(
-      doSellWithRetry(returnPayload, "Vuelta").then(result => ({ ...result, seatsObj: returnSeats }))
+      doSell(returnPayload, "Vuelta").then(result => ({ ...result, seatsObj: returnSeats }))
     );
   }
 
@@ -129,14 +91,15 @@ export async function sellGdsSeats(params: SellParams): Promise<Record<string, s
       const { res, data, label, seatsObj } = result.value;
 
       if (!res.ok) {
-        console.error(`[sell ${label}] Error HTTP definitivo:`, JSON.stringify(data));
+        console.error(`[sell ${label}] Error HTTP en la venta:`, JSON.stringify(data));
         return;
       }
 
+      // Validar si el GDS devolvió un error de negocio
       const codigoError = data?.data?.raw?.CodigoError;
       if (codigoError !== undefined && String(codigoError) !== "0") {
         const desc = data?.data?.raw?.Descripcion || "Error desconocido";
-        console.error(`[sell ${label}] GDS rechazó definitivo CodigoError=${codigoError}: ${desc}`);
+        console.error(`[sell ${label}] GDS rechazó la venta (CodigoError=${codigoError}): ${desc}`);
         return;
       }
 
@@ -147,7 +110,7 @@ export async function sellGdsSeats(params: SellParams): Promise<Record<string, s
         }
       });
     } else {
-      console.error("[sell] Error en red / excepcion definitiva:", result.reason);
+      console.error("[sell] Error en red o excepción:", result.reason);
     }
   });
 
