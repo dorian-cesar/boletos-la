@@ -212,8 +212,7 @@ export default function ConfirmationPageContent({
           total: `Gs. ${pricePerPassenger.toLocaleString("es-PY")}`,
           pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
           metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
-          // NUEVOS CAMPOS
-          numeroFactura: paymentDetails?.numero_pedido || reservaCodigo,
+          numeroFactura: paymentDetails?.numero_pedido || "",
           fechaVenta: format(new Date(), "dd/MM/yyyy HH:mm"),
           asiento: passengerSeat,
           servicio: trip.busType,
@@ -401,8 +400,7 @@ export default function ConfirmationPageContent({
         total: `Gs. ${pricePerPassenger.toLocaleString("es-PY")}`,
         pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
-        // NUEVOS CAMPOS
-        numeroFactura: paymentDetails?.numero_pedido || reservaCodigo,
+        numeroFactura: paymentDetails?.numero_pedido || "",
         fechaVenta: format(new Date(), "dd/MM/yyyy HH:mm"),
         asiento: passengerSeat,
         servicio: trip.busType,
@@ -520,7 +518,7 @@ export default function ConfirmationPageContent({
         pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
         // NUEVOS CAMPOS
-        numeroFactura: paymentDetails?.numero_pedido || reservaCodigo,
+        numeroFactura: paymentDetails?.numero_pedido || "",
         fechaVenta: format(new Date(), "dd/MM/yyyy HH:mm"),
         asiento: seat.number,
         servicio: trip.busType,
@@ -713,7 +711,7 @@ export default function ConfirmationPageContent({
         pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
         // NUEVOS CAMPOS
-        numeroFactura: paymentDetails?.numero_pedido || reservaCodigo,
+        numeroFactura: paymentDetails?.numero_pedido || "",
         fechaVenta: format(new Date(), "dd/MM/yyyy HH:mm"),
         asiento: passengerSeat,
         servicio: trip.busType,
