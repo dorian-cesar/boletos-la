@@ -98,13 +98,9 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
         email: passenger.email || "Sin email",
         fechaNacimiento: passenger.birthDate || "01/01/1990",
         telefono: passenger.phone || "Sin teléfono",
-        subtotal: `Gs. ${Math.round(seat.price * 0.82).toLocaleString("es-PY")}`,
-        iva: `Gs. ${Math.round(seat.price * 0.1).toLocaleString("es-PY")}`,
-        cargoServicio: `Gs. ${Math.round(seat.price * 0.08).toLocaleString("es-PY")}`,
         total: `Gs. ${seat.price.toLocaleString("es-PY")}`,
         pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
-        // NUEVOS CAMPOS
         numeroFactura: paymentDetails?.numero_pedido || "",
         fechaVenta: format(new Date(), "dd/MM/yyyy HH:mm"),
         asiento: seat.number,
