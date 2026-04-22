@@ -3,16 +3,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 // URL base del backend para analíticas desde variables de entorno
 const ANALYTICS_BASE_URL = process.env.DB_URL;
-const ANALYTICS_API_URL = `${ANALYTICS_BASE_URL}/api/tickets`;
 
 export async function POST(request: NextRequest) {
   try {
-    const payload = await request.json();
+    const { ticketNumber } = await request.json();
 
-    // Validación básica
-    if (!payload.ticket_number) {
+    if (!ticketNumber) {
       return NextResponse.json(
-        { success: false, message: "ticket_number es requerido" },
+        { success: false, message: "ticketNumber es requerido" },
         { status: 400 },
       );
     }
@@ -38,8 +36,6 @@ export async function POST(request: NextRequest) {
       });
 
       if (!authRes.ok) {
-        const errorData = await authRes.json().catch(() => ({}));
-        console.error("Error en login de analíticas:", errorData);
         return NextResponse.json(
           { success: false, message: "Error de autenticación en analíticas" },
           { status: 401 },
@@ -55,20 +51,8 @@ export async function POST(request: NextRequest) {
           { status: 401 },
         );
       }
-    }
 
-    const response = await fetch(ANALYTICS_API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-      signal: AbortSignal.timeout(20000), // 20 segundos timeout
-    });
-
-    // 4. Manejar respuesta y persistencia del token
-    if (!existingToken && token) {
+      // Guardar token en cookie
       nextResponse.cookies.set("analytics_token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -78,26 +62,24 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    let responseData;
-    try {
-      responseData = await response.json();
-    } catch (e) {
-      responseData = {
-        message: "No se pudo parsear la respuesta del servidor",
-      };
-    }
+    const response = await fetch(
+      `${ANALYTICS_BASE_URL}/api/tickets/number/${ticketNumber}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    const responseData = await response.json();
 
     if (!response.ok) {
-      console.error("Error en backend de analíticas:", {
-        status: response.status,
-        data: responseData,
-      });
-
       return NextResponse.json(
         {
           success: false,
-          message: "Error al guardar el ticket en analíticas",
-          externalResponse: responseData,
+          message: "Error al buscar el ticket en analíticas",
+          error: responseData,
         },
         {
           status: response.status,
@@ -109,7 +91,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: "Ticket guardado exitosamente",
         data: responseData,
       },
       {
@@ -117,13 +98,9 @@ export async function POST(request: NextRequest) {
       },
     );
   } catch (error: any) {
-    console.error("Error en API tickets/save:", error);
+    console.error("Error en /api/tickets/find:", error);
     return NextResponse.json(
-      {
-        success: false,
-        message: "Error interno al procesar el guardado del ticket",
-        error: error.message,
-      },
+      { success: false, message: error.message || "Error interno" },
       { status: 500 },
     );
   }
