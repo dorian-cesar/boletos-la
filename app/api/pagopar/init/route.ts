@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 const BACKEND_URL =
@@ -17,26 +18,78 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       );
     }
+
+    const cookieStore = await cookies();
+    const existingToken = cookieStore.get("pagopar_token")?.value;
+
+    const response = NextResponse.json({});
+
+    let token: string;
+
+    if (existingToken) {
+      token = existingToken;
+    } else {
+      const authRes = await fetch(`${BACKEND_URL}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: process.env.AUTH_EMAIL,
+          password: process.env.AUTH_PASSWORD,
+        }),
+      });
+
+      if (!authRes.ok) {
+        const errorText = await authRes.text();
+        return NextResponse.json(
+          { error: errorText || "Error autenticando en Pagopar" },
+          { status: authRes.status },
+        );
+      }
+
+      const authData = await authRes.json();
+      const newToken = authData?.token;
+
+      if (!newToken) {
+        return NextResponse.json(
+          { error: "Token no recibido de Pagopar" },
+          { status: 401 },
+        );
+      }
+
+      token = newToken;
+
+      response.cookies.set("pagopar_token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+        maxAge: 60 * 60 * 24, // 1 día
+      });
+    }
+
     console.log("Enviando datos ENCRIPTADOS al backend...");
     console.log("Longitud:", data.length);
     console.log("Primeros 50 chars:", data.substring(0, 50) + "...");
 
     // Enviar los datos ENCRIPTADOS al backend
-    const response = await fetch(`${BACKEND_URL}/api/pagopar/iniciar-pago`, {
+    const apiRes = await fetch(`${BACKEND_URL}/api/pagopar/iniciar-pago`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ data }),
     });
 
-    const resultado = await response.json();
+    const resultado = await apiRes.json();
 
-    if (!response.ok) {
+    if (!apiRes.ok) {
       throw new Error(resultado.message || "Error del backend");
     }
 
-    return NextResponse.json(resultado);
+    return NextResponse.json(resultado, {
+      headers: response.headers,
+    });
   } catch (error: any) {
     console.error("Error en proxy:", error);
     return NextResponse.json(

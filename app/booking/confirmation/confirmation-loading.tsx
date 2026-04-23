@@ -424,7 +424,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
 
   if (status === "checking") {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background">
+      <div className="min-h-screen bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background relative overflow-x-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
           <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-secondary/10 rounded-full blur-[100px]" />
@@ -456,7 +456,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
 
   // Estados de error / pendiente
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background">
+    <div className="min-h-screen bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background relative overflow-x-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-secondary/10 rounded-full blur-[100px]" />
@@ -481,7 +481,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                       if (pagoparHash)
                         window.location.href = `https://www.pagopar.com/pagos/${pagoparHash}`;
                     }}
-                    className="bg-purple-600 hover:bg-purple-700"
+                    className="bg-purple-600 hover:bg-purple-700 w-full sm:w-auto"
                   >
                     <Wallet className="h-4 w-4" />
                     Completar pago en Pagopar
@@ -506,7 +506,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                   </p>
                   <Button
                     onClick={() => router.push("/booking/checkout")}
-                    className="bg-purple-600 hover:bg-purple-700"
+                    className="bg-purple-600 hover:bg-purple-700 w-full sm:w-auto"
                   >
                     <Wallet className="h-4 w-4" />
                     Intentar pago nuevamente

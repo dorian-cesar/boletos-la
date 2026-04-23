@@ -774,7 +774,7 @@ export default function ConfirmationPageContent({
 
   if (!selectedOutboundTrip) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#1a2332] to-[#0f1419]">
+      <div className="min-h-screen bg-gradient-to-b from-[#1a2332] to-[#0f1419] relative overflow-x-hidden">
         {/* Background Effects */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
@@ -810,12 +810,12 @@ export default function ConfirmationPageContent({
                     </p>
                   </div>
 
-                  <div className="flex gap-3">
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <Button
                       onClick={() => {
                         router.push("/");
                       }}
-                      className="bg-primary hover:bg-primary/90"
+                      className="bg-primary hover:bg-primary/90 w-full sm:w-auto"
                     >
                       Volver al inicio
                     </Button>
@@ -824,7 +824,7 @@ export default function ConfirmationPageContent({
                       onClick={() => {
                         router.push("/booking/checkout");
                       }}
-                      className="border-background/30 text-foreground hover:bg-background/10"
+                      className="border-background/30 text-foreground hover:bg-background/10 w-full sm:w-auto"
                     >
                       Intentar nuevamente
                     </Button>
