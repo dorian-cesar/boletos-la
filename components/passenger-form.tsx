@@ -68,7 +68,7 @@ function validateEmail(email: string): boolean {
 }
 
 function validatePhone(phone: string): boolean {
-  return phone.replace(/\D/g, "").length >= 8;
+  return phone.replace(/\D/g, "").length >= 9;
 }
 
 function validateName(name: string): boolean {
@@ -217,7 +217,7 @@ export function PassengerForm({
         return !validateEmail(value) ? "Email inválido" : null;
       case "phone":
         return !validatePhone(value)
-          ? "Teléfono inválido (mín. 8 dígitos)"
+          ? "Teléfono inválido (mín. 9 dígitos)"
           : null;
       default:
         return null;
