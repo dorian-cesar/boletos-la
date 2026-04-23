@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          message: "Error al buscar el ticket en analíticas",
+          message: "Número de boleto no encontrado.",
           error: responseData,
         },
         {
