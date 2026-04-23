@@ -9,13 +9,12 @@ import {
   Loader2,
   Search,
   Ticket,
-  MapPin,
   Calendar,
   Clock,
   User,
   Download,
-  Bus,
   ArrowRight,
+  ArrowLeft,
   Info,
   ShieldCheck,
   Smartphone,
@@ -66,7 +65,7 @@ interface TicketData {
   created_at: string;
 }
 
-export default function MisViajesPage() {
+export default function MiBoletoPage() {
   const [ticketNumber, setTicketNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -101,8 +100,15 @@ export default function MisViajesPage() {
       const data = result.data;
       setTicketData(data);
 
-      // Generar QR
-      const qrUrl = await QRCode.toDataURL(data.ticket_number);
+      // Generar QR con alta resolución
+      const qrUrl = await QRCode.toDataURL(data.ticket_number, {
+        width: 400,
+        margin: 1,
+        color: {
+          dark: "#000000",
+          light: "#ffffff",
+        },
+      });
       setQrCodeUrl(qrUrl);
     } catch (err: any) {
       setError(err.message);
@@ -354,18 +360,18 @@ export default function MisViajesPage() {
                   </div>
 
                   {/* Lado Derecho - QR y Acciones */}
-                  <div className="w-full md:w-[300px] bg-white/[0.02] p-8 md:p-10 flex flex-col items-center justify-center text-center">
-                    <div className="bg-white p-3 rounded-2xl mb-6 shadow-xl shadow-black/50">
+                  <div className="w-full md:w-[320px] bg-white/[0.02] p-8 md:p-10 flex flex-col items-center justify-center text-center">
+                    <div className="bg-white p-4 rounded-3xl mb-6 shadow-2xl shadow-black/50">
                       {qrCodeUrl ? (
                         <Image
                           src={qrCodeUrl}
                           alt="Ticket QR"
-                          width={140}
-                          height={140}
-                          className="rounded-lg"
+                          width={240}
+                          height={240}
+                          className="rounded-xl w-48 h-48 md:w-40 md:h-40"
                         />
                       ) : (
-                        <div className="w-[140px] h-[140px] bg-gray-200 animate-pulse rounded-lg" />
+                        <div className="w-48 h-48 md:w-40 md:h-40 bg-gray-200 animate-pulse rounded-xl" />
                       )}
                     </div>
 
@@ -393,9 +399,10 @@ export default function MisViajesPage() {
                           setTicketData(null);
                           setTicketNumber("");
                         }}
-                        className="w-full border-white/10 bg-transparent hover:bg-white/5 text-white/60 hover:text-white rounded-xl h-12"
+                        className="w-full border-white/20 bg-white/5 hover:bg-white/10 text-white/80 hover:text-white rounded-xl h-12 flex items-center justify-center gap-2 transition-all"
                       >
-                        Nueva Búsqueda
+                        <ArrowLeft className="h-4 w-4" />
+                        Volver a buscar boleto
                       </Button>
                     </div>
                   </div>
@@ -464,12 +471,9 @@ export default function MisViajesPage() {
                 </Card>
               </div>
 
-              {/* Botones de acción adicionales */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                <div className="flex items-center gap-3 text-white/40 text-sm">
-                  <Smartphone className="h-5 w-5" />
-                  Podés presentar este boleto desde tu celular
-                </div>
+              <div className="flex items-center gap-3 justify-center text-white/40 text-sm mt-4">
+                <Smartphone className="h-5 w-5" />
+                Podés presentar este boleto desde tu celular
               </div>
             </div>
           )}

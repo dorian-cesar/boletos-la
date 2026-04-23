@@ -120,11 +120,12 @@ export function Header() {
 
             {/* CTA Button */}
             <div className="hidden lg:flex items-center gap-4">
-              <Link href="/mis-viajes">
-                <Button className="bg-[#ffaa00] hover:bg-[#ffaa00]/90 text-black transition-all duration-300 transform hover:scale-105 border-0">
-                  Mi Boleto
-                </Button>
-              </Link>
+              <Button 
+                onClick={() => window.location.href = "/mi-boleto"}
+                className="bg-[#ffaa00] hover:bg-[#ffaa00]/90 text-black transition-all duration-300 transform hover:scale-105 border-0"
+              >
+                Buscá tu Boleto
+              </Button>
             </div>
 
             {/* Mobile Menu Button */}
@@ -184,14 +185,15 @@ export function Header() {
               </>
             )}
             <div className="flex flex-col gap-2 pt-4 border-t border-white/20">
-              <Link
-                href="/mis-viajes"
-                onClick={() => setIsMobileMenuOpen(false)}
+              <Button 
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  window.location.href = "/mi-boleto";
+                }}
+                className="w-full bg-[#ffaa00] text-black border-0"
               >
-                <Button className="w-full bg-[#ffaa00] text-black border-0">
-                  Mi Boleto
-                </Button>
-              </Link>
+                Buscá tu Boleto
+              </Button>
             </div>
           </nav>
         </div>
