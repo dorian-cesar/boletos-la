@@ -215,7 +215,7 @@ export default function MiBoletoPage() {
                     <Input
                       id="ticketNumber"
                       type="text"
-                      placeholder="Ej: 70030020000049"
+                      placeholder="Ej: 12345678912345"
                       value={ticketNumber}
                       onChange={(e) =>
                         setTicketNumber(e.target.value.toUpperCase())
