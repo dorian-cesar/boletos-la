@@ -471,7 +471,7 @@ export default function MiBoletoPage() {
                 </Card>
               </div>
 
-              <div className="flex items-center gap-3 justify-center text-white/40 text-sm mt-4">
+              <div className="flex items-center gap-3 justify-center text-white/40 text-sm pt-4">
                 <Smartphone className="h-5 w-5" />
                 Podés presentar este boleto desde tu celular
               </div>
