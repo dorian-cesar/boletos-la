@@ -12,7 +12,7 @@ export function Header() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
+
   const isHome = pathname === "/";
 
   useEffect(() => {
@@ -122,7 +122,7 @@ export function Header() {
             <div className="hidden lg:flex items-center gap-4">
               <Link href="/mis-viajes">
                 <Button className="bg-[#ffaa00] hover:bg-[#ffaa00]/90 text-black transition-all duration-300 transform hover:scale-105 border-0">
-                  Mis Viajes
+                  Mi Boleto
                 </Button>
               </Link>
             </div>
@@ -184,9 +184,12 @@ export function Header() {
               </>
             )}
             <div className="flex flex-col gap-2 pt-4 border-t border-white/20">
-              <Link href="/mis-viajes" onClick={() => setIsMobileMenuOpen(false)}>
+              <Link
+                href="/mis-viajes"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
                 <Button className="w-full bg-[#ffaa00] text-black border-0">
-                  Mis Viajes
+                  Mi Boleto
                 </Button>
               </Link>
             </div>
