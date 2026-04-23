@@ -285,9 +285,6 @@ export default function MisViajesPage() {
                       </div>
 
                       <div className="flex flex-col items-center px-4">
-                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 mb-2">
-                          <Bus className="h-6 w-6 text-primary" />
-                        </div>
                         <div className="h-px w-20 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
                       </div>
 
