@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Phone, Mail, MapPin, MessageCircle } from "lucide-react";
+import { Menu, X, Mail, MapPin, MessageCircle, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -50,14 +50,14 @@ export function Header() {
               Asunción, Paraguay
             </span>
           </div>
-          <div className="flex items-center gap-4">
+          {/* <div className="flex items-center gap-4">
             <Link href="#" className="hover:text-[#00c7cc] transition-colors">
               Ayuda
             </Link>
             <Link href="#" className="hover:text-[#00c7cc] transition-colors">
               Mis Reservas
             </Link>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -120,10 +120,11 @@ export function Header() {
 
             {/* CTA Button */}
             <div className="hidden lg:flex items-center gap-4">
-              <Button 
-                onClick={() => window.location.href = "/mi-boleto"}
+              <Button
+                onClick={() => (window.location.href = "/mi-boleto")}
                 className="bg-[#ffaa00] hover:bg-[#ffaa00]/90 text-black transition-all duration-300 transform hover:scale-105 border-0"
               >
+                <Search className="h-4 w-4" />
                 Buscá tu Boleto
               </Button>
             </div>
@@ -185,13 +186,14 @@ export function Header() {
               </>
             )}
             <div className="flex flex-col gap-2 pt-4 border-t border-white/20">
-              <Button 
+              <Button
                 onClick={() => {
                   setIsMobileMenuOpen(false);
                   window.location.href = "/mi-boleto";
                 }}
                 className="w-full bg-[#ffaa00] text-black border-0"
               >
+                <Search className="h-4 w-4" />
                 Buscá tu Boleto
               </Button>
             </div>
