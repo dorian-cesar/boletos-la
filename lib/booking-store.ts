@@ -83,6 +83,7 @@ const initialState = {
   destination: "",
   departureDate: "",
   returnDate: "",
+  pax: 1,
   selectedOutboundTrip: null,
   selectedReturnTrip: null,
   selectedSeats: [],
@@ -104,6 +105,7 @@ export const useBookingStore = create<BookingState>()(
       setDestination: (destination) => set({ destination }),
       setDepartureDate: (departureDate) => set({ departureDate }),
       setReturnDate: (returnDate) => set({ returnDate }),
+      setPax: (pax) => set({ pax }),
       setSelectedOutboundTrip: (selectedOutboundTrip) =>
         set({ selectedOutboundTrip }),
       setSelectedReturnTrip: (selectedReturnTrip) =>
@@ -226,18 +228,18 @@ export const useBookingStore = create<BookingState>()(
 
 // Datos para Paraguay
 export const cities = [
-  { id: "asu", name: "Asunción", department: "Capital" },
-  { id: "cde", name: "Ciudad del Este", department: "Alto Paraná" },
-  { id: "enc", name: "Encarnación", department: "Itapúa" },
-  { id: "pjc", name: "Pedro Juan Caballero", department: "Amambay" },
-  { id: "caz", name: "Caazapá", department: "Caazapá" },
-  { id: "cor", name: "Coronel Oviedo", department: "Caaguazú" },
-  { id: "sal", name: "Salto del Guairá", department: "Canindeyú" },
-  { id: "pil", name: "Pilar", department: "Ñeembucú" },
-  { id: "con", name: "Concepción", department: "Concepción" },
-  { id: "vde", name: "Villa del Rosario", department: "San Pedro" },
-  { id: "may", name: "Mayor Otaño", department: "Itapúa" },
-  { id: "her", name: "Hernandarias", department: "Alto Paraná" },
+  { id: "asu", name: "Asunción", department: "Capital", distribusionCode: "PYASU" },
+  { id: "cde", name: "Ciudad del Este", department: "Alto Paraná", distribusionCode: "PYAGT" },
+  { id: "enc", name: "Encarnación", department: "Itapúa", distribusionCode: "PYENO" },
+  { id: "pjc", name: "Pedro Juan Caballero", department: "Amambay", distribusionCode: "PYPJC" },
+  { id: "caz", name: "Caazapá", department: "Caazapá", distribusionCode: "PYCAZ" },
+  { id: "cor", name: "Coronel Oviedo", department: "Caaguazú", distribusionCode: "PYCOO" },
+  { id: "sal", name: "Salto del Guairá", department: "Canindeyú", distribusionCode: "PYSG" },
+  { id: "pil", name: "Pilar", department: "Ñeembucú", distribusionCode: "PYPIL" },
+  { id: "con", name: "Concepción", department: "Concepción", distribusionCode: "PYCIO" },
+  { id: "vde", name: "Villa del Rosario", department: "San Pedro", distribusionCode: "PYVDR" },
+  { id: "may", name: "Mayor Otaño", department: "Itapúa", distribusionCode: "PYMOT" },
+  { id: "her", name: "Hernandarias", department: "Alto Paraná", distribusionCode: "PYHER" },
 ];
 
 export const generateTrips = (
