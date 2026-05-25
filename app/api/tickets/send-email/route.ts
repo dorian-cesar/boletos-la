@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       templateName: "ticket-boleto",
       emailDestino: body.emailDestino,
       logo: "logo-santaniana-blanco.png",
-      logoEmail: "logo-santaniana-blanco.png",
+      logoEmail: "logo-boletos.png",
       type: "boletos",
       reservaCodigo: body.reservaCodigo,
       numeroFactura: body.numeroFactura,
