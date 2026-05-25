@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// URL del backend externo para enviar emails (NUEVO ENDPOINT)
+// URL del backend externo para enviar emails
 const EXTERNAL_EMAIL_API_URL =
   "https://pdf-mail.dev-wit.com/api/mail/send-ticket";
 
@@ -69,6 +69,7 @@ export async function POST(request: NextRequest) {
       templateName: "ticket-boleto",
       emailDestino: body.emailDestino,
       logo: "logo-santaniana-blanco.png",
+      logoEmail: "logo-santaniana-blanco.png",
       type: "boletos",
       reservaCodigo: body.reservaCodigo,
       numeroFactura: body.numeroFactura,
@@ -116,7 +117,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!emailResponse.ok) {
-      console.error("❌ Error en backend externo:", {
+      console.error("Error en backend externo:", {
         status: emailResponse.status,
         statusText: emailResponse.statusText,
         data: responseData,
@@ -134,7 +135,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 7. Respuesta exitosa
-    console.log("✅ Email enviado exitosamente:", {
+    console.log("Email enviado exitosamente:", {
       email: externalPayload.emailDestino,
       reservaCodigo: externalPayload.reservaCodigo,
       response: responseData,
@@ -149,7 +150,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     // Manejo de errores
-    console.error("❌ Error en API send-email:", {
+    console.error("Error en API send-email:", {
       name: error.name,
       message: error.message,
       stack: error.stack,
