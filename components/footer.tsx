@@ -205,11 +205,11 @@ export function Footer() {
               </h5>
               <div className="flex items-center">
                 <Image 
-                  src="/logos/logo-pagopar-blanco.svg" 
-                  alt="Pagopar" 
-                  width={100} 
-                  height={32} 
-                  className="h-8 w-auto opacity-80 hover:opacity-100 transition-opacity"
+                  src="/logos/logo-bancard-blanco.png" 
+                  alt="Bancard" 
+                  width={110} 
+                  height={30} 
+                  className="h-8 w-auto opacity-80 hover:opacity-100 transition-opacity object-contain"
                 />
               </div>
             </div>

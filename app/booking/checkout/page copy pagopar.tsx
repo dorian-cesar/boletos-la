@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { format, parse } from "date-fns";
 import { es } from "date-fns/locale";
@@ -25,6 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { BookingProgress } from "@/components/booking-progress";
 import { useBookingStore, cities } from "@/lib/booking-store";
 import { cn } from "@/lib/utils";
+import { encryptData } from "@/lib/pagopar-encrypt";
 import Image from "next/image";
 
 export default function CheckoutPage() {
@@ -32,9 +33,9 @@ export default function CheckoutPage() {
   const [mounted, setMounted] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
-    "tarjeta" | "bancard" | null
-  >("bancard");
-  const [bancardProcessId, setBancardProcessId] = useState<string | null>(null);
+    "tarjeta" | "pagopar" | "bancard" | null
+  >("pagopar");
+  const [bancardIframeUrl, setBancardIframeUrl] = useState<string | null>(null);
 
   const {
     tripType,
@@ -53,7 +54,6 @@ export default function CheckoutPage() {
   } = useBookingStore();
 
   const [isExpired, setIsExpired] = useState(false);
-  const handleExpire = useCallback(() => setIsExpired(true), []);
 
   // Validar que los pasajeros del store estén completos
   const isFormValid =
@@ -69,7 +69,9 @@ export default function CheckoutPage() {
 
   const totalPassengers = selectedSeats.length + selectedReturnSeats.length;
 
-  const handlePaymentMethodSelect = (method: "tarjeta" | "bancard") => {
+  const handlePaymentMethodSelect = (
+    method: "tarjeta" | "pagopar" | "bancard",
+  ) => {
     setSelectedPaymentMethod(method);
   };
 
@@ -81,6 +83,35 @@ export default function CheckoutPage() {
     try {
       if (selectedPaymentMethod === "tarjeta") {
         router.push("/booking/confirmation/tarjeta");
+      } else if (selectedPaymentMethod === "pagopar") {
+        const primaryPassenger = passengerDetails[0];
+        if (!primaryPassenger) throw new Error("No hay datos del pasajero");
+
+        const encryptedData = encryptData({
+          montoTotal: totalPrice,
+          datosComprador: {
+            nombre: primaryPassenger.firstName,
+            apellido: primaryPassenger.lastName,
+            email: primaryPassenger.email,
+            telefono: primaryPassenger.phone.replace(/\D/g, ""),
+            ruc: primaryPassenger.documentNumber,
+          },
+        });
+
+        const response = await fetch("/api/pagopar/init", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ data: encryptedData }),
+        });
+
+        const result = await response.json();
+
+        if (result.success === true && result.hash) {
+          localStorage.setItem("pagopar_last_hash", result.hash);
+          window.location.href = `https://www.pagopar.com/pagos/${result.hash}`;
+        } else {
+          throw new Error(result.message || "Error al crear pago en Pagopar");
+        }
       } else if (selectedPaymentMethod === "bancard") {
         const primaryPassenger = passengerDetails[0];
         const response = await fetch("/api/bancard/crear-transaccion", {
@@ -95,22 +126,9 @@ export default function CheckoutPage() {
 
         const result = await response.json();
 
-        if (result.processId) {
+        if (result.iframeUrl) {
           setIsProcessing(false);
-          setBancardProcessId(result.processId);
-        } else if (result.iframeUrl) {
-          try {
-            const urlObj = new URL(result.iframeUrl);
-            const pId = urlObj.searchParams.get("process_id");
-            if (pId) {
-              setIsProcessing(false);
-              setBancardProcessId(pId);
-            } else {
-              window.location.href = result.iframeUrl;
-            }
-          } catch (e) {
-            window.location.href = result.iframeUrl;
-          }
+          setBancardIframeUrl(result.iframeUrl);
         } else if (result.url) {
           window.location.href = result.url;
         } else if (result.success && result.processUrl) {
@@ -130,106 +148,6 @@ export default function CheckoutPage() {
     setMounted(true);
     setStep(3);
   }, [setStep]);
-
-  // Efecto para inyectar dinámicamente el SDK de Bancard e inicializar el formulario de pago
-  useEffect(() => {
-    if (!bancardProcessId) return;
-
-    let active = true;
-    const scriptId = "bancard-checkout-script";
-    let script = document.getElementById(scriptId) as HTMLScriptElement;
-
-    const initializeForm = () => {
-      if (!active) return;
-      const bancard = (window as any).Bancard;
-      if (bancard && bancard.Checkout) {
-        const estilosBase = {
-          "button-background-color": "#f37032", // Naranja corporativo de boletos.la
-          "button-text-color": "#ffffff",
-          "button-border-color": "#f37032",
-          "form-background-color": "#ffffff",
-          "form-border-color": "#ffffff",
-          "input-background-color": "#f8fafc",
-          "input-text-color": "#1e293b",
-          "input-border-color": "#cbd5e1",
-          "input-placeholder-color": "#94a3b8",
-          "input-error-color": "#ef4444",
-          "label-text-color": "#475569",
-          "hr-border-color": "#e2e8f0",
-          "tab-main-color": "#3b82f6", // Azul para acentuar (Bancard)
-          "tab-background-color": "#f1f5f9",
-        };
-
-        const estilosPersonalizados = {
-          styles: estilosBase,
-          ...estilosBase,
-        };
-        try {
-          const container = document.getElementById("mi-contenedor-vpos");
-          if (container) {
-            container.innerHTML = "";
-            bancard.Checkout.createForm(
-              "mi-contenedor-vpos",
-              bancardProcessId,
-              estilosPersonalizados,
-            );
-          }
-        } catch (err) {
-          console.error("Error al inicializar formulario de Bancard:", err);
-        }
-      } else {
-        console.error("SDK de Bancard no disponible en window");
-      }
-    };
-
-    const checkContainerAndInitialize = () => {
-      const container = document.getElementById("mi-contenedor-vpos");
-      if (container) {
-        initializeForm();
-      } else {
-        setTimeout(checkContainerAndInitialize, 50);
-      }
-    };
-
-    if (!script) {
-      script = document.createElement("script");
-      script.id = scriptId;
-      script.src =
-        "https://vpos.infonet.com.py:8888/checkout/javascript/dist/bancard-checkout-4.0.0.js";
-      script.async = true;
-      script.onload = () => {
-        setTimeout(checkContainerAndInitialize, 100);
-      };
-      script.onerror = () => {
-        console.error("Error al cargar la librería de Bancard");
-      };
-      document.body.appendChild(script);
-    } else {
-      if ((window as any).Bancard) {
-        checkContainerAndInitialize();
-      } else {
-        script.addEventListener("load", checkContainerAndInitialize);
-      }
-    }
-
-    return () => {
-      active = false;
-      if (script) {
-        script.removeEventListener("load", checkContainerAndInitialize);
-      }
-    };
-  }, [bancardProcessId]);
-
-  // Efecto para bloquear el scroll del fondo (body) mientras el modal de pago está abierto
-  useEffect(() => {
-    if (bancardProcessId) {
-      const originalOverflow = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = originalOverflow;
-      };
-    }
-  }, [bancardProcessId]);
 
   if (!mounted) {
     return (
@@ -432,22 +350,22 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Payment Methods Selection */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 w-full">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 w-full">
                   <Card
                     className={cn(
                       "p-4 cursor-pointer transition-all duration-200 border-2 bg-background/5 backdrop-blur-sm w-full relative",
                       selectedPaymentMethod === "tarjeta"
-                        ? "border-purple-500 bg-purple-500/10"
-                        : "border-background/30 hover:border-purple-500",
+                        ? "border-blue-500 bg-blue-500/10"
+                        : "border-background/30 hover:border-blue-500",
                     )}
                     onClick={() => handlePaymentMethodSelect("tarjeta")}
                   >
                     {selectedPaymentMethod === "tarjeta" && (
-                      <CheckCircle2 className="h-5 w-5 text-purple-500 absolute top-4 right-4" />
+                      <CheckCircle2 className="h-5 w-5 text-green-500 absolute top-4 right-4" />
                     )}
                     <div className="pr-8">
                       <div className="h-7 mb-2 flex items-center">
-                        <div className="w-10 h-6 bg-purple-500 rounded flex items-center justify-center shrink-0">
+                        <div className="w-10 h-6 bg-blue-500 rounded flex items-center justify-center shrink-0">
                           <CreditCard className="h-3.5 w-3.5 text-white" />
                         </div>
                         <p className="ml-2 font-medium text-background truncate text-sm">
@@ -475,24 +393,60 @@ export default function CheckoutPage() {
                   <Card
                     className={cn(
                       "p-4 cursor-pointer transition-all duration-200 border-2 bg-background/5 backdrop-blur-sm w-full relative",
-                      selectedPaymentMethod === "bancard"
-                        ? "border-blue-500 bg-blue-500/10"
-                        : "border-background/30 hover:border-blue-500",
+                      selectedPaymentMethod === "pagopar"
+                        ? "border-purple-500 bg-purple-500/10"
+                        : "border-background/30 hover:border-purple-500",
                     )}
-                    onClick={() => handlePaymentMethodSelect("bancard")}
+                    onClick={() => handlePaymentMethodSelect("pagopar")}
                   >
-                    {selectedPaymentMethod === "bancard" && (
-                      <CheckCircle2 className="h-5 w-5 text-blue-500 absolute top-4 right-4" />
+                    {selectedPaymentMethod === "pagopar" && (
+                      <CheckCircle2 className="h-5 w-5 text-green-500 absolute top-4 right-4" />
                     )}
                     <div className="pr-8">
                       <div className="h-7 mb-2 flex items-center">
                         <Image
-                          src="/logos/logo-bancard-blanco.png"
-                          alt="Bancard"
+                          src="/logos/logo-pagopar-blanco.svg"
+                          alt="Pagopar"
                           width={110}
                           height={30}
-                          className="h-full w-auto object-contain"
+                          className="h-full w-auto"
                         />
+                      </div>
+                      <p className="text-xs text-background/60 leading-relaxed">
+                        Pago con tarjeta, transferencia o billetera electrónica
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-1 mt-4">
+                      {["Tarjetas", "Transferencia", "Billetera"].map(
+                        (option) => (
+                          <span
+                            key={option}
+                            className="text-[10px] px-2 py-1 bg-background/10 rounded text-background/80 truncate"
+                          >
+                            {option}
+                          </span>
+                        ),
+                      )}
+                    </div>
+                  </Card>
+
+                  <Card
+                    className={cn(
+                      "p-4 cursor-pointer transition-all duration-200 border-2 bg-background/5 backdrop-blur-sm w-full relative",
+                      selectedPaymentMethod === "bancard"
+                        ? "border-emerald-500 bg-emerald-500/10"
+                        : "border-background/30 hover:border-emerald-500",
+                    )}
+                    onClick={() => handlePaymentMethodSelect("bancard")}
+                  >
+                    {selectedPaymentMethod === "bancard" && (
+                      <CheckCircle2 className="h-5 w-5 text-emerald-500 absolute top-4 right-4" />
+                    )}
+                    <div className="pr-8">
+                      <div className="h-7 mb-2 flex items-center">
+                        <span className="font-bold text-lg text-emerald-500">
+                          Bancard
+                        </span>
                       </div>
                       <p className="text-xs text-background/60 leading-relaxed">
                         Pago con tarjeta de crédito/débito y billeteras vía
@@ -518,7 +472,7 @@ export default function CheckoutPage() {
                     <div className="space-y-3">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div className="flex items-center gap-2 min-w-0">
-                          <Shield className="h-5 w-5 text-purple-500 shrink-0" />
+                          <Shield className="h-5 w-5 text-blue-500 shrink-0" />
                           <span className="text-sm font-medium text-background truncate">
                             Pago con Tarjeta (Simulación)
                           </span>
@@ -536,12 +490,36 @@ export default function CheckoutPage() {
                       </p>
                     </div>
                   )}
-
+                  {selectedPaymentMethod === "pagopar" && (
+                    <div className="space-y-3">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div className="flex items-center">
+                          <Image
+                            src="/logos/logo-pagopar-blanco.svg"
+                            alt="Pagopar"
+                            width={110}
+                            height={32}
+                            className="h-7 w-auto"
+                          />
+                        </div>
+                        <Badge
+                          variant="outline"
+                          className="bg-background/10 border-background/30 text-background/80 shrink-0 self-start sm:self-auto"
+                        >
+                          Múltiples Opciones
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-background/60 break-words">
+                        Pagá con tarjeta, transferencia o billetera electrónica
+                        desde Paraguay. Serás redirigido al portal de Pagopar.
+                      </p>
+                    </div>
+                  )}
                   {selectedPaymentMethod === "bancard" && (
                     <div className="space-y-3">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div className="flex items-center gap-2 min-w-0">
-                          <Shield className="h-5 w-5 text-blue-500 shrink-0" />
+                          <Shield className="h-5 w-5 text-emerald-500 shrink-0" />
                           <span className="text-sm font-medium text-background truncate">
                             Pago Seguro con Bancard
                           </span>
@@ -582,7 +560,7 @@ export default function CheckoutPage() {
                   <h3 className="text-lg sm:text-xl font-bold text-background truncate w-full">
                     Resumen de Compra
                   </h3>
-                  <CheckoutTimer onExpire={handleExpire} />
+                  <CheckoutTimer onExpire={() => setIsExpired(true)} />
                 </div>
 
                 {/* Outbound Trip */}
@@ -745,13 +723,13 @@ export default function CheckoutPage() {
                       <span className="truncate">
                         {selectedPaymentMethod === "tarjeta"
                           ? "Procesando pago..."
-                          : "Conectando con Bancard..."}
+                          : "Redirigiendo a Pagopar..."}
                       </span>
                     </>
                   ) : passengerDetails.length === 0 ? (
                     "Cargando..."
                   ) : isFormValid && selectedPaymentMethod ? (
-                    `Pagar con ${selectedPaymentMethod === "tarjeta" ? "Tarjeta" : "Bancard"}`
+                    `Pagar con ${selectedPaymentMethod === "tarjeta" ? "Tarjeta" : selectedPaymentMethod === "pagopar" ? "Pagopar" : "Bancard"}`
                   ) : (
                     "Completa los datos"
                   )}
@@ -767,23 +745,25 @@ export default function CheckoutPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-xl p-4">
           <div className="text-center w-full max-w-md p-6 sm:p-8 bg-[#0f1419] border border-gray-700 rounded-2xl shadow-2xl">
             <div
-              className={`w-20 h-20 sm:w-24 sm:h-24 ${selectedPaymentMethod === "tarjeta" ? "bg-purple-500/20" : "bg-blue-500/20"} rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 border-4 ${selectedPaymentMethod === "tarjeta" ? "border-purple-500/40" : "border-blue-500/40"}`}
+              className={`w-20 h-20 sm:w-24 sm:h-24 ${selectedPaymentMethod === "tarjeta" ? "bg-blue-500/20" : "bg-purple-500/20"} rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 border-4 ${selectedPaymentMethod === "tarjeta" ? "border-blue-500/40" : "border-purple-500/40"}`}
             >
               {selectedPaymentMethod === "tarjeta" ? (
-                <CreditCard className="h-10 w-10 sm:h-12 sm:w-12 text-purple-300" />
+                <CreditCard className="h-10 w-10 sm:h-12 sm:w-12 text-blue-300" />
               ) : (
-                <Wallet className="h-10 w-10 sm:h-12 sm:w-12 text-blue-300" />
+                <Wallet className="h-10 w-10 sm:h-12 sm:w-12 text-purple-300" />
               )}
             </div>
             <h3 className="text-xl sm:text-2xl font-bold mb-2 text-white break-words">
               {selectedPaymentMethod === "tarjeta"
                 ? "Procesando pago con Tarjeta"
-                : "Conectando con Bancard..."}
+                : selectedPaymentMethod === "pagopar"
+                  ? "Redirigiendo a Pagopar"
+                  : "Redirigiendo a Bancard"}
             </h3>
             <p className="text-sm sm:text-base text-gray-300 mb-4 break-words">
               {selectedPaymentMethod === "tarjeta"
                 ? "Tu reserva se confirmará en instantes..."
-                : "Estamos abriendo tu entorno seguro de pago. Por favor espera."}
+                : "Estamos preparando tu pago seguro. Serás redirigido automáticamente."}
             </p>
             <Loader2 className="h-10 w-10 sm:h-12 sm:w-12 text-blue-400 mx-auto mb-4 animate-spin" />
             <div className="text-xs text-gray-400 mt-4">
@@ -793,45 +773,27 @@ export default function CheckoutPage() {
         </div>
       )}
 
-      {/* Overlay de Checkout Bancard con Contenedor Embebido */}
-      {bancardProcessId && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 backdrop-blur-xl p-3 sm:p-6 animate-fade-in">
-          <div className="relative w-full max-w-lg bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col border border-gray-200 max-h-[95vh]">
-            <div className="flex justify-between items-center p-4 bg-gray-50 border-b border-gray-200 shrink-0">
-              <span className="font-bold text-gray-700">Pagar con Bancard</span>
+      {/* Overlay de Iframe Bancard */}
+      {bancardIframeUrl && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4 sm:p-8">
+          <div className="relative w-full max-w-4xl h-[85vh] bg-white rounded-2xl overflow-hidden shadow-2xl animate-fade-in flex flex-col">
+            <div className="flex justify-between items-center p-4 bg-gray-50 border-b border-gray-200">
+              <span className="font-bold text-gray-700">
+                Completar pago con Bancard
+              </span>
               <button
-                onClick={() => setBancardProcessId(null)}
+                onClick={() => setBancardIframeUrl(null)}
                 className="bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-full p-2 transition-colors"
                 title="Cerrar ventana de pago"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <div className="p-4 sm:p-6 bg-white overflow-y-auto overflow-x-hidden flex-1 max-h-[85vh]">
-              {/* Forzar estilo del iframe inyectado por Bancard para evitar scroll interno */}
-              <style
-                dangerouslySetInnerHTML={{
-                  __html: `
-                #mi-contenedor-vpos iframe {
-                  height: 590px !important;
-                  min-height: 590px !important;
-                  border: none !important;
-                }
-              `,
-                }}
-              />
-              <div
-                id="mi-contenedor-vpos"
-                className="w-full min-h-[590px] flex items-center justify-center"
-              >
-                <div className="text-center text-gray-500">
-                  <Loader2 className="h-8 w-8 text-orange-500 animate-spin mx-auto mb-3" />
-                  <p className="text-sm">
-                    Cargando formulario seguro de Bancard...
-                  </p>
-                </div>
-              </div>
-            </div>
+            <iframe
+              src={bancardIframeUrl}
+              className="w-full flex-1 border-0 bg-white"
+              title="Pago con Bancard"
+            />
           </div>
         </div>
       )}
@@ -843,31 +805,17 @@ export default function CheckoutPage() {
 
 function CheckoutTimer({ onExpire }: { onExpire: () => void }) {
   const [seconds, setSeconds] = useState(8 * 60);
-  const onExpireRef = useRef(onExpire);
 
-  useEffect(() => {
-    onExpireRef.current = onExpire;
-  }, [onExpire]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSeconds((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Invocar la expiración de forma segura en la fase posterior al renderizado (efectos)
   useEffect(() => {
     if (seconds <= 0) {
-      onExpireRef.current();
+      onExpire();
+      return;
     }
-  }, [seconds]);
+    const interval = setInterval(() => {
+      setSeconds((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [seconds, onExpire]);
 
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
