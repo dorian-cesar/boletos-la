@@ -8,90 +8,55 @@ import { DistribusionWidget } from "@/components/distribusion-widget";
 
 export function HeroSection() {
   const [mounted, setMounted] = useState(false);
-  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const carouselImages = [
+    "/images/carrousel/C1.jpg",
+    "/images/carrousel/C2.jpg",
+    "/images/carrousel/C3.jpg",
+    "/images/carrousel/C4.jpg",
+    "/images/carrousel/C5.jpg",
+    "/images/carrousel/C6.jpg",
+    "/images/carrousel/C7.jpeg",
+    "/images/carrousel/C8.jpg",
+    "/images/carrousel/C9.JPG",
+    "/images/carrousel/C10.jpg",
+    "/images/carrousel/C11.jpg",
+    "/images/carrousel/C12.jpg",
+    "/images/carrousel/C13.jpg",
+    "/images/carrousel/C14.jpg",
+  ];
 
   useEffect(() => {
     setMounted(true);
+    
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === carouselImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5000);
 
-    // Precarga del video
-    const preloadVideo = () => {
-      const video = document.createElement("video");
-      video.preload = "auto";
-      video.src = "/videos/banner-boletos.mp4";
-
-      video.onloadeddata = () => {
-        setIsVideoLoaded(true);
-
-        // Intenta reproducir el video principal
-        setTimeout(() => {
-          if (videoRef.current) {
-            const playPromise = videoRef.current.play();
-            if (playPromise !== undefined) {
-              playPromise.catch(() => {
-                // Si falla el autoplay, intentamos con user gesture más tarde
-                console.log(
-                  "Autoplay bloqueado, se necesitará interacción del usuario",
-                );
-              });
-            }
-          }
-        }, 500);
-      };
-    };
-
-    preloadVideo();
+    return () => clearInterval(interval);
   }, []);
 
   if (!mounted) return null;
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Video Background optimizado */}
-      <div className="absolute inset-0">
-        {/* Placeholder mientras carga */}
-        {!isVideoLoaded && (
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-black/70 to-secondary/20">
-            <img
-              src="/placeholder-video.png"
-              alt="Bus viajando a tu destino"
-              className="w-full h-full object-cover opacity-50"
-              loading="eager"
-            />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Loader2 className="h-12 w-12 text-white animate-spin" />
-            </div>
-          </div>
-        )}
-
-        {/* Video optimizado */}
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          className={cn(
-            "w-full h-full object-cover transition-opacity duration-1000",
-            isVideoLoaded ? "opacity-100" : "opacity-0",
-          )}
-          onCanPlayThrough={() => {
-            // Backup para asegurar que se marque como cargado
-            if (!isVideoLoaded) {
-              setIsVideoLoaded(true);
-            }
-          }}
-        >
-          <source src="/videos/banner-boletos.mp4" type="video/mp4" />
-
-          {/* Fallback image si el video no carga */}
+      {/* Background Carousel */}
+      <div className="absolute inset-0 bg-[#0f1419]">
+        {carouselImages.map((src, index) => (
           <img
-            src="/placeholder-video.png"
-            alt="Bus viajando a tu destino"
-            className="w-full h-full object-cover"
+            key={src}
+            src={src}
+            alt={`Bus viajando a tu destino ${index + 1}`}
+            className={cn(
+              "absolute inset-0 w-full h-full object-cover transition-opacity duration-1000",
+              index === currentImageIndex ? "opacity-100" : "opacity-0"
+            )}
+            loading={index === 0 ? "eager" : "lazy"}
           />
-        </video>
+        ))}
 
         {/* Overlay oscuro para mejor legibilidad */}
         <div className="absolute inset-0 bg-black/60" />
