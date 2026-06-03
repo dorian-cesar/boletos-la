@@ -76,11 +76,11 @@ export function DistribusionWidget({
         <div
           id="distribusion-search"
           ref={containerRef}
-          className="w-full max-w-md p-4 text-white overflow-hidden"
+          className="w-full max-w-md p-4 overflow-hidden text-black"
         >
           {/* The widget will be mounted here */}
-          <div className="flex flex-col items-center justify-center h-48 text-white/80">
-            <div className="w-8 h-8 border-4 border-white/50 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <div className="flex flex-col items-center justify-center h-48 text-black/60">
+            <div className="w-8 h-8 border-4 border-black/20 border-t-black/80 rounded-full animate-spin mb-4"></div>
             <p>Cargando buscador de Distribusion...</p>
           </div>
         </div>
