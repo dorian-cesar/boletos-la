@@ -31,7 +31,6 @@ import {
   CommandInput,
 } from "@/components/ui/command";
 import { useBookingStore, cities } from "@/lib/booking-store";
-import { AVAILABLE_CARRIER_CODES } from "@/lib/carriers";
 import { cn } from "@/lib/utils";
 import { format, parse } from "date-fns";
 import { es } from "date-fns/locale";
@@ -121,11 +120,6 @@ export function SearchForm() {
           currency: "PYG",
           pax: pax.toString(),
           departureDate: departureDate,
-        });
-
-        // Agregar todos los carrier codes disponibles
-        AVAILABLE_CARRIER_CODES.forEach((code) => {
-          params.append("marketing_carrier_codes[]", code);
         });
 
         if (tripType === "round-trip" && returnDate) {
