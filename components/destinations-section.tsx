@@ -10,6 +10,15 @@ import { useBookingStore, cities } from "@/lib/booking-store";
 
 const destinations = [
   {
+    id: 0,
+    name: "Paraguay",
+    region: "Sudamérica",
+    image: "/images/asuncion.png",
+    price: 50,
+    duration: "Múltiples opciones",
+    popular: true,
+  },
+  {
     id: 1,
     name: "Colombia",
     region: "Suramérica",

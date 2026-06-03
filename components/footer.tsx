@@ -144,6 +144,7 @@ export function Footer() {
             </h4>
             <ul className="space-y-4">
               {[
+                "Paraguay",
                 "Colombia",
                 "Brasil",
                 "Argentina",
