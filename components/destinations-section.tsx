@@ -11,73 +11,36 @@ import { useBookingStore, cities } from "@/lib/booking-store";
 const destinations = [
   {
     id: 1,
-    name: "Asunción",
-    region: "Capital",
-    image: "/images/asuncion.png",
-    price: 25000,
-    duration: "0h base",
+    name: "Colombia",
+    region: "Suramérica",
+    image: "/images/colombia.png",
+    price: 150,
+    duration: "Múltiples opciones",
     popular: true,
   },
   {
     id: 2,
-    name: "Ciudad del Este",
-    region: "Alto Paraná",
-    image: "/images/ciudad-del-este.png",
-    price: 35000,
-    duration: "4h 30min",
+    name: "Brasil",
+    region: "Suramérica",
+    image: "/images/brazil.png",
+    price: 120,
+    duration: "Múltiples opciones",
     popular: true,
   },
   {
     id: 3,
-    name: "Encarnación",
-    region: "Itapúa",
-    image: "/images/encarnacion.png",
-    price: 40000,
-    duration: "5h",
+    name: "Argentina",
+    region: "Suramérica",
+    image: "/images/argentina.png",
+    price: 100,
+    duration: "Múltiples opciones",
     popular: true,
-  },
-  {
-    id: 4,
-    name: "Pedro Juan Caballero",
-    region: "Amambay",
-    image: "/images/pedro-juan-caballero.png",
-    price: 50000,
-    duration: "6h",
-    popular: false,
-  },
-  {
-    id: 5,
-    name: "Coronel Oviedo",
-    region: "Caaguazú",
-    image: "/images/coronel-oviedo.png",
-    price: 20000,
-    duration: "2h",
-    popular: false,
-  },
-  {
-    id: 6,
-    name: "Salto del Guairá",
-    region: "Canindeyú",
-    image: "/images/salto-del-guaira.png",
-    price: 45000,
-    duration: "5h 30min",
-    popular: false,
   },
 ];
 
 export function DestinationsSection() {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
-  const router = useRouter();
-  const {
-    setOrigin,
-    setDestination,
-    setDepartureDate,
-    setTripType,
-    setSelectedOutboundTrip,
-    setSelectedReturnTrip,
-    setReturnDate,
-  } = useBookingStore();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -98,63 +61,11 @@ export function DestinationsSection() {
 
   // Función para manejar la búsqueda de servicios
   const handleSearchServices = (destinationName: string) => {
-    // Obtener la fecha actual en formato yyyy-MM-dd
-    const today = new Date();
-    const formattedDate = format(today, "yyyy-MM-dd");
-
-    // Buscar Asunción en el array de ciudades
-    const asuncion = cities.find((c) => c.name === "Asunción");
-
-    // Buscar la ciudad de destino
-    const destino = cities.find((c) => c.name === destinationName);
-
-    // Limpiar selecciones previas
-    setSelectedOutboundTrip(null);
-    setSelectedReturnTrip(null);
-    setReturnDate("");
-
-    // Establecer los valores en el store
-    if (asuncion) {
-      setOrigin(asuncion.id);
-    } else {
-      // Si no encuentra Asunción, usar "asu" que es el ID en tu store
-      setOrigin("asu");
+    // Scroll to the distribusion widget at the top of the page smoothly
+    const widget = document.getElementById("distribusion-search");
+    if (widget) {
+      widget.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-
-    // Establecer el destino
-    if (destino) {
-      setDestination(destino.id);
-    } else {
-      // Si no encuentra la ciudad por nombre exacto, buscar por coincidencia
-      const foundCity = cities.find(
-        (c) =>
-          c.name.toLowerCase().includes(destinationName.toLowerCase()) ||
-          destinationName.toLowerCase().includes(c.name.toLowerCase()),
-      );
-      if (foundCity) {
-        setDestination(foundCity.id);
-      } else {
-        // Si aún no encuentra, usar un valor por defecto basado en el nombre
-        const cityIdMap: Record<string, string> = {
-          "Ciudad del Este": "cde",
-          Encarnación: "enc",
-          "Pedro Juan Caballero": "pjc",
-          "Coronel Oviedo": "cor",
-          "Salto del Guairá": "sal",
-        };
-
-        const cityId =
-          cityIdMap[destinationName] ||
-          destinationName.toLowerCase().replace(/\s+/g, "-");
-        setDestination(cityId);
-      }
-    }
-
-    setDepartureDate(formattedDate);
-    setTripType("one-way"); // Solo ida
-
-    // Redirigir a la página de servicios
-    router.push("/booking/services");
   };
 
   return (
@@ -173,16 +84,6 @@ export function DestinationsSection() {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-12">
           <div>
-            <span
-              className={cn(
-                "inline-block px-4 py-2 bg-secondary/10 text-secondary rounded-full text-sm font-medium mb-4 transition-all duration-700",
-                isVisible
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-10",
-              )}
-            >
-              Destinos Populares
-            </span>
             <h2
               className={cn(
                 "text-3xl md:text-5xl font-bold text-white mb-4 transition-all duration-700 delay-100",
@@ -192,7 +93,7 @@ export function DestinationsSection() {
               )}
             >
               <span className="text-balance">Explora </span>
-              <span className="text-secondary">Paraguay</span>
+              <span className="text-secondary">Nuestros Destinos</span>
             </h2>
             <p
               className={cn(

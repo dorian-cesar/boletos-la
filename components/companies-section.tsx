@@ -67,16 +67,6 @@ export function CompaniesSection() {
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <span
-            className={cn(
-              "inline-block px-4 py-2 bg-primary/20 text-primary rounded-full text-sm font-medium mb-4 transition-all duration-700",
-              isVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-10",
-            )}
-          >
-            Nuestros Partners
-          </span>
           <h2
             className={cn(
               "text-3xl md:text-5xl font-bold text-white mb-4 transition-all duration-700 delay-100",
@@ -97,7 +87,7 @@ export function CompaniesSection() {
             )}
           >
             Trabajamos con las empresas de transporte más reconocidas de
-            Paraguay para ofrecerte la mejor experiencia de viaje.
+            Latinoamérica para ofrecerte la mejor experiencia de viaje.
           </p>
         </div>
 
