@@ -112,4 +112,14 @@ body {
 #distribusion-search h3,
 #distribusion-search h4 {
   color: #000000 !important;
+}
+
+/* Force inner Distribusion containers to be transparent so our glassmorphism shows */
+#distribusion-search > div,
+#distribusion-search .dbn-widget,
+#distribusion-search .dbn-search-form {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
