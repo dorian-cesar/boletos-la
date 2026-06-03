@@ -36,7 +36,7 @@ export function Footer() {
   return (
     <footer
       id="contacto"
-      className="bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background relative overflow-hidden"
+      className="bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-white relative overflow-hidden"
     >
       {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none">
@@ -45,14 +45,14 @@ export function Footer() {
       </div>
 
       {/* Newsletter Section */}
-      <div className="border-b border-background/10 relative z-10">
+      <div className="border-b border-white/10 relative z-10">
         <div className="container mx-auto px-4 py-12">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div>
               <h3 className="text-2xl md:text-3xl font-bold mb-2">
                 Recibe <span className="text-[#00c7cc]">ofertas exclusivas</span>
               </h3>
-              <p className="text-background/60">
+              <p className="text-white/60">
                 Suscríbete y obtén descuentos especiales en tus próximos viajes.
               </p>
             </div>
@@ -62,7 +62,7 @@ export function Footer() {
                 name="newsletter-subscribe-email"
                 autoComplete="newsletter-email"
                 placeholder="Tu correo electrónico"
-                className="bg-background/10 border-background/20 text-background placeholder:text-background/50 h-12 w-full lg:w-80"
+                className="bg-white/10 border-white/20 text-white placeholder:text-white/50 h-12 w-full lg:w-80"
               />
               <Button className="bg-[#ffaa00] hover:bg-[#ffaa00]/90 text-[#ffaa00]-foreground h-12 px-6">
                 Suscribirse
@@ -88,7 +88,7 @@ export function Footer() {
                 loading="eager"
               />
             </Link>
-            <p className="text-background/60 mb-6 leading-relaxed">
+            <p className="text-white/60 mb-6 leading-relaxed">
               Tu plataforma de confianza para reservar pasajes de bus en toda
               Latinoamérica. Viaja seguro, viaja con nosotros.
             </p>
@@ -101,7 +101,7 @@ export function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-[#00c7cc] hover:text-[#00c7cc]-foreground transition-all duration-300 hover:scale-110"
+                    className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#00c7cc] hover:text-[#00c7cc]-foreground transition-all duration-300 hover:scale-110"
                   >
                     <Icon className="h-5 w-5" />
                   </a>
@@ -112,7 +112,7 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-bold mb-6 text-background">
+            <h4 className="text-lg font-bold mb-6 text-white">
               Enlaces Rápidos
             </h4>
             <ul className="space-y-4">
@@ -127,7 +127,7 @@ export function Footer() {
                 <li key={link}>
                   <a
                     href="#"
-                    className="text-background/60 hover:text-[#00c7cc] transition-colors duration-300 flex items-center gap-2 group"
+                    className="text-white/60 hover:text-[#00c7cc] transition-colors duration-300 flex items-center gap-2 group"
                   >
                     <ArrowRight className="h-4 w-4 opacity-0 -ml-6 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />
                     {link}
@@ -139,7 +139,7 @@ export function Footer() {
 
           {/* Destinos */}
           <div>
-            <h4 className="text-lg font-bold mb-6 text-background">
+            <h4 className="text-lg font-bold mb-6 text-white">
               Destinos Populares
             </h4>
             <ul className="space-y-4">
@@ -151,7 +151,7 @@ export function Footer() {
                 <li key={city}>
                   <a
                     href="#"
-                    className="text-background/60 hover:text-[#00c7cc] transition-colors duration-300 flex items-center gap-2 group"
+                    className="text-white/60 hover:text-[#00c7cc] transition-colors duration-300 flex items-center gap-2 group"
                   >
                     <MapPin className="h-4 w-4 text-[#00c7cc]/50 group-hover:text-[#00c7cc] transition-colors" />
                     {city}
@@ -163,11 +163,11 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="text-lg font-bold mb-6 text-background">Contacto</h4>
+            <h4 className="text-lg font-bold mb-6 text-white">Contacto</h4>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-[#00c7cc] mt-0.5" />
-                <span className="text-background/60">
+                <span className="text-white/60">
                   Boletos.la Headquarters
                   <br />
                   América Latina
@@ -179,7 +179,7 @@ export function Footer() {
                   href="https://wa.me/595991224613?text=Hola%2C%20me%20gustar%C3%ADa%20recibir%20informaci%C3%B3n%20sobre%20los%20servicios%20que%20ofrece%20www.boletos.la%20en%20toda%20Latinoam%C3%A9rica.%0A%0A%C2%BFPodr%C3%ADan%20asesorarme%3F%20Muchas%20gracias"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-background/60 hover:text-[#00c7cc] transition-colors"
+                  className="text-white/60 hover:text-[#00c7cc] transition-colors"
                 >
                   +595 991 224613
                 </a>
@@ -188,7 +188,7 @@ export function Footer() {
                 <Mail className="h-5 w-5 text-[#00c7cc]" />
                 <a
                   href="mailto:contacto@boletos.la"
-                  className="text-background/60 hover:text-[#00c7cc] transition-colors"
+                  className="text-white/60 hover:text-[#00c7cc] transition-colors"
                 >
                   contacto@boletos.la
                 </a>
@@ -197,17 +197,17 @@ export function Footer() {
 
             {/* Payment Methods */}
             <div className="mt-8">
-              <h5 className="text-sm font-medium mb-3 text-background/80">
+              <h5 className="text-sm font-medium mb-3 text-white/80">
                 Medios de Pago
               </h5>
               <div className="flex items-center gap-2">
-                <div className="px-3 py-2 bg-background/10 rounded text-xs font-medium">
+                <div className="px-3 py-2 bg-white/10 rounded text-xs font-medium">
                   Pagopar
                 </div>
-                <div className="px-3 py-2 bg-background/10 rounded text-xs font-medium">
+                <div className="px-3 py-2 bg-white/10 rounded text-xs font-medium">
                   Visa
                 </div>
-                <div className="px-3 py-2 bg-background/10 rounded text-xs font-medium">
+                <div className="px-3 py-2 bg-white/10 rounded text-xs font-medium">
                   Mastercard
                 </div>
               </div>
@@ -217,11 +217,11 @@ export function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-background/10">
+      <div className="border-t border-white/10">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Año + logo */}
-            <div className="flex items-center gap-2 text-background/50 text-sm">
+            <div className="flex items-center gap-2 text-white/50 text-sm">
               <Image
                 src="/logos/logo-boletos-blanco.png"
                 alt="Boletos.la"
@@ -238,19 +238,19 @@ export function Footer() {
             <div className="flex items-center gap-6 text-sm">
               <a
                 href="#"
-                className="text-background/50 hover:text-[#00c7cc] transition-colors"
+                className="text-white/50 hover:text-[#00c7cc] transition-colors"
               >
                 Términos y Condiciones
               </a>
               <a
                 href="#"
-                className="text-background/50 hover:text-[#00c7cc] transition-colors"
+                className="text-white/50 hover:text-[#00c7cc] transition-colors"
               >
                 Política de Privacidad
               </a>
               <a
                 href="#"
-                className="text-background/50 hover:text-[#00c7cc] transition-colors"
+                className="text-white/50 hover:text-[#00c7cc] transition-colors"
               >
                 Ayuda
               </a>
