@@ -45,6 +45,7 @@ export interface BookingState {
   destination: string;
   departureDate: string;
   returnDate: string;
+  pax: number;
   selectedOutboundTrip: Trip | null;
   selectedReturnTrip: Trip | null;
   selectedSeats: Seat[];
@@ -60,6 +61,7 @@ export interface BookingState {
   setDestination: (destination: string) => void;
   setDepartureDate: (date: string) => void;
   setReturnDate: (date: string) => void;
+  setPax: (pax: number) => void;
   setSelectedOutboundTrip: (trip: Trip | null) => void;
   setSelectedReturnTrip: (trip: Trip | null) => void;
   addSeat: (seat: Seat) => void;
