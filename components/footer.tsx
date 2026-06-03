@@ -40,8 +40,8 @@ export function Footer() {
     >
       {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-secondary/10 rounded-full blur-[100px]" />
+        <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-[#00c7cc]/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-[#ffaa00]/10 rounded-full blur-[100px]" />
       </div>
 
       {/* Newsletter Section */}
@@ -50,7 +50,7 @@ export function Footer() {
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div>
               <h3 className="text-2xl md:text-3xl font-bold mb-2">
-                Recibe <span className="text-primary">ofertas exclusivas</span>
+                Recibe <span className="text-[#00c7cc]">ofertas exclusivas</span>
               </h3>
               <p className="text-background/60">
                 Suscríbete y obtén descuentos especiales en tus próximos viajes.
@@ -64,7 +64,7 @@ export function Footer() {
                 placeholder="Tu correo electrónico"
                 className="bg-background/10 border-background/20 text-background placeholder:text-background/50 h-12 w-full lg:w-80"
               />
-              <Button className="bg-secondary hover:bg-secondary/90 text-secondary-foreground h-12 px-6">
+              <Button className="bg-[#ffaa00] hover:bg-[#ffaa00]/90 text-[#ffaa00]-foreground h-12 px-6">
                 Suscribirse
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
@@ -101,7 +101,7 @@ export function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110"
+                    className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-[#00c7cc] hover:text-[#00c7cc]-foreground transition-all duration-300 hover:scale-110"
                   >
                     <Icon className="h-5 w-5" />
                   </a>
@@ -127,7 +127,7 @@ export function Footer() {
                 <li key={link}>
                   <a
                     href="#"
-                    className="text-background/60 hover:text-primary transition-colors duration-300 flex items-center gap-2 group"
+                    className="text-background/60 hover:text-[#00c7cc] transition-colors duration-300 flex items-center gap-2 group"
                   >
                     <ArrowRight className="h-4 w-4 opacity-0 -ml-6 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />
                     {link}
@@ -151,9 +151,9 @@ export function Footer() {
                 <li key={city}>
                   <a
                     href="#"
-                    className="text-background/60 hover:text-primary transition-colors duration-300 flex items-center gap-2 group"
+                    className="text-background/60 hover:text-[#00c7cc] transition-colors duration-300 flex items-center gap-2 group"
                   >
-                    <MapPin className="h-4 w-4 text-primary/50 group-hover:text-primary transition-colors" />
+                    <MapPin className="h-4 w-4 text-[#00c7cc]/50 group-hover:text-[#00c7cc] transition-colors" />
                     {city}
                   </a>
                 </li>
@@ -166,7 +166,7 @@ export function Footer() {
             <h4 className="text-lg font-bold mb-6 text-background">Contacto</h4>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-primary mt-0.5" />
+                <MapPin className="h-5 w-5 text-[#00c7cc] mt-0.5" />
                 <span className="text-background/60">
                   Boletos.la Headquarters
                   <br />
@@ -174,21 +174,21 @@ export function Footer() {
                 </span>
               </li>
               <li className="flex items-center gap-3">
-                <MessageCircle className="h-5 w-5 text-primary" />
+                <MessageCircle className="h-5 w-5 text-[#00c7cc]" />
                 <a
                   href="https://wa.me/595991224613?text=Hola%2C%20me%20gustar%C3%ADa%20recibir%20informaci%C3%B3n%20sobre%20los%20servicios%20que%20ofrece%20www.boletos.la%20en%20toda%20Latinoam%C3%A9rica.%0A%0A%C2%BFPodr%C3%ADan%20asesorarme%3F%20Muchas%20gracias"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-background/60 hover:text-primary transition-colors"
+                  className="text-background/60 hover:text-[#00c7cc] transition-colors"
                 >
                   +595 991 224613
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-primary" />
+                <Mail className="h-5 w-5 text-[#00c7cc]" />
                 <a
                   href="mailto:contacto@boletos.la"
-                  className="text-background/60 hover:text-primary transition-colors"
+                  className="text-background/60 hover:text-[#00c7cc] transition-colors"
                 >
                   contacto@boletos.la
                 </a>
@@ -238,19 +238,19 @@ export function Footer() {
             <div className="flex items-center gap-6 text-sm">
               <a
                 href="#"
-                className="text-background/50 hover:text-primary transition-colors"
+                className="text-background/50 hover:text-[#00c7cc] transition-colors"
               >
                 Términos y Condiciones
               </a>
               <a
                 href="#"
-                className="text-background/50 hover:text-primary transition-colors"
+                className="text-background/50 hover:text-[#00c7cc] transition-colors"
               >
                 Política de Privacidad
               </a>
               <a
                 href="#"
-                className="text-background/50 hover:text-primary transition-colors"
+                className="text-background/50 hover:text-[#00c7cc] transition-colors"
               >
                 Ayuda
               </a>
