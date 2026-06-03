@@ -102,3 +102,14 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Distribusion Widget Custom Overrides */
+#distribusion-search label,
+#distribusion-search span,
+#distribusion-search p,
+#distribusion-search h1,
+#distribusion-search h2,
+#distribusion-search h3,
+#distribusion-search h4 {
+  color: #000000 !important;
+}

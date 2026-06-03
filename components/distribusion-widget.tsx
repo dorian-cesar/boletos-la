@@ -72,15 +72,17 @@ export function DistribusionWidget({
         src="https://book.distribusion.com/sdk.1.0.0.js"
         onLoad={initWidget}
       />
-      <div
-        id="distribusion-search"
-        ref={containerRef}
-        className="w-full min-h-[400px] bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-2xl p-4 text-black"
-      >
-        {/* The widget will be mounted here */}
-        <div className="flex flex-col items-center justify-center h-full text-black/80">
-          <div className="w-8 h-8 border-4 border-black/50 border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p>Cargando buscador de Distribusion...</p>
+      <div className="w-full flex justify-center px-4 py-8">
+        <div
+          id="distribusion-search"
+          ref={containerRef}
+          className="w-full max-w-4xl min-h-[300px] bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-2xl p-4 text-black"
+        >
+          {/* The widget will be mounted here */}
+          <div className="flex flex-col items-center justify-center h-full text-black/80">
+            <div className="w-8 h-8 border-4 border-black/50 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p>Cargando buscador de Distribusion...</p>
+          </div>
         </div>
       </div>
     </>
