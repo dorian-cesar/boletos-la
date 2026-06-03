@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { ChevronDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SearchForm } from "@/components/search-form";
+import { DistribusionWidget } from "@/components/distribusion-widget";
 
 export function HeroSection() {
   const [mounted, setMounted] = useState(false);
@@ -53,7 +54,7 @@ export function HeroSection() {
           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-black/70 to-secondary/20">
             <img
               src="/placeholder-video.png"
-              alt="Bus viajando por Paraguay"
+              alt="Bus viajando a tu destino"
               className="w-full h-full object-cover opacity-50"
               loading="eager"
             />
@@ -87,7 +88,7 @@ export function HeroSection() {
           {/* Fallback image si el video no carga */}
           <img
             src="/placeholder-video.png"
-            alt="Bus viajando por Paraguay"
+            alt="Bus viajando a tu destino"
             className="w-full h-full object-cover"
           />
         </video>
@@ -106,8 +107,8 @@ export function HeroSection() {
             className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 animate-fade-in-up"
             style={{ animationDelay: "0.2s" }}
           >
-            <span className="text-balance">Viaja por todo </span>
-            <span className="text-primary">Paraguay</span>
+            <span className="text-balance">Viaja a tu </span>
+            <span className="text-primary">próximo destino</span>
             <br />
             <span className="text-secondary">con nosotros</span>
           </h1>
@@ -120,8 +121,17 @@ export function HeroSection() {
           </p>
         </div>
 
-        {/* Search Form Component */}
-        <SearchForm />
+        {/* Search Form Component (Oculto a petición) */}
+        {/* <SearchForm /> */}
+
+        {/* Distribusion Widget */}
+        <div className="bg-white/95 rounded-xl shadow-2xl overflow-hidden mt-8 max-w-5xl mx-auto relative z-20">
+          <DistribusionWidget
+            partnerNumber="830754"
+            locale="es"
+            currency="USD"
+          />
+        </div>
 
         {/* Stats */}
         <div

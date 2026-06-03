@@ -14,7 +14,9 @@ interface DistribusionWidgetProps {
     arrivalStation?: string;
     arrivalArea?: string;
     arrivalCity?: string;
+    pax?: number;
   };
+  layout?: "horizontal" | "vertical";
 }
 
 declare global {
@@ -28,20 +30,37 @@ export function DistribusionWidget({
   locale = "es",
   currency = "PYG",
   defaults,
+  layout = "horizontal",
 }: DistribusionWidgetProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const initWidget = () => {
     if (window.Distribusion && containerRef.current) {
-      window.Distribusion.Search.mount({
+      // Limpiar el contenedor antes de montar para evitar duplicados o estados inválidos
+      containerRef.current.innerHTML = '';
+      
+      const config: any = {
         root: containerRef.current,
         partnerNumber: partnerNumber,
         locale: locale,
         currency: currency,
-        defaults: defaults,
-      });
+      };
+      
+      if (defaults) {
+        config.defaults = defaults;
+      }
+
+      window.Distribusion.Search.mount(config);
     }
   };
+
+  useEffect(() => {
+    // Si el script ya está cargado (ej. al volver atrás con el navegador),
+    // reinicializamos el widget manualmente.
+    if (window.Distribusion) {
+      initWidget();
+    }
+  }, [partnerNumber, locale, currency, defaults]);
 
   return (
     <>

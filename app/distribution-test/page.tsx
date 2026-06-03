@@ -17,10 +17,13 @@ export default function DistributionTestPage() {
         <div className="bg-background border rounded-xl p-8 shadow-sm">
           <h2 className="text-2xl font-semibold mb-6">Buscador de Viajes (Paraguay)</h2>
           <DistribusionWidget
-            partnerNumber="222222"
+            partnerNumber="830754"
             locale="es"
             currency="PYG"
-            defaults={{ departureCity: "ASU" }}
+            defaults={{ 
+              departureCity: "PYASU",
+              pax: 2
+            }}
           />
         </div>
 
