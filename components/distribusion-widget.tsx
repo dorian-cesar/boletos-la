@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import Script from "next/script";
-//interfaz
+
 interface DistribusionWidgetProps {
   partnerNumber: string | number;
   locale?: string;
