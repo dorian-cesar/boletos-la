@@ -122,7 +122,7 @@ export function HeroSection() {
         {/* <SearchForm /> */}
 
         {/* Distribusion Widget */}
-        <div className="bg-white/95 rounded-xl shadow-2xl overflow-hidden mt-8 max-w-5xl mx-auto relative z-20">
+        <div className="bg-white/95 rounded-xl shadow-2xl overflow-hidden mt-8 max-w-md mx-auto relative z-20">
           <DistribusionWidget
             partnerNumber="830754"
             locale="es"
