@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import Script from "next/script";
-
+//interfaz
 interface DistribusionWidgetProps {
   partnerNumber: string | number;
   locale?: string;
@@ -38,14 +38,14 @@ export function DistribusionWidget({
     if (window.Distribusion && containerRef.current) {
       // Limpiar el contenedor antes de montar para evitar duplicados o estados inválidos
       containerRef.current.innerHTML = '';
-      
+
       const config: any = {
         root: containerRef.current,
         partnerNumber: partnerNumber,
         locale: locale,
         currency: currency,
       };
-      
+
       if (defaults) {
         config.defaults = defaults;
       }
