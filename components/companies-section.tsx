@@ -65,8 +65,17 @@ export function CompaniesSection() {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        {/* Section Header */}
         <div className="text-center mb-16">
+          <span
+            className={cn(
+              "inline-block px-4 py-2 bg-[#00c7cc]/10 text-[#00c7cc] rounded-full text-sm font-medium mb-4 transition-all duration-700",
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-10",
+            )}
+          >
+            Nuestros Partners
+          </span>
           <h2
             className={cn(
               "text-3xl md:text-5xl font-bold text-white mb-4 transition-all duration-700 delay-100",
@@ -76,7 +85,7 @@ export function CompaniesSection() {
             )}
           >
             <span className="text-balance">Las mejores </span>
-            <span className="text-primary">empresas</span>
+            <span className="text-[#00c7cc]">empresas</span>
           </h2>
           <p
             className={cn(
@@ -141,7 +150,7 @@ export function CompaniesSection() {
             { value: "97%", label: "Satisfacción" },
           ].map((stat, index) => (
             <div key={index} className="text-center">
-              <p className="text-4xl md:text-5xl font-bold text-primary mb-2">
+              <p className="text-4xl md:text-5xl font-bold text-[#00c7cc] mb-2">
                 {stat.value}
               </p>
               <p className="text-white/60">{stat.label}</p>

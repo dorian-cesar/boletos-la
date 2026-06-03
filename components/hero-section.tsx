@@ -100,14 +100,17 @@ export function HeroSection() {
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 py-20 lg:py-32">
         <div className="text-center mb-12 animate-fade-in">
+          <span className="inline-block px-4 py-2 bg-[#00c7cc]/20 text-[#00c7cc] rounded-full text-sm font-medium mb-6 animate-bounce-in">
+            Tu viaje comienza aquí
+          </span>
           <h1
             className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 animate-fade-in-up"
             style={{ animationDelay: "0.2s" }}
           >
             <span className="text-balance">Viaja a tu </span>
-            <span className="text-primary">próximo destino</span>
+            <span className="text-[#00c7cc]">próximo destino</span>
             <br />
-            <span className="text-secondary">con nosotros</span>
+            <span className="text-[#ffaa00]">con nosotros</span>
           </h1>
           <p
             className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto animate-fade-in-up"
@@ -142,7 +145,7 @@ export function HeroSection() {
             { value: "24/7", label: "Soporte" },
           ].map((stat, index) => (
             <div key={index} className="text-center group cursor-default">
-              <p className="text-3xl md:text-4xl font-bold text-primary group-hover:text-secondary transition-colors duration-300">
+              <p className="text-3xl md:text-4xl font-bold text-[#00c7cc] group-hover:text-[#ffaa00] transition-colors duration-300">
                 {stat.value}
               </p>
               <p className="text-white/70 mt-1">{stat.label}</p>

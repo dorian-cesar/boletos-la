@@ -84,6 +84,16 @@ export function DestinationsSection() {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-12">
           <div>
+            <span
+              className={cn(
+                "inline-block px-4 py-2 bg-[#ffaa00]/10 text-[#ffaa00] rounded-full text-sm font-medium mb-4 transition-all duration-700",
+                isVisible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-10",
+              )}
+            >
+              Destinos Populares
+            </span>
             <h2
               className={cn(
                 "text-3xl md:text-5xl font-bold text-white mb-4 transition-all duration-700 delay-100",
@@ -93,7 +103,7 @@ export function DestinationsSection() {
               )}
             >
               <span className="text-balance">Explora </span>
-              <span className="text-secondary">Nuestros Destinos</span>
+              <span className="text-[#ffaa00]">Nuestros Destinos</span>
             </h2>
             <p
               className={cn(
