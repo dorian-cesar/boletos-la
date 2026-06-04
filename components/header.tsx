@@ -73,7 +73,7 @@ export function Header() {
                 alt="Boletos.la Logo"
                 width={140}
                 height={80}
-                style={{ width: "auto", height: "auto" }}
+                style={{ width: "140px", height: "auto" }}
                 className="transition-transform duration-300 group-hover:scale-105 mb-1"
                 loading="eager"
               />

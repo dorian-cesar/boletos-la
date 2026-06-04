@@ -21,7 +21,7 @@ export default function ConfirmationLoading() {
                 alt="Logo Boletos.la"
                 width={120}
                 height={64}
-                style={{ width: "auto", height: "auto" }}
+                style={{ width: "120px", height: "auto" }}
                 className="mx-auto mb-5 animate-bounce"
                 priority
               />
