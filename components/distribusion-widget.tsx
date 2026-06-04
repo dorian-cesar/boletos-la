@@ -163,6 +163,127 @@ export function DistribusionWidget({
     }
   }, [partnerNumber, locale, currency, serializedDefaults, layout]);
 
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const updateCurrencyFromDOM = () => {
+      const inputs = Array.from(container.querySelectorAll("input"));
+      let departureCode = "";
+
+      // 1. Intentamos detectar el código de partida de 5 letras (ej. COBOG, PYASU)
+      for (const input of inputs) {
+        const val = input.value?.trim().toUpperCase();
+        if (val && val.length === 5 && /^[A-Z]{5}$/.test(val)) {
+          const prefix = val.substring(0, 2);
+          if (["CO", "PY", "CL", "BR", "AR", "PE", "MX", "UY", "BO", "EC"].includes(prefix)) {
+            departureCode = val;
+            break;
+          }
+        }
+      }
+
+      // 2. Fallback: Detectar por el texto visible si el código de 5 letras no está o es genérico
+      if (!departureCode) {
+        const visibleInput = inputs.find(
+          (input) =>
+            input.type === "text" &&
+            (input.name.toLowerCase().includes("departure") ||
+              input.name.toLowerCase().includes("origin") ||
+              input.placeholder.toLowerCase().includes("origen") ||
+              input.placeholder.toLowerCase().includes("desde") ||
+              input.id.toLowerCase().includes("departure") ||
+              input.id.toLowerCase().includes("origin") ||
+              input.className.toLowerCase().includes("departure") ||
+              input.className.toLowerCase().includes("origin"))
+        );
+
+        if (visibleInput && visibleInput.value) {
+          const text = visibleInput.value.toLowerCase();
+          if (text.includes("colombia") || text.includes("bogota") || text.includes("bogotá") || text.includes("medellin") || text.includes("cali")) {
+            departureCode = "CO";
+          } else if (text.includes("paraguay") || text.includes("asuncion") || text.includes("asunción") || text.includes("ciudad del este")) {
+            departureCode = "PY";
+          } else if (text.includes("chile") || text.includes("santiago") || text.includes("valparaiso")) {
+            departureCode = "CL";
+          } else if (text.includes("argentina") || text.includes("buenos aires") || text.includes("mendoza")) {
+            departureCode = "AR";
+          } else if (text.includes("brasil") || text.includes("brazil") || text.includes("sao paulo") || text.includes("rio de janeiro")) {
+            departureCode = "BR";
+          } else if (text.includes("peru") || text.includes("perú") || text.includes("lima")) {
+            departureCode = "PE";
+          } else if (text.includes("mexico") || text.includes("méxico") || text.includes("cancun")) {
+            departureCode = "MX";
+          } else if (text.includes("uruguay") || text.includes("montevideo")) {
+            departureCode = "UY";
+          } else if (text.includes("bolivia") || text.includes("la paz")) {
+            departureCode = "BO";
+          } else if (text.includes("ecuador") || text.includes("quito")) {
+            departureCode = "EC";
+          }
+        }
+      }
+
+      if (departureCode && departureCode.length >= 2) {
+        const prefix = departureCode.substring(0, 2).toUpperCase();
+        const prefixCurrencyMap: { [key: string]: string } = {
+          PY: "PYG",
+          CO: "COP",
+          CL: "CLP",
+          BR: "BRL",
+          AR: "ARS",
+          PE: "PEN",
+          MX: "MXN",
+          UY: "UYU",
+          BO: "BOB",
+          EC: "USD",
+        };
+        const targetCurrency = prefixCurrencyMap[prefix];
+        if (targetCurrency) {
+          // Guardamos en localStorage para persistencia
+          localStorage.setItem("selected-currency", targetCurrency);
+
+          // Buscamos el input de currency y lo actualizamos en caliente si es diferente
+          const currencyInput = inputs.find(
+            (input) =>
+              ["currency", "currency_code", "currencycode"].includes(input.name.toLowerCase()) ||
+              input.id.toLowerCase().includes("currency")
+          );
+
+          if (currencyInput && currencyInput.value !== targetCurrency) {
+            currencyInput.value = targetCurrency;
+            // Disparamos los eventos correspondientes para que el SDK procese el cambio
+            currencyInput.dispatchEvent(new Event("change", { bubbles: true }));
+            currencyInput.dispatchEvent(new Event("input", { bubbles: true }));
+            console.log(`[DistribusionWidget] Moneda cambiada dinámicamente a ${targetCurrency} por origen ${prefix}`);
+          }
+        }
+      }
+    };
+
+    // Escuchamos múltiples eventos para cubrir cualquier interacción con los inputs de búsqueda
+    const events = ["input", "change", "click", "focusout", "submit"];
+    events.forEach((eventType) => {
+      container.addEventListener(eventType, updateCurrencyFromDOM);
+    });
+
+    // MutationObserver para capturar inserciones o actualizaciones asíncronas del DOM del SDK
+    const observer = new MutationObserver(updateCurrencyFromDOM);
+    observer.observe(container, {
+      attributes: true,
+      childList: true,
+      subtree: true,
+      attributeFilter: ["value"]
+    });
+
+    return () => {
+      events.forEach((eventType) => {
+        container.removeEventListener(eventType, updateCurrencyFromDOM);
+      });
+      observer.disconnect();
+    };
+  }, []);
+
   return (
     <>
       <link
