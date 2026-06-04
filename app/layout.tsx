@@ -35,8 +35,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es">
-      <body className={`${inter.variable} antialiased`}>
+    <html lang="es" suppressHydrationWarning>
+      <body className={`${inter.variable} antialiased`} suppressHydrationWarning>
         <GoogleTagManager />
         {children}
       </body>
