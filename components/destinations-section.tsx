@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { useBookingStore, cities } from "@/lib/booking-store";
+import Aurora from "@/components/aurora";
 
 const destinations = [
   {
@@ -93,13 +94,20 @@ export function DestinationsSection() {
     <section
       ref={sectionRef}
       id="destinos"
-      className="py-24 bg-gradient-to-b from-[#1a2332] to-[#0f1419] relative overflow-hidden"
+      className="py-24 bg-[#0f1419] relative overflow-hidden"
     >
-      {/* Decorative Background - Actualizado para fondo oscuro */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#00c7cc]/5 rounded-full blur-[150px]" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#ffaa00]/5 rounded-full blur-[120px]" />
+      {/* Aurora WebGL Animated Background */}
+      <div className="absolute inset-0 pointer-events-none opacity-30 z-0">
+        <Aurora
+          colorStops={["#00c7cc", "#1a2332", "#ffaa00"]}
+          blend={0.8}
+          amplitude={1.0}
+          speed={0.3}
+        />
       </div>
+
+      {/* Subtle overlay to soften the background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#1a2332]/50 via-transparent to-[#0f1419] pointer-events-none z-0" />
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
