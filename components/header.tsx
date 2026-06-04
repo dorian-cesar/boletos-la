@@ -22,7 +22,7 @@ export function Header() {
   return (
     <>
       {/* Top Bar */}
-      <div className="hidden lg:block bg-black text-white py-2">
+      <div className="max-lg:hidden bg-black text-white py-2">
         <div className="container mx-auto px-4 flex items-center justify-between text-sm">
           <div className="flex items-center gap-6">
             <a
@@ -80,7 +80,7 @@ export function Header() {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-8">
+            <nav className="max-lg:hidden lg:flex items-center gap-8">
               <Link
                 href="/"
                 className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
@@ -114,7 +114,7 @@ export function Header() {
             </nav>
 
             {/* CTA Button */}
-            <div className="hidden lg:flex items-center gap-4">
+            <div className="max-lg:hidden lg:flex items-center gap-4">
               <Button
                 variant="outline"
                 className="border-[#00c7cc] text-[#00c7cc] hover:bg-[#00c7cc] hover:text-white transition-all duration-300 bg-transparent"
