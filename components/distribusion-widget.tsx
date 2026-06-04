@@ -298,7 +298,7 @@ export function DistribusionWidget({
         <div
           id="distribusion-search"
           ref={containerRef}
-          className="w-full max-w-5xl p-4 overflow-hidden text-black"
+          className="w-full max-w-5xl p-4 overflow-visible text-black"
         >
           {/* The widget will be mounted here */}
           <div className="flex flex-col items-center justify-center h-48 text-black/60">

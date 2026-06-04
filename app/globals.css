@@ -100,8 +100,20 @@ body {
   }
   body {
     @apply bg-background text-foreground;
-    zoom: 0.8;
   }
 }
 
-/* Distribusion Widget Custom Overrides */
+.zoom-wrapper {
+  zoom: 0.8;
+}
+
+/* Distribusion Widget Custom Overrides */
+body > div[class*="mantine-Portal"],
+body > div.mantine-Portal-root,
+body > div[class*="Portal"],
+.m_38a85659,
+div[class*="Autocomplete_dropdown"],
+div[class*="Popover_dropdown"] {
+  transform: scale(0.8) !important;
+  transform-origin: top left !important;
+}

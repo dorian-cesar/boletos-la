@@ -38,7 +38,9 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <body className={`${inter.variable} antialiased`} suppressHydrationWarning>
         <GoogleTagManager />
-        {children}
+        <div className="zoom-wrapper">
+          {children}
+        </div>
       </body>
     </html>
   );
