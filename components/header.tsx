@@ -44,14 +44,6 @@ export function Header() {
               contacto@boletos.la
             </a>
           </div>
-          <div className="flex items-center gap-4">
-            <Link href="#" className="hover:text-[#00c7cc] transition-colors">
-              Ayuda
-            </Link>
-            <Link href="#" className="hover:text-[#00c7cc] transition-colors">
-              Mis Reservas
-            </Link>
-          </div>
         </div>
       </div>
 
