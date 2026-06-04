@@ -72,8 +72,8 @@ export function HeroSection() {
             className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 animate-fade-in-up"
             style={{ animationDelay: "0.2s" }}
           >
-            <span className="text-balance">Viaja a tu </span>
-            <span className="text-[#00c7cc]">próximo destino</span>
+            <span className="text-balance">Viaja por toda </span>
+            <span className="text-[#00c7cc]">Latinoamérica</span>
             <br />
             <span className="text-[#ffaa00]">con nosotros</span>
           </h1>
@@ -90,7 +90,7 @@ export function HeroSection() {
         {/* <SearchForm /> */}
 
         {/* Distribusion Widget */}
-        <div className="bg-white/95 rounded-xl shadow-2xl overflow-hidden mt-8 max-w-md mx-auto relative z-20">
+        <div className="bg-white/95 rounded-xl shadow-2xl overflow-hidden mt-8 max-w-5xl mx-auto relative z-20 w-full">
           <DistribusionWidget
             partnerNumber="830754"
             locale="es"

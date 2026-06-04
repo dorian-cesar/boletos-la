@@ -26,7 +26,7 @@ export function Header() {
         <div className="container mx-auto px-4 flex items-center justify-between text-sm">
           <div className="flex items-center gap-6">
             <a
-              href="https://wa.me/595991224613?text=Hola%2C%20me%20gustar%C3%ADa%20recibir%20informaci%C3%B3n%20sobre%20los%20servicios%20que%20ofrece%20www.boletos.la%20en%20Paraguay.%0A%0A%C2%BFPodr%C3%ADan%20asesorarme%3F%20Muchas%20gracias"
+              href="https://wa.me/595991224613?text=Hola%2C%20me%20gustar%C3%ADa%20recibir%20informaci%C3%B3n%20sobre%20los%20servicios%20que%20ofrece%20www.boletos.la.%0A%0A%C2%BFPodr%C3%ADan%20asesorarme%3F%20Muchas%20gracias"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 hover:text-[#00c7cc] transition-colors"
@@ -43,7 +43,7 @@ export function Header() {
             </a>
             <span className="flex items-center gap-2">
               <MapPin className="h-4 w-4 text-[#00c7cc]" />
-              Asunción, Paraguay
+              Latinoamérica
             </span>
           </div>
           <div className="flex items-center gap-4">

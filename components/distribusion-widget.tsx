@@ -28,7 +28,7 @@ declare global {
 export function DistribusionWidget({
   partnerNumber,
   locale = "es",
-  currency = "PYG",
+  currency = "USD",
   defaults,
   layout = "horizontal",
 }: DistribusionWidgetProps) {
@@ -44,6 +44,7 @@ export function DistribusionWidget({
         partnerNumber: partnerNumber,
         locale: locale,
         currency: currency,
+        layout: layout === "horizontal" ? "row" : "column",
       };
 
       if (defaults) {
@@ -54,13 +55,15 @@ export function DistribusionWidget({
     }
   };
 
+  const serializedDefaults = defaults ? JSON.stringify(defaults) : "";
+
   useEffect(() => {
     // Si el script ya está cargado (ej. al volver atrás con el navegador),
     // reinicializamos el widget manualmente.
     if (window.Distribusion) {
       initWidget();
     }
-  }, [partnerNumber, locale, currency, defaults]);
+  }, [partnerNumber, locale, currency, serializedDefaults, layout]);
 
   return (
     <>
@@ -72,11 +75,11 @@ export function DistribusionWidget({
         src="https://book.distribusion.com/sdk.1.0.0.js"
         onLoad={initWidget}
       />
-      <div className="w-full flex justify-center px-4 py-8">
+      <div className="w-full flex justify-center px-4 py-2">
         <div
           id="distribusion-search"
           ref={containerRef}
-          className="w-full max-w-md p-4 overflow-hidden text-black"
+          className="w-full max-w-5xl p-4 overflow-hidden text-black"
         >
           {/* The widget will be mounted here */}
           <div className="flex flex-col items-center justify-center h-48 text-black/60">
