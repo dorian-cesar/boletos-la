@@ -25,6 +25,102 @@ declare global {
   }
 }
 
+function detectCurrency(
+  propCurrency: string,
+  defaults?: { departureCity?: string; departureStation?: string },
+): string {
+  if (typeof window === "undefined") return propCurrency;
+
+  // 1. Detectar desde URL query parameters (?currency=XXX o ?country=XX)
+  const searchParams = new URLSearchParams(window.location.search);
+  const urlCurrency = searchParams.get("currency")?.toUpperCase();
+  if (urlCurrency && urlCurrency.length === 3) {
+    return urlCurrency;
+  }
+  
+  const urlCountry = searchParams.get("country")?.toUpperCase();
+  if (urlCountry) {
+    const countryCurrencyMap: { [key: string]: string } = {
+      PY: "PYG",
+      CO: "COP",
+      CL: "CLP",
+      BR: "BRL",
+      AR: "ARS",
+      PE: "PEN",
+      MX: "MXN",
+      UY: "UYU",
+      BO: "BOB",
+      EC: "USD",
+    };
+    if (countryCurrencyMap[urlCountry]) {
+      return countryCurrencyMap[urlCountry];
+    }
+  }
+
+  // 2. Detectar desde los defaults de partida (ej. PYASU -> PY -> PYG)
+  const departureCode = defaults?.departureCity || defaults?.departureStation;
+  if (departureCode && departureCode.length >= 2) {
+    const prefix = departureCode.substring(0, 2).toUpperCase();
+    const prefixCurrencyMap: { [key: string]: string } = {
+      PY: "PYG",
+      CO: "COP",
+      CL: "CLP",
+      BR: "BRL",
+      AR: "ARS",
+      PE: "PEN",
+      MX: "MXN",
+      UY: "UYU",
+      BO: "BOB",
+      EC: "USD",
+    };
+    if (prefixCurrencyMap[prefix]) {
+      return prefixCurrencyMap[prefix];
+    }
+  }
+
+  // 3. Detectar desde la zona horaria del navegador
+  try {
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (timeZone) {
+      if (timeZone.includes("Asuncion")) return "PYG";
+      if (timeZone.includes("Bogota")) return "COP";
+      if (timeZone.includes("Santiago")) return "CLP";
+      if (timeZone.includes("Lima")) return "PEN";
+      if (timeZone.includes("Montevideo")) return "UYU";
+      if (timeZone.includes("La_Paz")) return "BOB";
+      if (timeZone.includes("Argentina")) return "ARS";
+      if (
+        timeZone.includes("Sao_Paulo") ||
+        timeZone.includes("Manaus") ||
+        timeZone.includes("Fortaleza") ||
+        timeZone.includes("Recife") ||
+        timeZone.includes("Bahia")
+      ) {
+        return "BRL";
+      }
+      if (
+        timeZone.includes("Mexico_City") ||
+        timeZone.includes("Monterrey") ||
+        timeZone.includes("Tijuana")
+      ) {
+        return "MXN";
+      }
+    }
+  } catch (e) {
+    console.error("Error al detectar zona horaria:", e);
+  }
+
+  // 4. Default a la moneda pasada por prop o guardada en localStorage
+  try {
+    const savedCurrency = localStorage.getItem("selected-currency");
+    if (savedCurrency && savedCurrency.length === 3) {
+      return savedCurrency;
+    }
+  } catch (e) {}
+
+  return propCurrency;
+}
+
 export function DistribusionWidget({
   partnerNumber,
   locale = "es",
@@ -39,11 +135,13 @@ export function DistribusionWidget({
       // Limpiar el contenedor antes de montar para evitar duplicados o estados inválidos
       containerRef.current.innerHTML = '';
 
+      const detectedCurrency = detectCurrency(currency, defaults);
+
       const config: any = {
         root: containerRef.current,
         partnerNumber: partnerNumber,
         locale: locale,
-        currency: currency,
+        currency: detectedCurrency,
         layout: layout === "horizontal" ? "row" : "column",
       };
 

@@ -14,7 +14,10 @@ const destinations = [
     name: "Paraguay",
     region: "Sudamérica",
     image: "/images/asuncion.png",
-    price: 50,
+    price: 350000,
+    currency: "PYG",
+    symbol: "₲",
+    locale: "es-PY",
     duration: "Múltiples opciones",
     popular: true,
   },
@@ -23,7 +26,10 @@ const destinations = [
     name: "Colombia",
     region: "Suramérica",
     image: "/images/colombia.png",
-    price: 150,
+    price: 600000,
+    currency: "COP",
+    symbol: "$",
+    locale: "es-CO",
     duration: "Múltiples opciones",
     popular: true,
   },
@@ -32,7 +38,10 @@ const destinations = [
     name: "Brasil",
     region: "Suramérica",
     image: "/images/brazil.png",
-    price: 120,
+    price: 680,
+    currency: "BRL",
+    symbol: "R$",
+    locale: "pt-BR",
     duration: "Múltiples opciones",
     popular: true,
   },
@@ -41,7 +50,10 @@ const destinations = [
     name: "Argentina",
     region: "Suramérica",
     image: "/images/argentina.png",
-    price: 100,
+    price: 95000,
+    currency: "ARS",
+    symbol: "$",
+    locale: "es-AR",
     duration: "Múltiples opciones",
     popular: true,
   },
@@ -199,7 +211,8 @@ export function DestinationsSection() {
                   <div className="text-right">
                     <p className="text-xs text-white/70">Desde</p>
                     <p className="text-2xl font-bold text-[#ffaa00]">
-                      ₲{destination.price.toLocaleString("es-PY")}
+                      {destination.symbol}{destination.price.toLocaleString(destination.locale)}{" "}
+                      <span className="text-xs font-normal text-white/70">{destination.currency}</span>
                     </p>
                   </div>
                 </div>
