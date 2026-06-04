@@ -10,7 +10,7 @@ const features = [
   {
     icon: Shield,
     title: "Pago 100% Seguro",
-    description: "Transacciones protegidas con Pagopar y encriptación SSL.",
+    description: "Transacciones protegidas con encriptación SSL.",
     image: "/images/1.jpg",
   },
   {
