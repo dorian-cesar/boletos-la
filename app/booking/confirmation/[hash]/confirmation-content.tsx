@@ -1135,6 +1135,7 @@ export default function ConfirmationPageContent({
             alt="Logo Boletos.la"
             width={120}
             height={64}
+            style={{ width: "auto", height: "auto" }}
             className="mx-auto mb-5 animate-bounce"
             priority
           />

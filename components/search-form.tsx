@@ -62,6 +62,7 @@ function ComingSoonModal({
               alt="Logo Boletos.la"
               width={135}
               height={100}
+              style={{ width: "auto", height: "auto" }}
             />
           </div>
           <h3 className="text-3xl font-bold text-white mb-4">
