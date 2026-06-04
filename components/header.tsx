@@ -27,7 +27,7 @@ export function Header() {
           "sticky top-0 z-50 w-full transition-all duration-500",
           isScrolled
             ? "bg-black/80 backdrop-blur-md border-b border-white/10 shadow-lg"
-            : "bg-black/40 backdrop-blur-sm border-b border-white/5",
+            : "bg-black",
         )}
       >
         <div className="container mx-auto px-4 py-4">
