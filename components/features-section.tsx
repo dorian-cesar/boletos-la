@@ -5,7 +5,6 @@ import { Shield, CreditCard, Clock, Headphones } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import LightRays from "./light-rays";
 
 const features = [
   {
@@ -61,24 +60,8 @@ export function FeaturesSection() {
     <section
       ref={sectionRef}
       id="servicios"
-      className="py-24 bg-gradient-to-b from-[#1a2332] to-[#0f1419] relative overflow-hidden"
+      className="py-24 relative"
     >
-      {/* Background Effects */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <LightRays
-          raysOrigin="top-center"
-          raysColor="#00c7cc"
-          raysSpeed={1.5}
-          lightSpread={0.8}
-          rayLength={1.2}
-          followMouse={true}
-          mouseInfluence={0.1}
-          noiseAmount={0.1}
-          distortion={0.05}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1a2332]/50 via-transparent to-[#0f1419] pointer-events-none z-10" />
-      </div>
-
       <div className="container mx-auto px-4 relative z-10">
         {/* Centered Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">

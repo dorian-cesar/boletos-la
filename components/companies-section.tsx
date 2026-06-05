@@ -56,15 +56,10 @@ export function CompaniesSection() {
     <section
       ref={sectionRef}
       id="empresas"
-      className="py-24 bg-gradient-to-b from-[#1a2332] to-[#0f1419] relative overflow-hidden"
+      className="py-24 relative"
     >
-      {/* Background Effects - Simple como el FeaturesSection */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-secondary/10 rounded-full blur-[100px]" />
-      </div>
-
       <div className="container mx-auto px-4 relative z-10">
+        <div className="bg-gradient-to-br from-[#ffaa00]/10 to-[#ff7b00]/5 backdrop-blur-xl border border-[#ffaa00]/30 rounded-3xl p-8 md:p-12 shadow-[0_0_40px_rgba(255,170,0,0.15)]">
         <div className="text-center mb-16">
           <span
             className={cn(
@@ -156,6 +151,7 @@ export function CompaniesSection() {
               <p className="text-white/60">{stat.label}</p>
             </div>
           ))}
+        </div>
         </div>
       </div>
     </section>
