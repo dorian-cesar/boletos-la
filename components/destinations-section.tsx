@@ -216,13 +216,7 @@ export function DestinationsSection() {
                       </span>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-xs text-white/70">Desde</p>
-                    <p className="text-2xl font-bold text-[#ffaa00]">
-                      {destination.symbol}{destination.price.toLocaleString(destination.locale)}{" "}
-                      <span className="text-xs font-normal text-white/70">{destination.currency}</span>
-                    </p>
-                  </div>
+                  {/* Precio oculto */}
                 </div>
 
                 {/* Hover Button */}
