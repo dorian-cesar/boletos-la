@@ -24,10 +24,10 @@ export function Header() {
       {/* Main Header */}
       <header
         className={cn(
-          "sticky top-0 z-50 w-full transition-all duration-500",
+          "sticky top-0 z-50 w-full transition-all duration-500 border-b",
           isScrolled
-            ? "bg-black/80 backdrop-blur-md border-b border-white/10 shadow-lg"
-            : "bg-black",
+            ? "bg-black/80 backdrop-blur-md border-white/10 shadow-lg"
+            : "bg-black border-transparent",
         )}
       >
         <div className="container mx-auto px-4 py-4">
