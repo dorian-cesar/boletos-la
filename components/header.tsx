@@ -65,16 +65,9 @@ export function Header() {
 
             {/* Desktop Actions */}
             <div className="max-lg:hidden lg:flex items-center gap-4 relative z-10">
-              <Button
-                variant="ghost"
-                className="text-white/80 hover:text-white hover:bg-white/10 rounded-full px-5 font-medium transition-all duration-300"
-              >
+              <Button className="bg-gradient-to-r from-[#ffaa00] to-[#ff7b00] hover:from-[#ffb733] hover:to-[#ff8c1a] text-black font-bold rounded-full px-7 shadow-lg shadow-[#ffaa00]/20 hover:shadow-[#ffaa00]/40 transition-all duration-300 transform hover:-translate-y-0.5">
                 <Ticket className="w-4 h-4 mr-2" />
                 Mis Viajes
-              </Button>
-              <Button className="bg-gradient-to-r from-[#ffaa00] to-[#ff7b00] hover:from-[#ffb733] hover:to-[#ff8c1a] text-black font-bold rounded-full px-7 shadow-lg shadow-[#ffaa00]/20 hover:shadow-[#ffaa00]/40 transition-all duration-300 transform hover:-translate-y-0.5">
-                <Calendar className="w-4 h-4 mr-2" />
-                Reservar Pasaje
               </Button>
             </div>
 
@@ -120,16 +113,9 @@ export function Header() {
             ))}
             
             <div className="flex flex-col gap-3 pt-4 mt-2">
-              <Button
-                variant="outline"
-                className="w-full border-white/20 text-white hover:bg-white/10 rounded-xl h-12 text-base"
-              >
+              <Button className="w-full bg-gradient-to-r from-[#ffaa00] to-[#ff7b00] text-black font-bold rounded-xl h-12 text-base shadow-lg shadow-[#ffaa00]/20">
                 <Ticket className="w-5 h-5 mr-2" />
                 Mis Viajes
-              </Button>
-              <Button className="w-full bg-gradient-to-r from-[#ffaa00] to-[#ff7b00] text-black font-bold rounded-xl h-12 text-base shadow-lg shadow-[#ffaa00]/20">
-                <Calendar className="w-5 h-5 mr-2" />
-                Reservar Pasaje
               </Button>
             </div>
           </nav>
