@@ -9,6 +9,7 @@ import { FeaturesSection } from "@/components/features-section";
 import { DestinationsSection } from "@/components/destinations-section";
 import { CompaniesSection } from "@/components/companies-section";
 import { Footer } from "@/components/footer";
+import { ScrollToTop } from "@/components/scroll-to-top";
 import Aurora from "@/components/aurora";
 
 export default function HomePage() {
@@ -64,6 +65,7 @@ export default function HomePage() {
       </div>
 
       <Footer />
+      <ScrollToTop />
     </main>
   );
 }

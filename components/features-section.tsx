@@ -113,29 +113,6 @@ export function FeaturesSection() {
         </div>
       </div>
 
-      {/* Scroll to Top Button */}
-      <button
-        className={cn(
-          "fixed bottom-8 right-8 w-14 h-14 rounded-full border-2 border-[#00c7cc] text-[#00c7cc] flex items-center justify-center transition-all duration-500 hover:bg-[#00c7cc] hover:text-white hover:scale-110 z-50",
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10",
-        )}
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        aria-label="Volver arriba"
-      >
-        <svg
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5 10l7-7m0 0l7 7m-7-7v18"
-          />
-        </svg>
-      </button>
     </section>
   );
 }

@@ -5,6 +5,7 @@ import { ChevronDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SearchForm } from "@/components/search-form";
 import { DistribusionWidget } from "@/components/distribusion-widget";
+import Image from "next/image";
 
 export function HeroSection() {
   const [mounted, setMounted] = useState(false);
@@ -46,15 +47,17 @@ export function HeroSection() {
       {/* Background Carousel */}
       <div className="absolute inset-0 bg-[#0f1419]">
         {carouselImages.map((src, index) => (
-          <img
+          <Image
             key={src}
             src={src}
             alt={`Bus viajando a tu destino ${index + 1}`}
+            fill
+            sizes="100vw"
             className={cn(
-              "absolute inset-0 w-full h-full object-cover transition-opacity duration-1000",
+              "object-cover transition-opacity duration-1000",
               index === currentImageIndex ? "opacity-100" : "opacity-0"
             )}
-            loading={index === 0 ? "eager" : "lazy"}
+            priority={index === 0}
           />
         ))}
 
