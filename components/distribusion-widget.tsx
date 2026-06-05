@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Script from "next/script";
+import { cn } from "@/lib/utils";
 
 interface DistribusionWidgetProps {
   partnerNumber: string | number;
@@ -129,6 +130,7 @@ export function DistribusionWidget({
   layout = "horizontal",
 }: DistribusionWidgetProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isWidgetReady, setIsWidgetReady] = useState(false);
 
   const initWidget = () => {
     if (window.Distribusion && containerRef.current) {
@@ -268,7 +270,13 @@ export function DistribusionWidget({
     });
 
     // MutationObserver para capturar inserciones o actualizaciones asíncronas del DOM del SDK
-    const observer = new MutationObserver(updateCurrencyFromDOM);
+    const observer = new MutationObserver(() => {
+      try {
+        updateCurrencyFromDOM();
+      } catch (e) {
+        console.error("Error updating currency:", e);
+      }
+    });
     observer.observe(container, {
       attributes: true,
       childList: true,
@@ -276,11 +284,27 @@ export function DistribusionWidget({
       attributeFilter: ["value"]
     });
 
+    // Usar un intervalo para detectar de manera segura cuando el SDK se haya montado por completo
+    let intervalCount = 0;
+    const readyInterval = setInterval(() => {
+      intervalCount++;
+      // Chequeo 1: Ver si ya hay inputs (el widget cargó por completo)
+      const hasInputs = container.querySelectorAll("input").length > 0 || container.querySelector("form");
+      // Chequeo 2: Ver si el SDK ya metió mucho contenido interno
+      const hasContent = container.children.length > 0 && container.innerHTML.length > 500;
+      
+      if (hasInputs || hasContent || intervalCount > 15) { // 15 * 200ms = 3 segundos máximo
+        setIsWidgetReady(true);
+        clearInterval(readyInterval);
+      }
+    }, 200);
+
     return () => {
       events.forEach((eventType) => {
         container.removeEventListener(eventType, updateCurrencyFromDOM);
       });
       observer.disconnect();
+      clearInterval(readyInterval);
     };
   }, []);
 
@@ -294,16 +318,43 @@ export function DistribusionWidget({
         src="https://book.distribusion.com/sdk.1.0.0.js"
         onLoad={initWidget}
       />
-      <div className="w-full flex justify-center px-4 py-2">
-        <div
-          id="distribusion-search"
-          ref={containerRef}
-          className="w-full max-w-5xl p-4 overflow-visible text-black"
+      <div className="w-full flex justify-center px-4 py-2 relative">
+        
+        {/* Esqueleto Personalizado (Mantiene el espacio correcto en el DOM) */}
+        {!isWidgetReady && (
+          <div className="w-full max-w-5xl p-4">
+            <div className="animate-pulse w-full px-2 py-4">
+              <div className="flex flex-col md:flex-row gap-3">
+                {/* Origen */}
+                <div className="h-14 bg-gray-200 rounded-lg w-full md:flex-1"></div>
+                {/* Destino */}
+                <div className="h-14 bg-gray-200 rounded-lg w-full md:flex-1"></div>
+                {/* Fechas */}
+                <div className="h-14 bg-gray-200 rounded-lg w-full md:flex-[1.5]"></div>
+                {/* Pasajeros */}
+                <div className="h-14 bg-gray-200 rounded-lg w-full md:flex-[0.8]"></div>
+                {/* Botón Buscar */}
+                <div className="h-14 bg-gray-300 rounded-lg w-full md:w-32"></div>
+              </div>
+              <div className="mt-4 flex justify-center">
+                <p className="text-xs text-black/40 font-medium tracking-wide uppercase">Cargando Buscador...</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Contenedor que Controlamos Nosotros (El SDK no puede borrar sus clases) */}
+        <div 
+          className={cn(
+            "w-full max-w-5xl transition-opacity duration-500",
+            !isWidgetReady ? "absolute opacity-0 pointer-events-none" : "opacity-100 relative z-20"
+          )}
         >
-          {/* The widget will be mounted here */}
-          <div className="flex flex-col items-center justify-center h-48 text-black/60">
-            <div className="w-8 h-8 border-4 border-black/20 border-t-black/80 rounded-full animate-spin mb-4"></div>
-            <p>Cargando buscador de Distribusion...</p>
+          <div
+            id="distribusion-search"
+            ref={containerRef}
+            className="w-full p-4 overflow-visible text-black"
+          >
           </div>
         </div>
       </div>
