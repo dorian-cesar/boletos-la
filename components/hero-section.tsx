@@ -19,7 +19,7 @@ export function HeroSection() {
       {/* Background Image */}
       <div className="absolute inset-0 bg-[#0f1419]">
         <Image
-          src="/images/hero_beach_dock.png"
+          src="/images/hero.jpg"
           alt="Vista aérea de una playa tropical"
           fill
           sizes="100vw"
@@ -33,11 +33,11 @@ export function HeroSection() {
       {/* Content Container */}
       <div className="relative z-10 container mx-auto px-4 md:px-6 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          
           {/* Left Column: Text & Subtitles */}
           <div className="lg:col-span-7 text-left text-white max-w-xl">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight tracking-tight drop-shadow-sm">
-              Cualquier sitio.<br />
+              Cualquier sitio.
+              <br />
               Un solo punto de partida
             </h1>
             <div className="space-y-1 mt-4">
@@ -61,7 +61,6 @@ export function HeroSection() {
               />
             </div>
           </div>
-
         </div>
       </div>
     </section>
