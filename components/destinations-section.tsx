@@ -147,13 +147,12 @@ export function DestinationsSection() {
           {/* Quick Route Tags */}
           <div className="flex flex-wrap gap-2 pt-6">
             {quickRoutes.map((route, i) => (
-              <button
+              <span
                 key={i}
-                onClick={handleScrollToWidget}
-                className="px-3 py-1.5 bg-gray-200/60 hover:bg-gray-300/80 text-[10px] md:text-xs font-semibold text-gray-600 rounded-md tracking-wider transition-colors"
+                className="px-3 py-1.5 bg-gray-200/60 text-[10px] md:text-xs font-semibold text-gray-600 rounded-md tracking-wider select-none"
               >
                 {route}
-              </button>
+              </span>
             ))}
           </div>
         </div>

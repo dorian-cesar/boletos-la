@@ -18,6 +18,7 @@ export function PartnersSection() {
                 src="/logos/logo-booking.png"
                 alt="Booking.com Logo"
                 fill
+                sizes="120px"
                 className="object-contain"
               />
             </div>
@@ -28,6 +29,7 @@ export function PartnersSection() {
                 src="/logos/logo-airbnb.png"
                 alt="Airbnb Logo"
                 fill
+                sizes="100px"
                 className="object-contain"
               />
             </div>
@@ -38,7 +40,8 @@ export function PartnersSection() {
                 src="/logos/logo-google.png"
                 alt="Google Logo"
                 fill
-                className="object-contain"
+                sizes="100px"
+                className="object-contain p-0.5"
               />
             </div>
 
@@ -48,6 +51,7 @@ export function PartnersSection() {
                 src="/logos/logo-uber.png"
                 alt="Uber Logo"
                 fill
+                sizes="80px"
                 className="object-contain p-1"
               />
             </div>
@@ -58,6 +62,7 @@ export function PartnersSection() {
                 src="/logos/logo-oxxo.png"
                 alt="OXXO Logo"
                 fill
+                sizes="80px"
                 className="object-contain"
               />
             </div>

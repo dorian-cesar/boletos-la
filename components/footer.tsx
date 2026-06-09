@@ -30,10 +30,10 @@ export function Footer() {
       id="contacto"
       className="bg-[#1a1a1a] text-white pt-16 relative overflow-hidden border-t border-neutral-800"
     >
-      <div className="container mx-auto px-4 max-w-6xl relative z-10">
+      <div className="container mx-auto px-4 max-w-[1440px] relative z-10 pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           {/* Brand & Selectors Column */}
-          <div className="lg:col-span-5 space-y-6">
+          <div className="lg:col-span-4 space-y-6">
             <Link href="/" className="inline-block">
               <Image
                 src="/logos/logo-boletos.png"
@@ -46,20 +46,29 @@ export function Footer() {
               />
             </Link>
 
-            <p className="text-xs md:text-sm text-neutral-400 leading-relaxed font-normal max-w-md">
+            <p className="text-xs md:text-sm text-neutral-400 leading-relaxed font-normal">
               Tu ruta completa por Latinoamérica, en un solo lugar.
               <br />
-              <br />
               En boletos.la conectamos ciudades y destinos combinando buses y
-              alojamiento. Compara opciones, visualiza tiempos y precios de
-              cientos de operadores en tiempo real. Rutas de punta a punta.
-              Ofrecemos la mejor opción de principio a fin. Hacemos más fácil
-              directo a las boleterías oficiales para un viaje sin sorpresas.
+              alojamiento.
+              <br />
+              <br />
+              <strong>Compara opciones:</strong> Visualiza tiempos y precios de
+              cientos de operadores en tiempo real.
+              <br />
+              <strong>Rutas puerta a puerta:</strong> Diseñamos tu itinerario
+              exacto de principio a fin.
+              <br />
+              <strong>Reserva fácil:</strong> Enlaces directos a las boleterías
+              oficiales para un viaje sin sorpresas.
               <br />
               <br />
               <strong>
-                De la Patagonia al Caribe, nosotros trazamos el mapa. Tú eliges
-                el camino.
+                De la Patagonia al Caribe,
+                <br />
+                nosotros trazamos el mapa.
+                <br />
+                Tú eliges el camino.
               </strong>
             </p>
           </div>
@@ -128,13 +137,14 @@ export function Footer() {
           </div>
 
           {/* Phone Mockup Column */}
-          <div className="lg:col-span-3 flex justify-center lg:justify-end relative w-full h-[300px]">
-            <div className="relative w-56 h-full">
+          <div className="lg:col-span-4 flex justify-center lg:justify-end w-full">
+            <div className="relative w-full h-[280px] lg:h-[360px] overflow-hidden rounded-lg">
               <Image
                 src="/images/boletos-celular-footer.jpg"
                 alt="Boletos.la en celular"
                 fill
-                className="object-contain"
+                className="object-cover object-center scale-125 lg:scale-150 transition-transform duration-500"
+                sizes="(max-width: 1024px) 100vw, 400px"
               />
             </div>
           </div>
@@ -303,7 +313,7 @@ export function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-white/10">
-        <div className="container mx-auto px-4 py-6">
+        <div className="container mx-auto px-4 max-w-[1440px] py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Año + logo */}
             <div className="flex items-center gap-2 text-white/50 text-sm">

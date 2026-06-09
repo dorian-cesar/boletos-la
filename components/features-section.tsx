@@ -36,9 +36,9 @@ const steps = [
 export function FeaturesSection() {
   return (
     <section id="servicios" className="py-16 bg-white text-gray-800">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 max-w-6xl">
         {/* Header content */}
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+        <div className="text-center max-w-5xl mx-auto mb-16 space-y-4">
           <h2 className="text-3xl md:text-4xl font-extrabold text-[#3a3a3a] tracking-tight">
             Cómo funciona boletos.la
           </h2>
@@ -59,7 +59,7 @@ export function FeaturesSection() {
         </div>
 
         {/* Circular badges grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-4xl mx-auto mt-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto mt-12">
           {steps.map((step, idx) => {
             return (
               <div
@@ -67,7 +67,7 @@ export function FeaturesSection() {
                 className="flex flex-col items-center text-center space-y-4"
               >
                 {/* Icon Image (No Background) */}
-                <div className="relative w-24 h-24 flex items-center justify-center transform hover:scale-105 transition-transform duration-300">
+                <div className="relative w-24 h-24 flex items-center justify-center">
                   <Image
                     src={step.iconPath}
                     alt={step.label}
@@ -78,7 +78,7 @@ export function FeaturesSection() {
 
                 {/* Text and stats */}
                 <div className="space-y-1">
-                  <h4 className="text-xl md:text-2xl font-extrabold text-gray-800">
+                  <h4 className="text-xl md:text-2xl font-extrabold text-gray-800 mb-1">
                     {step.value}
                   </h4>
                   <p className="text-xs font-bold tracking-wider text-gray-400 uppercase">
