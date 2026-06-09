@@ -111,6 +111,7 @@ export function DestinationsSection() {
                   alt={d.name}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 1024px) 100vw, 600px"
                 />
                 <div className="absolute inset-0 bg-black/30" />
                 <div className="absolute bottom-4 left-4 text-white">
@@ -133,6 +134,7 @@ export function DestinationsSection() {
                     alt={d.name}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 1024px) 50vw, 300px"
                   />
                   <div className="absolute inset-0 bg-black/30" />
                   <div className="absolute bottom-3 left-3 text-white">
@@ -180,6 +182,7 @@ export function DestinationsSection() {
                     alt={city.name}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 400px"
                   />
                 </div>
                 {/* Title Below */}

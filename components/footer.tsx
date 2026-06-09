@@ -40,7 +40,6 @@ export function Footer() {
                 alt="Boletos.la Logo"
                 width={150}
                 height={80}
-                style={{ width: "150px", height: "auto" }}
                 className="transition-transform duration-300 hover:scale-105"
                 loading="eager"
               />
@@ -322,7 +321,6 @@ export function Footer() {
                 alt="Boletos.la"
                 width={90}
                 height={24}
-                style={{ width: "90px", height: "auto" }}
                 className="opacity-70"
               />
               {/* <span>{new Date().getFullYear()}</span> */}

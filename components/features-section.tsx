@@ -73,6 +73,7 @@ export function FeaturesSection() {
                     alt={step.label}
                     fill
                     className="object-contain"
+                    sizes="96px"
                   />
                 </div>
 
