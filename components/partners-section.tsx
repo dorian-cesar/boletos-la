@@ -64,6 +64,28 @@ export function PartnersSection() {
                 className="object-contain"
               />
             </div>
+
+            {/* Rappi */}
+            <div className="relative w-28 h-12">
+              <Image
+                src="/logos/rappi-logo.svg"
+                alt="Rappi Logo"
+                fill
+                sizes="110px"
+                className="object-contain"
+              />
+            </div>
+
+            {/* TripAdvisor */}
+            <div className="relative w-32 h-12">
+              <Image
+                src="/logos/trip-advisor.svg"
+                alt="TripAdvisor Logo"
+                fill
+                sizes="130px"
+                className="object-contain"
+              />
+            </div>
           </div>
         </div>
       </div>
