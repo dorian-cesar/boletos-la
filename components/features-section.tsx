@@ -16,6 +16,14 @@ interface StepItem {
 
 const steps: StepItem[] = [
   {
+    icon: Globe,
+    target: 12,
+    suffix: "",
+    label: "PAÍSES",
+    sublabel: "Cobertura regional",
+    colorClass: "bg-[#7c3aed]",
+  },
+  {
     iconPath: "/images/iconos-web/icono-web-1.png",
     target: 40,
     suffix: " +",
@@ -39,14 +47,6 @@ const steps: StepItem[] = [
     label: "VIAJEROS",
     sublabel: "Satisfechos",
     colorClass: "bg-[#e5a924]",
-  },
-  {
-    icon: Globe,
-    target: 12,
-    suffix: "",
-    label: "PAÍSES",
-    sublabel: "Cobertura regional",
-    colorClass: "bg-[#7c3aed]",
   },
   {
     iconPath: "/images/iconos-web/icono-web-4.png",
