@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import { Globe, LucideIcon } from "lucide-react";
 
 interface StepItem {
-  iconPath: string;
+  iconPath?: string;
+  icon?: LucideIcon;
   target?: number;
   suffix?: string;
   staticValue?: string;
@@ -22,6 +24,14 @@ const steps: StepItem[] = [
     colorClass: "bg-[#eb5b24]",
   },
   {
+    iconPath: "/images/iconos-web/icono-web-3.png",
+    target: 200,
+    suffix: " +",
+    label: "DESTINOS",
+    sublabel: "Amplia cobertura",
+    colorClass: "bg-[#00c7cc]",
+  },
+  {
     iconPath: "/images/iconos-web/icono-web-2.png",
     target: 500000,
     suffix: " +",
@@ -31,12 +41,12 @@ const steps: StepItem[] = [
     colorClass: "bg-[#e5a924]",
   },
   {
-    iconPath: "/images/iconos-web/icono-web-3.png",
-    target: 200,
-    suffix: " +",
-    label: "DESTINOS",
-    sublabel: "Amplia cobertura",
-    colorClass: "bg-[#00c7cc]",
+    icon: Globe,
+    target: 14,
+    suffix: "",
+    label: "PAÍSES",
+    sublabel: "Cobertura regional",
+    colorClass: "bg-[#7c3aed]",
   },
   {
     iconPath: "/images/iconos-web/icono-web-4.png",
@@ -117,7 +127,7 @@ function CountUpNumber({
 export function FeaturesSection() {
   return (
     <section id="servicios" className="py-16 bg-white text-gray-800">
-      <div className="container mx-auto px-4 max-w-6xl">
+      <div className="container mx-auto px-4 max-w-[1440px]">
         {/* Header content */}
         <div className="text-center max-w-5xl mx-auto mb-16 space-y-4">
           <h2 className="text-4xl md:text-5xl font-extrabold text-[#3a3a3a] tracking-tight">
@@ -126,7 +136,7 @@ export function FeaturesSection() {
           <div className="text-gray-600 space-y-4 text-base md:text-lg lg:text-xl leading-relaxed font-normal">
             <p>
               <strong>Busca tu destino:</strong> Ingresa cualquier ciudad,
-              dirección o punto de interés en Latinoamérica.
+              dirección o point de interés en Latinoamérica.
             </p>
             <p>
               <strong>Compara:</strong> Analizamos al instante buses y hoteles
@@ -140,22 +150,28 @@ export function FeaturesSection() {
         </div>
 
         {/* Circular badges grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto mt-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 max-w-7xl mx-auto mt-12 justify-center">
           {steps.map((step, idx) => {
             return (
               <div
                 key={idx}
                 className="flex flex-col items-center text-center space-y-4"
               >
-                {/* Icon Image (No Background) */}
+                {/* Icon Image or Lucide Icon */}
                 <div className="relative w-24 h-24 flex items-center justify-center">
-                  <Image
-                    src={step.iconPath}
-                    alt={step.label}
-                    fill
-                    className="object-contain"
-                    sizes="96px"
-                  />
+                  {step.icon ? (
+                    <div className="w-20 h-20 rounded-full bg-[#00c7cc]/10 flex items-center justify-center text-[#00c7cc]">
+                      <step.icon className="w-11 h-11 stroke-[1.5]" />
+                    </div>
+                  ) : (
+                    <Image
+                      src={step.iconPath!}
+                      alt={step.label}
+                      fill
+                      className="object-contain"
+                      sizes="96px"
+                    />
+                  )}
                 </div>
 
                 {/* Text and stats */}
