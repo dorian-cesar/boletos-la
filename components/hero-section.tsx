@@ -15,7 +15,7 @@ export function HeroSection() {
   if (!mounted) return null;
 
   return (
-    <section className="relative min-h-[85vh] lg:min-h-[75vh] flex items-center justify-center overflow-hidden py-12 lg:py-20">
+    <section className="relative min-h-[calc(125vh-72px)] flex items-center justify-center overflow-hidden py-12 lg:py-20">
       {/* Background Image */}
       <div className="absolute inset-0 bg-[#0f1419]">
         <Image
@@ -34,7 +34,10 @@ export function HeroSection() {
       <div className="relative z-10 container mx-auto px-4 md:px-6 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Left Column: Text & Subtitles */}
-          <div className="lg:col-span-6 text-left text-white max-w-xl" style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.6)" }}>
+          <div
+            className="lg:col-span-6 text-left text-white max-w-xl"
+            style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.6)" }}
+          >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight tracking-tight drop-shadow-sm flex flex-col gap-3">
               <span>Cualquier sitio.</span>
               <span>Un solo punto de partida</span>
