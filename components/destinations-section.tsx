@@ -52,6 +52,29 @@ const popularCities = [
   },
 ];
 
+const newRegionDestinations = [
+  {
+    name: "MEDELLÍN",
+    country: "Colombia",
+    image: "/images/medellin.jpg",
+  },
+  {
+    name: "MONTEVIDEO",
+    country: "Uruguay",
+    image: "/images/montevideo.png",
+  },
+  {
+    name: "QUITO",
+    country: "Ecuador",
+    image: "/images/quito.png",
+  },
+  {
+    name: "VALDIVIA",
+    country: "Chile",
+    image: "/images/valdivia.jpg",
+  },
+];
+
 const quickRoutes = [
   "ASUNCIÓN - CLORINDA",
   "LA PAZ - TARIJA",
@@ -91,42 +114,21 @@ export function DestinationsSection() {
   return (
     <section id="destinos" className="py-16 bg-[#f8f9fa] text-gray-800">
       <div className="container mx-auto px-4 max-w-6xl">
-        
         {/* Region Exploration Grid */}
         <div className="space-y-6">
           <p className="text-sm md:text-base font-semibold text-gray-600">
-            Explora lo mejor de la región: Las rutas más elegidas por nuestros viajeros.
+            Explora lo mejor de la región: Las rutas más elegidas por nuestros
+            viajeros.
           </p>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {/* Left Large Card */}
-            {regionDestinations.filter(d => d.size === "large").map((d, i) => (
-              <div 
-                key={i} 
-                className="relative h-[250px] lg:h-[416px] rounded-lg overflow-hidden group cursor-pointer"
-                onClick={handleScrollToWidget}
-              >
-                <Image
-                  src={d.image}
-                  alt={d.name}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  sizes="(max-width: 1024px) 100vw, 600px"
-                />
-                <div className="absolute inset-0 bg-black/30" />
-                <div className="absolute bottom-4 left-4 text-white">
-                  <span className="text-xs uppercase tracking-wider text-white/80">{d.country}</span>
-                  <h3 className="text-xl font-bold tracking-tight">{d.name}</h3>
-                </div>
-              </div>
-            ))}
-
-            {/* Right 2x2 Grid of Small Cards */}
-            <div className="grid grid-cols-2 gap-4">
-              {regionDestinations.filter(d => d.size === "small").map((d, i) => (
-                <div 
-                  key={i} 
-                  className="relative h-[120px] lg:h-[200px] rounded-lg overflow-hidden group cursor-pointer"
+            {regionDestinations
+              .filter((d) => d.size === "large")
+              .map((d, i) => (
+                <div
+                  key={i}
+                  className="relative h-[250px] lg:h-[416px] rounded-lg overflow-hidden group cursor-pointer"
                   onClick={handleScrollToWidget}
                 >
                   <Image
@@ -134,16 +136,77 @@ export function DestinationsSection() {
                     alt={d.name}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 1024px) 50vw, 300px"
+                    sizes="(max-width: 1024px) 100vw, 600px"
                   />
                   <div className="absolute inset-0 bg-black/30" />
-                  <div className="absolute bottom-3 left-3 text-white">
-                    <span className="text-[10px] uppercase tracking-wider text-white/80">{d.country}</span>
-                    <h3 className="text-sm lg:text-base font-bold tracking-tight">{d.name}</h3>
+                  <div className="absolute bottom-3 left-4 text-white flex flex-col justify-end" style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.8)" }}>
+                    <span className="text-xs uppercase tracking-wider text-white/80 leading-none">
+                      {d.country}
+                    </span>
+                    <h3 className="text-xl font-bold tracking-tight leading-tight mb-1">
+                      {d.name}
+                    </h3>
                   </div>
                 </div>
               ))}
+
+            {/* Right 2x2 Grid of Small Cards */}
+            <div className="grid grid-cols-2 gap-4">
+              {regionDestinations
+                .filter((d) => d.size === "small")
+                .map((d, i) => (
+                  <div
+                    key={i}
+                    className="relative h-[120px] lg:h-[200px] rounded-lg overflow-hidden group cursor-pointer"
+                    onClick={handleScrollToWidget}
+                  >
+                    <Image
+                      src={d.image}
+                      alt={d.name}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 1024px) 50vw, 300px"
+                    />
+                    <div className="absolute inset-0 bg-black/30" />
+                    <div className="absolute bottom-2 left-3 text-white flex flex-col justify-end" style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.8)" }}>
+                      <span className="text-[10px] uppercase tracking-wider text-white/80 leading-none">
+                        {d.country}
+                      </span>
+                      <h3 className="text-sm lg:text-base font-bold tracking-tight leading-tight mb-1">
+                        {d.name}
+                      </h3>
+                    </div>
+                  </div>
+                ))}
             </div>
+          </div>
+
+          {/* New row of 4 region destinations */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {newRegionDestinations.map((d, i) => (
+              <div
+                key={i}
+                className="relative h-[120px] lg:h-[200px] rounded-lg overflow-hidden group cursor-pointer"
+                onClick={handleScrollToWidget}
+              >
+                <Image
+                  src={d.image}
+                  alt={d.name}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 300px"
+                />
+                <div className="absolute inset-0 bg-black/30" />
+                <div className="absolute bottom-2 left-3 text-white flex flex-col justify-end" style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.8)" }}>
+                  <span className="text-[10px] uppercase tracking-wider text-white/80 leading-none">
+                    {d.country}
+                  </span>
+                  <h3 className="text-sm lg:text-base font-bold tracking-tight leading-tight mb-1">
+                    {d.name}
+                  </h3>
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* Quick Route Tags */}
@@ -170,8 +233,8 @@ export function DestinationsSection() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {popularCities.map((city, idx) => (
-              <div 
-                key={idx} 
+              <div
+                key={idx}
                 className="group cursor-pointer"
                 onClick={handleScrollToWidget}
               >
@@ -193,7 +256,6 @@ export function DestinationsSection() {
             ))}
           </div>
         </div>
-
       </div>
     </section>
   );
