@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 import { cn } from "@/lib/utils";
 
-interface DistribusionWidgetProps {
+interface DistributionWidgetProps {
   partnerNumber: string | number;
   locale?: string;
   currency?: string;
@@ -122,13 +122,13 @@ function detectCurrency(
   return propCurrency;
 }
 
-export function DistribusionWidget({
+export function DistributionWidget({
   partnerNumber,
   locale = "es",
   currency = "USD",
   defaults,
   layout = "horizontal",
-}: DistribusionWidgetProps) {
+}: DistributionWidgetProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isWidgetReady, setIsWidgetReady] = useState(false);
 
@@ -257,7 +257,7 @@ export function DistribusionWidget({
             // Disparamos los eventos correspondientes para que el SDK procese el cambio
             currencyInput.dispatchEvent(new Event("change", { bubbles: true }));
             currencyInput.dispatchEvent(new Event("input", { bubbles: true }));
-            console.log(`[DistribusionWidget] Moneda cambiada dinámicamente a ${targetCurrency} por origen ${prefix}`);
+            console.log(`[DistributionWidget] Moneda cambiada dinámicamente a ${targetCurrency} por origen ${prefix}`);
           }
         }
       }

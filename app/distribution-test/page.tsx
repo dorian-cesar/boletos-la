@@ -1,5 +1,5 @@
 import React from "react";
-import { DistribusionWidget } from "@/components/distribusion-widget";
+import { DistributionWidget } from "@/components/distribution-widget";
 
 export default function DistributionTestPage() {
   return (
@@ -16,7 +16,7 @@ export default function DistributionTestPage() {
 
         <div className="bg-background border rounded-xl p-8 shadow-sm">
           <h2 className="text-2xl font-semibold mb-6">Buscador de Viajes (Paraguay)</h2>
-          <DistribusionWidget
+          <DistributionWidget
             partnerNumber="830754"
             locale="es"
             currency="USD"

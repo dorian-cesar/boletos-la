@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { ChevronDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SearchForm } from "@/components/search-form";
-import { DistribusionWidget } from "@/components/distribusion-widget";
+import { DistributionWidget } from "@/components/distribution-widget";
 import Image from "next/image";
 
 export function HeroSection() {
@@ -94,7 +94,7 @@ export function HeroSection() {
 
         {/* Distribusion Widget */}
         <div className="bg-white/95 rounded-xl shadow-2xl overflow-visible mt-8 max-w-5xl mx-auto relative z-20 w-full">
-          <DistribusionWidget
+          <DistributionWidget
             partnerNumber="830754"
             locale="es"
             currency="USD"
