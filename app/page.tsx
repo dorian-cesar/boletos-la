@@ -5,12 +5,11 @@ import { useEffect } from "react";
 import { useBookingStore } from "@/lib/booking-store";
 import { Header } from "@/components/header";
 import { HeroSection } from "@/components/hero-section";
+import { PartnersSection } from "@/components/partners-section";
 import { FeaturesSection } from "@/components/features-section";
 import { DestinationsSection } from "@/components/destinations-section";
-import { CompaniesSection } from "@/components/companies-section";
 import { Footer } from "@/components/footer";
 import { ScrollToTop } from "@/components/scroll-to-top";
-import Aurora from "@/components/aurora";
 
 export default function HomePage() {
   useEffect(() => {
@@ -40,30 +39,12 @@ export default function HomePage() {
   }, []); // Empty dependency array = solo se ejecuta una vez al montar
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-white">
       <Header />
       <HeroSection />
-      
-      <div className="relative overflow-hidden bg-[#0f1419]">
-        {/* Shared Aurora Background for Features and Destinations */}
-        <div className="absolute inset-0 pointer-events-none z-0">
-          <Aurora
-            colorStops={["#ff7b00", "#ffaa00", "#00c7cc"]}
-            blend={0.5}
-            amplitude={2.8}
-            speed={0.8}
-          />
-        </div>
-        {/* Seamless transition gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1a2332]/30 via-transparent to-[#0f1419]/40 pointer-events-none z-0" />
-        
-        <div className="relative z-10">
-          <FeaturesSection />
-          <DestinationsSection />
-          <CompaniesSection />
-        </div>
-      </div>
-
+      <PartnersSection />
+      <FeaturesSection />
+      <DestinationsSection />
       <Footer />
       <ScrollToTop />
     </main>

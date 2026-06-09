@@ -1,171 +1,93 @@
+"use client";
+
 import React from "react";
+import { Handshake, Bus, MapPin, Headphones } from "lucide-react";
 
-import { useEffect, useRef, useState } from "react";
-import { Shield, CreditCard, Clock, Headphones } from "lucide-react";
-import { cn } from "@/lib/utils";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-
-const features = [
+const steps = [
   {
-    icon: Shield,
-    title: "Pago 100% Seguro",
-    description: "Transacciones protegidas con encriptación SSL.",
-    image: "/images/1.jpg",
+    icon: Handshake,
+    value: "40 +",
+    label: "EMPRESAS",
+    sublabel: "Más opciones de ruta",
+    colorClass: "bg-[#eb5b24]", // Orange
   },
   {
-    icon: CreditCard,
-    title: "Múltiples Medios de Pago",
-    description:
-      "Paga con tarjeta de crédito, débito o transferencia bancaria.",
-    image: "/images/2.jpg",
+    icon: Bus,
+    value: "500K +",
+    label: "VIAJEROS",
+    sublabel: "Satisfechos",
+    colorClass: "bg-[#e5a924]", // Yellow/gold
   },
   {
-    icon: Clock,
-    title: "Reserva Instantánea",
-    description:
-      "Confirma tu viaje en segundos y recibe tu boleto al instante.",
-    image: "/images/3.jpg",
+    icon: MapPin,
+    value: "200 +",
+    label: "DESTINOS",
+    sublabel: "Amplia cobertura",
+    colorClass: "bg-[#00c7cc]", // Teal
   },
   {
     icon: Headphones,
-    title: "Soporte 24/7",
-    description: "Atención al cliente disponible todo el día, todos los días.",
-    image: "/images/4.jpg",
+    value: "24/7",
+    label: "SOPORTE",
+    sublabel: "En tiempo real",
+    colorClass: "bg-[#007b80]", // Dark teal
   },
 ];
 
 export function FeaturesSection() {
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 },
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <section
-      ref={sectionRef}
-      id="servicios"
-      className="py-24 relative"
-    >
-      <div className="container mx-auto px-4 relative z-10">
-        {/* Centered Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span
-            className={cn(
-              "inline-block text-[#00c7cc] font-semibold uppercase tracking-wider text-sm mb-4 transition-all duration-700",
-              isVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-10",
-            )}
-          >
-            Nuestros Servicios
-          </span>
-          <h2
-            className={cn(
-              "text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight transition-all duration-700 delay-100",
-              isVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-10",
-            )}
-          >
-            <span className="text-balance">Es Hora de </span>
-            <span className="text-[#00c7cc]">Viajar</span>
-            <span className="text-balance"> Con Nosotros</span>
+    <section id="servicios" className="py-16 bg-white text-gray-800">
+      <div className="container mx-auto px-4">
+        
+        {/* Header content */}
+        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-[#3a3a3a] tracking-tight">
+            Cómo funciona boletos.la
           </h2>
-
-          {/* <Button
-            className={cn(
-              "bg-secondary text-white hover:bg-secondary/90 rounded-full px-8 py-6 font-semibold text-base transition-all duration-700 delay-200 hover:scale-105 hover:shadow-lg hover:shadow-secondary/30",
-              isVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-10",
-            )}
-          >
-            Ver Servicios
-          </Button> */}
+          <div className="text-gray-600 space-y-3 text-sm md:text-base leading-relaxed font-normal">
+            <p>
+              <strong>Busca tu destino:</strong> Ingresa cualquier ciudad, dirección o punto de interés en Latinoamérica.
+            </p>
+            <p>
+              <strong>Compara:</strong> Analizamos al instante buses y hoteles para mostrarte la combinación más rápida y la más económica.
+            </p>
+            <p>
+              <strong>Reserva:</strong> Te conectamos con los operadores oficiales para que compres tus boletos de forma segura y rápido.
+            </p>
+          </div>
         </div>
 
-        {/* Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((feature, index) => (
-            <FeatureCard
-              key={feature.title}
-              feature={feature}
-              index={index}
-              isVisible={isVisible}
-            />
-          ))}
+        {/* Circular badges grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-4xl mx-auto mt-12">
+          {steps.map((step, idx) => {
+            const Icon = step.icon;
+            return (
+              <div key={idx} className="flex flex-col items-center text-center space-y-4">
+                
+                {/* Colored Circle Badge */}
+                <div className={`${step.colorClass} w-20 h-20 rounded-full flex items-center justify-center text-white shadow-md transform hover:scale-105 transition-transform duration-300`}>
+                  <Icon className="w-10 h-10 stroke-[1.5]" />
+                </div>
+
+                {/* Text and stats */}
+                <div className="space-y-1">
+                  <h4 className="text-xl md:text-2xl font-extrabold text-gray-800">
+                    {step.value}
+                  </h4>
+                  <p className="text-xs font-bold tracking-wider text-gray-400 uppercase">
+                    {step.label}
+                  </p>
+                  <p className="text-xs text-gray-500 font-medium">
+                    {step.sublabel}
+                  </p>
+                </div>
+
+              </div>
+            );
+          })}
         </div>
+
       </div>
-
     </section>
-  );
-}
-
-function FeatureCard({
-  feature,
-  index,
-  isVisible,
-}: {
-  feature: (typeof features)[0];
-  index: number;
-  isVisible: boolean;
-}) {
-  return (
-    <div
-      className={cn(
-        "group relative bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-700 hover:shadow-2xl hover:-translate-y-2 border border-white/10",
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10",
-      )}
-      style={{ transitionDelay: `${(index + 3) * 100}ms` }}
-    >
-      {/* Icon Badge */}
-      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
-        <div className="w-16 h-16 rounded-full bg-[#ffaa00] border-4 border-white/20 flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-[#ffaa00]/50">
-          <feature.icon className="w-7 h-7 text-black" />
-        </div>
-      </div>
-
-      {/* Image */}
-      <div className="relative h-[280px] overflow-hidden">
-        <Image
-          src={feature.image}
-          alt={feature.title}
-          fill
-          className="object-cover transition-transform duration-700 group-hover:scale-110"
-          style={{ objectPosition: "50% 20%" }}
-        />
-        <div className="absolute inset-0 bg-black/10" />
-      </div>
-
-      {/* Content */}
-      <div className="p-6 pt-4 text-center">
-        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#00c7cc] transition-colors duration-300">
-          {feature.title}
-        </h3>
-        <p className="text-white/70 text-sm leading-relaxed">
-          {feature.description}
-        </p>
-
-        <div className="mt-4 flex justify-center">
-          <div className="h-1 w-12 bg-[#ffaa00] rounded-full transition-all duration-500 group-hover:w-24 group-hover:bg-[#00c7cc]" />
-        </div>
-      </div>
-    </div>
   );
 }

@@ -25,8 +25,8 @@ export function Header() {
         className={cn(
           "sticky top-0 z-50 w-full transition-all duration-500",
           isScrolled
-            ? "bg-[#0a0d14]/90 backdrop-blur-xl border-b border-white/10 shadow-2xl py-3"
-            : "bg-[#0a0d14] border-b border-white/5 py-5",
+            ? "bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm py-3"
+            : "bg-white/95 border-b border-gray-50 py-4",
         )}
       >
         <div className="container mx-auto px-4 md:px-6">
@@ -56,25 +56,20 @@ export function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-white/70 hover:text-white px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:bg-white/5"
+                  className="text-gray-600 hover:text-[#00c7cc] px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:bg-gray-50"
                 >
                   {item.name}
                 </Link>
               ))}
             </nav>
 
-            {/* Desktop Actions */}
-            <div className="max-lg:hidden lg:flex items-center gap-4 relative z-10">
-              <Button className="bg-gradient-to-r from-[#ffaa00] to-[#ff7b00] hover:from-[#ffb733] hover:to-[#ff8c1a] text-black font-bold rounded-full px-7 shadow-lg shadow-[#ffaa00]/20 hover:shadow-[#ffaa00]/40 transition-all duration-300 transform hover:-translate-y-0.5">
-                <Ticket className="w-4 h-4 mr-2" />
-                Mis Viajes
-              </Button>
-            </div>
+            {/* Empty space in place of actions to keep spacing consistent with image */}
+            <div className="max-lg:hidden lg:block w-[150px]" />
 
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-all relative z-10"
+              className="lg:hidden p-2 text-gray-800 hover:text-black hover:bg-gray-100 rounded-full transition-all relative z-10"
               aria-label="Menú"
             >
               {isMobileMenuOpen ? (
@@ -89,7 +84,7 @@ export function Header() {
         {/* Mobile Menu Dropdown */}
         <div
           className={cn(
-            "lg:hidden absolute top-full left-0 w-full overflow-hidden transition-all duration-500 ease-in-out origin-top border-t border-white/10 backdrop-blur-xl bg-[#0a0d14]/95 shadow-2xl",
+            "lg:hidden absolute top-full left-0 w-full overflow-hidden transition-all duration-500 ease-in-out origin-top border-t border-gray-100 backdrop-blur-md bg-white/95 shadow-lg",
             isMobileMenuOpen ? "max-h-[500px] opacity-100 scale-y-100" : "max-h-0 opacity-0 scale-y-0",
           )}
         >
@@ -105,19 +100,12 @@ export function Header() {
                 key={item.name}
                 href={item.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-white/80 hover:text-[#00c7cc] text-lg font-medium py-3 border-b border-white/5 transition-colors"
+                className="text-gray-700 hover:text-[#00c7cc] text-lg font-medium py-3 border-b border-gray-50 transition-colors"
                 style={{ transitionDelay: `${index * 50}ms` }}
               >
                 {item.name}
               </Link>
             ))}
-            
-            <div className="flex flex-col gap-3 pt-4 mt-2">
-              <Button className="w-full bg-gradient-to-r from-[#ffaa00] to-[#ff7b00] text-black font-bold rounded-xl h-12 text-base shadow-lg shadow-[#ffaa00]/20">
-                <Ticket className="w-5 h-5 mr-2" />
-                Mis Viajes
-              </Button>
-            </div>
           </nav>
         </div>
       </header>
