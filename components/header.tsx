@@ -56,7 +56,7 @@ export function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-neutral-300 hover:text-[#00c7cc] px-4 py-2 rounded-full text-base font-semibold transition-all duration-300 hover:bg-neutral-800/50"
+                  className="text-neutral-300 hover:text-[#00c7cc] px-4 py-2 rounded-full text-lg lg:text-xl font-bold transition-all duration-300 hover:bg-neutral-800/50"
                 >
                   {item.name}
                 </Link>
@@ -100,7 +100,7 @@ export function Header() {
                 key={item.name}
                 href={item.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-neutral-300 hover:text-[#00c7cc] text-xl font-bold py-3 border-b border-neutral-800 transition-colors"
+                className="text-neutral-300 hover:text-[#00c7cc] text-xl font-bold py-2 transition-colors"
                 style={{ transitionDelay: `${index * 50}ms` }}
               >
                 {item.name}
