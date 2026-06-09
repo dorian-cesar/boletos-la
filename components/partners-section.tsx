@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import Image from "next/image";
 
 export function PartnersSection() {
@@ -8,8 +7,10 @@ export function PartnersSection() {
     <section className="bg-white py-6 border-b border-gray-100">
       <div className="container mx-auto px-4">
         <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16 text-gray-400 text-sm font-semibold tracking-wider">
-          <span className="uppercase text-xs text-gray-400">Our Partners :</span>
-          
+          <span className="uppercase text-xs text-gray-400">
+            Our Partners :
+          </span>
+
           <div className="flex items-center gap-10 md:gap-16 flex-wrap justify-center">
             {/* Booking.com */}
             <div className="relative w-28 h-10">
@@ -47,7 +48,7 @@ export function PartnersSection() {
                 src="/logos/logo-uber.png"
                 alt="Uber Logo"
                 fill
-                className="object-contain"
+                className="object-contain p-1"
               />
             </div>
 

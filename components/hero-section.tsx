@@ -34,7 +34,7 @@ export function HeroSection() {
       <div className="relative z-10 container mx-auto px-4 md:px-6 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Left Column: Text & Subtitles */}
-          <div className="lg:col-span-7 text-left text-white max-w-xl">
+          <div className="lg:col-span-6 text-left text-white max-w-xl">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight tracking-tight drop-shadow-sm">
               Cualquier sitio.
               <br />
@@ -51,8 +51,8 @@ export function HeroSection() {
           </div>
 
           {/* Right Column: White Card Container for the Search Widget */}
-          <div className="lg:col-span-5 flex justify-end w-full">
-            <div className="bg-white rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.15)] overflow-visible p-5 w-full max-w-md border border-gray-100/50">
+          <div className="lg:col-span-6 flex justify-end w-full">
+            <div className="bg-white rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.15)] overflow-visible p-5 w-full max-w-xl border border-gray-100/50">
               <DistributionWidget
                 partnerNumber="830754"
                 locale="es"
