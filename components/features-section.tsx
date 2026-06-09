@@ -26,7 +26,7 @@ const steps: StepItem[] = [
   {
     iconPath: "/images/iconos-web/icono-web-3.png",
     target: 200,
-    suffix: " +",
+    suffix: "",
     label: "DESTINOS",
     sublabel: "Amplia cobertura",
     colorClass: "bg-[#00c7cc]",
@@ -34,7 +34,7 @@ const steps: StepItem[] = [
   {
     iconPath: "/images/iconos-web/icono-web-2.png",
     target: 500000,
-    suffix: " +",
+    suffix: "",
     useSeparator: true,
     label: "VIAJEROS",
     sublabel: "Satisfechos",
@@ -42,7 +42,7 @@ const steps: StepItem[] = [
   },
   {
     icon: Globe,
-    target: 14,
+    target: 12,
     suffix: "",
     label: "PAÍSES",
     sublabel: "Cobertura regional",
@@ -73,7 +73,8 @@ function CountUpNumber({
   const ref = useRef<HTMLSpanElement>(null);
 
   // Dynamic duration: larger numbers animate slightly longer (between 800ms and 2400ms)
-  const animDuration = duration || Math.max(800, Math.min(2400, Math.log10(target) * 420));
+  const animDuration =
+    duration || Math.max(800, Math.min(2400, Math.log10(target) * 420));
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -83,7 +84,7 @@ function CountUpNumber({
           observer.disconnect();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
     if (ref.current) {
       observer.observe(ref.current);
@@ -97,10 +98,10 @@ function CountUpNumber({
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
       const progress = Math.min((timestamp - startTimestamp) / animDuration, 1);
-      
+
       // Ease out cubic: fast at start, decelerating at end
       const easedProgress = 1 - Math.pow(1 - progress, 3);
-      
+
       setCount(Math.floor(easedProgress * target));
       if (progress < 1) {
         window.requestAnimationFrame(step);
