@@ -25,8 +25,8 @@ export function Header() {
         className={cn(
           "sticky top-0 z-50 w-full transition-all duration-500",
           isScrolled
-            ? "bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm py-3"
-            : "bg-white/95 border-b border-gray-50 py-4",
+            ? "bg-[#1a1a1a]/95 backdrop-blur-md border-b border-neutral-800 shadow-sm py-3"
+            : "bg-[#1a1a1a] border-b border-neutral-800 py-4",
         )}
       >
         <div className="container mx-auto px-4 md:px-6">
@@ -56,7 +56,7 @@ export function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-gray-600 hover:text-[#00c7cc] px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:bg-gray-50"
+                  className="text-neutral-300 hover:text-[#00c7cc] px-4 py-2 rounded-full text-base font-semibold transition-all duration-300 hover:bg-neutral-800/50"
                 >
                   {item.name}
                 </Link>
@@ -69,7 +69,7 @@ export function Header() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-gray-800 hover:text-black hover:bg-gray-100 rounded-full transition-all relative z-10"
+              className="lg:hidden p-2 text-neutral-300 hover:text-white hover:bg-neutral-800 rounded-full transition-all relative z-10"
               aria-label="Menú"
             >
               {isMobileMenuOpen ? (
@@ -84,7 +84,7 @@ export function Header() {
         {/* Mobile Menu Dropdown */}
         <div
           className={cn(
-            "lg:hidden absolute top-full left-0 w-full overflow-hidden transition-all duration-500 ease-in-out origin-top border-t border-gray-100 backdrop-blur-md bg-white/95 shadow-lg",
+            "lg:hidden absolute top-full left-0 w-full overflow-hidden transition-all duration-500 ease-in-out origin-top border-t border-neutral-800 backdrop-blur-md bg-[#1a1a1a]/95 shadow-lg",
             isMobileMenuOpen ? "max-h-[500px] opacity-100 scale-y-100" : "max-h-0 opacity-0 scale-y-0",
           )}
         >
@@ -100,7 +100,7 @@ export function Header() {
                 key={item.name}
                 href={item.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-gray-700 hover:text-[#00c7cc] text-lg font-medium py-3 border-b border-gray-50 transition-colors"
+                className="text-neutral-300 hover:text-[#00c7cc] text-xl font-bold py-3 border-b border-neutral-800 transition-colors"
                 style={{ transitionDelay: `${index * 50}ms` }}
               >
                 {item.name}
