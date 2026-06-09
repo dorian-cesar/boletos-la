@@ -25,8 +25,8 @@ export function Header() {
         className={cn(
           "sticky top-0 z-50 w-full transition-all duration-500",
           isScrolled
-            ? "bg-[#1a1a1a]/95 backdrop-blur-md border-b border-neutral-800 shadow-sm py-3"
-            : "bg-[#1a1a1a] border-b border-neutral-800 py-4",
+            ? "bg-[#1a1a1a]/95 backdrop-blur-md shadow-sm py-3"
+            : "bg-[#1a1a1a] py-4",
         )}
       >
         <div className="container mx-auto px-4 md:px-6">
@@ -56,7 +56,7 @@ export function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-neutral-300 hover:text-[#00c7cc] px-4 py-2 rounded-full text-lg lg:text-xl font-bold transition-all duration-300 hover:bg-neutral-800/50"
+                  className="text-neutral-300 hover:text-[#00c7cc] px-4 py-2 rounded-full text-lg lg:text-xl font-bold transition-all duration-300 hover:bg-neutral-800/50 no-underline"
                 >
                   {item.name}
                 </Link>
@@ -100,7 +100,7 @@ export function Header() {
                 key={item.name}
                 href={item.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-neutral-300 hover:text-[#00c7cc] text-xl font-bold py-2 transition-colors"
+                className="text-neutral-300 hover:text-[#00c7cc] text-xl font-bold py-2 transition-colors no-underline"
                 style={{ transitionDelay: `${index * 50}ms` }}
               >
                 {item.name}

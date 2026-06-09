@@ -35,13 +35,12 @@ export function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Left Column: Text & Subtitles */}
           <div className="lg:col-span-6 text-left text-white max-w-xl">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight tracking-tight drop-shadow-sm">
-              Cualquier sitio.
-              <br />
-              Un solo punto de partida
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight tracking-tight drop-shadow-sm flex flex-col gap-3">
+              <span>Cualquier sitio.</span>
+              <span>Un solo punto de partida</span>
             </h1>
             <div className="space-y-1 mt-4">
-              <p className="text-sm font-bold tracking-widest text-[#00c7cc] uppercase">
+              <p className="text-sm font-bold tracking-widest text-white/90 uppercase">
                 VIAJES DE BUS Y ALOJAMIENTO
               </p>
               <p className="text-sm font-bold tracking-widest text-white/90 uppercase">
