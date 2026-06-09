@@ -1,37 +1,115 @@
-"use client";
-
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
-const steps = [
+interface StepItem {
+  iconPath: string;
+  target: number;
+  suffix: string;
+  useSeparator?: boolean;
+  label: string;
+  sublabel: string;
+  colorClass: string;
+}
+
+const steps: StepItem[] = [
   {
     iconPath: "/images/iconos-web/icono-web-1.png",
-    value: "40 +",
+    target: 40,
+    suffix: " +",
     label: "EMPRESAS",
     sublabel: "Más opciones de ruta",
-    colorClass: "bg-[#eb5b24]", // Orange
+    colorClass: "bg-[#eb5b24]",
   },
   {
     iconPath: "/images/iconos-web/icono-web-2.png",
-    value: "500K +",
+    target: 500000,
+    suffix: " +",
+    useSeparator: true,
     label: "VIAJEROS",
     sublabel: "Satisfechos",
-    colorClass: "bg-[#e5a924]", // Yellow/gold
+    colorClass: "bg-[#e5a924]",
   },
   {
     iconPath: "/images/iconos-web/icono-web-3.png",
-    value: "200 +",
+    target: 200,
+    suffix: " +",
     label: "DESTINOS",
     sublabel: "Amplia cobertura",
-    colorClass: "bg-[#00c7cc]", // Teal
+    colorClass: "bg-[#00c7cc]",
   },
   {
     iconPath: "/images/iconos-web/icono-web-4.png",
-    value: "24/7",
+    target: 24,
+    suffix: "/7",
     label: "SOPORTE",
     sublabel: "En tiempo real",
-    colorClass: "bg-[#007b80]", // Dark teal
+    colorClass: "bg-[#007b80]",
   },
 ];
+
+function CountUpNumber({
+  target,
+  suffix,
+  duration = 2000,
+  useSeparator = false,
+}: {
+  target: number;
+  suffix: string;
+  duration?: number;
+  useSeparator?: boolean;
+}) {
+  const [count, setCount] = useState(0);
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsIntersecting(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isIntersecting) return;
+    let startTimestamp: number | null = null;
+    const step = (timestamp: number) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      
+      // Ease out cubic: fast at start, decelerating at end
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+      
+      setCount(Math.floor(easedProgress * target));
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
+    };
+    window.requestAnimationFrame(step);
+  }, [isIntersecting, target, duration]);
+
+  const formatNumber = (num: number) => {
+    if (useSeparator) {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+    return num.toString();
+  };
+
+  return (
+    <span ref={ref}>
+      {formatNumber(count)}
+      {suffix}
+    </span>
+  );
+}
 
 export function FeaturesSection() {
   return (
@@ -39,10 +117,10 @@ export function FeaturesSection() {
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Header content */}
         <div className="text-center max-w-5xl mx-auto mb-16 space-y-4">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-[#3a3a3a] tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-[#3a3a3a] tracking-tight">
             Cómo funciona boletos.la
           </h2>
-          <div className="text-gray-600 space-y-3 text-sm md:text-base leading-relaxed font-normal">
+          <div className="text-gray-600 space-y-4 text-base md:text-lg lg:text-xl leading-relaxed font-normal">
             <p>
               <strong>Busca tu destino:</strong> Ingresa cualquier ciudad,
               dirección o punto de interés en Latinoamérica.
@@ -79,13 +157,17 @@ export function FeaturesSection() {
 
                 {/* Text and stats */}
                 <div className="space-y-1">
-                  <h4 className="text-xl md:text-2xl font-extrabold text-gray-800 mb-1">
-                    {step.value}
+                  <h4 className="text-xl md:text-2xl lg:text-3xl font-extrabold text-gray-800 mb-1">
+                    <CountUpNumber
+                      target={step.target}
+                      suffix={step.suffix}
+                      useSeparator={step.useSeparator}
+                    />
                   </h4>
-                  <p className="text-xs font-bold tracking-wider text-gray-400 uppercase">
+                  <p className="text-sm md:text-base font-bold tracking-wider text-gray-400 uppercase">
                     {step.label}
                   </p>
-                  <p className="text-xs text-gray-500 font-medium">
+                  <p className="text-sm text-gray-500 font-semibold">
                     {step.sublabel}
                   </p>
                 </div>

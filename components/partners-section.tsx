@@ -7,8 +7,6 @@ export function PartnersSection() {
     <section className="bg-white py-6 border-b border-gray-100">
       <div className="container mx-auto px-4">
         <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16 text-gray-400 text-sm font-semibold tracking-wider">
-
-
           <div className="flex items-center gap-10 md:gap-16 flex-wrap justify-center">
             {/* Booking.com */}
             <div className="relative w-36 h-12">
@@ -72,7 +70,7 @@ export function PartnersSection() {
                 alt="Rappi Logo"
                 fill
                 sizes="110px"
-                className="object-contain"
+                className="object-contain p-0.5"
               />
             </div>
 
