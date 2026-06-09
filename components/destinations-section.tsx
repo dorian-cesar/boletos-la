@@ -44,7 +44,7 @@ const popularCities = [
   },
   {
     name: "BUENOS AIRES",
-    image: "/images/colombia.png", // placeholder
+    image: "/images/buenos-aires.jpg",
   },
   {
     name: "LIMA",
