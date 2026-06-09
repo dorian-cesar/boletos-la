@@ -40,7 +40,7 @@ const regionDestinations = [
 const popularCities = [
   {
     name: "SANTIAGO",
-    image: "/images/argentina.png", // placeholder
+    image: "/images/santiago.webp",
   },
   {
     name: "BUENOS AIRES",
