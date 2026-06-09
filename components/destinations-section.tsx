@@ -48,7 +48,7 @@ const popularCities = [
   },
   {
     name: "LIMA",
-    image: "/images/brazil.png", // placeholder
+    image: "/images/lima.jpg",
   },
 ];
 
