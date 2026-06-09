@@ -3,8 +3,9 @@ import Image from "next/image";
 
 interface StepItem {
   iconPath: string;
-  target: number;
-  suffix: string;
+  target?: number;
+  suffix?: string;
+  staticValue?: string;
   useSeparator?: boolean;
   label: string;
   sublabel: string;
@@ -39,8 +40,7 @@ const steps: StepItem[] = [
   },
   {
     iconPath: "/images/iconos-web/icono-web-4.png",
-    target: 24,
-    suffix: "/7",
+    staticValue: "24/7",
     label: "SOPORTE",
     sublabel: "En tiempo real",
     colorClass: "bg-[#007b80]",
@@ -50,7 +50,7 @@ const steps: StepItem[] = [
 function CountUpNumber({
   target,
   suffix,
-  duration = 2000,
+  duration,
   useSeparator = false,
 }: {
   target: number;
@@ -61,6 +61,9 @@ function CountUpNumber({
   const [count, setCount] = useState(0);
   const [isIntersecting, setIsIntersecting] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
+
+  // Dynamic duration: larger numbers animate slightly longer (between 800ms and 2400ms)
+  const animDuration = duration || Math.max(800, Math.min(2400, Math.log10(target) * 420));
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -83,7 +86,7 @@ function CountUpNumber({
     let startTimestamp: number | null = null;
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
-      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      const progress = Math.min((timestamp - startTimestamp) / animDuration, 1);
       
       // Ease out cubic: fast at start, decelerating at end
       const easedProgress = 1 - Math.pow(1 - progress, 3);
@@ -94,7 +97,7 @@ function CountUpNumber({
       }
     };
     window.requestAnimationFrame(step);
-  }, [isIntersecting, target, duration]);
+  }, [isIntersecting, target, animDuration]);
 
   const formatNumber = (num: number) => {
     if (useSeparator) {
@@ -158,11 +161,15 @@ export function FeaturesSection() {
                 {/* Text and stats */}
                 <div className="space-y-1">
                   <h4 className="text-xl md:text-2xl lg:text-3xl font-extrabold text-gray-800 mb-1">
-                    <CountUpNumber
-                      target={step.target}
-                      suffix={step.suffix}
-                      useSeparator={step.useSeparator}
-                    />
+                    {step.staticValue ? (
+                      step.staticValue
+                    ) : (
+                      <CountUpNumber
+                        target={step.target!}
+                        suffix={step.suffix!}
+                        useSeparator={step.useSeparator}
+                      />
+                    )}
                   </h4>
                   <p className="text-sm md:text-base font-bold tracking-wider text-gray-400 uppercase">
                     {step.label}
