@@ -85,7 +85,8 @@ export default function CheckoutPage() {
         router.push("/booking/confirmation/tarjeta");
       } else if (selectedPaymentMethod === "bancard") {
         const primaryPassenger = passengerDetails[0];
-        const response = await fetch("/api/bancard/crear-transaccion", {
+        // const response = await fetch("/api/bancard/crear-transaccion", {
+        const response = await fetch("/api/bancard/crear-transaccion-staging", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
