@@ -6,7 +6,7 @@ const confirmUrl = `${returnUrl}/booking/confirmation/bancard`;
 
 export async function POST(request: Request) {
   try {
-    const shopProcessId = Math.floor(100000000000000 + Math.random() * 900000000000000);
+    const shopProcessId = Date.now() * 100 + Math.floor(Math.random() * 100);
     const body = await request.json();
     const { amount, description, idCompra } = body;
 
