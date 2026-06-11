@@ -1,17 +1,32 @@
 import { NextResponse } from "next/server";
+import crypto from "crypto";
 
 const returnUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-const cancelUrl = `${returnUrl}/booking/checkout`;
 const confirmUrl = `${returnUrl}/booking/confirmation/bancard`;
+
+// Función segura para entornos Serverless de Next.js (Asegura 15 dígitos fijos)
+function generarShopProcessIdSeguro(): number {
+  const ahora = Date.now(); // 13 dígitos (ej: 1781198500123)
+
+  // Generamos 2 dígitos aleatorios criptográficos (rango 10 a 99) para evitar colisiones
+  // si múltiples instancias distribuidas de Next.js atienden en el mismo milisegundo.
+  const bytes = crypto.randomBytes(1);
+  const sufijoAleatorio = 10 + (bytes[0] % 90);
+
+  // 13 dígitos + 2 dígitos = 15 dígitos exactos (Límite de Bancard)
+  return parseInt(`${ahora}${sufijoAleatorio}`);
+}
 
 export async function POST(request: Request) {
   try {
-    const shopProcessId = Date.now() * 100 + Math.floor(Math.random() * 100);
+    // 1. Generamos el ID único de 15 dígitos bajo estándares seguros
+    const shopProcessId = generarShopProcessIdSeguro();
+
     const body = await request.json();
     const { amount, description, idCompra } = body;
 
     const payload = {
-      shopProcessId: shopProcessId, // En producción esto debería ser el ID de la reserva
+      shopProcessId: shopProcessId,
       amount: amount || 0,
       currency: "PYG",
       description: description || "Boleto de boleto.la",
@@ -20,7 +35,6 @@ export async function POST(request: Request) {
       id: idCompra,
       action: "single-buy",
       // return_url: confirmUrl,
-      // cancel_url: cancelUrl,
     };
 
     const baseUrl = process.env.BANCARD_API_URL;
