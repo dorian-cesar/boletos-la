@@ -1,12 +1,17 @@
 import { NextResponse } from "next/server";
 
+const returnUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const cancelUrl = `${returnUrl}/booking/checkout`;
+const confirmUrl = `${returnUrl}/booking/confirmation/bancard`;
+
 export async function POST(request: Request) {
   try {
+    const shopProcessId = Math.floor(Math.random() * 1000000);
     const body = await request.json();
     const { amount, description, idCompra } = body;
 
     const payload = {
-      shopProcessId: Math.floor(Math.random() * 1000000), // En producción esto debería ser el ID de la reserva
+      shopProcessId: shopProcessId, // En producción esto debería ser el ID de la reserva
       amount: amount || 0,
       currency: "PYG",
       description: description || "Boleto de boleto.la",
@@ -14,6 +19,8 @@ export async function POST(request: Request) {
       canal: "web",
       id: idCompra,
       action: "single-buy",
+      // return_url: confirmUrl,
+      // cancel_url: cancelUrl,
     };
 
     const baseUrl = process.env.BANCARD_API_URL;
@@ -45,6 +52,7 @@ export async function POST(request: Request) {
       return NextResponse.json({
         success: true,
         iframeUrl: apiResponse.data.iframeUrl,
+        shopProcessId: shopProcessId,
         processId:
           apiResponse.data.processId ||
           apiResponse.data.rawResponse?.process_id,

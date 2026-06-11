@@ -44,6 +44,8 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
     setPaymentStatus: setStorePaymentStatus,
     setPaymentResult,
     assignTicketNumbers,
+    bancardProcessId,
+    setBancardProcessId,
   } = useBookingStore();
 
   const primaryPassenger = passengerDetails[0];
@@ -329,6 +331,90 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
         });
 
         onReady(simulatedPaymentDetails, true);
+        return;
+      }
+
+      if (hash === "bancard") {
+        const shopProcessId = bancardProcessId || "";
+        const primaryPassenger = passengerDetails[0];
+        const docNum = primaryPassenger?.documentNumber || "1234567";
+
+        try {
+          const res = await fetch("/api/bancard/confirmar-transaccion", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              shopProcessId: shopProcessId ? parseInt(shopProcessId) : 1,
+              id: docNum,
+            }),
+          });
+          const data = await res.json();
+
+          if (data.status === "success" || data.success === true) {
+            setBancardProcessId(null);
+            let finalRef = bookingReference;
+            if (!finalRef) {
+              finalRef = `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+              setBookingReference(finalRef);
+            }
+            setStorePaymentStatus("completed");
+
+            const simulatedPaymentDetails = {
+              pagado: true,
+              forma_pago: "Bancard",
+              fecha_pago: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
+              monto: totalPrice.toFixed(2),
+              hash_pedido:
+                data.data?.processId || shopProcessId || "bancard-payment",
+              numero_pedido: shopProcessId || "bancard-payment",
+              token: data.data?.processId || shopProcessId || "bancard-payment",
+            };
+
+            if (selectedOutboundTrip) {
+              const ticketMap = await sellGdsSeats({
+                outboundTrip: selectedOutboundTrip,
+                returnTrip: selectedReturnTrip,
+                outboundSeats: selectedSeats,
+                returnSeats: selectedReturnSeats,
+                passengers: passengerDetails,
+                outboundConnectionId,
+                returnConnectionId,
+              });
+              if (Object.keys(ticketMap).length > 0) {
+                assignTicketNumbers(ticketMap);
+                const first = Object.values(ticketMap)[0];
+                if (first) {
+                  setBookingReference(first);
+                  finalRef = first;
+                }
+              }
+              await sendEmailAlertsInBackground(
+                simulatedPaymentDetails,
+                finalRef,
+                ticketMap,
+              );
+              await saveTicketsInBackground(
+                simulatedPaymentDetails,
+                finalRef,
+                ticketMap,
+              );
+            }
+
+            setPaymentResult({
+              monto: simulatedPaymentDetails.monto,
+              pagado: simulatedPaymentDetails.pagado,
+              token: simulatedPaymentDetails.token,
+              hash_pedido: simulatedPaymentDetails.hash_pedido,
+            });
+
+            onReady(simulatedPaymentDetails, false);
+          } else {
+            setStatus("failed");
+          }
+        } catch (error) {
+          console.error("Error confirmando pago Bancard:", error);
+          setStatus("failed");
+        }
         return;
       }
 

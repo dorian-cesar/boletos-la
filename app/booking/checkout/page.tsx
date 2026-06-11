@@ -34,7 +34,7 @@ export default function CheckoutPage() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
     "tarjeta" | "bancard" | null
   >("bancard");
-  const [bancardProcessId, setBancardProcessId] = useState<string | null>(null);
+  const [iframeProcessId, setIframeProcessId] = useState<string | null>(null);
 
   const {
     tripType,
@@ -50,6 +50,8 @@ export default function CheckoutPage() {
     resetBooking,
     originTitle,
     destinationTitle,
+    bancardProcessId,
+    setBancardProcessId,
   } = useBookingStore();
 
   const [isExpired, setIsExpired] = useState(false);
@@ -95,16 +97,20 @@ export default function CheckoutPage() {
 
         const result = await response.json();
 
+        if (result.shopProcessId) {
+          setBancardProcessId(String(result.shopProcessId));
+        }
+
         if (result.processId) {
           setIsProcessing(false);
-          setBancardProcessId(result.processId);
+          setIframeProcessId(result.processId);
         } else if (result.iframeUrl) {
           try {
             const urlObj = new URL(result.iframeUrl);
             const pId = urlObj.searchParams.get("process_id");
             if (pId) {
               setIsProcessing(false);
-              setBancardProcessId(pId);
+              setIframeProcessId(pId);
             } else {
               window.location.href = result.iframeUrl;
             }
@@ -133,7 +139,7 @@ export default function CheckoutPage() {
 
   // Efecto para inyectar dinámicamente el SDK de Bancard e inicializar el formulario de pago
   useEffect(() => {
-    if (!bancardProcessId) return;
+    if (!iframeProcessId) return;
 
     let active = true;
     const scriptId = "bancard-checkout-script";
@@ -170,7 +176,7 @@ export default function CheckoutPage() {
             container.innerHTML = "";
             bancard.Checkout.createForm(
               "mi-contenedor-vpos",
-              bancardProcessId,
+              iframeProcessId,
               estilosPersonalizados,
             );
           }
@@ -218,18 +224,18 @@ export default function CheckoutPage() {
         script.removeEventListener("load", checkContainerAndInitialize);
       }
     };
-  }, [bancardProcessId]);
+  }, [iframeProcessId]);
 
   // Efecto para bloquear el scroll del fondo (body) mientras el modal de pago está abierto
   useEffect(() => {
-    if (bancardProcessId) {
+    if (iframeProcessId) {
       const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = "hidden";
       return () => {
         document.body.style.overflow = originalOverflow;
       };
     }
-  }, [bancardProcessId]);
+  }, [iframeProcessId]);
 
   if (!mounted) {
     return (
@@ -253,7 +259,14 @@ export default function CheckoutPage() {
     return (
       <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-[#1a2332] to-[#0f1419]">
         <div className="text-center text-background">
-          <Bus className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+          <Image
+            src="/logos/logo-boletos.png"
+            alt="Logo Boletos.la"
+            width={120}
+            height={64}
+            className="mx-auto mb-5 animate-bounce"
+            priority
+          />
           <p className="text-xl font-semibold mb-2">No hay reserva activa</p>
           <p className="text-muted-foreground mb-4">
             Por favor, inicia una nueva reserva
@@ -794,13 +807,13 @@ export default function CheckoutPage() {
       )}
 
       {/* Overlay de Checkout Bancard con Contenedor Embebido */}
-      {bancardProcessId && (
+      {iframeProcessId && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 backdrop-blur-xl p-3 sm:p-6 animate-fade-in">
           <div className="relative w-full max-w-lg bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col border border-gray-200 max-h-[95vh]">
             <div className="flex justify-between items-center p-4 bg-gray-50 border-b border-gray-200 shrink-0">
               <span className="font-bold text-gray-700">Pagar con Bancard</span>
               <button
-                onClick={() => setBancardProcessId(null)}
+                onClick={() => setIframeProcessId(null)}
                 className="bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-full p-2 transition-colors"
                 title="Cerrar ventana de pago"
               >
