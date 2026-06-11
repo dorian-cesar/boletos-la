@@ -10,14 +10,14 @@ const features = [
   {
     icon: Shield,
     title: "Pago 100% Seguro",
-    description: "Transacciones protegidas con Pagopar y encriptación SSL.",
+    description: "Transacciones protegidas con Bancard y encriptación SSL.",
     image: "/images/1.jpg",
   },
   {
     icon: CreditCard,
     title: "Múltiples Medios de Pago",
     description:
-      "Paga con tarjeta de crédito, débito o transferencia bancaria.",
+      "Paga con tarjeta de crédito, débito o código QR a través de Bancard.",
     image: "/images/2.jpg",
   },
   {

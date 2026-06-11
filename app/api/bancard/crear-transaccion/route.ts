@@ -13,6 +13,7 @@ export async function POST(request: Request) {
       servicio: "boletos",
       canal: "web",
       id: idCompra,
+      action: "single-buy",
     };
 
     const baseUrl = process.env.BANCARD_API_URL;
@@ -37,11 +38,16 @@ export async function POST(request: Request) {
 
     const apiResponse = await response.json();
 
-    if (apiResponse.status === "success" && (apiResponse.data?.iframeUrl || apiResponse.data?.processId)) {
+    if (
+      apiResponse.status === "success" &&
+      (apiResponse.data?.iframeUrl || apiResponse.data?.processId)
+    ) {
       return NextResponse.json({
         success: true,
         iframeUrl: apiResponse.data.iframeUrl,
-        processId: apiResponse.data.processId || apiResponse.data.rawResponse?.process_id,
+        processId:
+          apiResponse.data.processId ||
+          apiResponse.data.rawResponse?.process_id,
       });
     } else {
       throw new Error(
