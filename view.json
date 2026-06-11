@@ -1,3 +1,59 @@
+respuesta bancard confirmacion:
+{
+    "status": "success",
+    "action": "confirmation",
+    "message": "Confirmación obtenida correctamente.",
+    "data": {
+        "shopProcessId": 686340,
+        "status": "success",
+        "confirmation": {
+            "token": "98f47d59fc109ba9c51f11f7ad3b5e0f",
+            "shop_process_id": 686340,
+            "response": "S",
+            "response_details": "Procesado Satisfactoriamente",
+            "amount": "50600.00",
+            "currency": "PYG",
+            "authorization_number": "911086",
+            "ticket_number": "2119134351",
+            "response_code": "00",
+            "response_description": "Transaccion aprobada",
+            "extended_response_description": null,
+            "security_information": {
+                "card_source": "L",
+                "customer_ip": "200.111.155.148",
+                "card_country": "PARAGUAY",
+                "version": "0.3",
+                "risk_index": 0
+            }
+        },
+        "messages": [],
+        "rawResponse": {
+            "status": "success",
+            "confirmation": {
+                "token": "98f47d59fc109ba9c51f11f7ad3b5e0f",
+                "shop_process_id": 686340,
+                "response": "S",
+                "response_details": "Procesado Satisfactoriamente",
+                "amount": "50600.00",
+                "currency": "PYG",
+                "authorization_number": "911086",
+                "ticket_number": "2119134351",
+                "response_code": "00",
+                "response_description": "Transaccion aprobada",
+                "extended_response_description": null,
+                "security_information": {
+                    "card_source": "L",
+                    "customer_ip": "200.111.155.148",
+                    "card_country": "PARAGUAY",
+                    "version": "0.3",
+                    "risk_index": 0
+                }
+            }
+        }
+    }
+}
+
+
 {
     "state": {
         "step": 4,
