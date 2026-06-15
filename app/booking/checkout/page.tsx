@@ -93,6 +93,11 @@ export default function CheckoutPage() {
             amount: totalPrice,
             description: "Boleto de boleto.la",
             idCompra: primaryPassenger?.documentNumber || "1234567",
+            billingClient: {
+              ruc: "123456-7",
+              name: `${primaryPassenger?.firstName} ${primaryPassenger?.lastName}`.toUpperCase(),
+              email: primaryPassenger?.email || "juangonzalez@mail.com.py",
+            },
           }),
         });
 
