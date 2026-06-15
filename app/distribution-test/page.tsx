@@ -1,5 +1,6 @@
 import React from "react";
-import { DistributionWidget } from "@/components/distribution-widget";
+import { DistributionWidget } from "@/components/distribusion-widget";
+
 
 export default function DistributionTestPage() {
   return (

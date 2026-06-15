@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { DistributionWidget } from "@/components/distribution-widget";
+import { DistributionWidget } from "@/components/distribusion-widget";
+
 import Image from "next/image";
 
 export function HeroSection() {
