@@ -32,7 +32,6 @@ export async function POST() {
         currency: currency,
         amount: amount,
         iva_amount: "0.00",
-        additional_data: "099VS ORO000045",
         description: "Ejemplo de pago",
         return_url: "http://localhost:3000/confirmation_loading",
         cancel_url: "http://localhost:3000/confirmation_loading",
@@ -42,7 +41,7 @@ export async function POST() {
           client_email: "juangonzalez@mail.com.py",
           commerce_stamp: "12559969",
           commerce_expedition_point: "001",
-          commerce_establishment: "002",
+          commerce_establishment: "001",
           details: [
             {
               description: "item 1",
