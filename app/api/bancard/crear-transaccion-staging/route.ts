@@ -33,12 +33,14 @@ export async function POST() {
         amount: amount,
         iva_amount: "0.00",
         description: "Ejemplo de pago",
-        return_url: "http://localhost:3000/booking/confirmation/bancard",
-        cancel_url: "http://localhost:3000/booking/confirmation/bancard",
+        return_url:
+          "https://boletos-la-dev.netlify.app/booking/confirmation/bancard",
+        cancel_url:
+          "https://boletos-la-dev.netlify.app/booking/confirmation/bancard",
         billing: {
           client_ruc: "44444401-7",
           client_name: "JUAN GONZALEZ",
-          client_email: "juangonzalez@mail.com.py",
+          client_email: "[EMAIL_ADDRESS]",
           commerce_stamp: "12559969",
           commerce_expedition_point: "001",
           commerce_establishment: "001",
