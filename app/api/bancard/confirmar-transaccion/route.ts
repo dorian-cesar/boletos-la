@@ -3,34 +3,28 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { shopProcessId, id } = body;
+    const { shopProcessId } = body;
 
-    if (!shopProcessId || !id) {
+    if (!shopProcessId) {
       return NextResponse.json(
-        { success: false, message: "shopProcessId e id son requeridos" },
+        { success: false, message: "shopProcessId es requerido" },
         { status: 400 }
       );
     }
-
-    const payload = {
-      action: "confirmation",
-      shopProcessId: Number(shopProcessId),
-      servicio: "boletos",
-      canal: "web",
-      id: id,
-    };
 
     const baseUrl = process.env.BANCARD_API_URL;
     if (!baseUrl) {
       throw new Error("Falta la variable de entorno BANCARD_API_URL");
     }
 
-    const response = await fetch(`${baseUrl}/api/pagosimple`, {
-      method: "POST",
+    const targetUrl = `${baseUrl}/api/bancard/confirmation/${shopProcessId}`;
+    console.log("[Bancard Confirmation API] Calling URL:", targetUrl);
+
+    const response = await fetch(targetUrl, {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
@@ -41,6 +35,8 @@ export async function POST(request: Request) {
     }
 
     const apiResponse = await response.json();
+    console.log("[Bancard Confirmation API] Response:", JSON.stringify(apiResponse, null, 2));
+    
     return NextResponse.json(apiResponse);
   } catch (error: any) {
     console.error("Error confirmando transacción:", error);

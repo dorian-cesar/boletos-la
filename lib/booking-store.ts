@@ -80,6 +80,7 @@ export interface BookingState {
   paymentResult: PaymentResult | null;
   failedSeats: Record<string, string[]>;
   bancardProcessId: string | null;
+  bancardShopProcessId: string | null;
 
   setStep: (step: number) => void;
   setTripType: (type: "one-way" | "round-trip") => void;
@@ -107,6 +108,7 @@ export interface BookingState {
   setReturnConnectionId: (id: string | null) => void;
   setPaymentResult: (result: PaymentResult | null) => void;
   setBancardProcessId: (id: string | null) => void;
+  setBancardShopProcessId: (id: string | null) => void;
   addFailedSeats: (tripId: string, seatNumbers: string[]) => void;
   clearFailedSeats: (tripId: string) => void;
   assignTicketNumbers: (ticketMap: Record<string, string>) => void;
@@ -136,6 +138,7 @@ const initialState = {
   paymentResult: null,
   failedSeats: {},
   bancardProcessId: null,
+  bancardShopProcessId: null,
 };
 
 export const useBookingStore = create<BookingState>()(
@@ -313,6 +316,7 @@ export const useBookingStore = create<BookingState>()(
       setReturnConnectionId: (returnConnectionId) => set({ returnConnectionId }),
       setPaymentResult: (paymentResult) => set({ paymentResult }),
       setBancardProcessId: (bancardProcessId) => set({ bancardProcessId }),
+      setBancardShopProcessId: (bancardShopProcessId) => set({ bancardShopProcessId }),
       addFailedSeats: (tripId, seatNumbers) => {
         const { failedSeats } = get();
         const currentFailed = failedSeats[tripId] || [];
@@ -382,6 +386,7 @@ export const useBookingStore = create<BookingState>()(
         paymentResult: state.paymentResult,
         failedSeats: state.failedSeats,
         bancardProcessId: state.bancardProcessId,
+        bancardShopProcessId: state.bancardShopProcessId,
       }),
       // Versión para migraciones futuras
       version: 1,

@@ -46,6 +46,8 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
     assignTicketNumbers,
     bancardProcessId,
     setBancardProcessId,
+    bancardShopProcessId,
+    setBancardShopProcessId,
   } = useBookingStore();
 
   const primaryPassenger = passengerDetails[0];
@@ -335,7 +337,8 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
       }
 
       if (hash === "bancard") {
-        const shopProcessId = bancardProcessId || "";
+        const shopProcessId = bancardShopProcessId || (typeof window !== "undefined" ? localStorage.getItem("bancard_shop_process_id") : null) || "";
+        const processId = bancardProcessId || (typeof window !== "undefined" ? localStorage.getItem("bancard_process_id") : null) || "";
         const primaryPassenger = passengerDetails[0];
         const docNum = primaryPassenger?.documentNumber || "1234567";
 
@@ -345,13 +348,26 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               shopProcessId: shopProcessId ? parseInt(shopProcessId) : 1,
+              processId: processId,
               id: docNum,
             }),
           });
           const data = await res.json();
 
-          if (data.status === "success" || data.success === true) {
+          const isSuccess =
+            (data.status === "success" && data.data?.status === "success") ||
+            data.status === "approved" ||
+            data.success === true ||
+            data.data?.processed === true ||
+            data.data?.confirmation?.response === "S";
+
+          if (isSuccess) {
             setBancardProcessId(null);
+            setBancardShopProcessId(null);
+            if (typeof window !== "undefined") {
+              localStorage.removeItem("bancard_shop_process_id");
+              localStorage.removeItem("bancard_process_id");
+            }
             let finalRef = bookingReference;
             if (!finalRef) {
               finalRef = `TB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;

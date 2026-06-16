@@ -33,8 +33,8 @@ export async function POST() {
         amount: amount,
         iva_amount: "0.00",
         description: "Ejemplo de pago",
-        return_url: "http://localhost:3000/confirmation_loading",
-        cancel_url: "http://localhost:3000/confirmation_loading",
+        return_url: "http://localhost:3000/booking/confirmation/bancard",
+        cancel_url: "http://localhost:3000/booking/confirmation/bancard",
         billing: {
           client_ruc: "44444401-7",
           client_name: "JUAN GONZALEZ",

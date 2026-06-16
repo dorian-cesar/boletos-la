@@ -52,6 +52,8 @@ export default function CheckoutPage() {
     destinationTitle,
     bancardProcessId,
     setBancardProcessId,
+    bancardShopProcessId,
+    setBancardShopProcessId,
   } = useBookingStore();
 
   const [isExpired, setIsExpired] = useState(false);
@@ -104,10 +106,13 @@ export default function CheckoutPage() {
         const result = await response.json();
 
         if (result.shopProcessId) {
-          setBancardProcessId(String(result.shopProcessId));
+          setBancardShopProcessId(String(result.shopProcessId));
+          localStorage.setItem("bancard_shop_process_id", String(result.shopProcessId));
         }
 
         if (result.processId) {
+          setBancardProcessId(String(result.processId));
+          localStorage.setItem("bancard_process_id", String(result.processId));
           setIsProcessing(false);
           setIframeProcessId(result.processId);
         } else if (result.iframeUrl) {
@@ -115,6 +120,8 @@ export default function CheckoutPage() {
             const urlObj = new URL(result.iframeUrl);
             const pId = urlObj.searchParams.get("process_id");
             if (pId) {
+              setBancardProcessId(pId);
+              localStorage.setItem("bancard_process_id", pId);
               setIsProcessing(false);
               setIframeProcessId(pId);
             } else {
