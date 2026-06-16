@@ -114,11 +114,17 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
       };
 
       try {
-        await fetch("/api/tickets/send-email", {
+        const response = await fetch("/api/tickets/send-email", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
+        if (!response.ok) {
+          const errData = await response.json();
+          console.error("Error al enviar email (status code no exitoso):", response.status, errData);
+        } else {
+          console.log("Email enviado exitosamente para el asiento:", seat.number);
+        }
       } catch (err) {
         console.error("Error enviando email:", err);
       }
@@ -254,7 +260,22 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
     }
   };
 
+  const [isHydrated, setIsHydrated] = useState(false);
+
   useEffect(() => {
+    const hasHydrated = useBookingStore.persist.hasHydrated();
+    if (hasHydrated) {
+      setIsHydrated(true);
+    } else {
+      const unsub = useBookingStore.persist.onFinishHydration(() => {
+        setIsHydrated(true);
+      });
+      return () => unsub();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) return;
     if (processingRef.current) return;
     processingRef.current = true;
 
@@ -397,6 +418,16 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 outboundConnectionId,
                 returnConnectionId,
               });
+
+              const expectedTicketsCount = selectedSeats.length + (selectedReturnTrip ? selectedReturnSeats.length : 0);
+              const actualTicketsCount = Object.keys(ticketMap).length;
+
+              if (actualTicketsCount < expectedTicketsCount) {
+                console.error("GDS sell failed for Bancard: expected", expectedTicketsCount, "tickets but got", actualTicketsCount);
+                setStatus("failed");
+                return;
+              }
+
               if (Object.keys(ticketMap).length > 0) {
                 assignTicketNumbers(ticketMap);
                 const first = Object.values(ticketMap)[0];
@@ -487,6 +518,16 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 outboundConnectionId,
                 returnConnectionId,
               });
+
+              const expectedTicketsCount = selectedSeats.length + (selectedReturnTrip ? selectedReturnSeats.length : 0);
+              const actualTicketsCount = Object.keys(ticketMap).length;
+
+              if (actualTicketsCount < expectedTicketsCount) {
+                console.error("GDS sell failed for Pagopar: expected", expectedTicketsCount, "tickets but got", actualTicketsCount);
+                setStatus("failed");
+                return;
+              }
+
               if (Object.keys(ticketMap).length > 0) {
                 assignTicketNumbers(ticketMap);
                 const first = Object.values(ticketMap)[0];
@@ -523,7 +564,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
     };
 
     run();
-  }, []);
+  }, [isHydrated]);
 
   if (status === "checking") {
     return (
