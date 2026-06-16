@@ -355,11 +355,12 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           const data = await res.json();
 
           const isSuccess =
-            (data.status === "success" && data.data?.status === "success") ||
+            (data.status === "success" &&
+              data.data?.status === "success" &&
+              data.data?.confirmation?.response_code === "00") ||
             data.status === "approved" ||
             data.success === true ||
-            data.data?.processed === true ||
-            data.data?.confirmation?.response === "S";
+            data.data?.processed === true;
 
           if (isSuccess) {
             setBancardProcessId(null);
