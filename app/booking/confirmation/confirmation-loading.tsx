@@ -105,7 +105,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
         total: `Gs. ${seat.price.toLocaleString("es-PY")}`,
         pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
-        numeroFactura: paymentDetails?.numero_pedido || "",
+        numeroFactura: paymentDetails?.numero_factura || "",
         fechaVenta: format(new Date(), "dd/MM/yyyy HH:mm"),
         asiento: seat.number,
         servicio: trip.busType,
@@ -121,9 +121,16 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
         });
         if (!response.ok) {
           const errData = await response.json();
-          console.error("Error al enviar email (status code no exitoso):", response.status, errData);
+          console.error(
+            "Error al enviar email (status code no exitoso):",
+            response.status,
+            errData,
+          );
         } else {
-          console.log("Email enviado exitosamente para el asiento:", seat.number);
+          console.log(
+            "Email enviado exitosamente para el asiento:",
+            seat.number,
+          );
         }
       } catch (err) {
         console.error("Error enviando email:", err);
@@ -358,8 +365,18 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
       }
 
       if (hash === "bancard") {
-        const shopProcessId = bancardShopProcessId || (typeof window !== "undefined" ? localStorage.getItem("bancard_shop_process_id") : null) || "";
-        const processId = bancardProcessId || (typeof window !== "undefined" ? localStorage.getItem("bancard_process_id") : null) || "";
+        const shopProcessId =
+          bancardShopProcessId ||
+          (typeof window !== "undefined"
+            ? localStorage.getItem("bancard_shop_process_id")
+            : null) ||
+          "";
+        const processId =
+          bancardProcessId ||
+          (typeof window !== "undefined"
+            ? localStorage.getItem("bancard_process_id")
+            : null) ||
+          "";
         const primaryPassenger = passengerDetails[0];
         const docNum = primaryPassenger?.documentNumber || "1234567";
 
@@ -401,8 +418,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               setBookingReference(finalRef);
             }
             setStorePaymentStatus("completed");
-
-            const simulatedPaymentDetails = {
+            const realPaymentDetails = {
               pagado: true,
               forma_pago: "Bancard",
               fecha_pago: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
@@ -411,6 +427,8 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 data.data?.processId || shopProcessId || "bancard-payment",
               numero_pedido: shopProcessId || "bancard-payment",
               token: data.data?.processId || shopProcessId || "bancard-payment",
+              numero_factura:
+                data.data?.confirmation?.electronicBillNumber || "",
             };
 
             if (selectedOutboundTrip) {
@@ -424,11 +442,18 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 returnConnectionId,
               });
 
-              const expectedTicketsCount = selectedSeats.length + (selectedReturnTrip ? selectedReturnSeats.length : 0);
+              const expectedTicketsCount =
+                selectedSeats.length +
+                (selectedReturnTrip ? selectedReturnSeats.length : 0);
               const actualTicketsCount = Object.keys(ticketMap).length;
 
               if (actualTicketsCount < expectedTicketsCount) {
-                console.error("GDS sell failed for Bancard: expected", expectedTicketsCount, "tickets but got", actualTicketsCount);
+                console.error(
+                  "GDS sell failed for Bancard: expected",
+                  expectedTicketsCount,
+                  "tickets but got",
+                  actualTicketsCount,
+                );
                 setStatus("failed");
                 return;
               }
@@ -442,25 +467,25 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 }
               }
               await sendEmailAlertsInBackground(
-                simulatedPaymentDetails,
+                realPaymentDetails,
                 finalRef,
                 ticketMap,
               );
               await saveTicketsInBackground(
-                simulatedPaymentDetails,
+                realPaymentDetails,
                 finalRef,
                 ticketMap,
               );
             }
 
             setPaymentResult({
-              monto: simulatedPaymentDetails.monto,
-              pagado: simulatedPaymentDetails.pagado,
-              token: simulatedPaymentDetails.token,
-              hash_pedido: simulatedPaymentDetails.hash_pedido,
+              monto: realPaymentDetails.monto,
+              pagado: realPaymentDetails.pagado,
+              token: realPaymentDetails.token,
+              hash_pedido: realPaymentDetails.hash_pedido,
             });
 
-            onReady(simulatedPaymentDetails, false);
+            onReady(realPaymentDetails, false);
           } else {
             setStatus("failed");
           }
@@ -524,11 +549,18 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 returnConnectionId,
               });
 
-              const expectedTicketsCount = selectedSeats.length + (selectedReturnTrip ? selectedReturnSeats.length : 0);
+              const expectedTicketsCount =
+                selectedSeats.length +
+                (selectedReturnTrip ? selectedReturnSeats.length : 0);
               const actualTicketsCount = Object.keys(ticketMap).length;
 
               if (actualTicketsCount < expectedTicketsCount) {
-                console.error("GDS sell failed for Pagopar: expected", expectedTicketsCount, "tickets but got", actualTicketsCount);
+                console.error(
+                  "GDS sell failed for Pagopar: expected",
+                  expectedTicketsCount,
+                  "tickets but got",
+                  actualTicketsCount,
+                );
                 setStatus("failed");
                 return;
               }

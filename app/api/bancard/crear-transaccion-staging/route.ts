@@ -31,7 +31,7 @@ export async function POST() {
         shop_process_id: shopProcessId,
         currency: currency,
         amount: amount,
-        iva_amount: "0.00",
+        iva_amount: "00.00",
         description: "Ejemplo de pago",
         // prod
         return_url:
