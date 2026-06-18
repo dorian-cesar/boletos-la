@@ -313,7 +313,7 @@ export function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-white/10">
         <div className="container mx-auto px-4 max-w-[1440px] py-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center justify-center gap-4">
             {/* Año + logo */}
             <div className="flex items-center gap-2 text-white/50 text-sm">
               <Image
@@ -323,31 +323,8 @@ export function Footer() {
                 height={24}
                 className="opacity-70"
               />
-              {/* <span>{new Date().getFullYear()}</span> */}
               <span>|</span>
               <span>Todos los derechos reservados.</span>
-            </div>
-
-            {/* Links */}
-            <div className="flex items-center gap-6 text-sm">
-              <a
-                href="#"
-                className="text-white/50 hover:text-[#00c7cc] transition-colors"
-              >
-                Términos y Condiciones
-              </a>
-              <a
-                href="#"
-                className="text-white/50 hover:text-[#00c7cc] transition-colors"
-              >
-                Política de Privacidad
-              </a>
-              <a
-                href="#"
-                className="text-white/50 hover:text-[#00c7cc] transition-colors"
-              >
-                Ayuda
-              </a>
             </div>
           </div>
         </div>
