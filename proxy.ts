@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Solo evaluar si el usuario entra a la raíz "/"
@@ -38,7 +38,7 @@ export function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-// Configurar para que el middleware solo se ejecute en la raíz "/"
+// Configurar para que el proxy solo se ejecute en la raíz "/"
 export const config = {
   matcher: ['/'],
 };
