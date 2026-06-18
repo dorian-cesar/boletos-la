@@ -42,7 +42,7 @@ export default function HomePage() {
     <main className="min-h-screen bg-white">
       <Header />
       <HeroSection />
-      <PartnersSection />
+      {/* <PartnersSection /> */}
       <FeaturesSection />
       <DestinationsSection />
       <Footer />

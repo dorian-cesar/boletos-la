@@ -32,7 +32,10 @@ export function Header() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 group relative z-10">
+            <Link
+              href="/"
+              className="flex items-center gap-2 group relative z-10"
+            >
               <Image
                 src="/logos/logo-boletos.png"
                 alt="Boletos.la Logo"
@@ -45,7 +48,7 @@ export function Header() {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="max-lg:hidden lg:flex items-center gap-1">
+            {/* <nav className="max-lg:hidden lg:flex items-center gap-1">
               {[
                 { name: "Inicio", href: "/" },
                 { name: "Destinos", href: "#destinos" },
@@ -61,7 +64,7 @@ export function Header() {
                   {item.name}
                 </Link>
               ))}
-            </nav>
+            </nav> */}
 
             {/* Empty space in place of actions to keep spacing consistent with image */}
             <div className="max-lg:hidden lg:block w-[150px]" />
@@ -85,7 +88,9 @@ export function Header() {
         <div
           className={cn(
             "lg:hidden absolute top-full left-0 w-full overflow-hidden transition-all duration-500 ease-in-out origin-top border-t border-neutral-800 backdrop-blur-md bg-[#1a1a1a]/95 shadow-lg",
-            isMobileMenuOpen ? "max-h-[500px] opacity-100 scale-y-100" : "max-h-0 opacity-0 scale-y-0",
+            isMobileMenuOpen
+              ? "max-h-[500px] opacity-100 scale-y-100"
+              : "max-h-0 opacity-0 scale-y-0",
           )}
         >
           <nav className="container mx-auto px-6 py-6 flex flex-col gap-4">

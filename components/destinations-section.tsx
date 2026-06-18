@@ -115,14 +115,13 @@ export function DestinationsSection() {
     <section id="destinos" className="py-16 bg-[#f8f9fa] text-gray-800">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Region Exploration Grid */}
-        <div className="space-y-6">
+        {/* <div className="space-y-6">
           <p className="text-sm md:text-base font-semibold text-gray-600">
             Explora lo mejor de la región: Las rutas más elegidas por nuestros
             viajeros.
           </p>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* Left Large Card */}
             {regionDestinations
               .filter((d) => d.size === "large")
               .map((d, i) => (
@@ -150,7 +149,6 @@ export function DestinationsSection() {
                 </div>
               ))}
 
-            {/* Right 2x2 Grid of Small Cards */}
             <div className="grid grid-cols-2 gap-4">
               {regionDestinations
                 .filter((d) => d.size === "small")
@@ -181,7 +179,6 @@ export function DestinationsSection() {
             </div>
           </div>
 
-          {/* New row of 4 region destinations */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {newRegionDestinations.map((d, i) => (
               <div
@@ -209,7 +206,6 @@ export function DestinationsSection() {
             ))}
           </div>
 
-          {/* Quick Route Tags */}
           <div className="flex flex-wrap gap-2 pt-6">
             {quickRoutes.map((route, i) => (
               <span
@@ -222,8 +218,7 @@ export function DestinationsSection() {
           </div>
         </div>
 
-        {/* Separator */}
-        <hr className="my-16 border-gray-200" />
+        <hr className="my-16 border-gray-200" /> */}
 
         {/* Popular Destinations */}
         <div className="space-y-8">
