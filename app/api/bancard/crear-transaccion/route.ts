@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
+  const bancardUrl = process.env.BANCARD_API_URL || "";
   try {
     const body = await request.json();
     const { amount, client_ruc, client_name, client_email, total_items } = body;
@@ -42,9 +43,7 @@ export async function POST(request: Request) {
       id: client_ruc || "fallback",
     };
 
-    console.log("payload crear transaccion:", JSON.stringify(payload, null, 2));
-
-    const targetUrl = "https://wit-bancard.dev-wit.com/api/pagosimple";
+    const targetUrl = `${bancardUrl}/api/pagosimple`;
 
     const response = await fetch(targetUrl, {
       method: "POST",
@@ -73,8 +72,14 @@ export async function POST(request: Request) {
         apiResponse.data?.processId ||
         apiResponse.data?.rawResponse?.process_id;
       const iframeUrl = apiResponse.url || apiResponse.data?.iframeUrl || null;
+
       const shopProcessId =
         apiResponse.shop_process_id || apiResponse.data?.shopProcessId || null;
+
+      if (!shopProcessId) {
+        throw new Error("La API no devolvió un shopProcessId válido.");
+      }
+
       return NextResponse.json({
         success: true,
         iframeUrl: iframeUrl,
