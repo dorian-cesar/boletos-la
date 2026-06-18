@@ -87,19 +87,16 @@ export default function CheckoutPage() {
         router.push("/booking/confirmation/tarjeta");
       } else if (selectedPaymentMethod === "bancard") {
         const primaryPassenger = passengerDetails[0];
-        // const response = await fetch("/api/bancard/crear-transaccion", {
-        const response = await fetch("/api/bancard/crear-transaccion-staging", {
+        const response = await fetch("/api/bancard/crear-transaccion", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             amount: totalPrice,
-            description: "Boleto de boleto.la",
-            idCompra: primaryPassenger?.documentNumber || "1234567",
-            billingClient: {
-              ruc: "123456-7",
-              name: `${primaryPassenger?.firstName} ${primaryPassenger?.lastName}`.toUpperCase(),
-              email: primaryPassenger?.email || "juangonzalez@mail.com.py",
-            },
+            client_ruc: primaryPassenger?.documentNumber || "fallback",
+            client_name:
+              `${primaryPassenger?.firstName} ${primaryPassenger?.lastName}`.toUpperCase(),
+            client_email: primaryPassenger?.email || "fallback",
+            total_items: totalPassengers,
           }),
         });
 
@@ -107,7 +104,10 @@ export default function CheckoutPage() {
 
         if (result.shopProcessId) {
           setBancardShopProcessId(String(result.shopProcessId));
-          localStorage.setItem("bancard_shop_process_id", String(result.shopProcessId));
+          localStorage.setItem(
+            "bancard_shop_process_id",
+            String(result.shopProcessId),
+          );
         }
 
         if (result.processId) {

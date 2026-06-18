@@ -385,7 +385,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              shopProcessId: shopProcessId ? parseInt(shopProcessId) : 1,
+              shopProcessId: shopProcessId ? parseInt(shopProcessId) : 0,
               processId: processId,
               id: docNum,
             }),

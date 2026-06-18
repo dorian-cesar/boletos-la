@@ -1,48 +1,52 @@
 import { NextResponse } from "next/server";
-import crypto from "crypto";
-
-const returnUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-const confirmUrl = `${returnUrl}/booking/confirmation/bancard`;
-
-// Función segura para entornos Serverless de Next.js (Asegura 15 dígitos fijos)
-function generarShopProcessIdSeguro(): number {
-  const ahora = Date.now(); // 13 dígitos (ej: 1781198500123)
-
-  // Generamos 2 dígitos aleatorios criptográficos (rango 10 a 99) para evitar colisiones
-  // si múltiples instancias distribuidas de Next.js atienden en el mismo milisegundo.
-  const bytes = crypto.randomBytes(1);
-  const sufijoAleatorio = 10 + (bytes[0] % 90);
-
-  // 13 dígitos + 2 dígitos = 15 dígitos exactos (Límite de Bancard)
-  return parseInt(`${ahora}${sufijoAleatorio}`);
-}
 
 export async function POST(request: Request) {
   try {
-    // 1. Generamos el ID único de 15 dígitos bajo estándares seguros
-    const shopProcessId = generarShopProcessIdSeguro();
-
     const body = await request.json();
-    const { amount, description, idCompra } = body;
+    const { amount, client_ruc, client_name, client_email, total_items } = body;
 
     const payload = {
-      shopProcessId: shopProcessId,
+      action: "single-buy",
       amount: amount || 0,
       currency: "PYG",
-      description: description || "Boleto de boleto.la",
+      description:
+        total_items && total_items > 1
+          ? "Compra de boletos - Boletos.la"
+          : "Compra de boleto - Boletos.la",
+      billing: {
+        client_ruc: client_ruc || "123456-1",
+        client_name: client_name || "fallback",
+        client_email: client_email || "fallback",
+        details: [
+          {
+            description:
+              total_items && total_items > 1
+                ? "Boletos de bus - Boletos.la"
+                : "Boleto de bus - Boletos.la",
+            amount: amount || 0,
+            iva_rate: 0,
+            total_items: total_items || 1,
+          },
+        ],
+      },
+      // prod
+      // return_url:
+      //   "https://boletos-la-dev.netlify.app/booking/confirmation/bancard",
+      // cancel_url:
+      //   "https://boletos-la-dev.netlify.app/booking/confirmation/bancard",
+      // dev:
+      return_url: "http://localhost:3000/booking/confirmation/bancard",
+      cancel_url: "http://localhost:3000/booking/confirmation/bancard",
       servicio: "boletos",
       canal: "web",
-      id: idCompra,
-      action: "single-buy",
-      // return_url: confirmUrl,
+      id: client_ruc || "fallback",
     };
 
-    const baseUrl = process.env.BANCARD_API_URL;
-    if (!baseUrl) {
-      throw new Error("Falta la variable de entorno BANCARD_API_URL");
-    }
+    console.log("payload crear transaccion:", JSON.stringify(payload, null, 2));
 
-    const response = await fetch(`${baseUrl}/api/pagosimple`, {
+    const targetUrl = "https://wit-bancard.dev-wit.com/api/pagosimple";
+
+    const response = await fetch(targetUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -60,16 +64,24 @@ export async function POST(request: Request) {
     const apiResponse = await response.json();
 
     if (
-      apiResponse.status === "success" &&
-      (apiResponse.data?.iframeUrl || apiResponse.data?.processId)
+      apiResponse.status === "success" ||
+      apiResponse.process_id ||
+      apiResponse.data?.processId
     ) {
+      const processId =
+        apiResponse.process_id ||
+        apiResponse.data?.processId ||
+        apiResponse.data?.rawResponse?.process_id;
+      const iframeUrl = apiResponse.url || apiResponse.data?.iframeUrl || null;
+      const shopProcessId =
+        apiResponse.shop_process_id ||
+        apiResponse.data?.shopProcessId ||
+        null;
       return NextResponse.json({
         success: true,
-        iframeUrl: apiResponse.data.iframeUrl,
+        iframeUrl: iframeUrl,
+        processId: processId,
         shopProcessId: shopProcessId,
-        processId:
-          apiResponse.data.processId ||
-          apiResponse.data.rawResponse?.process_id,
       });
     } else {
       throw new Error(
