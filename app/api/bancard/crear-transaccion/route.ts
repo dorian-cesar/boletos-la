@@ -30,13 +30,13 @@ export async function POST(request: Request) {
         ],
       },
       // prod
-      // return_url:
-      //   "https://boletos-la-dev.netlify.app/booking/confirmation/bancard",
-      // cancel_url:
-      //   "https://boletos-la-dev.netlify.app/booking/confirmation/bancard",
+      return_url:
+        "https://boletos-la-dev.netlify.app/booking/confirmation/bancard",
+      cancel_url:
+        "https://boletos-la-dev.netlify.app/booking/confirmation/bancard",
       // dev:
-      return_url: "http://localhost:3000/booking/confirmation/bancard",
-      cancel_url: "http://localhost:3000/booking/confirmation/bancard",
+      // return_url: "http://localhost:3000/booking/confirmation/bancard",
+      // cancel_url: "http://localhost:3000/booking/confirmation/bancard",
       servicio: "boletos",
       canal: "web",
       id: client_ruc || "fallback",
@@ -74,9 +74,7 @@ export async function POST(request: Request) {
         apiResponse.data?.rawResponse?.process_id;
       const iframeUrl = apiResponse.url || apiResponse.data?.iframeUrl || null;
       const shopProcessId =
-        apiResponse.shop_process_id ||
-        apiResponse.data?.shopProcessId ||
-        null;
+        apiResponse.shop_process_id || apiResponse.data?.shopProcessId || null;
       return NextResponse.json({
         success: true,
         iframeUrl: iframeUrl,
