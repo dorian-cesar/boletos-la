@@ -1,3 +1,5 @@
 import HomePage from "../page";
 
-export default HomePage;
+export default function Page() {
+  return <HomePage country="chile" />;
+}

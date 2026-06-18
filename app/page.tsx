@@ -11,7 +11,11 @@ import { DestinationsSection } from "@/components/destinations-section";
 import { Footer } from "@/components/footer";
 import { ScrollToTop } from "@/components/scroll-to-top";
 
-export default function HomePage() {
+interface HomePageProps {
+  country?: string;
+}
+
+export default function HomePage({ country }: HomePageProps) {
   useEffect(() => {
     // Usar getState para acceder directamente sin suscribir al componente
     const storeState = useBookingStore.getState();
