@@ -44,7 +44,7 @@ export default function HomePage({ country = "chile" }: HomePageProps) {
 
   return (
     <main className="min-h-screen bg-white">
-      <Header />
+      <Header country={country} />
       <HeroSection country={country} />
       {/* <PartnersSection /> */}
       <FeaturesSection country={country} />

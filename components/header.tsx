@@ -5,7 +5,11 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
-export function Header() {
+interface HeaderProps {
+  country?: string;
+}
+
+export function Header({ country }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -30,7 +34,7 @@ export function Header() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link
-              href="/"
+              href={country ? `/${country.toLowerCase()}` : "/"}
               className="flex items-center gap-2 group relative z-10"
             >
               <Image

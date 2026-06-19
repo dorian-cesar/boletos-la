@@ -99,7 +99,7 @@ export function Footer({ country }: FooterProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           {/* Brand & Selectors Column */}
           <div className="lg:col-span-4 space-y-6">
-            <Link href="/" className="inline-block">
+            <Link href={country ? `/${country.toLowerCase()}` : "/"} className="inline-block">
               <Image
                 src="/logos/logo-boletos.png"
                 alt="Boletos.la Logo"
