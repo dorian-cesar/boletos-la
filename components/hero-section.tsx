@@ -27,9 +27,14 @@ export function HeroSection({ country }: HeroSectionProps) {
   };
   const heroImageSrc = (country && heroImages[country.toLowerCase()]) || "/images/hero.jpg";
 
-  const normalizedCountry = country?.toLowerCase() || "chile";
+  const normalizedCountry = country?.toLowerCase() || "latam";
 
   const heroData: Record<string, { title: string; subtitle1: string; subtitle2: string }> = {
+    latam: {
+      title: "Cualquier sitio. Un solo punto de partida",
+      subtitle1: "VIAJES DE BUS Y ALOJAMIENTO",
+      subtitle2: "PARA UNA MEJOR EXPERIENCIA DE VIAJE",
+    },
     chile: {
       title: "Pasajes de bus a todo Chile",
       subtitle1: "COMPRA CON WEBPAY, ONEPAY",
@@ -52,7 +57,7 @@ export function HeroSection({ country }: HeroSectionProps) {
     },
   };
 
-  const currentHero = heroData[normalizedCountry] || heroData.chile;
+  const currentHero = heroData[normalizedCountry] || heroData.latam;
 
   return (
     <section className="relative min-h-[calc(125vh-72px)] flex items-center justify-center overflow-hidden py-12 lg:py-20">

@@ -34,7 +34,7 @@ export function Header({ country }: HeaderProps) {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link
-              href={country ? `/${country.toLowerCase()}` : "/"}
+              href={country && country.toLowerCase() !== "latam" ? `/${country.toLowerCase()}` : "/"}
               className="flex items-center gap-2 group relative z-10"
             >
               <Image

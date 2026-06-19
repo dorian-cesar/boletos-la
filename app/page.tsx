@@ -15,7 +15,7 @@ interface HomePageProps {
   country?: string;
 }
 
-export default function HomePage({ country = "chile" }: HomePageProps) {
+export default function HomePage({ country = "latam" }: HomePageProps) {
   useEffect(() => {
     // Usar getState para acceder directamente sin suscribir al componente
     const storeState = useBookingStore.getState();
