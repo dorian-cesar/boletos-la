@@ -66,12 +66,12 @@ const countryDestinations: Record<string, typeof popularCities> = {
     { name: "PUERTO VARAS", image: "/images/chile-2.webp" },
     { name: "LA SERENA", image: "/images/chile-3.webp" },
   ],
-    colombia: [
-      { name: "CARTAGENA", image: "/images/colombia-1.webp" },
-      { name: "MEDELLÍN", image: "/images/colombia-2.webp" },
-      { name: "CALI", image: "/images/colombia-3.webp" }
-    ]
-  };
+  colombia: [
+    { name: "CARTAGENA", image: "/images/colombia-1.webp" },
+    { name: "MEDELLÍN", image: "/images/colombia-2.webp" },
+    { name: "CALI", image: "/images/colombia-3.webp" },
+  ],
+};
 
 const newRegionDestinations = [
   {
@@ -256,7 +256,7 @@ export function DestinationsSection({ country }: DestinationsSectionProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {citiesToDisplay.map((city, idx) => (
-              <div key={idx} className="group" onClick={handleScrollToWidget}>
+              <div key={idx} className="group">
                 {/* Image Box */}
                 <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-sm">
                   <Image

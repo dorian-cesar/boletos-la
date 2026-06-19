@@ -110,7 +110,7 @@ export function Footer({ country }: FooterProps) {
               />
             </Link>
 
-            <p className="text-xs md:text-sm text-neutral-400 leading-relaxed font-normal">
+            <p className="text-sm md:text-base text-neutral-400 leading-relaxed font-normal">
               {currentFooter.slogan}
               <br />
               <br />
@@ -129,32 +129,32 @@ export function Footer({ country }: FooterProps) {
 
           {/* Quick Links Column */}
           <div className="lg:col-span-2 space-y-4">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-300">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-300">
               Compañía
             </h4>
-            <ul className="space-y-3 text-xs text-neutral-400">
+            <ul className="space-y-3 text-sm text-neutral-400">
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <a href="#" className="hover:text-white transition-colors no-underline">
                   Sobre nosotros
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <a href="#" className="hover:text-white transition-colors no-underline">
                   Prensa
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <a href="#" className="hover:text-white transition-colors no-underline">
                   Trabaja con nosotros
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <a href="#" className="hover:text-white transition-colors no-underline">
                   Carreras
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <a href="#" className="hover:text-white transition-colors no-underline">
                   Contacto
                 </a>
               </li>
@@ -163,27 +163,27 @@ export function Footer({ country }: FooterProps) {
 
           {/* Help Links Column */}
           <div className="lg:col-span-2 space-y-4">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-300">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-300">
               Asistencia
             </h4>
-            <ul className="space-y-3 text-xs text-neutral-400">
+            <ul className="space-y-3 text-sm text-neutral-400">
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <a href="#" className="hover:text-white transition-colors no-underline">
                   Soporte
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <a href="#" className="hover:text-white transition-colors no-underline">
                   Reembolsos
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <a href="#" className="hover:text-white transition-colors no-underline">
                   Cambios de viaje
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <a href="#" className="hover:text-white transition-colors no-underline">
                   Preguntas frecuentes
                 </a>
               </li>
@@ -297,7 +297,7 @@ export function Footer({ country }: FooterProps) {
                   />
                 </svg>
                 <div className="flex flex-col leading-none">
-                  <div className="flex items-center text-[17.85px] font-bold tracking-tight">
+                  <div className="flex items-center text-[19.85px] font-bold tracking-tight">
                     <span className="text-[#4285F4]">G</span>
                     <span className="text-[#EA4335]">o</span>
                     <span className="text-[#FBBC05]">o</span>
@@ -305,7 +305,7 @@ export function Footer({ country }: FooterProps) {
                     <span className="text-[#34A853]">l</span>
                     <span className="text-[#EA4335]">e</span>
                   </div>
-                  <span className="text-[10.5px] font-medium text-white/60 whitespace-nowrap">
+                  <span className="text-[12.5px] font-medium text-white/60 whitespace-nowrap">
                     Safe browsing
                   </span>
                 </div>
@@ -352,10 +352,10 @@ export function Footer({ country }: FooterProps) {
                   </g>
                 </svg>
                 <div className="flex flex-col leading-none">
-                  <span className="text-[17.85px] font-bold text-white tracking-tight">
+                  <span className="text-[19.85px] font-bold text-white tracking-tight">
                     100%
                   </span>
-                  <span className="text-[10.5px] font-medium text-white/60 whitespace-nowrap">
+                  <span className="text-[12.5px] font-medium text-white/60 whitespace-nowrap">
                     Secure purchase
                   </span>
                 </div>
@@ -370,7 +370,7 @@ export function Footer({ country }: FooterProps) {
         <div className="container mx-auto px-4 max-w-[1440px] py-6">
           <div className="flex items-center justify-center gap-4">
             {/* Año + logo */}
-            <div className="flex items-center gap-2 text-white/50 text-sm">
+            <div className="flex items-center gap-2 text-white/50 text-base">
               <Image
                 src="/logos/logo-boletos-blanco.png"
                 alt="Boletos.la"

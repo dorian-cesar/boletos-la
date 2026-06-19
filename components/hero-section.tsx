@@ -75,7 +75,7 @@ export function HeroSection({ country }: HeroSectionProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Left Column: Text & Subtitles */}
           <div
-            className="lg:col-span-7 text-left text-white max-w-2xl"
+            className="lg:col-span-6 text-left text-white max-w-2xl"
             style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.6)" }}
           >
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-tight tracking-tight drop-shadow-sm">
@@ -92,8 +92,8 @@ export function HeroSection({ country }: HeroSectionProps) {
           </div>
 
           {/* Right Column: White Card Container for the Search Widget */}
-          <div className="lg:col-span-5 flex justify-end w-full">
-            <div className="bg-white rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.15)] overflow-visible p-5 w-full max-w-xl border border-gray-100/50">
+          <div className="lg:col-span-6 flex justify-end w-full">
+            <div className="bg-white rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.15)] overflow-visible p-5 w-full max-w-2xl border border-gray-100/50">
               <DistributionWidget
                 partnerNumber="830754"
                 locale={normalizedCountry === "brasil" ? "pt" : "es"}

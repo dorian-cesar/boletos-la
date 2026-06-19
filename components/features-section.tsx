@@ -120,50 +120,60 @@ export function FeaturesSection({ country }: FeaturesSectionProps) {
     brasil: {
       titleBoletos: "Como funciona o Boletos.la",
       step1Bold: "Busque seu destino:",
-      step1Text: " Digite qualquer cidade, endereço ou ponto de interesse na América Latina.",
+      step1Text:
+        " Digite qualquer cidade, endereço ou ponto de interesse na América Latina.",
       step2Bold: "Compare:",
-      step2Text: " Analisamos instantaneamente ônibus e hotéis para mostrar a combinação mais rápida e barata.",
+      step2Text:
+        " Analisamos instantaneamente ônibus e hotéis para mostrar a combinação mais rápida e barata.",
       step3Bold: "Reserve:",
-      step3Text: " Conectamos você com as operadoras oficiais para que você possa comprar suas passagens com segurança e rapidez.",
+      step3Text:
+        " Conectamos você com as operadoras oficiais para que você possa comprar suas passagens com segurança e rapidez.",
       labels: ["PAISES", "ROTAS", "PASSAGEIROS", "DESTINOS"],
     },
     default: {
       titleBoletos: "Cómo funciona boletos.la",
       step1Bold: "Busca tu destino:",
-      step1Text: " Ingresa cualquier ciudad, dirección o punto de interés en Latinoamérica.",
+      step1Text:
+        " Ingresa cualquier ciudad, dirección o punto de interés en Latinoamérica.",
       step2Bold: "Compara:",
-      step2Text: " Analizamos al instante buses y hoteles para mostrarte la combinación más rápida y la más económica.",
+      step2Text:
+        " Analizamos al instante buses y hoteles para mostrarte la combinación más rápida y la más económica.",
       step3Bold: "Reserva:",
-      step3Text: " Te conectamos con los operadores oficiales para que compres tus boletos de forma segura y rápido.",
+      step3Text:
+        " Te conectamos con los operadores oficiales para que compres tus boletos de forma segura y rápido.",
       labels: ["PAISES", "RUTAS", "PASAJEROS", "DESTINOS"],
-    }
+    },
   };
 
-  const currentText = normalizedCountry === "brasil" ? featuresText.brasil : featuresText.default;
+  const currentText =
+    normalizedCountry === "brasil" ? featuresText.brasil : featuresText.default;
 
   return (
     <section id="servicios" className="py-16 bg-white text-gray-850">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Header content */}
-        <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-[#4a4a4a] tracking-tight">
+        <div className="text-center max-w-6xl mx-auto mb-12 space-y-4">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-[#4a4a4a] tracking-tight">
             {currentText.titleBoletos}
           </h2>
-          <div className="text-gray-500 space-y-2 text-sm md:text-base leading-relaxed font-normal">
+          <div className="text-gray-500 space-y-4 text-base md:text-lg lg:text-xl leading-relaxed font-normal">
             <p>
-              <strong>{currentText.step1Bold}</strong>{currentText.step1Text}
+              <strong>{currentText.step1Bold}</strong>
+              {currentText.step1Text}
             </p>
             <p>
-              <strong>{currentText.step2Bold}</strong>{currentText.step2Text}
+              <strong>{currentText.step2Bold}</strong>
+              {currentText.step2Text}
             </p>
             <p>
-              <strong>{currentText.step3Bold}</strong>{currentText.step3Text}
+              <strong>{currentText.step3Bold}</strong>
+              {currentText.step3Text}
             </p>
           </div>
         </div>
 
         {/* Circular badges grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full mt-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full mt-16">
           {steps.map((step, idx) => {
             return (
               <div
@@ -171,19 +181,21 @@ export function FeaturesSection({ country }: FeaturesSectionProps) {
                 className="flex flex-col items-center text-center space-y-3"
               >
                 {/* Icon Image */}
-                <div className="relative w-20 h-20 flex items-center justify-center">
+                <div className="relative w-28 h-28 flex items-center justify-center">
                   <Image
                     src={step.iconPath}
                     alt={step.label}
                     fill
                     className="object-contain"
-                    sizes="80px"
+                    sizes="112px"
                   />
                 </div>
 
                 {/* Text and stats */}
                 <div className="space-y-1">
-                  <h4 className={`text-3xl md:text-4xl font-black ${step.textColor} mb-0.5`}>
+                  <h4
+                    className={`text-3xl md:text-4xl font-black ${step.textColor} mb-0.5`}
+                  >
                     <CountUpNumber
                       target={step.target}
                       suffix={step.suffix}
