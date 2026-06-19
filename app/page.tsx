@@ -15,7 +15,7 @@ interface HomePageProps {
   country?: string;
 }
 
-export default function HomePage({ country }: HomePageProps) {
+export default function HomePage({ country = "chile" }: HomePageProps) {
   useEffect(() => {
     // Usar getState para acceder directamente sin suscribir al componente
     const storeState = useBookingStore.getState();
@@ -45,11 +45,11 @@ export default function HomePage({ country }: HomePageProps) {
   return (
     <main className="min-h-screen bg-white">
       <Header />
-      <HeroSection />
+      <HeroSection country={country} />
       {/* <PartnersSection /> */}
-      <FeaturesSection />
-      <DestinationsSection />
-      <Footer />
+      <FeaturesSection country={country} />
+      <DestinationsSection country={country} />
+      <Footer country={country} />
       <ScrollToTop />
     </main>
   );

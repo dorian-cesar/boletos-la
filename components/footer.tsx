@@ -24,7 +24,72 @@ const socialLinks = [
   },
 ];
 
-export function Footer() {
+interface FooterProps {
+  country?: string;
+}
+
+export function Footer({ country }: FooterProps) {
+  const normalizedCountry = country?.toLowerCase() || "chile";
+
+  const footerTranslations = {
+    brasil: {
+      slogan: (
+        <>
+          Seu roteiro completo pela América Latina,
+          <br />
+          tudo em um só lugar.
+          <br />
+          <br />
+          Na boletos.la, conectamos cidades e destinos combinando ônibus e hospedagem.
+        </>
+      ),
+      compareTitle: "Compare opções: ",
+      compareDesc: "Veja horários e preços de viagens em tempo real de centenas de operadoras.",
+      routesTitle: "Roteiros porta a porta: ",
+      routesDesc: "Criamos seu itinerário exato do início ao fim.",
+      reserveTitle: "Reserva fácil: ",
+      reserveDesc: "Links diretos para bilheterias oficiais para uma viagem sem complicações.",
+      patagonia: (
+        <>
+          Da Patagônia ao Caribe,
+          <br />
+          nós traçamos a rota.
+          <br />
+          Você escolhe o caminho.
+        </>
+      ),
+    },
+    default: {
+      slogan: (
+        <>
+          Tu ruta completa por América Latina,
+          <br />
+          todo en un mismo lugar.
+          <br />
+          <br />
+          En boletos.la conectamos ciudades y destinos combinando viajes en autobús y alojamiento.
+        </>
+      ),
+      compareTitle: "Compara opciones: ",
+      compareDesc: "consulta horarios y precios en tiempo real de cientos de operadores.",
+      routesTitle: "Itinerarios puerta a puerta: ",
+      routesDesc: "diseñamos tu ruta exacta de principio a fin.",
+      reserveTitle: "Reserva sencilla: ",
+      reserveDesc: "enlaces directos a puntos de venta oficiales para un viaje sin complicaciones.",
+      patagonia: (
+        <>
+          Desde la Patagonia hasta el Caribe,
+          <br />
+          nosotros trazamos la ruta.
+          <br />
+          Tú eliges el camino.
+        </>
+      ),
+    }
+  };
+
+  const currentFooter = normalizedCountry === "brasil" ? footerTranslations.brasil : footerTranslations.default;
+
   return (
     <footer
       id="contacto"
@@ -46,28 +111,18 @@ export function Footer() {
             </Link>
 
             <p className="text-xs md:text-sm text-neutral-400 leading-relaxed font-normal">
-              Tu ruta completa por Latinoamérica, en un solo lugar.
-              <br />
-              En boletos.la conectamos ciudades y destinos combinando buses y
-              alojamiento.
+              {currentFooter.slogan}
               <br />
               <br />
-              <strong>Compara opciones:</strong> Visualiza tiempos y precios de
-              cientos de operadores en tiempo real.
+              <strong>{currentFooter.compareTitle}</strong>{currentFooter.compareDesc}
               <br />
-              <strong>Rutas puerta a puerta:</strong> Diseñamos tu itinerario
-              exacto de principio a fin.
+              <strong>{currentFooter.routesTitle}</strong>{currentFooter.routesDesc}
               <br />
-              <strong>Reserva fácil:</strong> Enlaces directos a las boleterías
-              oficiales para un viaje sin sorpresas.
+              <strong>{currentFooter.reserveTitle}</strong>{currentFooter.reserveDesc}
               <br />
               <br />
               <strong>
-                De la Patagonia al Caribe,
-                <br />
-                nosotros trazamos el mapa.
-                <br />
-                Tú eliges el camino.
+                {currentFooter.patagonia}
               </strong>
             </p>
           </div>
@@ -142,7 +197,7 @@ export function Footer() {
                 src="/images/boletos-celular-footer.jpg"
                 alt="Boletos.la en celular"
                 fill
-                className="object-cover object-center scale-125 lg:scale-150 transition-transform duration-500"
+                className="object-cover object-center scale-110 lg:scale-115 -translate-y-4 lg:-translate-y-4 transition-transform duration-500"
                 sizes="(max-width: 1024px) 100vw, 400px"
               />
             </div>

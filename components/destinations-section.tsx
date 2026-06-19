@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { MapPin } from "lucide-react";
 import Image from "next/image";
 
 const regionDestinations = [
@@ -51,6 +49,29 @@ const popularCities = [
     image: "/images/lima.jpg",
   },
 ];
+
+const countryDestinations: Record<string, typeof popularCities> = {
+  argentina: [
+    { name: "BARILOCHE", image: "/images/argentina-1.webp" },
+    { name: "MENDOZA", image: "/images/argentina-2.webp" },
+    { name: "MAR DEL PLATA", image: "/images/argentina-3.webp" },
+  ],
+  brasil: [
+    { name: "SALVADOR", image: "/images/brasil-1.webp" },
+    { name: "SAO PAULO", image: "/images/brasil-2.webp" },
+    { name: "FOZ DO IGUAÇU", image: "/images/brasil-3.jpg" },
+  ],
+  chile: [
+    { name: "VALPARAISO", image: "/images/chile-1.webp" },
+    { name: "PUERTO VARAS", image: "/images/chile-2.webp" },
+    { name: "LA SERENA", image: "/images/chile-3.webp" },
+  ],
+    colombia: [
+      { name: "CARTAGENA", image: "/images/colombia-1.webp" },
+      { name: "MEDELLÍN", image: "/images/colombia-2.webp" },
+      { name: "CALI", image: "/images/colombia-3.webp" }
+    ]
+  };
 
 const newRegionDestinations = [
   {
@@ -103,13 +124,20 @@ const quickRoutes = [
   "COCHABAMBA - LPB",
 ];
 
-export function DestinationsSection() {
+interface DestinationsSectionProps {
+  country?: string;
+}
+
+export function DestinationsSection({ country }: DestinationsSectionProps) {
   const handleScrollToWidget = () => {
     const widget = document.getElementById("distribusion-search");
     if (widget) {
       widget.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   };
+
+  const citiesToDisplay =
+    (country && countryDestinations[country.toLowerCase()]) || popularCities;
 
   return (
     <section id="destinos" className="py-16 bg-[#f8f9fa] text-gray-800">
@@ -227,12 +255,8 @@ export function DestinationsSection() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {popularCities.map((city, idx) => (
-              <div
-                key={idx}
-                className="group cursor-pointer"
-                onClick={handleScrollToWidget}
-              >
+            {citiesToDisplay.map((city, idx) => (
+              <div key={idx} className="group" onClick={handleScrollToWidget}>
                 {/* Image Box */}
                 <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-sm">
                   <Image

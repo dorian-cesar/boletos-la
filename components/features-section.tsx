@@ -1,59 +1,46 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { Globe, LucideIcon } from "lucide-react";
 
 interface StepItem {
-  iconPath?: string;
-  icon?: LucideIcon;
-  target?: number;
-  suffix?: string;
-  staticValue?: string;
+  iconPath: string;
+  target: number;
+  suffix: string;
   useSeparator?: boolean;
   label: string;
-  sublabel: string;
-  colorClass: string;
+  textColor: string;
 }
 
 const steps: StepItem[] = [
   {
-    icon: Globe,
+    iconPath: "/images/iconos-web/paises-icon.png",
     target: 12,
     suffix: "",
-    label: "PAÍSES",
-    sublabel: "Cobertura regional",
-    colorClass: "bg-[#7c3aed]",
+    label: "PAISES",
+    textColor: "text-[#eb5b24]",
   },
   {
-    iconPath: "/images/iconos-web/icono-web-1.png",
-    target: 40,
-    suffix: " +",
-    label: "EMPRESAS",
-    sublabel: "Más opciones de ruta",
-    colorClass: "bg-[#eb5b24]",
-  },
-  {
-    iconPath: "/images/iconos-web/icono-web-3.png",
-    target: 200,
-    suffix: "",
-    label: "DESTINOS",
-    sublabel: "Amplia cobertura",
-    colorClass: "bg-[#00c7cc]",
-  },
-  {
-    iconPath: "/images/iconos-web/icono-web-2.png",
-    target: 500000,
+    iconPath: "/images/iconos-web/rutas-icon.png",
+    target: 5000,
     suffix: "",
     useSeparator: true,
-    label: "VIAJEROS",
-    sublabel: "Satisfechos",
-    colorClass: "bg-[#e5a924]",
+    label: "RUTAS",
+    textColor: "text-[#e5a924]",
   },
   {
-    iconPath: "/images/iconos-web/icono-web-4.png",
-    staticValue: "24/7",
-    label: "SOPORTE",
-    sublabel: "En tiempo real",
-    colorClass: "bg-[#007b80]",
+    iconPath: "/images/iconos-web/pasajeros-icon.png",
+    target: 20000,
+    suffix: "",
+    useSeparator: true,
+    label: "PASAJEROS",
+    textColor: "text-[#00c7cc]",
+  },
+  {
+    iconPath: "/images/iconos-web/destinos-icon.png",
+    target: 3000,
+    suffix: "",
+    useSeparator: true,
+    label: "DESTINOS",
+    textColor: "text-[#007b80]",
   },
 ];
 
@@ -72,7 +59,6 @@ function CountUpNumber({
   const [isIntersecting, setIsIntersecting] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
 
-  // Dynamic duration: larger numbers animate slightly longer (between 800ms and 2400ms)
   const animDuration =
     duration || Math.max(800, Math.min(2400, Math.log10(target) * 420));
 
@@ -98,8 +84,6 @@ function CountUpNumber({
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
       const progress = Math.min((timestamp - startTimestamp) / animDuration, 1);
-
-      // Ease out cubic: fast at start, decelerating at end
       const easedProgress = 1 - Math.pow(1 - progress, 3);
 
       setCount(Math.floor(easedProgress * target));
@@ -125,74 +109,89 @@ function CountUpNumber({
   );
 }
 
-export function FeaturesSection() {
+interface FeaturesSectionProps {
+  country?: string;
+}
+
+export function FeaturesSection({ country }: FeaturesSectionProps) {
+  const normalizedCountry = country?.toLowerCase() || "chile";
+
+  const featuresText = {
+    brasil: {
+      titleBoletos: "Como funciona o Boletos.la",
+      step1Bold: "Busque seu destino:",
+      step1Text: " Digite qualquer cidade, endereço ou ponto de interesse na América Latina.",
+      step2Bold: "Compare:",
+      step2Text: " Analisamos instantaneamente ônibus e hotéis para mostrar a combinação mais rápida e barata.",
+      step3Bold: "Reserve:",
+      step3Text: " Conectamos você com as operadoras oficiais para que você possa comprar suas passagens com segurança e rapidez.",
+      labels: ["PAISES", "ROTAS", "PASSAGEIROS", "DESTINOS"],
+    },
+    default: {
+      titleBoletos: "Cómo funciona boletos.la",
+      step1Bold: "Busca tu destino:",
+      step1Text: " Ingresa cualquier ciudad, dirección o punto de interés en Latinoamérica.",
+      step2Bold: "Compara:",
+      step2Text: " Analizamos al instante buses y hoteles para mostrarte la combinación más rápida y la más económica.",
+      step3Bold: "Reserva:",
+      step3Text: " Te conectamos con los operadores oficiales para que compres tus boletos de forma segura y rápido.",
+      labels: ["PAISES", "RUTAS", "PASAJEROS", "DESTINOS"],
+    }
+  };
+
+  const currentText = normalizedCountry === "brasil" ? featuresText.brasil : featuresText.default;
+
   return (
-    <section id="servicios" className="py-16 bg-white text-gray-800">
-      <div className="container mx-auto px-4 max-w-[1440px]">
+    <section id="servicios" className="py-16 bg-white text-gray-850">
+      <div className="container mx-auto px-4 max-w-6xl">
         {/* Header content */}
-        <div className="text-center max-w-5xl mx-auto mb-16 space-y-4">
-          <h2 className="text-4xl md:text-5xl font-extrabold text-[#3a3a3a] tracking-tight">
-            Cómo funciona boletos.la
+        <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-[#4a4a4a] tracking-tight">
+            {currentText.titleBoletos}
           </h2>
-          <div className="text-gray-600 space-y-4 text-base md:text-lg lg:text-xl leading-relaxed font-normal">
+          <div className="text-gray-500 space-y-2 text-sm md:text-base leading-relaxed font-normal">
             <p>
-              <strong>Busca tu destino:</strong> Ingresa cualquier ciudad,
-              dirección o point de interés en Latinoamérica.
+              <strong>{currentText.step1Bold}</strong>{currentText.step1Text}
             </p>
             <p>
-              <strong>Compara:</strong> Analizamos al instante buses y hoteles
-              para mostrarte la combinación más rápida y la más económica.
+              <strong>{currentText.step2Bold}</strong>{currentText.step2Text}
             </p>
             <p>
-              <strong>Reserva:</strong> Te conectamos con los operadores
-              oficiales para que compres tus boletos de forma segura y rápido.
+              <strong>{currentText.step3Bold}</strong>{currentText.step3Text}
             </p>
           </div>
         </div>
 
         {/* Circular badges grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 max-w-7xl mx-auto mt-12 justify-center">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full mt-12">
           {steps.map((step, idx) => {
             return (
               <div
                 key={idx}
-                className="flex flex-col items-center text-center space-y-4"
+                className="flex flex-col items-center text-center space-y-3"
               >
-                {/* Icon Image or Lucide Icon */}
-                <div className="relative w-24 h-24 flex items-center justify-center">
-                  {step.icon ? (
-                    <div className="w-20 h-20 rounded-full bg-[#00c7cc]/10 flex items-center justify-center text-[#00c7cc]">
-                      <step.icon className="w-11 h-11 stroke-[1.5]" />
-                    </div>
-                  ) : (
-                    <Image
-                      src={step.iconPath!}
-                      alt={step.label}
-                      fill
-                      className="object-contain"
-                      sizes="96px"
-                    />
-                  )}
+                {/* Icon Image */}
+                <div className="relative w-20 h-20 flex items-center justify-center">
+                  <Image
+                    src={step.iconPath}
+                    alt={step.label}
+                    fill
+                    className="object-contain"
+                    sizes="80px"
+                  />
                 </div>
 
                 {/* Text and stats */}
                 <div className="space-y-1">
-                  <h4 className="text-xl md:text-2xl lg:text-3xl font-extrabold text-gray-800 mb-1">
-                    {step.staticValue ? (
-                      step.staticValue
-                    ) : (
-                      <CountUpNumber
-                        target={step.target!}
-                        suffix={step.suffix!}
-                        useSeparator={step.useSeparator}
-                      />
-                    )}
+                  <h4 className={`text-3xl md:text-4xl font-black ${step.textColor} mb-0.5`}>
+                    <CountUpNumber
+                      target={step.target}
+                      suffix={step.suffix}
+                      useSeparator={step.useSeparator}
+                    />
                   </h4>
-                  <p className="text-sm md:text-base font-bold tracking-wider text-gray-400 uppercase">
-                    {step.label}
-                  </p>
-                  <p className="text-sm text-gray-500 font-semibold">
-                    {step.sublabel}
+                  <p className="text-xs md:text-sm font-bold tracking-wider text-gray-400 uppercase">
+                    {currentText.labels[idx]}
                   </p>
                 </div>
               </div>
