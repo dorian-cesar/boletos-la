@@ -59,7 +59,7 @@ const countryDestinations: Record<string, typeof popularCities> = {
   brasil: [
     { name: "SALVADOR", image: "/images/brasil-1.webp" },
     { name: "SAO PAULO", image: "/images/brasil-2.webp" },
-    { name: "FOZ DO IGUAÇU", image: "/images/brasil-3.jpg" },
+    { name: "FOZ DO IGUAÇU", image: "/images/brasil-3.webp" },
   ],
   chile: [
     { name: "VALPARAISO", image: "/images/chile-1.webp" },

@@ -118,13 +118,25 @@ div[class*="Popover_dropdown"] {
   transform-origin: top left !important;
 }
 
-#distribusion-search button.ui-button:not([aria-label]) {
+#distribusion-search {
+  --primary: #1a1a1a !important;
+  --color-primary: #1a1a1a !important;
+  --primary-hover: #2b2b2b !important;
+  --color-primary-hover: #2b2b2b !important;
+  --color-text-on-primary: #ffffff !important;
+}
+
+#distribusion-search button[type="submit"],
+#distribusion-search button.ui-button,
+#distribusion-search button:not([aria-label]) {
   color: #ffffff !important;
   background-color: #1a1a1a !important;
   border-color: #1a1a1a !important;
 }
 
-#distribusion-search button.ui-button:not([aria-label]):hover {
+#distribusion-search button[type="submit"]:hover,
+#distribusion-search button.ui-button:hover,
+#distribusion-search button:not([aria-label]):hover {
   background-color: #2b2b2b !important;
   border-color: #2b2b2b !important;
 }
