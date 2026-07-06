@@ -33,6 +33,9 @@ export function proxy(request: NextRequest) {
     if (country === 'co') {
       return NextResponse.redirect(new URL('/colombia', request.url));
     }
+    if (country === 'py') {
+      return NextResponse.redirect(new URL('/paraguay', request.url));
+    }
   }
 
   return NextResponse.next();

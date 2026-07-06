@@ -71,6 +71,11 @@ const countryDestinations: Record<string, typeof popularCities> = {
     { name: "MEDELLÍN", image: "/images/colombia-2.webp" },
     { name: "CALI", image: "/images/colombia-3.webp" },
   ],
+  paraguay: [
+    { name: "SAN BERNARDINO", image: "/images/paraguay-1.webp" },
+    { name: "ENCARNACIÓN", image: "/images/paraguay-2.webp" },
+    { name: "CIUDAD DEL ESTE", image: "/images/paraguay-3.webp" },
+  ],
 };
 
 const newRegionDestinations = [

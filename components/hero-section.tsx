@@ -24,6 +24,7 @@ export function HeroSection({ country }: HeroSectionProps) {
     brasil: "/images/hero-brasil.webp",
     chile: "/images/hero-chile.webp",
     colombia: "/images/hero-colombia.webp",
+    paraguay: "/images/hero-paraguay.webp",
   };
   const heroImageSrc = (country && heroImages[country.toLowerCase()]) || "/images/hero.jpg";
 
@@ -54,6 +55,11 @@ export function HeroSection({ country }: HeroSectionProps) {
       title: "Tiquetes de bus en Colombia al instante",
       subtitle1: "PAGA CON PSE, NEQUI O TARJETA.",
       subtitle2: "CONFIRMACIÓN INMEDIATA",
+    },
+    paraguay: {
+      title: "Pasajes de bus por todo Paraguay",
+      subtitle1: "COMPRA CON WEBPAY, ONEPAY",
+      subtitle2: "Y RETIRO EN TERMINAL",
     },
   };
 
@@ -105,7 +111,9 @@ export function HeroSection({ country }: HeroSectionProps) {
                 currency={
                   normalizedCountry === "brasil" ? "BRL" :
                   normalizedCountry === "argentina" ? "ARS" :
-                  normalizedCountry === "colombia" ? "COP" : "USD"
+                  normalizedCountry === "colombia" ? "COP" :
+                  normalizedCountry === "chile" ? "CLP" :
+                  normalizedCountry === "paraguay" ? "PYG" : "USD"
                 }
                 layout="vertical"
               />
