@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { format, parse } from "date-fns";
 import { es } from "date-fns/locale";
 import { BookingProgress } from "@/components/booking-progress";
@@ -22,6 +22,7 @@ type Status = "checking" | "pending" | "cancelled" | "failed";
 
 export default function ConfirmationLoading({ hash, onReady }: Props) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const processingRef = useRef(false);
   const [status, setStatus] = useState<Status>("checking");
   const [pagoparHash, setPagoparHash] = useState<string | null>(null);
@@ -365,6 +366,13 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
       }
 
       if (hash === "bancard") {
+        const paymentStatus = searchParams.get("status");
+        if (paymentStatus === "payment_fail") {
+          console.error("El pago fue rechazado o cancelado en el iframe de Bancard.");
+          setStatus("failed");
+          return;
+        }
+
         const shopProcessId =
           bancardShopProcessId ||
           (typeof window !== "undefined"
@@ -388,6 +396,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               shopProcessId: shopProcessId ? parseInt(shopProcessId) : 0,
               processId: processId,
               id: docNum,
+              amount: totalPrice.toFixed(2)
             }),
           });
           const data = await res.json();
@@ -395,12 +404,13 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           const responseCode =
             data.data?.confirmation?.responseCode ||
             data.data?.confirmation?.response_code ||
-            data.data?.rawResponse?.confirmation?.response_code;
+            data.data?.rawResponse?.confirmation?.response_code ||
+            data.operation?.response_code;
 
           const isSuccess =
-            (data.status === "success" &&
-              data.data?.status === "success" &&
-              responseCode === "00") ||
+            (data.status === "success" && responseCode === "00") ||
+            (data.status === "success" && data.operation?.response === "S") ||
+            (data.status === "success" && data.data?.status === "success") ||
             data.status === "approved" ||
             data.success === true ||
             data.data?.processed === true;
@@ -424,10 +434,11 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               fecha_pago: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
               monto: totalPrice.toFixed(2),
               hash_pedido:
-                data.data?.processId || shopProcessId || "bancard-payment",
-              numero_pedido: shopProcessId || "bancard-payment",
-              token: data.data?.processId || shopProcessId || "bancard-payment",
+                data.operation?.token || data.data?.processId || shopProcessId || "bancard-payment",
+              numero_pedido: data.operation?.ticket_number || shopProcessId || "bancard-payment",
+              token: data.operation?.token || data.data?.processId || shopProcessId || "bancard-payment",
               numero_factura:
+                data.operation?.billing_response?.data?.invoice_number ||
                 data.data?.confirmation?.electronicBillNumber || "",
             };
 
@@ -454,6 +465,23 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                   "tickets but got",
                   actualTicketsCount,
                 );
+
+                // Realizar rollback porque los asientos no se pudieron comprar
+                try {
+                  console.log("Iniciando rollback por falla de GDS...");
+                  await fetch("/api/bancard/rollback-transaccion", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      shopProcessId: shopProcessId ? parseInt(shopProcessId) : 0,
+                      processId: processId
+                    }),
+                  });
+                  console.log("Rollback de Bancard completado.");
+                } catch (rollbackErr) {
+                  console.error("Error al hacer rollback de Bancard:", rollbackErr);
+                }
+
                 setStatus("failed");
                 return;
               }

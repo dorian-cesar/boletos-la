@@ -1,79 +1,48 @@
 import { NextResponse } from "next/server";
-import crypto from "crypto";
 
 export async function POST() {
+  const bancardUrl = process.env.APP_BASE_URL || "https://wit-bancard.dev-wit.com";
   try {
-    // Cargar llave privada del .env y limpiar comillas si existen
-    const rawPrivateKey = process.env.BANCARD_PRIVATE_KEY || "";
-    const privateKey = rawPrivateKey.replace(/^["']|["']$/g, "");
-
     const amount = "10330.00";
-    const currency = "PYG";
-
-    // 2. Generar shop_process_id de 15 dígitos de forma aleatoria como en el script de Postman
-    const shopProcessId = Math.floor(
-      100000000000000 + Math.random() * 900000000000000,
-    );
-
-    // 3. Generar token MD5 obligatorio
-    const stringToHash = `${privateKey}${shopProcessId}${amount}${currency}`;
-    const token = crypto.createHash("md5").update(stringToHash).digest("hex");
-
-    // Cargar llave pública del .env y limpiar comillas
-    const rawPublicKey = process.env.BANCARD_PUBLIC_KEY || "";
-    const publicKey = rawPublicKey.replace(/^["']|["']$/g, "");
-
-    // 4. Armar el payload exacto para Bancard
+    const client_ruc = "44444401-7";
+    const client_name = "JUAN GONZALEZ";
+    const client_email = "juangonzalez@mail.com.py";
+    
     const payload = {
-      public_key: publicKey,
-      operation: {
-        token: token,
-        shop_process_id: shopProcessId,
-        currency: currency,
-        amount: amount,
-        iva_amount: "00.00",
-        description: "Ejemplo de pago",
-        // prod
-        return_url:
-          "https://boletos-la-dev.netlify.app/booking/confirmation/bancard",
-        cancel_url:
-          "https://boletos-la-dev.netlify.app/booking/confirmation/bancard",
-        // dev
-        // return_url: "http://localhost:3000/booking/confirmation/bancard",
-        // cancel_url: "http://localhost:3000/booking/confirmation/bancard",
-        billing: {
-          client_ruc: "44444401-7",
-          client_name: "JUAN GONZALEZ",
-          client_email: "[EMAIL_ADDRESS]",
-          commerce_stamp: "12559969",
-          commerce_expedition_point: "001",
-          commerce_establishment: "001",
-          details: [
-            {
-              description: "item 1",
-              amount: "10000.00",
-              iva_rate: 0,
-              total_items: 1,
-            },
-            {
-              description: "item 2",
-              amount: "330.00",
-              iva_rate: 0,
-              total_items: 1,
-            },
-          ],
-        },
+      action: "single-buy",
+      servicio: "Tester Panel Staging",
+      canal: "web",
+      id: `TEST-STAGING-${Date.now()}`,
+      amount: Number(amount),
+      currency: "PYG",
+      preauthorization: true,
+      description: "Compra de prueba con Factura Electronica en Staging",
+      returnUrl: "https://boletos-la-dev.netlify.app/booking/confirmation/bancard",
+      cancelUrl: "https://boletos-la-dev.netlify.app/booking/confirmation/bancard",
+      billing: {
+        client_ruc: client_ruc,
+        client_name: client_name,
+        client_email: client_email,
+        details: [
+          {
+            description: "item 1 de staging",
+            amount: 10000.00,
+            iva_rate: 10,
+            total_items: 1,
+          },
+          {
+            description: "item 2 de staging",
+            amount: 330.00,
+            iva_rate: 10,
+            total_items: 1,
+          },
+        ],
       },
     };
 
-    // 5. Petición al endpoint de Staging de Bancard
-    const targetUrl =
-      "https://vpos.infonet.com.py:8888/vpos/api/0.3/single_buy";
-
-    console.log(
-      "[Bancard Staging TEST] Enviando payload:",
-      JSON.stringify(payload, null, 2),
-    );
+    const targetUrl = `${bancardUrl}/api/pagosimple`;
+    console.log("[Bancard Staging TEST] Enviando payload a Gateway:", targetUrl);
+    console.log("[Bancard Staging TEST] Payload:", JSON.stringify(payload, null, 2));
 
     const response = await fetch(targetUrl, {
       method: "POST",
@@ -85,33 +54,56 @@ export async function POST() {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(
-        "[Bancard Staging TEST] Error de red de Bancard:",
-        errorText,
-      );
-      throw new Error(
-        `Error de red en pasarela Bancard: ${response.status} - ${errorText}`,
-      );
+      console.error("[Bancard Staging TEST] Error de red Gateway:", errorText);
+      throw new Error(`Error de red en Gateway: ${response.status} - ${errorText}`);
     }
 
     const apiResponse = await response.json();
-    console.log(
-      "[Bancard Staging TEST] Respuesta de Bancard:",
-      JSON.stringify(apiResponse, null, 2),
-    );
+    console.log("[Bancard Staging TEST] Respuesta del Gateway:", JSON.stringify(apiResponse, null, 2));
 
-    if (apiResponse.status === "success" || apiResponse.process_id) {
+    if (
+      apiResponse.status === "success" ||
+      apiResponse.process_id ||
+      apiResponse.data?.processId
+    ) {
+      const processId =
+        apiResponse.process_id ||
+        apiResponse.data?.processId ||
+        apiResponse.data?.rawResponse?.process_id;
+      
+      const iframeUrl = apiResponse.url || apiResponse.data?.iframeUrl || null;
+      let shopProcessId = apiResponse.shop_process_id || apiResponse.data?.shopProcessId || 0;
+
+      // Consultar el shopProcessId con el endpoint de soporte
+      if (!shopProcessId && processId) {
+        try {
+          const shopUrl = `${bancardUrl}/api/bancard/shop-process-id/${processId}`;
+          console.log("[Bancard Staging TEST] Fetching shopProcessId from:", shopUrl);
+          const shopRes = await fetch(shopUrl);
+          if (shopRes.ok) {
+            const shopData = await shopRes.json();
+            if (shopData.data?.shopProcessId) {
+              shopProcessId = shopData.data.shopProcessId;
+            }
+          } else {
+             console.log("[Bancard Staging TEST] Error en shop-process-id endpoint:", shopRes.status);
+          }
+        } catch (err) {
+          console.error("No se pudo obtener el shopProcessId de soporte:", err);
+        }
+      }
+
       return NextResponse.json({
         success: true,
         shopProcessId: shopProcessId,
-        processId: apiResponse.process_id,
-        url: apiResponse.url || null,
+        processId: processId,
+        url: iframeUrl,
       });
     } else {
       const errorMsg =
         apiResponse.messages?.[0]?.description ||
         apiResponse.message ||
-        "Error desconocido devuelto por Bancard";
+        "Error desconocido devuelto por el Gateway";
       throw new Error(errorMsg);
     }
   } catch (error: any) {
@@ -119,10 +111,9 @@ export async function POST() {
     return NextResponse.json(
       {
         success: false,
-        message:
-          error.message || "Error interno al procesar el pago de prueba.",
+        message: error.message || "Error interno al procesar el pago de prueba.",
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

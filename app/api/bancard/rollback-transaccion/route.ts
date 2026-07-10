@@ -3,27 +3,24 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { processId, amount } = body;
+    const { shopProcessId, processId } = body;
 
-    if (!processId || !amount) {
+    if (!shopProcessId && !processId) {
       return NextResponse.json(
-        { success: false, message: "processId y amount son requeridos" },
+        { success: false, message: "shopProcessId o processId son requeridos" },
         { status: 400 }
       );
     }
 
     const baseUrl = process.env.APP_BASE_URL || "https://wit-bancard.dev-wit.com";
-    if (!baseUrl) {
-      throw new Error("Falta la variable de entorno APP_BASE_URL");
-    }
-
     const targetUrl = `${baseUrl}/api/pagosimple`;
-    console.log("[Bancard Preauth Confirm API] Calling URL:", targetUrl);
+    console.log("[Bancard Rollback API] Calling URL:", targetUrl);
 
+    // Asumimos que la acción es "rollback" en base a la documentación
     const payload = {
-      action: "preauth-confirm",
-      processId: processId,
-      amount: Number(amount)
+      action: "rollback",
+      shopProcessId: Number(shopProcessId || 0),
+      processId: processId
     };
 
     const response = await fetch(targetUrl, {
@@ -36,17 +33,15 @@ export async function POST(request: Request) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(
-        `Error de red al confirmar transacción: ${response.status} - ${errorText}`
-      );
+      throw new Error(`Error de red al cancelar transacción: ${response.status} - ${errorText}`);
     }
 
     const apiResponse = await response.json();
-    console.log("[Bancard Confirmation API] Response:", JSON.stringify(apiResponse, null, 2));
+    console.log("[Bancard Rollback API] Response:", JSON.stringify(apiResponse, null, 2));
     
     return NextResponse.json(apiResponse);
   } catch (error: any) {
-    console.error("Error confirmando transacción:", error);
+    console.error("Error cancelando (rollback) transacción:", error);
     return NextResponse.json(
       { success: false, message: error.message },
       { status: 500 }
