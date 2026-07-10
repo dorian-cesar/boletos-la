@@ -1,11 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  request: Request,
-  { params }: { params: { processId: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ processId: string }> }
 ) {
   const bancardUrl = process.env.APP_BASE_URL || "https://wit-bancard.dev-wit.com";
-  const { processId } = params;
+  const { processId } = await params;
 
   if (!processId) {
     return NextResponse.json(
