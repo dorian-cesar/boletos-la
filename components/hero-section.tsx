@@ -1,99 +1,48 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { ChevronDown, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
+import { ChevronDown } from "lucide-react";
+import Image from "next/image";
 import { SearchForm } from "@/components/search-form";
 
 export function HeroSection() {
   const [mounted, setMounted] = useState(false);
-  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     setMounted(true);
-
-    // Precarga del video
-    const preloadVideo = () => {
-      const video = document.createElement("video");
-      video.preload = "auto";
-      video.src = "/videos/banner-boletos.mp4";
-
-      video.onloadeddata = () => {
-        setIsVideoLoaded(true);
-
-        // Intenta reproducir el video principal
-        setTimeout(() => {
-          if (videoRef.current) {
-            const playPromise = videoRef.current.play();
-            if (playPromise !== undefined) {
-              playPromise.catch(() => {
-                // Si falla el autoplay, intentamos con user gesture más tarde
-                console.log(
-                  "Autoplay bloqueado, se necesitará interacción del usuario",
-                );
-              });
-            }
-          }
-        }, 500);
-      };
-    };
-
-    preloadVideo();
   }, []);
 
   if (!mounted) return null;
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Video Background optimizado */}
-      <div className="absolute inset-0">
-        {/* Placeholder mientras carga */}
-        {!isVideoLoaded && (
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-black/70 to-secondary/20">
-            <img
-              src="/placeholder-video.png"
-              alt="Bus viajando por Paraguay"
-              className="w-full h-full object-cover opacity-50"
-              loading="eager"
-            />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Loader2 className="h-12 w-12 text-white animate-spin" />
-            </div>
-          </div>
-        )}
+      {/* Background optimizado */}
+      <div className="absolute inset-0 bg-black">
+        {/* 1. Imagen de carga rápida (LCP optimizado) usando next/image */}
+        <Image
+          src="/placeholder-video.png"
+          alt="Fondo de bus viajando"
+          fill
+          priority
+          quality={85}
+          sizes="100vw"
+          className="object-cover opacity-60"
+        />
 
-        {/* Video optimizado */}
+        {/* 2. Video de fondo de carga nativa asíncrona */}
         <video
-          ref={videoRef}
           autoPlay
           muted
           loop
           playsInline
-          preload="auto"
-          className={cn(
-            "w-full h-full object-cover transition-opacity duration-1000",
-            isVideoLoaded ? "opacity-100" : "opacity-0",
-          )}
-          onCanPlayThrough={() => {
-            // Backup para asegurar que se marque como cargado
-            if (!isVideoLoaded) {
-              setIsVideoLoaded(true);
-            }
-          }}
+          className="absolute inset-0 w-full h-full object-cover opacity-80"
         >
           <source src="/videos/banner-boletos.mp4" type="video/mp4" />
-
-          {/* Fallback image si el video no carga */}
-          <img
-            src="/placeholder-video.png"
-            alt="Bus viajando por Paraguay"
-            className="w-full h-full object-cover"
-          />
         </video>
 
-        {/* Overlay oscuro para mejor legibilidad */}
-        <div className="absolute inset-0 bg-black/60" />
+        {/* Overlay oscuro para mejor legibilidad de los textos */}
+        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
       </div>
 
       {/* Content */}
