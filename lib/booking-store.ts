@@ -473,7 +473,7 @@ export const generateTrips = (
       departureTime: time,
       arrivalTime: `${arrivalHour.toString().padStart(2, "0")}:${arrivalMinute}`,
       duration: `${duration}h ${Math.random() > 0.5 ? "30" : "00"}min`,
-      price: 8300, // Equivalent to ~1000 CLP
+      price: 6549, // Equivalent to 1000 CLP
       busType: busTypes[index % busTypes.length],
       company: companies[index % companies.length],
       amenities: amenities[index % amenities.length],
