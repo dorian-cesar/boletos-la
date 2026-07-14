@@ -213,8 +213,10 @@ export default function CheckoutPage() {
     if (!script) {
       script = document.createElement("script");
       script.id = scriptId;
-      script.src =
-        "https://vpos.infonet.com.py:8888/checkout/javascript/dist/bancard-checkout-4.0.0.js";
+      const vposUrl =
+        process.env.NEXT_PUBLIC_BANCARD_VPOS_URL ||
+        "https://vpos.infonet.com.py:8888";
+      script.src = `${vposUrl}/checkout/javascript/dist/bancard-checkout-4.0.0.js`;
       script.async = true;
       script.onload = () => {
         setTimeout(checkContainerAndInitialize, 100);

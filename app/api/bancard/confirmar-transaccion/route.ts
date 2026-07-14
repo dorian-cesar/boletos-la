@@ -12,9 +12,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const baseUrl = process.env.APP_BASE_URL || "https://wit-bancard.dev-wit.com";
+    const baseUrl = process.env.BANCARD_API_URL || "https://wit-bancard.dev-wit.com";
     if (!baseUrl) {
-      throw new Error("Falta la variable de entorno APP_BASE_URL");
+      throw new Error("Falta la variable de entorno BANCARD_API_URL");
     }
 
     const targetUrl = `${baseUrl}/api/pagosimple`;

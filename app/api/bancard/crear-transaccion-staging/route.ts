@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 export async function POST() {
-  const bancardUrl = process.env.APP_BASE_URL || "https://wit-bancard.dev-wit.com";
+  const bancardUrl = process.env.BANCARD_API_URL || "https://wit-bancard.dev-wit.com";
   try {
     const amount = "10330.00";
     const client_ruc = "44444401-7";

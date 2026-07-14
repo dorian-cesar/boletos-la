@@ -12,7 +12,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const baseUrl = process.env.APP_BASE_URL || "https://wit-bancard.dev-wit.com";
+    const baseUrl = process.env.BANCARD_API_URL || "https://wit-bancard.dev-wit.com";
     const targetUrl = `${baseUrl}/api/pagosimple`;
     console.log("[Bancard Rollback API] Calling URL:", targetUrl);
 

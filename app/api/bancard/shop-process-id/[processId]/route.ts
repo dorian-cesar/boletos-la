@@ -4,7 +4,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ processId: string }> }
 ) {
-  const bancardUrl = process.env.APP_BASE_URL || "https://wit-bancard.dev-wit.com";
+  const bancardUrl = process.env.BANCARD_API_URL || "https://wit-bancard.dev-wit.com";
   const { processId } = await params;
 
   if (!processId) {
