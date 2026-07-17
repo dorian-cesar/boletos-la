@@ -127,6 +127,11 @@ export default function SeatsPage() {
 
         const data = await res.json();
         const blockData = data.data || data;
+        
+        console.log("=== INSPECCIÓN GDS BLOCK (IDA) ===");
+        console.log(JSON.stringify(blockData, null, 2));
+        console.log("==================================");
+
         const isGdsError =
           blockData.success === false ||
           (blockData.providerResult && blockData.providerResult !== "0");
@@ -179,6 +184,11 @@ export default function SeatsPage() {
 
           const returnData = await returnRes.json();
           const returnBlockData = returnData.data || returnData;
+
+          console.log("=== INSPECCIÓN GDS BLOCK (VUELTA) ===");
+          console.log(JSON.stringify(returnBlockData, null, 2));
+          console.log("=====================================");
+
           const isReturnGdsError =
             returnBlockData.success === false ||
             (returnBlockData.providerResult &&

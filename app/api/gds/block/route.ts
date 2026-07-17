@@ -90,6 +90,10 @@ export async function POST(req: NextRequest) {
     }
 
     const data = await apiRes.json();
+    
+    console.log("=== INSPECCIÓN CRUDA GDS BLOCK (BACKEND) ===");
+    console.log(JSON.stringify(data, null, 2));
+    console.log("============================================");
 
     return NextResponse.json(data, {
       headers: response.headers,
