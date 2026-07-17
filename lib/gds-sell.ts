@@ -40,6 +40,47 @@ async function doSell(payload: any, label: string) {
   }
 }
 
+async function retrySellWithNewBlock(payload: any, originalSeats: any[], label: string) {
+  console.log(`[sell ${label}] Intentando re-bloquear asientos por expiración (Error 233)...`);
+  try {
+    const blockRes = await fetch("/api/gds/block", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        serviceId: payload.serviceId,
+        originId: payload.originId,
+        destinationId: payload.destinationId,
+        seats: originalSeats.map((s: any) => s.number).join(", "),
+      }),
+    });
+
+    if (!blockRes.ok) {
+      console.error(`[sell ${label}] Falló el re-bloqueo:`, blockRes.status);
+      return null;
+    }
+
+    const blockData = await blockRes.json();
+    const parsedBlockData = blockData.data || blockData;
+    const isGdsError =
+      parsedBlockData.success === false ||
+      (parsedBlockData.providerResult && parsedBlockData.providerResult !== "0");
+
+    if (isGdsError || !parsedBlockData.connectionId) {
+      console.error(`[sell ${label}] GDS rechazó el re-bloqueo o no devolvió connectionId.`);
+      return null;
+    }
+
+    const newConnectionId = parsedBlockData.connectionId;
+    console.log(`[sell ${label}] Re-bloqueo exitoso. Nuevo connectionId: ${newConnectionId}. Reintentando venta...`);
+    
+    const newPayload = { ...payload, connectionId: newConnectionId };
+    return await doSell(newPayload, label);
+  } catch (error) {
+    console.error(`[sell ${label}] Excepción durante el re-bloqueo:`, error);
+    return null;
+  }
+}
+
 export async function sellGdsSeats(params: SellParams): Promise<Record<string, string>> {
   const { outboundTrip, returnTrip, outboundSeats, returnSeats, passengers, outboundConnectionId, returnConnectionId } = params;
   const ticketMap: Record<string, string> = {};
@@ -62,7 +103,7 @@ export async function sellGdsSeats(params: SellParams): Promise<Record<string, s
 
   // Venta de Ida
   tasks.push(
-    doSell(outboundPayload, "Ida").then(result => ({ ...result, seatsObj: outboundSeats }))
+    doSell(outboundPayload, "Ida").then(result => ({ ...result, seatsObj: outboundSeats, payload: outboundPayload }))
   );
 
   // Venta de Vuelta
@@ -80,27 +121,40 @@ export async function sellGdsSeats(params: SellParams): Promise<Record<string, s
     };
 
     tasks.push(
-      doSell(returnPayload, "Vuelta").then(result => ({ ...result, seatsObj: returnSeats }))
+      doSell(returnPayload, "Vuelta").then(result => ({ ...result, seatsObj: returnSeats, payload: returnPayload }))
     );
   }
 
   const results = await Promise.allSettled(tasks);
 
-  results.forEach(result => {
+  // Usamos un loop secuencial en lugar de forEach para poder manejar operaciones asíncronas de reintento
+  for (const result of results) {
     if (result.status === "fulfilled") {
-      const { res, data, label, seatsObj } = result.value;
+      let { res, data, label, seatsObj, payload } = result.value;
 
-      if (!res.ok) {
-        console.error(`[sell ${label}] Error HTTP en la venta:`, JSON.stringify(data));
-        return;
+      let isSuccess = res.ok;
+      let codigoError = data?.data?.raw?.CodigoError;
+
+      // Intento de re-bloqueo y venta si el error es 233 (Asiento no disponible / Bloqueo expirado)
+      if ((!isSuccess || (codigoError !== undefined && String(codigoError) !== "0")) && String(codigoError) === "233") {
+        const retryResult = await retrySellWithNewBlock(payload, seatsObj, label);
+        if (retryResult) {
+          res = retryResult.res;
+          data = retryResult.data;
+          isSuccess = res.ok;
+          codigoError = data?.data?.raw?.CodigoError;
+        }
       }
 
-      // Validar si el GDS devolvió un error de negocio
-      const codigoError = data?.data?.raw?.CodigoError;
+      if (!isSuccess) {
+        console.error(`[sell ${label}] Error HTTP en la venta:`, JSON.stringify(data));
+        continue;
+      }
+
       if (codigoError !== undefined && String(codigoError) !== "0") {
         const desc = data?.data?.raw?.Descripcion || "Error desconocido";
         console.error(`[sell ${label}] GDS rechazó la venta (CodigoError=${codigoError}): ${desc}`);
-        return;
+        continue;
       }
 
       const ticketNumbers: string[] = data?.data?.ticketNumbers ?? [];
@@ -112,7 +166,7 @@ export async function sellGdsSeats(params: SellParams): Promise<Record<string, s
     } else {
       console.error("[sell] Error en red o excepción:", result.reason);
     }
-  });
+  }
 
   return ticketMap;
 }
