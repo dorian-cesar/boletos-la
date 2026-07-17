@@ -389,31 +389,9 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
         const docNum = primaryPassenger?.documentNumber || "1234567";
 
         try {
-          const res = await fetch("/api/bancard/confirmar-transaccion", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              shopProcessId: shopProcessId ? parseInt(shopProcessId) : 0,
-              processId: processId,
-              id: docNum,
-              amount: totalPrice.toFixed(2)
-            }),
-          });
-          const data = await res.json();
-
-          const responseCode =
-            data.data?.confirmation?.responseCode ||
-            data.data?.confirmation?.response_code ||
-            data.data?.rawResponse?.confirmation?.response_code ||
-            data.operation?.response_code;
-
-          const isSuccess =
-            (data.status === "success" && responseCode === "00") ||
-            (data.status === "success" && data.operation?.response === "S") ||
-            (data.status === "success" && data.data?.status === "success") ||
-            data.status === "approved" ||
-            data.success === true ||
-            data.data?.processed === true;
+          // Ya no confirmamos la preautorización porque ahora usamos Venta Directa (preauthorization: false).
+          // Bancard captura el dinero automáticamente. Confiamos en el retorno exitoso del iframe.
+          const isSuccess = paymentStatus === "payment_success" || !paymentStatus;
 
           if (isSuccess) {
             setBancardProcessId(null);
@@ -428,18 +406,16 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               setBookingReference(finalRef);
             }
             setStorePaymentStatus("completed");
+            
             const realPaymentDetails = {
               pagado: true,
               forma_pago: "Bancard",
               fecha_pago: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
               monto: totalPrice.toFixed(2),
-              hash_pedido:
-                data.operation?.token || data.data?.processId || shopProcessId || "bancard-payment",
-              numero_pedido: data.operation?.ticket_number || shopProcessId || "bancard-payment",
-              token: data.operation?.token || data.data?.processId || shopProcessId || "bancard-payment",
-              numero_factura:
-                data.operation?.billing_response?.data?.invoice_number ||
-                data.data?.confirmation?.electronicBillNumber || "",
+              hash_pedido: processId || shopProcessId || "bancard-payment",
+              numero_pedido: shopProcessId || "bancard-payment",
+              token: processId || shopProcessId || "bancard-payment",
+              numero_factura: "",
             };
 
             if (selectedOutboundTrip) {
@@ -466,7 +442,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                   actualTicketsCount,
                 );
 
-                // Realizar rollback porque los asientos no se pudieron comprar
+                // Realizar rollback de la preautorización porque los asientos no se pudieron comprar
                 try {
                   console.log("Iniciando rollback por falla de GDS...");
                   await fetch("/api/bancard/rollback-transaccion", {
@@ -484,6 +460,48 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
 
                 setStatus("failed");
                 return;
+              }
+
+              // Si los boletos se emitieron correctamente, AHORA CONFIRMAMOS LA PREAUTORIZACIÓN para capturar el dinero
+              console.log("Asientos emitidos. Confirmando la preautorización para capturar el dinero...");
+              try {
+                const confirmRes = await fetch("/api/bancard/confirmar-transaccion", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    shopProcessId: shopProcessId ? parseInt(shopProcessId) : 0,
+                    processId: processId,
+                    id: docNum,
+                    amount: totalPrice.toFixed(2)
+                  }),
+                });
+                const confirmData = await confirmRes.json();
+                
+                const responseCode =
+                  confirmData.data?.confirmation?.responseCode ||
+                  confirmData.data?.confirmation?.response_code ||
+                  confirmData.data?.rawResponse?.confirmation?.response_code ||
+                  confirmData.operation?.response_code;
+
+                const isConfirmSuccess =
+                  (confirmData.status === "success" && responseCode === "00") ||
+                  (confirmData.status === "success" && confirmData.operation?.response === "S") ||
+                  (confirmData.status === "success" && confirmData.data?.status === "success") ||
+                  confirmData.status === "approved" ||
+                  confirmData.success === true ||
+                  confirmData.data?.processed === true;
+
+                if (!isConfirmSuccess) {
+                  console.error("ALERTA CRÍTICA: Se emitieron los boletos pero falló la captura del pago en Bancard.", confirmData);
+                  // Podrías enviar un email al admin aquí notificando la discrepancia
+                } else {
+                  console.log("Dinero capturado con éxito.");
+                  realPaymentDetails.numero_factura = 
+                    confirmData.operation?.billing_response?.data?.invoice_number ||
+                    confirmData.data?.confirmation?.electronicBillNumber || "";
+                }
+              } catch (err) {
+                console.error("ALERTA CRÍTICA: Error de red al intentar confirmar la preautorización.", err);
               }
 
               if (Object.keys(ticketMap).length > 0) {

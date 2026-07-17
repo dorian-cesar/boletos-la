@@ -16,12 +16,31 @@ export async function POST(request: Request) {
     const targetUrl = `${baseUrl}/api/pagosimple`;
     console.log("[Bancard Rollback API] Calling URL:", targetUrl);
 
-    // Asumimos que la acción es "rollback" en base a la documentación
+    let finalShopProcessId = Number(shopProcessId || 0);
+
+    // Si el shopProcessId es 0, intentamos recuperarlo desde el Gateway
+    if (!finalShopProcessId && processId) {
+      try {
+        const shopUrl = `${baseUrl}/api/bancard/shop-process-id/${processId}`;
+        const shopRes = await fetch(shopUrl);
+        if (shopRes.ok) {
+          const shopData = await shopRes.json();
+          if (shopData.data?.shopProcessId) {
+            finalShopProcessId = Number(shopData.data.shopProcessId);
+            console.log("[Bancard Rollback API] Recuperado shopProcessId:", finalShopProcessId);
+          }
+        }
+      } catch (err) {
+        console.error("[Bancard Rollback API] Error recuperando shopProcessId:", err);
+      }
+    }
+
     const payload = {
       action: "rollback",
-      shopProcessId: Number(shopProcessId || 0),
+      shopProcessId: finalShopProcessId,
       processId: processId
     };
+    console.log("[Bancard Rollback API] Payload to Gateway:", JSON.stringify(payload));
 
     const response = await fetch(targetUrl, {
       method: "POST",

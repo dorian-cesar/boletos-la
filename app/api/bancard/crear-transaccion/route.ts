@@ -23,8 +23,8 @@ export async function POST(request: Request) {
         total_items && total_items > 1
           ? "Compra de boletos - Boletos.la"
           : "Compra de boleto - Boletos.la",
-      returnUrl: `${appBaseUrl}/booking/confirmation/bancard`,
-      cancelUrl: `${appBaseUrl}/booking/confirmation/bancard`,
+      returnUrl: `${appBaseUrl}/booking/confirmation/bancard?status=payment_success`,
+      cancelUrl: `${appBaseUrl}/booking/confirmation/bancard?status=payment_fail`,
       billing: {
         client_ruc: client_ruc || "123456-1",
         client_name: client_name || "fallback",
@@ -91,7 +91,7 @@ export async function POST(request: Request) {
               shopProcessId = shopData.data.shopProcessId;
             }
           } else {
-             console.log("[Bancard Crear] Error en shop-process-id endpoint:", shopRes.status);
+            console.log("[Bancard Crear] Error en shop-process-id endpoint:", shopRes.status);
           }
         } catch (err) {
           console.error("No se pudo obtener el shopProcessId de soporte:", err);
@@ -107,7 +107,7 @@ export async function POST(request: Request) {
     } else {
       throw new Error(
         apiResponse.message ||
-          "La API no devolvió un processId válido para la transacción",
+        "La API no devolvió un processId válido para la transacción",
       );
     }
   } catch (error: any) {

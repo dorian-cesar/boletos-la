@@ -17,8 +17,8 @@ export async function POST() {
       currency: "PYG",
       preauthorization: true,
       description: "Compra de prueba con Factura Electronica en Staging",
-      returnUrl: "https://boletos-la-dev.netlify.app/booking/confirmation/bancard",
-      cancelUrl: "https://boletos-la-dev.netlify.app/booking/confirmation/bancard",
+      returnUrl: "https://boletos-la-dev.netlify.app/booking/confirmation/bancard?status=payment_success",
+      cancelUrl: "https://boletos-la-dev.netlify.app/booking/confirmation/bancard?status=payment_fail",
       billing: {
         client_ruc: client_ruc,
         client_name: client_name,

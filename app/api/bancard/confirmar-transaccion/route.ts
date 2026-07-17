@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { processId, amount } = body;
+    const { shopProcessId, processId, amount } = body;
 
     if (!processId || !amount) {
       return NextResponse.json(
@@ -22,6 +22,7 @@ export async function POST(request: Request) {
 
     const payload = {
       action: "preauth-confirm",
+      shopProcessId: shopProcessId ? Number(shopProcessId) : 0,
       processId: processId,
       amount: Number(amount)
     };
@@ -35,10 +36,18 @@ export async function POST(request: Request) {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(
-        `Error de red al confirmar transacción: ${response.status} - ${errorText}`
-      );
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch (e) {
+        const errorText = await response.text();
+        return NextResponse.json(
+          { success: false, message: `Error de red: ${response.status} - ${errorText}` },
+          { status: response.status }
+        );
+      }
+      console.log(`[Bancard Confirmation API] Error Response (${response.status}):`, JSON.stringify(errorData, null, 2));
+      return NextResponse.json(errorData, { status: response.status });
     }
 
     const apiResponse = await response.json();
