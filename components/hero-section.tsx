@@ -67,13 +67,23 @@ export function HeroSection({ country }: HeroSectionProps) {
     colombia: { departureCity: "COBOG", arrivalCity: "COCLO", pax: 1 },
     brasil: { departureCity: "BRSAO", arrivalCity: "BRRIO", pax: 1 },
     chile: { departureCity: "CLSCL", arrivalCity: "CLVNA", pax: 1 },
-    paraguay: { departureCity: "PYASU", arrivalCity: "PYAGT", pax: 1 },
+    paraguay: { departureCity: "PYASU", arrivalCity: "PYCDE", pax: 1 },
     argentina: { departureCity: "ARBUE", arrivalCity: "ARMDQ", pax: 1 },
     latam: { pax: 1 },
   };
 
+  const buttonTexts: Record<string, string> = {
+    colombia: "ENCONTRAR MI VIAJE",
+    brasil: "ENCONTRAR MINHA VIAGEM",
+    chile: "BUSCAR MI VIAJE",
+    paraguay: "ENCONTRAR MI VIAJE",
+    argentina: "BUSCAR MI VIAJE",
+    latam: "BUSCAR MI VIAJE",
+  };
+
   const currentHero = heroData[normalizedCountry] || heroData.latam;
   const currentDefaults = widgetDefaults[normalizedCountry] || widgetDefaults.latam;
+  const currentButtonText = buttonTexts[normalizedCountry] || buttonTexts.latam;
 
   return (
     <section className="relative min-h-[calc(125vh-72px)] flex items-center justify-center overflow-hidden py-12 lg:py-20">
@@ -127,6 +137,7 @@ export function HeroSection({ country }: HeroSectionProps) {
                 }
                 defaults={currentDefaults}
                 layout="vertical"
+                buttonText={currentButtonText}
               />
             </div>
           </div>

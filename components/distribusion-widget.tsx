@@ -18,6 +18,7 @@ interface DistributionWidgetProps {
     pax?: number;
   };
   layout?: "horizontal" | "vertical";
+  buttonText?: string;
 }
 
 declare global {
@@ -128,6 +129,7 @@ export function DistributionWidget({
   currency = "USD",
   defaults,
   layout = "horizontal",
+  buttonText,
 }: DistributionWidgetProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isWidgetReady, setIsWidgetReady] = useState(false);
@@ -273,8 +275,22 @@ export function DistributionWidget({
     const observer = new MutationObserver(() => {
       try {
         updateCurrencyFromDOM();
+        
+        // Sobrescribir el texto del botón si se especificó
+        if (buttonText) {
+          const submitBtn = container.querySelector('button[type="submit"]') as HTMLButtonElement;
+          if (submitBtn) {
+            // Check span inside button or button itself depending on SDK structure
+            const spanInside = submitBtn.querySelector('span');
+            if (spanInside && spanInside.innerText !== buttonText) {
+              spanInside.innerText = buttonText;
+            } else if (!spanInside && submitBtn.innerText !== buttonText) {
+              submitBtn.innerText = buttonText;
+            }
+          }
+        }
       } catch (e) {
-        console.error("Error updating currency:", e);
+        console.error("Error updating widget DOM:", e);
       }
     });
     observer.observe(container, {
