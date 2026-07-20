@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 const regionDestinations = [
   {
@@ -55,26 +56,36 @@ const countryDestinations: Record<string, typeof popularCities> = {
     { name: "BARILOCHE", image: "/images/destinations/argentina-bariloche.jpg" },
     { name: "MENDOZA", image: "/images/destinations/argentina-mendoza.jpg" },
     { name: "MAR DEL PLATA", image: "/images/destinations/argentina-mar-del-plata.jpg" },
+    { name: "BUENOS AIRES", image: "/images/buenos-aires.jpg" },
+    { name: "ROSARIO", image: "/images/argentina.png" }, // Fallback placeholder
   ],
   brasil: [
     { name: "RIO DE JANEIRO", image: "/images/destinations/brasil-rio.jpg" },
     { name: "SÃO PAULO", image: "/images/destinations/brasil-sao-paulo.jpg" },
     { name: "SALVADOR", image: "/images/destinations/brasil-salvador.jpg" },
+    { name: "BRASÍLIA", image: "/images/brazil.png" }, // Fallback placeholder
+    { name: "FORTALEZA", image: "/images/brazil.png" },
   ],
   chile: [
     { name: "VALPARAÍSO", image: "/images/destinations/chile-valparaiso.jpg" },
     { name: "PUERTO VARAS", image: "/images/destinations/chile-puerto-varas.jpg" },
     { name: "LA SERENA", image: "/images/destinations/chile-la-serena.jpg" },
+    { name: "SANTIAGO", image: "/images/santiago.webp" },
+    { name: "VALDIVIA", image: "/images/valdivia.jpg" },
   ],
   colombia: [
     { name: "CARTAGENA", image: "/images/destinations/colombia-cartagena.jpg" },
     { name: "MEDELLÍN", image: "/images/destinations/colombia-medellin.jpg" },
     { name: "CALI", image: "/images/destinations/colombia-cali.jpeg" },
+    { name: "BOGOTÁ", image: "/images/colombia.png" }, // Fallback placeholder
+    { name: "SANTA MARTA", image: "/images/colombia.png" },
   ],
   paraguay: [
     { name: "SAN BERNARDINO", image: "/images/destinations/paraguay-san-bernardino.jpg" },
     { name: "ENCARNACIÓN", image: "/images/destinations/paraguay-encarnacion.jpg" },
     { name: "CIUDAD DEL ESTE", image: "/images/destinations/paraguay-ciudad-del-este.jpg" },
+    { name: "ASUNCIÓN", image: "/images/asuncion.png" },
+    { name: "VILLARRICA", image: "/images/asuncion.png" }, // Fallback
   ],
 };
 
@@ -282,16 +293,16 @@ export function DestinationsSection({ country }: DestinationsSectionProps) {
 
         {/* Route Tags */}
         <div className="space-y-6 mb-16">
-          <p className="text-sm md:text-base font-semibold text-gray-600 uppercase tracking-widest text-center">
+          <p className="text-sm md:text-base font-semibold text-gray-800 tracking-wide text-left mb-6">
             {currentRoutes.title}
           </p>
 
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="flex flex-wrap justify-center gap-2">
             {currentRoutes.routes.map((route, i) => (
               <span
                 key={i}
                 onClick={handleScrollToWidget}
-                className="px-4 py-2 bg-white border border-gray-200 hover:border-[#00c7cc] hover:text-[#00c7cc] text-xs md:text-sm font-semibold text-gray-600 rounded-full tracking-wide shadow-sm cursor-pointer transition-all duration-300"
+                className="px-6 py-3 bg-[#f2f2f2] text-[10px] md:text-xs font-semibold text-gray-700 tracking-wider cursor-pointer hover:bg-gray-200 transition-colors uppercase whitespace-nowrap"
               >
                 {route}
               </span>
@@ -299,32 +310,32 @@ export function DestinationsSection({ country }: DestinationsSectionProps) {
           </div>
         </div>
 
-        {/* Popular Destinations */}
-        <div className="space-y-8">
-          <h2 className="text-sm font-bold tracking-widest text-gray-500 uppercase text-center">
-            DESTINOS POPULARES
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {citiesToDisplay.map((city, idx) => (
-              <div key={idx} className="group">
-                {/* Image Box */}
-                <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-sm">
-                  <Image
-                    src={city.image}
-                    alt={city.name}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 400px"
-                  />
-                </div>
-                {/* Title Below */}
-                <p className="text-center mt-3 font-bold text-gray-800 tracking-wider text-sm">
+        {/* Popular Destinations Grid (Masonry-like adaptation for 5 items) */}
+        <div className="grid grid-cols-1 md:grid-cols-12 md:grid-rows-2 gap-4 md:h-[500px]">
+          {citiesToDisplay.slice(0, 5).map((city, idx) => (
+            <div 
+              key={idx} 
+              className={cn(
+                "group relative overflow-hidden rounded-md shadow-sm cursor-pointer w-full h-[300px] md:h-full",
+                idx === 0 ? "md:col-span-6 md:row-span-2" : "md:col-span-3 md:row-span-1"
+              )}
+              onClick={handleScrollToWidget}
+            >
+              <Image
+                src={city.image}
+                alt={city.name}
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80" />
+              <div className="absolute bottom-4 left-4 md:bottom-6 md:left-6">
+                <p className="font-bold text-white tracking-widest text-sm md:text-base uppercase drop-shadow-md">
                   {city.name}
                 </p>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

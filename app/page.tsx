@@ -4,7 +4,6 @@
 import { useEffect } from "react";
 import { useBookingStore } from "@/lib/booking-store";
 import { Header } from "@/components/header";
-import { CarouselSection } from "@/components/carousel-section";
 import { HeroSection } from "@/components/hero-section";
 import { PartnersSection } from "@/components/partners-section";
 import { FeaturesSection } from "@/components/features-section";
@@ -49,7 +48,6 @@ export default function HomePage({ country = "latam" }: HomePageProps) {
   return (
     <main className="min-h-screen">
       <Header country={country} />
-      <CarouselSection country={country} />
       <HeroSection country={country} />
       <PartnersSection />
       <FeaturesSection country={country} />

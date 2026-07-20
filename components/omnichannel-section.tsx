@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 interface OmnichannelSectionProps {
   country?: string;
 }
@@ -33,14 +35,29 @@ export function OmnichannelSection({ country }: OmnichannelSectionProps) {
   const currentContent = content[normalizedCountry] || content.default;
 
   return (
-    <section className="py-20 bg-gray-50 text-center">
-      <div className="container mx-auto px-4 max-w-4xl">
-        <h2 className="text-3xl md:text-5xl font-extrabold text-[#4a4a4a] tracking-tight mb-6">
-          {currentContent.title}
-        </h2>
-        <p className="text-lg md:text-xl text-gray-500 leading-relaxed max-w-3xl mx-auto">
-          {currentContent.description}
-        </p>
+    <section className="bg-[#f8f9fa] text-gray-800">
+      <div className="grid grid-cols-1 md:grid-cols-2 items-center">
+        {/* Left Side: Text */}
+        <div className="flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 md:py-20 text-left">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#4a4a4a] tracking-tight mb-8 leading-tight">
+            {currentContent.title}
+          </h2>
+          <p className="text-lg md:text-xl text-gray-500 leading-relaxed font-normal">
+            {currentContent.description}
+          </p>
+        </div>
+
+        {/* Right Side: Image */}
+        <div className="flex items-center justify-center bg-[#f2f2f2]/50 h-full w-full">
+          <Image
+            src="/images/layout/totem-kiosk.png"
+            alt="Kiosko interactivo"
+            width={1195}
+            height={896}
+            className="w-full h-auto object-cover"
+            sizes="(max-width: 768px) 100vw, 50vw"
+          />
+        </div>
       </div>
     </section>
   );

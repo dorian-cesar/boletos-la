@@ -12,23 +12,83 @@ interface HeroSectionProps {
 
 export function HeroSection({ country }: HeroSectionProps) {
   const [mounted, setMounted] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
-
-  const heroImages: Record<string, string> = {
-    argentina: "/images/hero-argentina.webp",
-    brasil: "/images/hero-brasil.webp",
-    chile: "/images/hero-chile.webp",
-    colombia: "/images/hero-colombia.webp",
-    paraguay: "/images/hero-paraguay.webp",
+  const imagesByCountry: Record<string, string[]> = {
+    argentina: [
+      "/images/carousel/argentina/arg-baires.jpg",
+      "/images/carousel/argentina/arg-bariloche.jpg",
+      "/images/carousel/argentina/arg-bs-as.jpg",
+      "/images/carousel/argentina/arg-bsas.jpg",
+      "/images/carousel/argentina/arg-cordoba.png",
+      "/images/carousel/argentina/arg-mar-del-plata.jpg",
+      "/images/carousel/argentina/arg-mendoza.jpg"
+    ],
+    brasil: [
+      "/images/carousel/brasil/carrusel-brasil1.jpg",
+      "/images/carousel/brasil/carrusel-brasil2.jpg",
+      "/images/carousel/brasil/carrusel-brasil3.jpg",
+      "/images/carousel/brasil/carrusel-brasil4.jpg"
+    ],
+    chile: [
+      "/images/carousel/chile/chile-2.jpg",
+      "/images/carousel/chile/chile-3.jpg",
+      "/images/carousel/chile/chile-7.jpg",
+      "/images/carousel/chile/chile-patagonia.jpg",
+      "/images/carousel/chile/chile-puerto-varas.jpg",
+      "/images/carousel/chile/chile-serena.jpg",
+      "/images/carousel/chile/chile-valdi.jpg",
+      "/images/carousel/chile/chile-valpo.jpg",
+      "/images/carousel/chile/chile4.jpg",
+      "/images/carousel/chile/chile5.jpg"
+    ],
+    colombia: [
+      "/images/carousel/colombia/carrusel-colombia1.jpg",
+      "/images/carousel/colombia/carrusel-colombia2.jpg",
+      "/images/carousel/colombia/carrusel-colombia3.jpg",
+      "/images/carousel/colombia/carrusel-colombia4.jpg"
+    ],
+    ecuador: [
+      "/images/carousel/ecuador/ecuador-quito.png"
+    ],
+    paraguay: [
+      "/images/carousel/paraguay/asuncion(1).jpg",
+      "/images/carousel/paraguay/asuncion.jpg",
+      "/images/carousel/paraguay/cde.jpg",
+      "/images/carousel/paraguay/ciudad-del-este-paraguay.png",
+      "/images/carousel/paraguay/concepción-py.png",
+      "/images/carousel/paraguay/pedro-juan-caballero-py.png",
+      "/images/carousel/paraguay/py-encarnacion.jpg",
+      "/images/carousel/paraguay/py-san-ber.jpg"
+    ]
   };
-  const heroImageSrc = (country && heroImages[country.toLowerCase()]) || "/images/hero.jpg";
 
   const normalizedCountry = country?.toLowerCase() || "latam";
+  
+  // Use carousel images if available, otherwise fallback to the single hero image
+  const backgroundImages = imagesByCountry[normalizedCountry] && imagesByCountry[normalizedCountry].length > 0 
+    ? imagesByCountry[normalizedCountry] 
+    : [
+        normalizedCountry === "argentina" ? "/images/hero-argentina.webp" :
+        normalizedCountry === "brasil" ? "/images/hero-brasil.webp" :
+        normalizedCountry === "chile" ? "/images/hero-chile.webp" :
+        normalizedCountry === "colombia" ? "/images/hero-colombia.webp" :
+        normalizedCountry === "paraguay" ? "/images/hero-paraguay.webp" : "/images/hero.jpg"
+      ];
+
+  useEffect(() => {
+    if (backgroundImages.length <= 1) return;
+    
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % backgroundImages.length);
+    }, 5000);
+    
+    return () => clearInterval(timer);
+  }, [backgroundImages.length]);
 
   const heroData: Record<string, { title: string; subtitle1: string; subtitle2: string }> = {
     latam: {
@@ -85,20 +145,32 @@ export function HeroSection({ country }: HeroSectionProps) {
   const currentDefaults = widgetDefaults[normalizedCountry] || widgetDefaults.latam;
   const currentButtonText = buttonTexts[normalizedCountry] || buttonTexts.latam;
 
+  if (!mounted) return null;
+
   return (
     <section className="relative min-h-[calc(125vh-72px)] flex items-center justify-center overflow-hidden py-12 lg:py-20">
-      {/* Background Image */}
+      {/* Background Image(s) with fading effect */}
       <div className="absolute inset-0 bg-[#0f1419]">
-        <Image
-          src={heroImageSrc}
-          alt={`Vista aérea - Hero ${country || ""}`}
-          fill
-          sizes="100vw"
-          className="object-cover object-center"
-          priority
-        />
+        {backgroundImages.map((src, index) => (
+          <div 
+            key={index}
+            className={cn(
+              "absolute inset-0 transition-opacity duration-1000",
+              index === currentImageIndex ? "opacity-100 z-0" : "opacity-0 -z-10"
+            )}
+          >
+            <Image
+              src={src}
+              alt={`Vista aérea - Hero ${country || ""} ${index + 1}`}
+              fill
+              sizes="100vw"
+              className="object-cover object-center"
+              priority={index === 0}
+            />
+          </div>
+        ))}
         {/* Dark overlay for readability */}
-        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-black/40 z-10" />
       </div>
 
       {/* Content Container */}
