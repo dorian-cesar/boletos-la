@@ -116,37 +116,36 @@ interface FeaturesSectionProps {
 export function FeaturesSection({ country }: FeaturesSectionProps) {
   const normalizedCountry = country?.toLowerCase() || "chile";
 
-  const featuresText = {
+  const featuresText: Record<string, { title: string; description: string; labels: string[] }> = {
     brasil: {
-      titleBoletos: "Como funciona o Boletos.la",
-      step1Bold: "Busque seu destino:",
-      step1Text:
-        " Digite qualquer cidade, endereço ou ponto de interesse na América Latina.",
-      step2Bold: "Compare:",
-      step2Text:
-        " Analisamos instantaneamente ônibus e hotéis para mostrar a combinação mais rápida e barata.",
-      step3Bold: "Reserve:",
-      step3Text:
-        " Conectamos você com as operadoras oficiais para que você possa comprar suas passagens com segurança e rapidez.",
-      labels: ["PAISES", "ROTAS", "PASSAGEIROS", "DESTINOS"],
+      title: "Viaje de ônibus sem filas!",
+      description: "Boletos.la é a plataforma web ideal para comprar suas passagens online de forma rápida em qualquer dispositivo.",
+      labels: ["PAÍSES", "ROTAS", "PASSAGEIROS", "DESTINOS"],
+    },
+    colombia: {
+      title: "¡Viaja en bus sin filas!",
+      description: "Boletos.la es la plataforma web líder para comprar tus pasajes y tiquetes en línea desde cualquier dispositivo.",
+      labels: ["PAÍSES", "RUTAS", "PASAJEROS", "DESTINOS"],
+    },
+    chile: {
+      title: "¡Viaja en bus sin filas!",
+      description: "Boletos.la es la plataforma digital para comprar tus pasajes en línea de manera segura desde cualquier dispositivo.",
+      labels: ["PAÍSES", "RUTAS", "PASAJEROS", "DESTINOS"],
+    },
+    paraguay: {
+      title: "¡Viaja en colectivo sin filas!",
+      description: "Boletos.la es la plataforma web preferida para comprar tus pasajes y boletos en línea desde tu celular o computadora.",
+      labels: ["PAÍSES", "RUTAS", "PASAJEROS", "DESTINOS"],
     },
     default: {
-      titleBoletos: "Cómo funciona boletos.la",
-      step1Bold: "Busca tu destino:",
-      step1Text:
-        " Ingresa cualquier ciudad, dirección o punto de interés en Latinoamérica.",
-      step2Bold: "Compara:",
-      step2Text:
-        " Analizamos al instante buses y hoteles para mostrarte la combinación más rápida y la más económica.",
-      step3Bold: "Reserva:",
-      step3Text:
-        " Te conectamos con los operadores oficiales para que compres tus boletos de forma segura y rápido.",
-      labels: ["PAISES", "RUTAS", "PASAJEROS", "DESTINOS"],
+      title: "¡Viaja en bus sin filas!",
+      description: "Boletos.la es la plataforma líder para comprar tus pasajes en línea de manera segura desde cualquier dispositivo.",
+      labels: ["PAÍSES", "RUTAS", "PASAJEROS", "DESTINOS"],
     },
   };
 
   const currentText =
-    normalizedCountry === "brasil" ? featuresText.brasil : featuresText.default;
+    featuresText[normalizedCountry] || featuresText.default;
 
   return (
     <section id="servicios" className="py-16 bg-white text-gray-850">
@@ -154,20 +153,11 @@ export function FeaturesSection({ country }: FeaturesSectionProps) {
         {/* Header content */}
         <div className="text-center max-w-6xl mx-auto mb-12 space-y-4">
           <h2 className="text-4xl md:text-5xl font-extrabold text-[#4a4a4a] tracking-tight">
-            {currentText.titleBoletos}
+            {currentText.title}
           </h2>
           <div className="text-gray-500 space-y-4 text-base md:text-lg lg:text-xl leading-relaxed font-normal">
             <p>
-              <strong>{currentText.step1Bold}</strong>
-              {currentText.step1Text}
-            </p>
-            <p>
-              <strong>{currentText.step2Bold}</strong>
-              {currentText.step2Text}
-            </p>
-            <p>
-              <strong>{currentText.step3Bold}</strong>
-              {currentText.step3Text}
+              {currentText.description}
             </p>
           </div>
         </div>

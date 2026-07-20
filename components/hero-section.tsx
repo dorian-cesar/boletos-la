@@ -37,14 +37,14 @@ export function HeroSection({ country }: HeroSectionProps) {
       subtitle2: "PARA UNA MEJOR EXPERIENCIA DE VIAJE",
     },
     chile: {
-      title: "Pasajes de bus a todo Chile",
-      subtitle1: "COMPRA CON WEBPAY, ONEPAY",
-      subtitle2: "Y RETIRO EN TERMINAL",
+      title: "Todo Chile, a un solo clic de distancia.",
+      subtitle1: "¡BUS + HOTEL CON UN SOLO CLIC!",
+      subtitle2: "FÁCIL, SEGURO Y AL MEJOR PRECIO.",
     },
     brasil: {
-      title: "Passagens de ônibus no Brasil",
-      subtitle1: "COMPARE PREÇOS, PAGUE COM PIX",
-      subtitle2: "E EMBARQUE COM QR",
+      title: "Todo o Brasil, a apenas um clique de distância.",
+      subtitle1: "ÔNIBUS + HOTEL COM APENAS UM CLIQUE!",
+      subtitle2: "FÁCIL, SEGURO E AO MELHOR PREÇO.",
     },
     argentina: {
       title: "Viajá por Argentina en bus",
@@ -52,18 +52,28 @@ export function HeroSection({ country }: HeroSectionProps) {
       subtitle2: "PAGA EN PESOS CON MERCADO PAGO Y QR",
     },
     colombia: {
-      title: "Tiquetes de bus en Colombia al instante",
-      subtitle1: "PAGA CON PSE, NEQUI O TARJETA.",
-      subtitle2: "CONFIRMACIÓN INMEDIATA",
+      title: "Todo Colombia, a un solo clic de distancia.",
+      subtitle1: "¡BUS + HOTEL EN UN SOLO CLIC!",
+      subtitle2: "FÁCIL, SEGURO Y AL MEJOR PRECIO.",
     },
     paraguay: {
-      title: "Pasajes de bus por todo Paraguay",
-      subtitle1: "COMPRA CON WEBPAY, ONEPAY",
-      subtitle2: "Y RETIRO EN TERMINAL",
+      title: "Todo Paraguay, a un solo clic de distancia.",
+      subtitle1: "¡BUS + HOTEL CON UN SOLO CLIC!",
+      subtitle2: "FÁCIL, SEGURO Y AL MEJOR PRECIO.",
     },
   };
 
+  const widgetDefaults: Record<string, any> = {
+    colombia: { departureCity: "COBOG", arrivalCity: "COCLO", pax: 1 },
+    brasil: { departureCity: "BRSAO", arrivalCity: "BRRIO", pax: 1 },
+    chile: { departureCity: "CLSCL", arrivalCity: "CLVNA", pax: 1 },
+    paraguay: { departureCity: "PYASU", arrivalCity: "PYAGT", pax: 1 },
+    argentina: { departureCity: "ARBUE", arrivalCity: "ARMDQ", pax: 1 },
+    latam: { pax: 1 },
+  };
+
   const currentHero = heroData[normalizedCountry] || heroData.latam;
+  const currentDefaults = widgetDefaults[normalizedCountry] || widgetDefaults.latam;
 
   return (
     <section className="relative min-h-[calc(125vh-72px)] flex items-center justify-center overflow-hidden py-12 lg:py-20">
@@ -115,6 +125,7 @@ export function HeroSection({ country }: HeroSectionProps) {
                   normalizedCountry === "chile" ? "CLP" :
                   normalizedCountry === "paraguay" ? "PYG" : "USD"
                 }
+                defaults={currentDefaults}
                 layout="vertical"
               />
             </div>

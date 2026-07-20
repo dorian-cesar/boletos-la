@@ -3,88 +3,28 @@
 import Image from "next/image";
 
 export function PartnersSection() {
+  const logos = Array.from({ length: 10 }, (_, i) => 
+    `/logos/comercios/LOGOS-COMERCIOS-${(i + 1).toString().padStart(2, '0')}.png`
+  );
+
   return (
-    <section className="bg-white py-6 border-b border-gray-100">
+    <section className="bg-white py-10 border-b border-gray-100">
       <div className="container mx-auto px-4">
-        <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16 text-gray-400 text-sm font-semibold tracking-wider">
-          <div className="flex items-center gap-10 md:gap-16 flex-wrap justify-center">
-            {/* Booking.com */}
-            <div className="relative w-36 h-12">
+        <h3 className="text-center text-sm font-bold tracking-widest text-gray-400 uppercase mb-8">
+          NUESTROS ALIADOS COMERCIALES
+        </h3>
+        <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
+          {logos.map((logo, idx) => (
+            <div key={idx} className="relative w-24 h-12 md:w-32 md:h-16 opacity-70 hover:opacity-100 transition-opacity duration-300">
               <Image
-                src="/logos/logo-booking.png"
-                alt="Booking.com Logo"
+                src={logo}
+                alt={`Socio comercial ${idx + 1}`}
                 fill
-                sizes="150px"
+                sizes="(max-width: 768px) 100px, 150px"
                 className="object-contain"
               />
             </div>
-
-            {/* Airbnb */}
-            <div className="relative w-32 h-12">
-              <Image
-                src="/logos/logo-airbnb.png"
-                alt="Airbnb Logo"
-                fill
-                sizes="130px"
-                className="object-contain"
-              />
-            </div>
-
-            {/* Google */}
-            <div className="relative w-32 h-12">
-              <Image
-                src="/logos/logo-google.png"
-                alt="Google Logo"
-                fill
-                sizes="130px"
-                className="object-contain p-0.5"
-              />
-            </div>
-
-            {/* Uber */}
-            <div className="relative w-28 h-12">
-              <Image
-                src="/logos/logo-uber.png"
-                alt="Uber Logo"
-                fill
-                sizes="110px"
-                className="object-contain p-1"
-              />
-            </div>
-
-            {/* OXXO */}
-            <div className="relative w-28 h-12">
-              <Image
-                src="/logos/logo-oxxo.png"
-                alt="OXXO Logo"
-                fill
-                sizes="110px"
-                className="object-contain"
-              />
-            </div>
-
-            {/* Rappi */}
-            <div className="relative w-28 h-12">
-              <Image
-                src="/logos/rappi-logo.svg"
-                alt="Rappi Logo"
-                fill
-                sizes="110px"
-                className="object-contain p-0.5"
-              />
-            </div>
-
-            {/* TripAdvisor */}
-            <div className="relative w-32 h-12">
-              <Image
-                src="/logos/trip-advisor.svg"
-                alt="TripAdvisor Logo"
-                fill
-                sizes="130px"
-                className="object-contain"
-              />
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>

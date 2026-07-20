@@ -52,29 +52,29 @@ const popularCities = [
 
 const countryDestinations: Record<string, typeof popularCities> = {
   argentina: [
-    { name: "BARILOCHE", image: "/images/argentina-1.webp" },
-    { name: "MENDOZA", image: "/images/argentina-2.webp" },
-    { name: "MAR DEL PLATA", image: "/images/argentina-3.webp" },
+    { name: "BARILOCHE", image: "/images/destinations/argentina-bariloche.jpg" },
+    { name: "MENDOZA", image: "/images/destinations/argentina-mendoza.jpg" },
+    { name: "MAR DEL PLATA", image: "/images/destinations/argentina-mar-del-plata.jpg" },
   ],
   brasil: [
-    { name: "SALVADOR", image: "/images/brasil-1.webp" },
-    { name: "SAO PAULO", image: "/images/brasil-2.webp" },
-    { name: "FOZ DO IGUAÇU", image: "/images/brasil-3.webp" },
+    { name: "RIO DE JANEIRO", image: "/images/destinations/brasil-rio.jpg" },
+    { name: "SÃO PAULO", image: "/images/destinations/brasil-sao-paulo.jpg" },
+    { name: "SALVADOR", image: "/images/destinations/brasil-salvador.jpg" },
   ],
   chile: [
-    { name: "VALPARAISO", image: "/images/chile-1.webp" },
-    { name: "PUERTO VARAS", image: "/images/chile-2.webp" },
-    { name: "LA SERENA", image: "/images/chile-3.webp" },
+    { name: "VALPARAÍSO", image: "/images/destinations/chile-valparaiso.jpg" },
+    { name: "PUERTO VARAS", image: "/images/destinations/chile-puerto-varas.jpg" },
+    { name: "LA SERENA", image: "/images/destinations/chile-la-serena.jpg" },
   ],
   colombia: [
-    { name: "CARTAGENA", image: "/images/colombia-1.webp" },
-    { name: "MEDELLÍN", image: "/images/colombia-2.webp" },
-    { name: "CALI", image: "/images/colombia-3.webp" },
+    { name: "CARTAGENA", image: "/images/destinations/colombia-cartagena.jpg" },
+    { name: "MEDELLÍN", image: "/images/destinations/colombia-medellin.jpg" },
+    { name: "CALI", image: "/images/destinations/colombia-cali.jpeg" },
   ],
   paraguay: [
-    { name: "SAN BERNARDINO", image: "/images/paraguay-1.webp" },
-    { name: "ENCARNACIÓN", image: "/images/paraguay-2.webp" },
-    { name: "CIUDAD DEL ESTE", image: "/images/paraguay-3.webp" },
+    { name: "SAN BERNARDINO", image: "/images/destinations/paraguay-san-bernardino.jpg" },
+    { name: "ENCARNACIÓN", image: "/images/destinations/paraguay-encarnacion.jpg" },
+    { name: "CIUDAD DEL ESTE", image: "/images/destinations/paraguay-ciudad-del-este.jpg" },
   ],
 };
 
@@ -141,8 +141,35 @@ export function DestinationsSection({ country }: DestinationsSectionProps) {
     }
   };
 
+  const normalizedCountry = country?.toLowerCase() || "latam";
+
+  const routesData: Record<string, { title: string; routes: string[] }> = {
+    brasil: {
+      title: "Explore o melhor da região: As rotas preferidas dos nossos usuários",
+      routes: ["São Paulo / Rio de Janeiro", "São Paulo / Belo Horizonte", "Rio de Janeiro / Búzios", "Curitiba / Florianópolis", "Salvador / Porto Seguro", "Brasília / Goiânia", "São Paulo / Curitiba", "Fortaleza / Jericoacoara", "Belo Horizonte / Cabo Frio"],
+    },
+    colombia: {
+      title: "Explore lo mejor de la región: Las rutas preferidas por nuestros usuarios",
+      routes: ["Bogotá / Medellín", "Cartagena / Barranquilla", "Cali / Bogotá", "Bogotá / Bucaramanga", "Santa Marta / Bogotá", "Cali / Medellín", "Bogotá / Armenia", "Cartagena / Montería", "Barranquilla / Medellín", "Bogotá / Manizales", "Cartagena / Cúcuta", "Medellín / Barranquilla", "Medellín / Bogotá", "Santa Marta / Medellín", "Santa Marta / Cali", "Manizales / Barranquilla", "Barranquilla / Riohacha", "Santa Marta / Valledupar"],
+    },
+    chile: {
+      title: "Explore lo mejor de la región: Las rutas preferidas por nuestros usuarios",
+      routes: ["Santiago / Viña del Mar", "Santiago / Concepción", "Santiago / La Serena", "Puerto Montt / Temuco", "Santiago / Mendoza", "Antofagasta / Calama", "Santiago / Coquimbo", "Valparaíso / Santiago", "Puerto Montt / Bariloche"],
+    },
+    paraguay: {
+      title: "Explore lo mejor de la región: Las rutas preferidas por nuestros usuarios",
+      routes: ["Asunción / Ciudad del Este", "Asunción / Encarnación", "Asunción / Pedro Juan Caballero", "Ciudad del Este / Encarnación", "Asunción / Buenos Aires", "Asunción / Villarrica", "Asunción / Salto del Guairá", "Coronel Oviedo / Asunción"],
+    },
+    default: {
+      title: "Explore lo mejor de la región: Las rutas preferidas por nuestros usuarios",
+      routes: ["SANTIAGO - VALPARAÍSO", "BUENOS AIRES - MENDOZA", "BOGOTÁ - MEDELLÍN"],
+    }
+  };
+
+  const currentRoutes = routesData[normalizedCountry] || routesData.default;
+
   const citiesToDisplay =
-    (country && countryDestinations[country.toLowerCase()]) || popularCities;
+    (country && countryDestinations[normalizedCountry]) || popularCities;
 
   return (
     <section id="destinos" className="py-16 bg-[#f8f9fa] text-gray-800">
@@ -253,9 +280,28 @@ export function DestinationsSection({ country }: DestinationsSectionProps) {
 
         <hr className="my-16 border-gray-200" /> */}
 
+        {/* Route Tags */}
+        <div className="space-y-6 mb-16">
+          <p className="text-sm md:text-base font-semibold text-gray-600 uppercase tracking-widest text-center">
+            {currentRoutes.title}
+          </p>
+
+          <div className="flex flex-wrap justify-center gap-3">
+            {currentRoutes.routes.map((route, i) => (
+              <span
+                key={i}
+                onClick={handleScrollToWidget}
+                className="px-4 py-2 bg-white border border-gray-200 hover:border-[#00c7cc] hover:text-[#00c7cc] text-xs md:text-sm font-semibold text-gray-600 rounded-full tracking-wide shadow-sm cursor-pointer transition-all duration-300"
+              >
+                {route}
+              </span>
+            ))}
+          </div>
+        </div>
+
         {/* Popular Destinations */}
         <div className="space-y-8">
-          <h2 className="text-sm font-bold tracking-widest text-gray-500 uppercase">
+          <h2 className="text-sm font-bold tracking-widest text-gray-500 uppercase text-center">
             DESTINOS POPULARES
           </h2>
 

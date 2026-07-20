@@ -4,10 +4,14 @@
 import { useEffect } from "react";
 import { useBookingStore } from "@/lib/booking-store";
 import { Header } from "@/components/header";
+import { CarouselSection } from "@/components/carousel-section";
 import { HeroSection } from "@/components/hero-section";
 import { PartnersSection } from "@/components/partners-section";
 import { FeaturesSection } from "@/components/features-section";
 import { DestinationsSection } from "@/components/destinations-section";
+import { OmnichannelSection } from "@/components/omnichannel-section";
+import { RegionalExpansionSection } from "@/components/regional-expansion-section";
+import { BrandClosingSection } from "@/components/brand-closing-section";
 import { Footer } from "@/components/footer";
 import { ScrollToTop } from "@/components/scroll-to-top";
 
@@ -43,12 +47,16 @@ export default function HomePage({ country = "latam" }: HomePageProps) {
   }, []); // Empty dependency array = solo se ejecuta una vez al montar
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen">
       <Header country={country} />
+      <CarouselSection country={country} />
       <HeroSection country={country} />
-      {/* <PartnersSection /> */}
+      <PartnersSection />
       <FeaturesSection country={country} />
       <DestinationsSection country={country} />
+      <OmnichannelSection country={country} />
+      <RegionalExpansionSection country={country} />
+      <BrandClosingSection country={country} />
       <Footer country={country} />
       <ScrollToTop />
     </main>

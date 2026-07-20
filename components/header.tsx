@@ -49,23 +49,36 @@ export function Header({ country }: HeaderProps) {
             </Link>
 
             {/* Desktop Navigation */}
-            {/* <nav className="max-lg:hidden lg:flex items-center gap-1">
-              {[
-                { name: "Inicio", href: "/" },
-                { name: "Destinos", href: "#destinos" },
-                { name: "Servicios", href: "#servicios" },
-                { name: "Empresas", href: "#empresas" },
-                { name: "Contacto", href: "#contacto" },
-              ].map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="text-neutral-300 hover:text-[#00c7cc] px-4 py-2 rounded-full text-lg lg:text-xl font-bold transition-all duration-300 hover:bg-neutral-800/50 no-underline"
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </nav> */}
+            <nav className="max-lg:hidden lg:flex items-center gap-1">
+              {(() => {
+                const isBrasil = country?.toLowerCase() === "brasil";
+                const links = isBrasil
+                  ? [
+                      { name: "Início", href: "/" },
+                      { name: "Destinos", href: "#destinos" },
+                      { name: "Serviços", href: "#servicios" },
+                      { name: "Finanças", href: "#finanzas" },
+                      { name: "Contato", href: "#contacto" },
+                    ]
+                  : [
+                      { name: "Inicio", href: "/" },
+                      { name: "Destinos", href: "#destinos" },
+                      { name: "Servicios", href: "#servicios" },
+                      { name: "Finanzas", href: "#finanzas" },
+                      { name: "Contacto", href: "#contacto" },
+                    ];
+
+                return links.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="text-neutral-300 hover:text-[#00c7cc] px-4 py-2 rounded-full text-lg lg:text-xl font-bold transition-all duration-300 hover:bg-neutral-800/50 no-underline"
+                  >
+                    {item.name}
+                  </Link>
+                ));
+              })()}
+            </nav>
 
             {/* Empty space in place of actions to keep spacing consistent with image */}
             <div className="max-lg:hidden lg:block w-[150px]" />
