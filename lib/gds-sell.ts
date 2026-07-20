@@ -133,7 +133,13 @@ export async function sellGdsSeats(params: SellParams): Promise<Record<string, s
       let { res, data, label, seatsObj, payload } = result.value;
 
       let isSuccess = res.ok;
-      let codigoError = data?.data?.raw?.CodigoError;
+      let codigoError = data?.data?.raw?.CodigoError || data?.error?.errorCode || data?.errorCode;
+
+      // Extract error code from stringified error if necessary
+      if (!codigoError && data?.error && typeof data.error === 'string') {
+        const match = data.error.match(/CodigoError:\s*(\d+)/);
+        if (match) codigoError = match[1];
+      }
 
       // Intento de re-bloqueo y venta si el error es 233 (Asiento no disponible / Bloqueo expirado)
       if ((!isSuccess || (codigoError !== undefined && String(codigoError) !== "0")) && String(codigoError) === "233") {
@@ -142,7 +148,7 @@ export async function sellGdsSeats(params: SellParams): Promise<Record<string, s
           res = retryResult.res;
           data = retryResult.data;
           isSuccess = res.ok;
-          codigoError = data?.data?.raw?.CodigoError;
+          codigoError = data?.data?.raw?.CodigoError || data?.error?.errorCode || data?.errorCode;
         }
       }
 
