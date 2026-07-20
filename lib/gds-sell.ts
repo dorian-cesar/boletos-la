@@ -43,6 +43,20 @@ async function doSell(payload: any, label: string) {
 async function retrySellWithNewBlock(payload: any, originalSeats: any[], label: string) {
   console.log(`[sell ${label}] Intentando re-bloquear asientos por expiración (Error 233)...`);
   try {
+    // 1. Intentar desbloquear la sesión anterior (por si el asiento quedó en un limbo en el GDS)
+    if (payload.connectionId) {
+      console.log(`[sell ${label}] Liberando conexión anterior fantasma: ${payload.connectionId}`);
+      await fetch("/api/gds/unblock", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ connectionId: payload.connectionId }),
+      }).catch((e) => console.error(`[sell ${label}] Error silencioso al liberar conexión anterior:`, e));
+      
+      // Pequeña pausa para darle tiempo al GDS de procesar la liberación
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+
+    // 2. Intentar nuevo bloqueo
     const blockRes = await fetch("/api/gds/block", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
