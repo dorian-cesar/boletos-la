@@ -56,35 +56,48 @@ async function retrySellWithNewBlock(payload: any, originalSeats: any[], label: 
       await new Promise(resolve => setTimeout(resolve, 500));
     }
 
-    // 2. Intentar nuevo bloqueo
-    const blockRes = await fetch("/api/gds/block", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        serviceId: payload.serviceId,
-        originId: payload.originId,
-        destinationId: payload.destinationId,
-        seats: originalSeats.map((s: any) => s.number).join(", "),
-      }),
-    });
+    // 2. Intentar nuevo bloqueo con reintentos (el unblock puede tardar unos segundos en propagarse en el GDS)
+    let blockData = null;
+    let blockSuccess = false;
 
-    if (!blockRes.ok) {
-      console.error(`[sell ${label}] Falló el re-bloqueo:`, blockRes.status);
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      console.log(`[sell ${label}] Intento de re-bloqueo ${attempt}/3...`);
+      const blockRes = await fetch("/api/gds/block", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          serviceId: payload.serviceId,
+          originId: payload.originId,
+          destinationId: payload.destinationId,
+          seats: originalSeats.map((s: any) => s.number).join(", "),
+        }),
+      });
+
+      if (blockRes.ok) {
+        const rawData = await blockRes.json();
+        blockData = rawData.data || rawData;
+        const isGdsError =
+          blockData.success === false ||
+          (blockData.providerResult && blockData.providerResult !== "0");
+
+        if (!isGdsError && blockData.connectionId) {
+          blockSuccess = true;
+          break; // Salir del loop si fue exitoso
+        }
+      }
+      
+      if (attempt < 3) {
+        console.log(`[sell ${label}] GDS aún retiene el asiento. Esperando 2 segundos para reintentar...`);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    }
+
+    if (!blockSuccess || !blockData?.connectionId) {
+      console.error(`[sell ${label}] GDS rechazó el re-bloqueo definitivamente o no devolvió connectionId.`);
       return null;
     }
 
-    const blockData = await blockRes.json();
-    const parsedBlockData = blockData.data || blockData;
-    const isGdsError =
-      parsedBlockData.success === false ||
-      (parsedBlockData.providerResult && parsedBlockData.providerResult !== "0");
-
-    if (isGdsError || !parsedBlockData.connectionId) {
-      console.error(`[sell ${label}] GDS rechazó el re-bloqueo o no devolvió connectionId.`);
-      return null;
-    }
-
-    const newConnectionId = parsedBlockData.connectionId;
+    const newConnectionId = blockData.connectionId;
     console.log(`[sell ${label}] Re-bloqueo exitoso. Nuevo connectionId: ${newConnectionId}. Reintentando venta...`);
     
     const newPayload = { ...payload, connectionId: newConnectionId };
