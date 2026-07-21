@@ -39,7 +39,7 @@ function detectCurrency(
   if (urlCurrency && urlCurrency.length === 3) {
     return urlCurrency;
   }
-  
+
   const urlCountry = searchParams.get("country")?.toUpperCase();
   if (urlCountry) {
     const countryCurrencyMap: { [key: string]: string } = {
@@ -118,7 +118,7 @@ function detectCurrency(
     if (savedCurrency && savedCurrency.length === 3) {
       return savedCurrency;
     }
-  } catch (e) {}
+  } catch (e) { }
 
   return propCurrency;
 }
@@ -275,19 +275,40 @@ export function DistributionWidget({
     const observer = new MutationObserver(() => {
       try {
         updateCurrencyFromDOM();
+
+        // Forzar color a blanco en el botón de búsqueda y TODOS sus hijos
+        const buttons = Array.from(container.querySelectorAll('button, [role="button"], .mantine-Button-root'));
+        // Buscar el botón principal (suele ser el último o tener clase filled/primary)
+        let submitBtn = buttons.find(b => 
+          (b as HTMLButtonElement).type === 'submit' || 
+          b.classList.contains('mantine-Button-filled') ||
+          b.textContent?.toLowerCase().includes('buscar') || 
+          b.textContent?.toLowerCase().includes('search') ||
+          b.textContent?.toLowerCase().includes('pesquisar') ||
+          b.textContent?.toLowerCase().includes('procurar')
+        ) as HTMLElement;
         
-        // Sobrescribir el texto del botón si se especificó
-        if (buttonText) {
-          const submitBtn = container.querySelector('button[type="submit"]') as HTMLButtonElement;
-          if (submitBtn) {
-            // Check span inside button or button itself depending on SDK structure
+        if (!submitBtn && buttons.length > 0) {
+          submitBtn = buttons[buttons.length - 1] as HTMLElement; // Fallback al último botón
+        }
+
+        if (submitBtn) {
+          // Cambiar el texto si buttonText está definido
+          if (buttonText) {
             const spanInside = submitBtn.querySelector('span');
-            if (spanInside && spanInside.innerText !== buttonText) {
-              spanInside.innerText = buttonText;
-            } else if (!spanInside && submitBtn.innerText !== buttonText) {
+            if (spanInside) {
+              if (spanInside.innerText !== buttonText) spanInside.innerText = buttonText;
+            } else if (submitBtn.innerText !== buttonText) {
               submitBtn.innerText = buttonText;
             }
           }
+
+          // Forzar color blanco incondicionalmente a todos los niveles
+          submitBtn.style.setProperty('color', '#ffffff', 'important');
+          const children = submitBtn.querySelectorAll('*');
+          children.forEach(child => {
+            (child as HTMLElement).style.setProperty('color', '#ffffff', 'important');
+          });
         }
       } catch (e) {
         console.error("Error updating widget DOM:", e);
@@ -308,7 +329,7 @@ export function DistributionWidget({
       const hasInputs = container.querySelectorAll("input").length > 0 || container.querySelector("form");
       // Chequeo 2: Ver si el SDK ya metió mucho contenido interno
       const hasContent = container.children.length > 0 && container.innerHTML.length > 500;
-      
+
       if (hasInputs || hasContent || intervalCount > 15) { // 15 * 200ms = 3 segundos máximo
         setIsWidgetReady(true);
         clearInterval(readyInterval);
@@ -335,7 +356,7 @@ export function DistributionWidget({
         onLoad={initWidget}
       />
       <div className="w-full flex justify-center px-4 py-2 relative">
-        
+
         {/* Esqueleto Personalizado (Mantiene el espacio correcto en el DOM) */}
         {!isWidgetReady && (
           <div className="w-full max-w-5xl p-4">
@@ -360,7 +381,7 @@ export function DistributionWidget({
         )}
 
         {/* Contenedor que Controlamos Nosotros (El SDK no puede borrar sus clases) */}
-        <div 
+        <div
           className={cn(
             "w-full max-w-5xl transition-opacity duration-500",
             !isWidgetReady ? "absolute opacity-0 pointer-events-none" : "opacity-100 relative z-20"
@@ -372,6 +393,17 @@ export function DistributionWidget({
             className="w-full p-4 overflow-visible text-black"
           >
           </div>
+          <style dangerouslySetInnerHTML={{__html: `
+            #distribusion-search button,
+            #distribusion-search button *,
+            #distribusion-search .mantine-Button-root,
+            #distribusion-search .mantine-Button-root *,
+            #distribusion-search [class*="Button"],
+            #distribusion-search [class*="Button"] * {
+              color: #ffffff !important;
+              -webkit-text-fill-color: #ffffff !important;
+            }
+          `}} />
         </div>
       </div>
     </>
