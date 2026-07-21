@@ -157,7 +157,6 @@ export function Footer({ country }: FooterProps) {
     >
       <div className="container mx-auto px-4 max-w-[1440px] relative z-10 pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          {/* Brand & Selectors Column */}
           <div className="lg:col-span-4 space-y-6">
             <Link href={country && country.toLowerCase() !== "latam" ? `/${country.toLowerCase()}` : "/"} className="inline-block">
               <Image
@@ -165,30 +164,14 @@ export function Footer({ country }: FooterProps) {
                 alt="Boletos.la Logo"
                 width={150}
                 height={80}
-                className="transition-transform duration-300 hover:scale-105"
+                className="transition-transform duration-300 hover:scale-105 brightness-0 invert"
                 loading="eager"
               />
             </Link>
-
-            <p className="text-sm md:text-base text-neutral-400 leading-relaxed font-normal">
-              {currentFooter.slogan}
-              <br />
-              <br />
-              <strong>{currentFooter.compareTitle}</strong>{currentFooter.compareDesc}
-              <br />
-              <strong>{currentFooter.routesTitle}</strong>{currentFooter.routesDesc}
-              <br />
-              <strong>{currentFooter.reserveTitle}</strong>{currentFooter.reserveDesc}
-              <br />
-              <br />
-              <strong>
-                {currentFooter.patagonia}
-              </strong>
-            </p>
           </div>
 
           {/* Quick Links Column */}
-          <div className="lg:col-span-2 space-y-4">
+          <div className="lg:col-span-4 space-y-4">
             <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-300">
               {currentFooter.col1Title}
             </h4>
@@ -204,7 +187,7 @@ export function Footer({ country }: FooterProps) {
           </div>
 
           {/* Help Links Column */}
-          <div className="lg:col-span-2 space-y-4">
+          <div className="lg:col-span-4 space-y-4">
             <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-300">
               {currentFooter.col2Title}
             </h4>
@@ -217,19 +200,6 @@ export function Footer({ country }: FooterProps) {
                 </li>
               ))}
             </ul>
-          </div>
-
-          {/* Phone Mockup Column */}
-          <div className="lg:col-span-4 flex justify-center lg:justify-end w-full">
-            <div className="relative w-full h-[280px] lg:h-[360px] overflow-hidden rounded-lg">
-              <Image
-                src="/images/boletos-celular-footer.jpg"
-                alt="Boletos.la en celular"
-                fill
-                className="object-cover object-center scale-110 lg:scale-115 -translate-y-4 lg:-translate-y-4 transition-transform duration-500"
-                sizes="(max-width: 1024px) 100vw, 400px"
-              />
-            </div>
           </div>
         </div>
       </div>

@@ -24,7 +24,7 @@ export function RegionalExpansionSection({ country }: RegionalExpansionSectionPr
 
   return (
     <section className="bg-white text-gray-800">
-      <div className="grid grid-cols-1 md:grid-cols-2 items-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 items-center bg-[#f2f2f2]">
         {/* Left Side: Image */}
         <div className="flex items-center justify-center h-full w-full order-last md:order-first bg-white/50">
           <Image
@@ -38,11 +38,11 @@ export function RegionalExpansionSection({ country }: RegionalExpansionSectionPr
         </div>
 
         {/* Right Side: Text */}
-        <div className="flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 md:py-20 text-left bg-teal-50/50">
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#4a4a4a] tracking-tight mb-8 leading-tight">
+        <div className="flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 md:py-20 text-left">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-[#111111] tracking-tight mb-8 leading-[1.1]">
             {currentContent.title}
           </h2>
-          <p className="text-lg md:text-xl text-gray-500 leading-relaxed font-normal">
+          <p className="text-xl md:text-2xl lg:text-3xl text-gray-800 leading-snug font-normal">
             {currentContent.description}
           </p>
         </div>

@@ -28,15 +28,21 @@ export function BrandClosingSection({ country }: BrandClosingSectionProps) {
         {/* Left Side: Text */}
         <div className="flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 md:py-20 text-left">
           <div className="mb-6">
-             {/* Text Logo fallback */}
-             <span className="text-xl font-bold tracking-widest text-[#00c7cc]">BOLETOS.LA</span>
+            <Image
+              src="/images/layout/logo-boletos.png"
+              alt="Boletos.la Logo"
+              width={800}
+              height={100}
+              className="h-16 md:h-24 lg:h-32 w-auto object-contain"
+            />
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#4a4a4a] tracking-tight mb-8 leading-tight">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-[#111111] tracking-tight mb-8 leading-[1.1]">
             {currentContent.title}
           </h2>
-          <p className="text-lg md:text-xl text-gray-500 leading-relaxed font-normal">
-            {currentContent.description}
-          </p>
+          <div className="text-xl md:text-2xl lg:text-3xl text-gray-800 leading-snug font-normal space-y-6">
+            <p>{currentContent.description.split('.')[0]}.</p>
+            <p>{currentContent.description.split('.').slice(1).join('.').trim()}</p>
+          </div>
         </div>
 
         {/* Right Side: Image */}

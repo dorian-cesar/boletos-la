@@ -155,7 +155,7 @@ export function HeroSection({ country }: HeroSectionProps) {
           <div 
             key={index}
             className={cn(
-              "absolute inset-0 transition-opacity duration-1000",
+              "absolute inset-0 transition-opacity duration-[2000ms] ease-in-out",
               index === currentImageIndex ? "opacity-100 z-0" : "opacity-0 -z-10"
             )}
           >
@@ -164,7 +164,10 @@ export function HeroSection({ country }: HeroSectionProps) {
               alt={`Vista aérea - Hero ${country || ""} ${index + 1}`}
               fill
               sizes="100vw"
-              className="object-cover object-center"
+              className={cn(
+                "object-cover object-center transform transition-transform duration-[10000ms] ease-out",
+                index === currentImageIndex ? "scale-110" : "scale-100"
+              )}
               priority={index === 0}
             />
           </div>
