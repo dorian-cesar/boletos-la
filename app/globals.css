@@ -139,4 +139,35 @@ div[class*="Popover_dropdown"] {
 #distribusion-search button:not([aria-label]):hover {
   background-color: #2b2b2b !important;
   border-color: #2b2b2b !important;
+}
+
+/* Shine Animation */
+@keyframes shine {
+  0% { left: -100%; opacity: 0; }
+  10% { opacity: 0.5; }
+  20% { left: 100%; opacity: 0; }
+  100% { left: 100%; opacity: 0; }
+}
+
+#distribusion-search button[type="submit"] {
+  position: relative;
+  overflow: hidden;
+}
+
+#distribusion-search button[type="submit"]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+  animation: shine 4s infinite ease-in-out;
+  pointer-events: none;
 }

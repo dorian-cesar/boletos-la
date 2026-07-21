@@ -1,0 +1,231 @@
+
+1. Mapeo para COLOMBIA 
+[Menú de Navegación Superior]
+Enlaces:
+ Inicio | Destinos | Servicios | Finanzas | Contacto
+Carrusel: 
+https://drive.google.com/drive/folders/1CjwPNKDzpaMmtEmB8tzPjJ4mcth4Y8w2?usp=sharing
+[Sección Hero Principal]
+Título Principal (hero.title):
+ Todo Colombia, a un solo clic de distancia. 
+(Corregido anglicismo "click")
+Subtítulo de Oferta (hero.subtitle):
+ ¡BUS + HOTEL EN UN SOLO CLIC! FÁCIL, SEGURO Y AL MEJOR PRECIO.
+Campos del Widget de Búsqueda:
+De: [Bogotá, Colombia] 
+(Placeholder base)
+A: [Cali, Colombia] 
+(Placeholder base)
+Pasajeros: [1 Adulto]
+Fecha: [DD - MM - AAAA]
+Botón de Acción: ENCONTRAR MI VIAJE
+[Sección 1 - Propuesta de Valor Primaria]
+Título Principal:
+ ¡Viaja en bus sin filas!
+Descripción Corta:
+ Boletos.la es la plataforma web líder para comprar tus pasajes y tiquetes en línea desde cualquier dispositivo.
+[Sección 2 - Rutas y Destinos Populares]
+Título de Sección:
+ Explore lo mejor de la región: Las rutas preferidas por nuestros usuarios
+Bloque de Etiquetas Dinámicas (Array de Rutas CO):
+ Bogotá / Medellín • Cartagena / Barranquilla • Cali / Bogotá • Bogotá / Bucaramanga • Santa Marta / Bogotá • Cali / Medellín • Bogotá / Armenia • Cartagena / Montería • Barranquilla / Medellín • Bogotá / Manizales • Cartagena / Cúcuta • Medellín / Barranquilla • Medellín / Bogotá • Santa Marta / Medellín • Santa Marta / Cali • Manizales / Barranquilla • Barranquilla / Riohacha • Santa Marta / Valledupar
+[Sección 3 - Omnicanalidad y Puntos Físicos]
+Título Principal:
+ Donde sea que estés, también estamos.
+Descripción Corta:
+ Descubre nuestros puntos de venta físicos y terminales de autoservicio interactivo. Una alternativa rápida y fácil para comprar tus pasajes directamente en la terminal.
+[Sección 4 - Expansión Regional]
+Título Principal:
+ Nuestra red sigue creciendo, conectando toda la región.
+Descripción Corta:
+ Hemos ampliado nuestra tecnología para simplificar tus viajes por América Latina.
+[Sección 5 - Cierre de Marca]
+Título Principal:
+ Tu ruta completa por América Latina, todo en un mismo lugar.
+Descripción Corta:
+ Desde la Patagonia hasta el Caribe, nosotros trazamos la ruta. Tú eliges el camino. 
+[Pie de Página - Footer]
+Pasarelas / Gateway Renderizadas (Moneda: COP):
+ Google Pay | Apple Pay | PSE | Nequi | Daviplata
+Estructura de Enlaces Inferiores:
+DESCUBRE
+Hoteles
+Terminales
+Guías de viaje
+Blog
+BOLETOS.LA
+Sobre nosotros
+Prensa
+Trabaja con nosotros
+Ayuda
+Contacto
+2. Mapeo para BRASIL
+[Menú de Navegación Superior]
+Enlaces:
+ Início | Destinos | Serviços | Finanças | Contato
+Carrusel: 
+https://drive.google.com/drive/folders/1HwfyZmfAjpZE5GGccJBK8lbRMgKnukrp?usp=sharing
+[Sección Hero Principal]
+Título Principal (hero.title):
+ Todo o Brasil, a apenas um clique de distância.
+Subtítulo de Oferta (hero.subtitle):
+ ÔNIBUS + HOTEL COM APENAS UM CLIQUE! FÁCIL, SEGURO E AO MELHOR PREÇO.
+Campos del Widget de Búsqueda:
+De: [São Paulo, Brasil]
+Para: [Rio de Janeiro, Brasil]
+Passageiros: [1 Adulto]
+Data: [DD - MM - AAAA]
+Botón de Acción: ENCONTRAR MINHA VIAGEM
+[Sección 1 - Propuesta de Valor Primaria]
+Título Principal:
+ Viaje de ônibus sem filas!
+Descripción Corta:
+ Boletos.la é a plataforma web ideal para comprar suas passagens online de forma rápida em qualquer dispositivo.
+[Sección 2 - Rutas y Destinos Populares]
+Título de Sección:
+ Explore o melhor da região: As rotas preferidas dos nossos usuários
+Bloque de Etiquetas Dinámicas (Array de Rutas BR):
+ São Paulo / Rio de Janeiro • São Paulo / Belo Horizonte • Rio de Janeiro / Búzios • Curitiba / Florianópolis • Salvador / Porto Seguro • Brasília / Goiânia • São Paulo / Curitiba • Fortaleza / Jericoacoara • Belo Horizonte / Cabo Frio
+[Sección 3 - Omnicanalidad y Puntos Físicos]
+Título Principal:
+ Onde quer que você esteja, nós também estamos.
+Descripción Corta:
+ Descubra nossos pontos de venda físicos e totens de autoatendimento. Uma alternativa rápida e prática para comprar suas passagens diretamente na rodoviária.
+[Sección 4 - Expansión Regional]
+Título Principal:
+ Nossa rede continua crescendo, conectando toda a região.
+Descripción Corta:
+ Ampliamos nossa tecnologia para simplificar suas viagens pela América Latina.
+[Sección 5 - Cierre de Marca]
+Título Principal:
+ Sua rota completa pela América Latina, tudo em um só lugar.
+Descripción Corta:
+ Da Patagônia ao Caribe, nós traçamos a rota. Você escolhe o caminho.
+[Pie de Página - Footer]
+Pasarelas / Gateway Renderizadas (Moneda: BRL):
+ Google Pay | Apple Pay | Pix 
+Estructura de Enlaces Inferiores:
+DESCUBRA
+Hotéis
+Rodoviárias
+Guias de viagem
+Blog
+BOLETOS.LA
+Sobre nós
+Imprensa
+Trabalhe conosco
+Ajuda
+Contato
+3. Mapeo para CHILE (Localización de Mercado Chileno)
+[Menú de Navegación Superior]
+Enlaces:
+ Inicio | Destinos | Servicios | Finanzas | Contacto
+[Sección Hero Principal]
+Título Principal (hero.title):
+ Todo Chile, a un solo clic de distancia.
+Subtítulo de Oferta (hero.subtitle):
+ ¡BUS + HOTEL CON UN SOLO CLIC! FÁCIL, SEGURO Y AL MEJOR PRECIO.
+Campos del Widget de Búsqueda:
+De: [Santiago, Chile]
+A: [Viña del Mar, Chile]
+Pasajeros: [1 Adulto]
+Fecha: [DD - MM - AAAA]
+Botón de Acción: BUSCAR MI VIAJE
+[Sección 1 - Propuesta de Valor Primaria]
+Título Principal:
+ ¡Viaja en bus sin filas!
+Descripción Corta:
+ Boletos.la es la plataforma digital para comprar tus pasajes en línea de manera segura desde cualquier dispositivo.
+[Sección 2 - Rutas y Destinos Populares]
+Título de Sección:
+ Explore lo mejor de la región: Las rutas preferidas por nuestros usuarios
+Bloque de Etiquetas Dinámicas (Array de Rutas CL):
+ Santiago / Viña del Mar • Santiago / Concepción • Santiago / La Serena • Puerto Montt / Temuco • Santiago / Mendoza • Antofagasta / Calama • Santiago / Coquimbo • Valparaíso / Santiago • Puerto Montt / Bariloche
+[Sección 3 - Omnicanalidad y Puntos Físicos]
+Título Principal:
+ Donde sea que estés, también estamos.
+Descripción Corta:
+ Descubre nuestros puntos de venta físicos y tótems de autoservicio rápido. Una alternativa rápida y eficiente para comprar tus pasajes directamente en el terminal.
+[Sección 4 - Expansión Regional]
+Título Principal:
+ Nuestra red sigue creciendo, conectando toda la región.
+Descripción Corta:
+ Hemos ampliado nuestra tecnología para simplificar tus viajes por América Latina.
+[Sección 5 - Cierre de Marca]
+Título Principal:
+ Tu ruta completa por América Latina, todo en un mismo lugar.
+Descripción Corta:
+ Desde la Patagonia hasta el Caribe, nosotros trazamos la ruta. Tú eliges el camino.
+[Pie de Página - Footer]
+Pasarelas / Gateway Renderizadas (Moneda: CLP):
+ Google Pay | Apple Pay | Webpay | Transbank
+Estructura de Enlaces Inferiores:
+DESCUBRE
+Hoteles
+Terminales
+Guías de viaje
+Blog
+BOLETOS.LA
+Sobre nosotros
+Prensa
+Trabaja con nosotros
+Ayuda
+Contacto
+4. Mapeo para PARAGUAY (Localización de Mercado Paraguayo)
+[Menú de Navegación Superior]
+Enlaces:
+ Inicio | Destinos | Servicios | Finanzas | Contacto
+[Sección Hero Principal]
+Título Principal (hero.title):
+ Todo Paraguay, a un solo clic de distancia.
+Subtítulo de Oferta (hero.subtitle):
+ ¡BUS + HOTEL CON UN SOLO CLIC! FÁCIL, SEGURO Y AL MEJOR PRECIO.
+Campos del Widget de Búsqueda:
+De: [Asunción, Paraguay]
+A: [Ciudad del Este, Paraguay]
+Pasajeros: [1 Adulto]
+Fecha: [DD - MM - AAAA]
+Botón de Acción:** ENCONTRAR MI VIAJE
+[Sección 1 - Propuesta de Valor Primaria]
+Título Principal:
+ ¡Viaja en colectivo sin filas! 
+(Adaptación semántica preferencial)
+Descripción Corta:
+ Boletos.la es la plataforma web preferida para comprar tus pasajes y boletos en línea desde tu celular o computadora.
+[Sección 2 - Rutas y Destinos Populares]
+Título de Sección:
+ Explore lo mejor de la región: Las rutas preferidas por nuestros usuarios
+Bloque de Etiquetas Dinámicas (Array de Rutas PY):
+ Asunción / Ciudad del Este • Asunción / Encarnación • Asunción / Pedro Juan Caballero • Ciudad del Este / Encarnación • Asunción / Buenos Aires • Asunción / Villarrica • Asunción / Salto del Guairá • Coronel Oviedo / Asunción
+[Sección 3 - Omnicanalidad y Puntos Físicos]
+Título Principal:
+ Donde sea que estés, también estamos.
+Descripción Corta:
+ Descubre nuestros puntos de venta presenciales y terminales de autoservicio digital. Una alternativa ágil para comprar tus pasajes directamente en la terminal.
+[Sección 4 - Expansión Regional]
+Título Principal:
+ Nuestra red sigue creciendo, conectando toda la región.
+Descripción Corta:
+ Hemos ampliado nuestra tecnología para simplificar tus viajes por América Latina.
+[Sección 5 - Cierre de Marca]
+Título Principal:
+ Tu ruta completa por América Latina, todo en un mismo lugar.
+Descripción Corta:
+ Desde la Patagonia hasta el Caribe, nosotros trazamos la ruta. Tú eliges el camino.
+[Pie de Página - Footer]
+Selectores de Configuración:
+ Convertidor de Monedas | País: Paraguay
+Pasarelas / Gateway Renderizadas (Moneda: PYG):
+ Google Pay | Apple Pay | Bancard | Pago Móvil
+Estructura de Enlaces Inferiores:
+DESCUBRE
+Hoteles
+Terminales
+Guías de viaje
+Blog
+BOLETOS.LA
+Sobre nosotros
+Prensa
+Trabaja con nosotros
+Ayuda
+Contacto

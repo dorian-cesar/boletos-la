@@ -337,24 +337,26 @@ export function Footer({ country }: FooterProps) {
       {/* Bottom Bar */}
       <div className="border-t border-white/10">
         <div className="container mx-auto px-4 max-w-[1440px] py-6">
-          <div className="flex items-center justify-center gap-4 flex-col md:flex-row">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Año + logo */}
-            <div className="flex items-center gap-2 text-white/50 text-base">
+            <div className="flex items-center gap-4 text-white/50 text-sm">
               <Image
-                src="/logos/logo-boletos-blanco.png"
+                src="/logos/logo-boletos.png"
                 alt="Boletos.la"
                 width={90}
                 height={24}
-                className="opacity-70"
+                className="object-contain"
               />
-              <span>|</span>
+              <span className="hidden md:inline">|</span>
               <span>Todos los derechos reservados.</span>
             </div>
             {currentFooter.showSelectors && (
-              <div className="flex items-center gap-2 text-white/50 text-sm mt-2 md:mt-0">
-                <span>Convertidor de Monedas</span>
+              <div className="flex items-center gap-4 text-white/60 text-sm">
+                <button className="hover:text-white transition-colors">Convertidor de Monedas</button>
                 <span>|</span>
-                <span>País: Paraguay</span>
+                <button className="hover:text-white transition-colors flex items-center gap-2">
+                  País: Paraguay
+                </button>
               </div>
             )}
           </div>
