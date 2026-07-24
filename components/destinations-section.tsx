@@ -52,25 +52,25 @@ const popularCities = [
   },
 ];
 
-const countryDestinations: Record<string, typeof popularCities> = {
+const countryDestinations: Record<string, { name: string; image: string; available?: boolean }[]> = {
   argentina: [
     { name: "BUENOS AIRES / MENDOZA", image: "/images/destinations/arg-mendoza.jpg" },
     { name: "BUENOS AIRES / CÓRDOBA", image: "/images/destinations/arg-cordoba.png" },
     { name: "BUENOS AIRES / MAR DEL PLATA", image: "/images/destinations/arg-mar-del-plata.jpg" },
     { name: "BUENOS AIRES / BARILOCHE", image: "/images/destinations/arg-bariloche.jpg" },
-    { name: "MENDOZA / CÓRDOBA", image: "/images/destinations/placeholder.svg" },
-    { name: "CÓRDOBA / MAR DEL PLATA", image: "/images/destinations/placeholder.svg" },
-    { name: "ROSARIO / BUENOS AIRES", image: "/images/destinations/placeholder.svg" },
-    { name: "SALTA / TUCUMÁN", image: "/images/destinations/placeholder.svg" },
-    { name: "MENDOZA / SANTIAGO", image: "/images/destinations/placeholder.svg" }
+    { name: "MENDOZA / CÓRDOBA", image: "/images/destinations/placeholder.svg", available: false },
+    { name: "CÓRDOBA / MAR DEL PLATA", image: "/images/destinations/placeholder.svg", available: false },
+    { name: "ROSARIO / BUENOS AIRES", image: "/images/destinations/placeholder.svg", available: false },
+    { name: "SALTA / TUCUMÁN", image: "/images/destinations/placeholder.svg", available: false },
+    { name: "MENDOZA / SANTIAGO", image: "/images/destinations/placeholder.svg", available: false }
   ],
   brasil: [
     { name: "SÃO PAULO / RIO DE JANEIRO", image: "/images/destinations/brasil-sao-paulo.jpg" },
     { name: "SÃO PAULO / BELO HORIZONTE", image: "/images/destinations/brasil-belo-horizonte.webp" },
-    { name: "RIO DE JANEIRO / BÚZIOS", image: "/images/destinations/brasil-rio.jpeg" },
+    { name: "RIO DE JANEIRO / BÚZIOS", image: "/images/destinations/brasil-rio.jpeg", available: false },
     { name: "CURITIBA / FLORIANÓPOLIS", image: "/images/destinations/brasil-floripa.jpg" },
-    { name: "SALVADOR / PORTO SEGURO", image: "/images/destinations/brasil-salvador.jpg" },
-    { name: "BRASÍLIA / GOIÂNIA", image: "/images/destinations/brasil-goiana.jpg" },
+    { name: "SALVADOR / PORTO SEGURO", image: "/images/destinations/brasil-salvador.jpg", available: false },
+    { name: "BRASÍLIA / GOIÂNIA", image: "/images/destinations/brasil-goiana.jpg", available: false },
     { name: "SÃO PAULO / CURITIBA", image: "/images/destinations/brasil-curitiba.jpg" },
     { name: "FORTALEZA / JERICOACOARA", image: "/images/destinations/brasil-jericoacoara.jpg" },
     { name: "BELO HORIZONTE / CABO FRIO", image: "/images/destinations/brasil-cabo-frio.webp" }
@@ -82,11 +82,11 @@ const countryDestinations: Record<string, typeof popularCities> = {
     { name: "BOGOTÁ / BUCARAMANGA", image: "/images/destinations/colombia-santander.jpg" },
     { name: "SANTA MARTA / BOGOTÁ", image: "/images/destinations/colombia-santa-marta.jpeg" },
     { name: "CALI / MEDELLÍN", image: "/images/destinations/colombia-medellin.jpeg" },
-    { name: "BOGOTÁ / ARMENIA", image: "/images/destinations/colombia-bogota.jpg" },
+    { name: "BOGOTÁ / ARMENIA", image: "/images/destinations/colombia-bogota.jpg", available: false },
     { name: "CARTAGENA / MONTERÍA", image: "/images/destinations/colombia-monteria.jpeg" },
     { name: "BARRANQUILLA / MEDELLÍN", image: "/images/destinations/colombia-medellin.jpg" },
     { name: "BOGOTÁ / MANIZALES", image: "/images/destinations/colombia-manizales.jpg" },
-    { name: "CARTAGENA / CÚCUTA", image: "/images/destinations/colombia-cartagena.jpg" },
+    { name: "CARTAGENA / CÚCUTA", image: "/images/destinations/colombia-cartagena.jpg", available: false },
     { name: "MEDELLÍN / BARRANQUILLA", image: "/images/destinations/colombia-barranquilla-2.jpg" },
     { name: "MEDELLÍN / BOGOTÁ", image: "/images/destinations/colombia-medellin.jpg" },
     { name: "SANTA MARTA / MEDELLÍN", image: "/images/destinations/colombia-santa-marta-.jpeg" },
@@ -99,22 +99,22 @@ const countryDestinations: Record<string, typeof popularCities> = {
     { name: "SANTIAGO / VIÑA DEL MAR", image: "/images/destinations/chile-vina-del-mar.jpg" },
     { name: "SANTIAGO / CONCEPCIÓN", image: "/images/destinations/chile-concepcion.png" },
     { name: "SANTIAGO / LA SERENA", image: "/images/destinations/chile-serena.jpg" },
-    { name: "PUERTO MONTT / TEMUCO", image: "/images/destinations/chile-temuco.jpeg" },
+    { name: "PUERTO MONTT / TEMUCO", image: "/images/destinations/chile-temuco.jpeg", available: false },
     { name: "SANTIAGO / MENDOZA", image: "/images/destinations/chile-mendoza.jpg" },
     { name: "ANTOFAGASTA / CALAMA", image: "/images/destinations/chile-calama.webp" },
     { name: "SANTIAGO / COQUIMBO", image: "/images/destinations/chile-coquimbo.jpg" },
     { name: "VALPARAÍSO / SANTIAGO", image: "/images/destinations/chile-valpo.jpg" },
-    { name: "PUERTO MONTT / BARILOCHE", image: "/images/destinations/chile-patagonia.jpg" }
+    { name: "PUERTO MONTT / BARILOCHE", image: "/images/destinations/chile-patagonia.jpg", available: false }
   ],
   paraguay: [
     { name: "ASUNCIÓN / CIUDAD DEL ESTE", image: "/images/destinations/ciudad-del-este-paraguay.png" },
     { name: "ASUNCIÓN / ENCARNACIÓN", image: "/images/destinations/py-encarnacion.jpg" },
     { name: "ASUNCIÓN / PEDRO JUAN CABALLERO", image: "/images/destinations/pedro-juan-caballero-py.png" },
     { name: "CIUDAD DEL ESTE / ENCARNACIÓN", image: "/images/destinations/cde.jpg" },
-    { name: "ASUNCIÓN / BUENOS AIRES", image: "/images/destinations/asuncion.jpg" },
+    { name: "ASUNCIÓN / BUENOS AIRES", image: "/images/destinations/asuncion.jpg", available: false },
     { name: "ASUNCIÓN / VILLARRICA", image: "/images/destinations/paraguay-villarrica.jpg" },
-    { name: "ASUNCIÓN / SALTO DEL GUAIRÁ", image: "/images/destinations/paraguay-sd-guaira.jpg" },
-    { name: "CORONEL OVIEDO / ASUNCIÓN", image: "/images/destinations/paraguay-asuncion.jpg" }
+    { name: "ASUNCIÓN / SALTO DEL GUAIRÁ", image: "/images/destinations/paraguay-sd-guaira.jpg", available: false },
+    { name: "CORONEL OVIEDO / ASUNCIÓN", image: "/images/destinations/paraguay-asuncion.jpg", available: false }
   ]
 };
 
@@ -169,6 +169,25 @@ const quickRoutes = [
   "COCHABAMBA - LPB",
 ];
 
+const locationCodes: Record<string, string> = {
+  "BOGOTÁ": "COBOG", "MEDELLÍN": "COMDE", "CALI": "COCLO", "BUCARAMANGA": "COBGA",
+  "SANTA MARTA": "COSMR", "ARMENIA": "COAXM", "MONTERÍA": "COMTR", "BARRANQUILLA": "COBAQ",
+  "MANIZALES": "COMZL", "CÚCUTA": "COCUC", "RIOHACHA": "CORCH", "VALLEDUPAR": "COVUP",
+  "CARTAGENA": "COCTG",
+
+  "SÃO PAULO": "BRSAO", "RIO DE JANEIRO": "BRRIO", "BELO HORIZONTE": "BRBHZ", "BÚZIOS": "BRBZC",
+  "CURITIBA": "BRCWB", "FLORIANÓPOLIS": "BRFLN", "SALVADOR": "BRSSA", "PORTO SEGURO": "BRBPS",
+  "BRASÍLIA": "BRBSB", "GOIÂNIA": "BRGYN", "FORTALEZA": "BRFOR", "JERICOACOARA": "BRJJD",
+  "CABO FRIO": "BRCFB",
+
+  "SANTIAGO": "CLSCL", "VIÑA DEL MAR": "CLKNA", "CONCEPCIÓN": "CLCCP", "LA SERENA": "CLLSC",
+  "PUERTO MONTT": "CLPMC", "TEMUCO": "CLZCO", "MENDOZA": "ARMDZ", "ANTOFAGASTA": "CLANF",
+  "CALAMA": "CLCJC", "COQUIMBO": "CLCOQ", "VALPARAÍSO": "CLVAP", "BARILOCHE": "ARBRC",
+
+  "ASUNCIÓN": "PYASU", "CIUDAD DEL ESTE": "PYAGT", "ENCARNACIÓN": "PYENO", "PEDRO JUAN CABALLERO": "PYPJC",
+  "BUENOS AIRES": "ARBUE", "VILLARRICA": "PYVRC", "SALTO DEL GUAIRÁ": "PYSGK", "CORONEL OVIEDO": "PYCOV"
+};
+
 interface DestinationsSectionProps {
   country?: string;
 }
@@ -176,14 +195,25 @@ interface DestinationsSectionProps {
 export function DestinationsSection({ country }: DestinationsSectionProps) {
   const [currentPage, setCurrentPage] = useState(0);
 
-  const handleSelectRoute = (route: string) => {
-    // Scroll al widget
-    const widget = document.getElementById("distribusion-search");
-    if (widget) {
-      widget.scrollIntoView({ behavior: "smooth", block: "center" });
+  const handleSelectRoute = (route: string, available: boolean = true) => {
+    if (!available) return;
+
+    const parts = route.split("/");
+    if (parts.length >= 2) {
+      const rawDep = parts[0].trim().toUpperCase();
+      const rawArr = parts[1].trim().toUpperCase();
+      
+      const departureCity = locationCodes[rawDep] || rawDep;
+      const arrivalCity = locationCodes[rawArr] || rawArr;
+
+      // Scroll al widget
+      const widget = document.getElementById("distribusion-search");
+      if (widget) {
+        widget.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      // Despachar evento para que el widget se actualice
+      window.dispatchEvent(new CustomEvent('updateDistribusionRoute', { detail: { route, departureCity, arrivalCity } }));
     }
-    // Despachar evento para que el widget se actualice
-    window.dispatchEvent(new CustomEvent('updateDistribusionRoute', { detail: { route } }));
   };
 
   const normalizedCountry = country?.toLowerCase() || "latam";
@@ -347,16 +377,17 @@ export function DestinationsSection({ country }: DestinationsSectionProps) {
               <div
                 key={city.name + idx}
                 className={cn(
-                  "group relative overflow-hidden rounded-md shadow-sm cursor-pointer w-full h-[250px] md:h-full transition-shadow duration-500 hover:shadow-2xl hover:z-10",
-                  spanClasses
+                  "group relative overflow-hidden rounded-md shadow-sm w-full h-[250px] md:h-full transition-shadow duration-500",
+                  spanClasses,
+                  city.available === false ? "opacity-75" : "cursor-pointer hover:shadow-2xl hover:z-10"
                 )}
-                onClick={() => handleSelectRoute(city.name)}
+                onClick={() => handleSelectRoute(city.name, city.available)}
               >
                 <Image
                   src={city.image}
                   alt={city.name}
                   fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  className={cn("object-cover transition-transform duration-700", city.available !== false && "group-hover:scale-105")}
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 <div className="absolute bottom-4 left-4">
@@ -364,6 +395,9 @@ export function DestinationsSection({ country }: DestinationsSectionProps) {
                     <p className="font-medium text-white tracking-wide text-[10px] md:text-xs uppercase">
                       {city.name}
                     </p>
+                    {city.available === false && (
+                      <p className="text-[10px] text-red-300 font-bold mt-1">NO DISPONIBLE TEMPORALMENTE</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -396,15 +430,21 @@ export function DestinationsSection({ country }: DestinationsSectionProps) {
 
         {/* Route Tags */}
         <div className="flex flex-wrap justify-center gap-2 max-w-4xl mx-auto">
-          {currentRoutes.routes.map((route, i) => (
-            <span
-              key={i}
-              onClick={() => handleSelectRoute(route)}
-              className="px-6 py-3 bg-[#f2f2f2] text-[10px] md:text-xs font-semibold text-gray-700 tracking-wider cursor-pointer hover:bg-gray-200 transition-colors uppercase whitespace-nowrap"
-            >
-              {route}
-            </span>
-          ))}
+          {currentRoutes.routes.map((route, i) => {
+            const isAvailable = !pagedCities.find(c => c.name === route && c.available === false);
+            return (
+              <span
+                key={i}
+                onClick={() => handleSelectRoute(route, isAvailable)}
+                className={cn(
+                  "px-6 py-3 bg-[#f2f2f2] text-[10px] md:text-xs font-semibold tracking-wider uppercase whitespace-nowrap transition-colors",
+                  isAvailable ? "text-gray-700 cursor-pointer hover:bg-gray-200" : "text-gray-400 cursor-not-allowed opacity-60"
+                )}
+              >
+                {route}
+              </span>
+            );
+          })}
         </div>
       </div>
     </section>

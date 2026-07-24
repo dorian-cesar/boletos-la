@@ -134,12 +134,24 @@ export function DistributionWidget({
   const containerRef = useRef<HTMLDivElement>(null);
   const [isWidgetReady, setIsWidgetReady] = useState(false);
 
+  const getCountryFromPath = () => {
+    if (typeof window === "undefined") return undefined;
+    const path = window.location.pathname.toLowerCase();
+    if (path.includes('/colombia')) return 'CO';
+    if (path.includes('/brasil')) return 'BR';
+    if (path.includes('/chile')) return 'CL';
+    if (path.includes('/paraguay')) return 'PY';
+    if (path.includes('/argentina')) return 'AR';
+    return undefined;
+  };
+
   const initWidget = () => {
     if (window.Distribusion && containerRef.current) {
       // Limpiar el contenedor antes de montar para evitar duplicados o estados inválidos
       containerRef.current.innerHTML = '';
 
       const detectedCurrency = detectCurrency(currency, defaults);
+      const countryCode = getCountryFromPath();
 
       const config: any = {
         root: containerRef.current,
@@ -151,6 +163,10 @@ export function DistributionWidget({
 
       if (defaults) {
         config.defaults = defaults;
+      }
+      if (countryCode) {
+        // Fallback for different versions of the SDK filter params
+        config.filter = { country: countryCode };
       }
 
       window.Distribusion.Search.mount(config);
@@ -169,17 +185,18 @@ export function DistributionWidget({
 
   useEffect(() => {
     const handleUpdateRoute = (e: CustomEvent) => {
-      const { route } = e.detail;
+      const { route, departureCity, arrivalCity } = e.detail;
       if (!route || !window.Distribusion || !containerRef.current) return;
       
       const parts = route.split("/");
       if (parts.length >= 2) {
-        const departure = parts[0].trim();
-        const arrival = parts[1].trim();
+        const departure = departureCity || parts[0].trim();
+        const arrival = arrivalCity || parts[1].trim();
 
         // Limpiar contenedor
         containerRef.current.innerHTML = '';
         const detectedCurrency = detectCurrency(currency, defaults);
+        const countryCode = getCountryFromPath();
         
         const newDefaults = {
            ...defaults,
@@ -195,8 +212,22 @@ export function DistributionWidget({
           layout: layout === "horizontal" ? "row" : "column",
           defaults: newDefaults
         };
+
+        if (countryCode) {
+          config.filter = { country: countryCode };
+        }
         
         window.Distribusion.Search.mount(config);
+
+        // Auto-search after a short delay to allow widget to render
+        setTimeout(() => {
+          if (containerRef.current) {
+            const searchBtn = containerRef.current.querySelector('button[type="submit"]') as HTMLButtonElement;
+            if (searchBtn) {
+              searchBtn.click();
+            }
+          }
+        }, 300);
       }
     };
 
