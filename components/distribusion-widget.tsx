@@ -218,56 +218,6 @@ export function DistributionWidget({
         }
         
         window.Distribusion.Search.mount(config);
-
-        // Auto-search con reintentos (polling) para asegurar que el widget ya está montado
-        let attempts = 0;
-        const interval = setInterval(() => {
-          attempts++;
-          if (!containerRef.current || attempts > 20) { // Max 6 segundos (20 * 300ms)
-            clearInterval(interval);
-            return;
-          }
-          
-          // Helper para buscar botones recursivamente, incluyendo Shadow DOM
-          const findSearchBtn = (root: Element | DocumentFragment | null): HTMLButtonElement | null => {
-            if (!root) return null;
-            
-            // 1. Buscar botón con clase ui-button o type=submit
-            const btns = Array.from(root.querySelectorAll('button'));
-            const searchBtn = btns.find(b => 
-              b.classList.contains('ui-button') || 
-              b.getAttribute('type') === 'submit' ||
-              b.innerText?.toLowerCase().includes('buscar') ||
-              b.textContent?.toLowerCase().includes('buscar') ||
-              b.innerText?.toLowerCase().includes('search') ||
-              b.textContent?.toLowerCase().includes('search')
-            );
-            if (searchBtn) return searchBtn as HTMLButtonElement;
-            
-            // 2. Inspeccionar hijos con Shadow DOM
-            const childrenWithShadow = Array.from(root.querySelectorAll('*')).filter(el => el.shadowRoot);
-            for (const child of childrenWithShadow) {
-              const found = findSearchBtn(child.shadowRoot);
-              if (found) return found;
-            }
-            
-            return null;
-          };
-
-          const searchBtn = findSearchBtn(containerRef.current);
-          if (searchBtn) {
-            clearInterval(interval);
-            // Pequeña pausa extra por si el botón está renderizado pero aún no adjuntó eventos
-            setTimeout(() => searchBtn.click(), 200); 
-          } else {
-             // Como último recurso, probar con submit del form
-             const form = containerRef.current.querySelector('form');
-             if (form && attempts > 15) {
-                clearInterval(interval);
-                form.requestSubmit();
-             }
-          }
-        }, 300);
       }
     };
 
