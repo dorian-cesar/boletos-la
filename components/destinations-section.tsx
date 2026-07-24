@@ -37,7 +37,7 @@ const regionDestinations = [
   },
 ];
 
-const popularCities = [
+const popularCities: { name: string; image: string; available?: boolean }[] = [
   {
     name: "SANTIAGO",
     image: "/images/santiago.webp",
