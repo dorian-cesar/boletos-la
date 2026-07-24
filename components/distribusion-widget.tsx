@@ -221,13 +221,44 @@ export function DistributionWidget({
 
         // Auto-search after a short delay to allow widget to render
         setTimeout(() => {
-          if (containerRef.current) {
-            const searchBtn = containerRef.current.querySelector('button[type="submit"]') as HTMLButtonElement;
-            if (searchBtn) {
-              searchBtn.click();
+          if (!containerRef.current) return;
+          
+          // Helper para buscar botones recursivamente, incluyendo Shadow DOM
+          const findSearchBtn = (root: Element | DocumentFragment | null): HTMLButtonElement | null => {
+            if (!root) return null;
+            
+            // 1. Buscar botón type=submit
+            let btn = root.querySelector('button[type="submit"]') as HTMLButtonElement;
+            if (btn) return btn;
+            
+            // 2. Buscar cualquier botón genérico en el DOM actual
+            const allBtns = Array.from(root.querySelectorAll('button'));
+            if (allBtns.length > 0) {
+               // A menudo el botón de buscar es el último o el que tiene cierta clase
+               return allBtns[allBtns.length - 1] as HTMLButtonElement;
             }
+            
+            // 3. Inspeccionar hijos con Shadow DOM
+            const childrenWithShadow = Array.from(root.querySelectorAll('*')).filter(el => el.shadowRoot);
+            for (const child of childrenWithShadow) {
+              const found = findSearchBtn(child.shadowRoot);
+              if (found) return found;
+            }
+            
+            return null;
+          };
+
+          const searchBtn = findSearchBtn(containerRef.current);
+          if (searchBtn) {
+            searchBtn.click();
+          } else {
+             // Si el SDK encapsula todo en un div clickable, podemos intentar disparar un submit a cualquier form
+             const form = containerRef.current.querySelector('form');
+             if (form) {
+                form.requestSubmit();
+             }
           }
-        }, 300);
+        }, 800);
       }
     };
 
