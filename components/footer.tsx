@@ -211,24 +211,31 @@ export function Footer({ country }: FooterProps) {
             {/* Left: Payment Logos */}
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
               {currentFooter.gateways.map((gateway: string, idx: number) => {
-                if (gateway === "Google Pay") {
+                const gatewayMap: Record<string, string> = {
+                  "Google Pay": "/images/payment-methods/google-pay.png",
+                  "Apple Pay": "/images/payment-methods/apple-pay.png",
+                  "PSE": "/images/payment-methods/pse.png",
+                  "Nequi": "/images/payment-methods/nequi.png",
+                  "Daviplata": "/images/payment-methods/daviplata.png",
+                  "Pix": "/images/payment-methods/pix.png",
+                  "Webpay": "/images/payment-methods/webpay.png",
+                  "Transbank": "/images/payment-methods/transbank.png",
+                  "Bancard": "/images/payment-methods/bancard.png",
+                  "Pago Móvil": "/images/payment-methods/pago-movil.jpg"
+                };
+
+                const logoSrc = gatewayMap[gateway];
+
+                if (logoSrc) {
                   return (
-                    <div key={idx} className="h-8 bg-white rounded flex items-center px-2">
-                      <div className="relative w-12 h-6">
-                        <Image src="/logos/pagos/Google_Pay_Logo.svg.png" alt="Google Pay" fill className="object-contain" />
+                    <div key={idx} className="h-8 bg-white rounded flex items-center justify-center px-2">
+                      <div className="relative h-5 w-14">
+                        <Image src={logoSrc} alt={gateway} fill className="object-contain" />
                       </div>
                     </div>
                   );
                 }
-                if (gateway === "Apple Pay") {
-                  return (
-                    <div key={idx} className="h-8 bg-white rounded flex items-center px-2">
-                      <div className="relative w-12 h-6">
-                        <Image src="/logos/pagos/Apple_Pay-Logo.wine.png" alt="Apple Pay" fill className="object-contain" />
-                      </div>
-                    </div>
-                  );
-                }
+
                 return (
                   <div key={idx} className="h-8 px-3 border border-white/20 rounded flex items-center bg-white/5 text-xs font-semibold whitespace-nowrap text-white">
                     {gateway}

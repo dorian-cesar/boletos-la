@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const regionDestinations = [
@@ -65,43 +66,43 @@ const countryDestinations: Record<string, typeof popularCities> = {
   ],
   brasil: [
     { name: "SÃO PAULO / RIO DE JANEIRO", image: "/images/destinations/brasil-sao-paulo.jpg" },
-    { name: "SÃO PAULO / BELO HORIZONTE", image: "/images/destinations/placeholder.svg" },
+    { name: "SÃO PAULO / BELO HORIZONTE", image: "/images/destinations/brasil-belo-horizonte.webp" },
     { name: "RIO DE JANEIRO / BÚZIOS", image: "/images/destinations/brasil-rio.jpeg" },
     { name: "CURITIBA / FLORIANÓPOLIS", image: "/images/destinations/brasil-floripa.jpg" },
     { name: "SALVADOR / PORTO SEGURO", image: "/images/destinations/brasil-salvador.jpg" },
-    { name: "BRASÍLIA / GOIÂNIA", image: "/images/destinations/placeholder.svg" },
-    { name: "SÃO PAULO / CURITIBA", image: "/images/destinations/placeholder.svg" },
-    { name: "FORTALEZA / JERICOACOARA", image: "/images/destinations/placeholder.svg" },
-    { name: "BELO HORIZONTE / CABO FRIO", image: "/images/destinations/placeholder.svg" }
+    { name: "BRASÍLIA / GOIÂNIA", image: "/images/destinations/brasil-goiana.jpg" },
+    { name: "SÃO PAULO / CURITIBA", image: "/images/destinations/brasil-curitiba.jpg" },
+    { name: "FORTALEZA / JERICOACOARA", image: "/images/destinations/brasil-jericoacoara.jpg" },
+    { name: "BELO HORIZONTE / CABO FRIO", image: "/images/destinations/brasil-cabo-frio.webp" }
   ],
   colombia: [
-    { name: "BOGOTÁ / MEDELLÍN", image: "/images/destinations/colombia-medellin.jpg" },
-    { name: "CARTAGENA / BARRANQUILLA", image: "/images/destinations/colombia-cartagena.jpg" },
+    { name: "BOGOTÁ / MEDELLÍN", image: "/images/destinations/colombia-bogota.jpg" },
+    { name: "CARTAGENA / BARRANQUILLA", image: "/images/destinations/colombia-barranquilla.jpg" },
     { name: "CALI / BOGOTÁ", image: "/images/destinations/colombia-cali.jpeg" },
     { name: "BOGOTÁ / BUCARAMANGA", image: "/images/destinations/colombia-santander.jpg" },
     { name: "SANTA MARTA / BOGOTÁ", image: "/images/destinations/colombia-santa-marta.jpeg" },
-    { name: "CALI / MEDELLÍN", image: "/images/destinations/colombia-medellin.jpg" },
-    { name: "BOGOTÁ / ARMENIA", image: "/images/destinations/colombia-pereira.jpg" },
-    { name: "CARTAGENA / MONTERÍA", image: "/images/destinations/placeholder.svg" },
-    { name: "BARRANQUILLA / MEDELLÍN", image: "/images/destinations/placeholder.svg" },
-    { name: "BOGOTÁ / MANIZALES", image: "/images/destinations/placeholder.svg" },
+    { name: "CALI / MEDELLÍN", image: "/images/destinations/colombia-medellin.jpeg" },
+    { name: "BOGOTÁ / ARMENIA", image: "/images/destinations/colombia-bogota.jpg" },
+    { name: "CARTAGENA / MONTERÍA", image: "/images/destinations/colombia-monteria.jpeg" },
+    { name: "BARRANQUILLA / MEDELLÍN", image: "/images/destinations/colombia-medellin.jpg" },
+    { name: "BOGOTÁ / MANIZALES", image: "/images/destinations/colombia-manizales.jpg" },
     { name: "CARTAGENA / CÚCUTA", image: "/images/destinations/colombia-cartagena.jpg" },
-    { name: "MEDELLÍN / BARRANQUILLA", image: "/images/destinations/placeholder.svg" },
-    { name: "MEDELLÍN / BOGOTÁ", image: "/images/destinations/placeholder.svg" },
-    { name: "SANTA MARTA / MEDELLÍN", image: "/images/destinations/placeholder.svg" },
-    { name: "SANTA MARTA / CALI", image: "/images/destinations/placeholder.svg" },
-    { name: "MANIZALES / BARRANQUILLA", image: "/images/destinations/placeholder.svg" },
+    { name: "MEDELLÍN / BARRANQUILLA", image: "/images/destinations/colombia-barranquilla-2.jpg" },
+    { name: "MEDELLÍN / BOGOTÁ", image: "/images/destinations/colombia-medellin.jpg" },
+    { name: "SANTA MARTA / MEDELLÍN", image: "/images/destinations/colombia-santa-marta-.jpeg" },
+    { name: "SANTA MARTA / CALI", image: "/images/destinations/colombia-cali.jpeg" },
+    { name: "MANIZALES / BARRANQUILLA", image: "/images/destinations/colombia-barranquilla.jpg" },
     { name: "BARRANQUILLA / RIOHACHA", image: "/images/destinations/colombia-riohacha.jpg" },
-    { name: "SANTA MARTA / VALLEDUPAR", image: "/images/destinations/placeholder.svg" }
+    { name: "SANTA MARTA / VALLEDUPAR", image: "/images/destinations/colombia-valledupar.jpg" }
   ],
   chile: [
-    { name: "SANTIAGO / VIÑA DEL MAR", image: "/images/destinations/placeholder.svg" },
-    { name: "SANTIAGO / CONCEPCIÓN", image: "/images/destinations/placeholder.svg" },
+    { name: "SANTIAGO / VIÑA DEL MAR", image: "/images/destinations/chile-vina-del-mar.jpg" },
+    { name: "SANTIAGO / CONCEPCIÓN", image: "/images/destinations/chile-concepcion.png" },
     { name: "SANTIAGO / LA SERENA", image: "/images/destinations/chile-serena.jpg" },
-    { name: "PUERTO MONTT / TEMUCO", image: "/images/destinations/placeholder.svg" },
-    { name: "SANTIAGO / MENDOZA", image: "/images/destinations/placeholder.svg" },
-    { name: "ANTOFAGASTA / CALAMA", image: "/images/destinations/placeholder.svg" },
-    { name: "SANTIAGO / COQUIMBO", image: "/images/destinations/placeholder.svg" },
+    { name: "PUERTO MONTT / TEMUCO", image: "/images/destinations/chile-temuco.jpeg" },
+    { name: "SANTIAGO / MENDOZA", image: "/images/destinations/chile-mendoza.jpg" },
+    { name: "ANTOFAGASTA / CALAMA", image: "/images/destinations/chile-calama.webp" },
+    { name: "SANTIAGO / COQUIMBO", image: "/images/destinations/chile-coquimbo.jpg" },
     { name: "VALPARAÍSO / SANTIAGO", image: "/images/destinations/chile-valpo.jpg" },
     { name: "PUERTO MONTT / BARILOCHE", image: "/images/destinations/chile-patagonia.jpg" }
   ],
@@ -111,9 +112,9 @@ const countryDestinations: Record<string, typeof popularCities> = {
     { name: "ASUNCIÓN / PEDRO JUAN CABALLERO", image: "/images/destinations/pedro-juan-caballero-py.png" },
     { name: "CIUDAD DEL ESTE / ENCARNACIÓN", image: "/images/destinations/cde.jpg" },
     { name: "ASUNCIÓN / BUENOS AIRES", image: "/images/destinations/asuncion.jpg" },
-    { name: "ASUNCIÓN / VILLARRICA", image: "/images/destinations/placeholder.svg" },
-    { name: "ASUNCIÓN / SALTO DEL GUAIRÁ", image: "/images/destinations/placeholder.svg" },
-    { name: "CORONEL OVIEDO / ASUNCIÓN", image: "/images/destinations/placeholder.svg" }
+    { name: "ASUNCIÓN / VILLARRICA", image: "/images/destinations/paraguay-villarrica.jpg" },
+    { name: "ASUNCIÓN / SALTO DEL GUAIRÁ", image: "/images/destinations/paraguay-sd-guaira.jpg" },
+    { name: "CORONEL OVIEDO / ASUNCIÓN", image: "/images/destinations/paraguay-asuncion.jpg" }
   ]
 };
 
@@ -173,11 +174,16 @@ interface DestinationsSectionProps {
 }
 
 export function DestinationsSection({ country }: DestinationsSectionProps) {
-  const handleScrollToWidget = () => {
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const handleSelectRoute = (route: string) => {
+    // Scroll al widget
     const widget = document.getElementById("distribusion-search");
     if (widget) {
       widget.scrollIntoView({ behavior: "smooth", block: "center" });
     }
+    // Despachar evento para que el widget se actualice
+    window.dispatchEvent(new CustomEvent('updateDistribusionRoute', { detail: { route } }));
   };
 
   const normalizedCountry = country?.toLowerCase() || "latam";
@@ -209,6 +215,9 @@ export function DestinationsSection({ country }: DestinationsSectionProps) {
 
   const citiesToDisplay =
     (country && countryDestinations[normalizedCountry]) || popularCities;
+
+  const totalPages = Math.ceil(citiesToDisplay.length / 9);
+  const pagedCities = citiesToDisplay.slice(currentPage * 9, (currentPage + 1) * 9);
 
   return (
     <section id="destinos" className="py-16 bg-[#f8f9fa] text-gray-800">
@@ -327,47 +336,70 @@ export function DestinationsSection({ country }: DestinationsSectionProps) {
         </div>
 
         {/* Popular Destinations Grid (Masonry 9 items) */}
-        <div className="grid grid-cols-1 md:grid-cols-12 md:grid-rows-3 gap-4 md:h-[760px] mb-12">
-          {citiesToDisplay.slice(0, 9).map((city, idx) => {
+        <div className="grid grid-cols-1 md:grid-cols-12 md:grid-rows-3 gap-4 md:h-[760px] mb-8">
+          {pagedCities.map((city, idx) => {
             let spanClasses = "";
             if (idx === 0) spanClasses = "md:col-span-6 md:row-span-2";
             else if (idx >= 1 && idx <= 4) spanClasses = "md:col-span-3 md:row-span-1";
             else spanClasses = "md:col-span-3 md:row-span-1"; // items 5-8 go to row 3
 
             return (
-            <div 
-              key={idx} 
-              className={cn(
-                "group relative overflow-hidden rounded-md shadow-sm cursor-pointer w-full h-[250px] md:h-full transition-shadow duration-500 hover:shadow-2xl hover:z-10",
-                spanClasses
-              )}
-              onClick={handleScrollToWidget}
-            >
-              <Image
-                src={city.image}
-                alt={city.name}
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-              <div className="absolute bottom-4 left-4">
-                <div className="bg-black/60 border border-white/50 backdrop-blur-sm px-4 py-2">
-                  <p className="font-medium text-white tracking-wide text-[10px] md:text-xs uppercase">
-                    {city.name}
-                  </p>
+              <div
+                key={city.name + idx}
+                className={cn(
+                  "group relative overflow-hidden rounded-md shadow-sm cursor-pointer w-full h-[250px] md:h-full transition-shadow duration-500 hover:shadow-2xl hover:z-10",
+                  spanClasses
+                )}
+                onClick={() => handleSelectRoute(city.name)}
+              >
+                <Image
+                  src={city.image}
+                  alt={city.name}
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+                <div className="absolute bottom-4 left-4">
+                  <div className="bg-black/60 border border-white/50 backdrop-blur-sm px-4 py-2">
+                    <p className="font-medium text-white tracking-wide text-[10px] md:text-xs uppercase">
+                      {city.name}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
             );
           })}
         </div>
+
+        {/* Pagination Buttons */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center space-x-4 mb-12">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
+              disabled={currentPage === 0}
+              className="px-6 py-2 rounded-full font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed bg-white border-2 border-[#ff6700] text-[#ff6700] hover:bg-[#ff6700] hover:text-white"
+            >
+              Anterior
+            </button>
+            <span className="text-gray-600 font-medium">
+              Página {currentPage + 1} de {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
+              disabled={currentPage === totalPages - 1}
+              className="px-6 py-2 rounded-full font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed bg-[#ff6700] text-white border-2 border-[#ff6700] hover:bg-orange-600 hover:border-orange-600 hover:shadow-md"
+            >
+              Siguiente
+            </button>
+          </div>
+        )}
 
         {/* Route Tags */}
         <div className="flex flex-wrap justify-center gap-2 max-w-4xl mx-auto">
           {currentRoutes.routes.map((route, i) => (
             <span
               key={i}
-              onClick={handleScrollToWidget}
+              onClick={() => handleSelectRoute(route)}
               className="px-6 py-3 bg-[#f2f2f2] text-[10px] md:text-xs font-semibold text-gray-700 tracking-wider cursor-pointer hover:bg-gray-200 transition-colors uppercase whitespace-nowrap"
             >
               {route}

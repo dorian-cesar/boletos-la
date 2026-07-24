@@ -168,6 +168,43 @@ export function DistributionWidget({
   }, [partnerNumber, locale, currency, serializedDefaults, layout]);
 
   useEffect(() => {
+    const handleUpdateRoute = (e: CustomEvent) => {
+      const { route } = e.detail;
+      if (!route || !window.Distribusion || !containerRef.current) return;
+      
+      const parts = route.split("/");
+      if (parts.length >= 2) {
+        const departure = parts[0].trim();
+        const arrival = parts[1].trim();
+
+        // Limpiar contenedor
+        containerRef.current.innerHTML = '';
+        const detectedCurrency = detectCurrency(currency, defaults);
+        
+        const newDefaults = {
+           ...defaults,
+           departureCity: departure,
+           arrivalCity: arrival
+        };
+        
+        const config: any = {
+          root: containerRef.current,
+          partnerNumber: partnerNumber,
+          locale: locale,
+          currency: detectedCurrency,
+          layout: layout === "horizontal" ? "row" : "column",
+          defaults: newDefaults
+        };
+        
+        window.Distribusion.Search.mount(config);
+      }
+    };
+
+    window.addEventListener('updateDistribusionRoute' as any, handleUpdateRoute);
+    return () => window.removeEventListener('updateDistribusionRoute' as any, handleUpdateRoute);
+  }, [partnerNumber, locale, currency, layout, defaults]);
+
+  useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 

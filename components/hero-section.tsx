@@ -20,50 +20,33 @@ export function HeroSection({ country }: HeroSectionProps) {
 
   const imagesByCountry: Record<string, string[]> = {
     argentina: [
-      "/images/carousel/argentina/arg-baires.jpg",
-      "/images/carousel/argentina/arg-bariloche.jpg",
-      "/images/carousel/argentina/arg-bs-as.jpg",
-      "/images/carousel/argentina/arg-bsas.jpg",
-      "/images/carousel/argentina/arg-cordoba.png",
-      "/images/carousel/argentina/arg-mar-del-plata.jpg",
-      "/images/carousel/argentina/arg-mendoza.jpg"
+      "/images/destinations/carrusel-argentina-1.jpg"
     ],
     brasil: [
-      "/images/carousel/brasil/carrusel-brasil1.jpg",
-      "/images/carousel/brasil/carrusel-brasil2.jpg",
-      "/images/carousel/brasil/carrusel-brasil3.jpg",
-      "/images/carousel/brasil/carrusel-brasil4.jpg"
+      "/images/destinations/carrusel-brasil1.jpg",
+      "/images/destinations/carrusel-brasil2.jpg",
+      "/images/destinations/carrusel-brasil3.jpg",
+      "/images/destinations/carrusel-brasil4.jpg"
     ],
     chile: [
-      "/images/carousel/chile/chile-2.jpg",
-      "/images/carousel/chile/chile-3.jpg",
-      "/images/carousel/chile/chile-7.jpg",
-      "/images/carousel/chile/chile-patagonia.jpg",
-      "/images/carousel/chile/chile-puerto-varas.jpg",
-      "/images/carousel/chile/chile-serena.jpg",
-      "/images/carousel/chile/chile-valdi.jpg",
-      "/images/carousel/chile/chile-valpo.jpg",
-      "/images/carousel/chile/chile4.jpg",
-      "/images/carousel/chile/chile5.jpg"
+      "/images/destinations/carrusel-chile2.jpg",
+      "/images/destinations/carrusel-chile-3.jpg",
+      "/images/destinations/carrusel-chile4.jpg",
+      "/images/destinations/carrusel-chile5.jpg"
     ],
     colombia: [
-      "/images/carousel/colombia/carrusel-colombia1.jpg",
-      "/images/carousel/colombia/carrusel-colombia2.jpg",
-      "/images/carousel/colombia/carrusel-colombia3.jpg",
-      "/images/carousel/colombia/carrusel-colombia4.jpg"
+      "/images/destinations/carrusel-colombia1.jpg",
+      "/images/destinations/carrusel-colombia2.jpg",
+      "/images/destinations/carrusel-colombia3.jpg",
+      "/images/destinations/carrusel-colombia4.jpg"
     ],
     ecuador: [
       "/images/carousel/ecuador/ecuador-quito.png"
     ],
     paraguay: [
-      "/images/carousel/paraguay/asuncion(1).jpg",
-      "/images/carousel/paraguay/asuncion.jpg",
-      "/images/carousel/paraguay/cde.jpg",
-      "/images/carousel/paraguay/ciudad-del-este-paraguay.png",
-      "/images/carousel/paraguay/concepción-py.png",
-      "/images/carousel/paraguay/pedro-juan-caballero-py.png",
-      "/images/carousel/paraguay/py-encarnacion.jpg",
-      "/images/carousel/paraguay/py-san-ber.jpg"
+      "/images/destinations/carrusel-paraguay.jpg",
+      "/images/destinations/carrusel-paraguay-2.jpg",
+      "/images/destinations/carrusel-paraguay3.png"
     ]
   };
 
