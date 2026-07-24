@@ -68,7 +68,7 @@ export function HeroSection({ country }: HeroSectionProps) {
     
     const timer = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % backgroundImages.length);
-    }, 5000);
+    }, 8000); // 8 segundos por imagen para que sea menos abrupto
     
     return () => clearInterval(timer);
   }, [backgroundImages.length]);
@@ -138,7 +138,7 @@ export function HeroSection({ country }: HeroSectionProps) {
           <div 
             key={index}
             className={cn(
-              "absolute inset-0 transition-opacity duration-[2000ms] ease-in-out",
+              "absolute inset-0 transition-opacity duration-[3000ms] ease-in-out",
               index === currentImageIndex ? "opacity-100 z-0" : "opacity-0 -z-10"
             )}
           >
@@ -148,7 +148,7 @@ export function HeroSection({ country }: HeroSectionProps) {
               fill
               sizes="100vw"
               className={cn(
-                "object-cover object-center transform transition-transform duration-[10000ms] ease-out",
+                "object-cover object-center transform transition-transform duration-[15000ms] ease-out",
                 index === currentImageIndex ? "scale-110" : "scale-100"
               )}
               priority={index === 0}
