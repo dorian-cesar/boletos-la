@@ -57,6 +57,7 @@ export default function CheckoutPage() {
   } = useBookingStore();
 
   const [isExpired, setIsExpired] = useState(false);
+  const [showVisaModal, setShowVisaModal] = useState(false);
   const handleExpire = useCallback(() => setIsExpired(true), []);
 
   // Validar que los pasajeros del store estén completos
@@ -77,71 +78,79 @@ export default function CheckoutPage() {
     setSelectedPaymentMethod(method);
   };
 
-  const handlePayment = async () => {
-    if (passengerDetails.length === 0 || !selectedPaymentMethod) return;
-    if (!isFormValid) return;
-
+  const executeBancardPayment = async (isVisa: boolean) => {
+    setShowVisaModal(false);
     setIsProcessing(true);
     try {
-      if (selectedPaymentMethod === "tarjeta") {
-        router.push("/booking/confirmation/tarjeta");
-      } else if (selectedPaymentMethod === "bancard") {
-        const primaryPassenger = passengerDetails[0];
-        const response = await fetch("/api/bancard/crear-transaccion", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            amount: totalPrice,
-            client_ruc: primaryPassenger?.documentNumber || "fallback",
-            client_name:
-              `${primaryPassenger?.firstName} ${primaryPassenger?.lastName}`.toUpperCase(),
-            client_email: primaryPassenger?.email || "fallback",
-            total_items: totalPassengers,
-          }),
-        });
+      const primaryPassenger = passengerDetails[0];
+      const response = await fetch("/api/bancard/crear-transaccion", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: totalPrice,
+          client_ruc: primaryPassenger?.documentNumber || "fallback",
+          client_name:
+            `${primaryPassenger?.firstName} ${primaryPassenger?.lastName}`.toUpperCase(),
+          client_email: primaryPassenger?.email || "fallback",
+          total_items: totalPassengers,
+          preauthorization: isVisa ? false : true, // False si es tarjeta VISA, True si es otra tarjeta
+        }),
+      });
 
-        const result = await response.json();
+      const result = await response.json();
 
-        if (result.shopProcessId) {
-          setBancardShopProcessId(String(result.shopProcessId));
-          localStorage.setItem(
-            "bancard_shop_process_id",
-            String(result.shopProcessId),
-          );
-        }
+      if (result.shopProcessId) {
+        setBancardShopProcessId(String(result.shopProcessId));
+        localStorage.setItem(
+          "bancard_shop_process_id",
+          String(result.shopProcessId),
+        );
+      }
 
-        if (result.processId) {
-          setBancardProcessId(String(result.processId));
-          localStorage.setItem("bancard_process_id", String(result.processId));
-          setIsProcessing(false);
-          setIframeProcessId(result.processId);
-        } else if (result.iframeUrl) {
-          try {
-            const urlObj = new URL(result.iframeUrl);
-            const pId = urlObj.searchParams.get("process_id");
-            if (pId) {
-              setBancardProcessId(pId);
-              localStorage.setItem("bancard_process_id", pId);
-              setIsProcessing(false);
-              setIframeProcessId(pId);
-            } else {
-              window.location.href = result.iframeUrl;
-            }
-          } catch (e) {
+      if (result.processId) {
+        setBancardProcessId(String(result.processId));
+        localStorage.setItem("bancard_process_id", String(result.processId));
+        setIsProcessing(false);
+        setIframeProcessId(result.processId);
+      } else if (result.iframeUrl) {
+        try {
+          const urlObj = new URL(result.iframeUrl);
+          const pId = urlObj.searchParams.get("process_id");
+          if (pId) {
+            setBancardProcessId(pId);
+            localStorage.setItem("bancard_process_id", pId);
+            setIsProcessing(false);
+            setIframeProcessId(pId);
+          } else {
             window.location.href = result.iframeUrl;
           }
-        } else if (result.url) {
-          window.location.href = result.url;
-        } else if (result.success && result.processUrl) {
-          window.location.href = result.processUrl;
-        } else {
-          throw new Error(result.message || "Error al crear pago en Bancard");
+        } catch (e) {
+          window.location.href = result.iframeUrl;
         }
+      } else if (result.url) {
+        window.location.href = result.url;
+      } else if (result.success && result.processUrl) {
+        window.location.href = result.processUrl;
+      } else {
+        throw new Error(result.message || "Error al crear pago en Bancard");
       }
     } catch (error: any) {
       console.error("Error procesando pago:", error);
       setIsProcessing(false);
       alert(`Error: ${error.message || "Por favor intenta nuevamente."}`);
+    }
+  };
+
+  const handlePayment = async () => {
+    if (passengerDetails.length === 0 || !selectedPaymentMethod) return;
+    if (!isFormValid) return;
+
+    if (selectedPaymentMethod === "tarjeta") {
+      setIsProcessing(true);
+      router.push("/booking/confirmation/tarjeta");
+    } else if (selectedPaymentMethod === "bancard") {
+      // Preguntar si utilizará tarjeta VISA antes de generar el payload
+      setShowVisaModal(true);
     }
   };
 
@@ -816,6 +825,47 @@ export default function CheckoutPage() {
             <Loader2 className="h-10 w-10 sm:h-12 sm:w-12 text-blue-400 mx-auto mb-4 animate-spin" />
             <div className="text-xs text-gray-400 mt-4">
               No cierres esta ventana
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de consulta para Tarjeta VISA */}
+      {showVisaModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
+          <div className="relative w-full max-w-md bg-[#0f1419] border border-blue-500/30 rounded-2xl p-6 sm:p-8 shadow-2xl text-center">
+            <button
+              onClick={() => setShowVisaModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white p-1 transition-colors"
+              title="Cerrar"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <div className="w-16 h-16 rounded-full bg-blue-500/15 border border-blue-500/30 flex items-center justify-center mx-auto mb-4">
+              <CreditCard className="h-8 w-8 text-blue-400" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">
+              ¿Pagarás con Tarjeta VISA?
+            </h3>
+            <p className="text-sm text-gray-300 mb-6 leading-relaxed">
+              Por favor indícanos si utilizarás una tarjeta de crédito o débito{" "}
+              <strong className="text-blue-400">VISA</strong> para aplicar la configuración
+              de procesamiento requerida por Bancard.
+            </p>
+            <div className="flex flex-col gap-3">
+              <Button
+                onClick={() => executeBancardPayment(true)}
+                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 h-12 rounded-xl transition-all shadow-lg shadow-blue-600/25"
+              >
+                Sí, utilizaré Tarjeta VISA
+              </Button>
+              <Button
+                onClick={() => executeBancardPayment(false)}
+                variant="outline"
+                className="w-full border-gray-700 hover:bg-gray-800 text-gray-200 font-medium py-3 h-12 rounded-xl transition-all"
+              >
+                No (Otra tarjeta / medio)
+              </Button>
             </div>
           </div>
         </div>
