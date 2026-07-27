@@ -137,8 +137,15 @@ export default function SeatsPage() {
           (blockData.providerResult && blockData.providerResult !== "0");
 
         if (isGdsError) {
+          const detail =
+            blockData.Descripcion ||
+            blockData.raw?.Descripcion ||
+            blockData.message ||
+            blockData.error;
           throw new Error(
-            "No se pudo reservar el asiento, por favor intente con otro",
+            detail
+              ? `No se pudo reservar el asiento (${detail}). Por favor intente con otro.`
+              : "No se pudo reservar el asiento, por favor intente con otro",
           );
         }
 
@@ -195,8 +202,15 @@ export default function SeatsPage() {
               returnBlockData.providerResult !== "0");
 
           if (isReturnGdsError) {
+            const detail =
+              returnBlockData.Descripcion ||
+              returnBlockData.raw?.Descripcion ||
+              returnBlockData.message ||
+              returnBlockData.error;
             throw new Error(
-              "No se pudo reservar el asiento, por favor intente con otro",
+              detail
+                ? `No se pudo reservar el asiento de regreso (${detail}). Por favor intente con otro.`
+                : "No se pudo reservar el asiento, por favor intente con otro",
             );
           }
 
