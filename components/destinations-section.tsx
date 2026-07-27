@@ -72,7 +72,7 @@ const countryDestinations: Record<string, { name: string; image: string; availab
     { name: "SALVADOR / PORTO SEGURO", image: "/images/destinations/brasil-porto-seguro.jpg" },
     { name: "BRASÍLIA / GOIÂNIA", image: "/images/destinations/brasil-brasilia.jpg" },
     { name: "SÃO PAULO / CURITIBA", image: "/images/destinations/brasil-curitiba.jpg" },
-    { name: "FORTALEZA / JERICOACOARA", image: "/images/destinations/brasil-jericoacoara.jpg" },
+    { name: "FORTALEZA / JERICOACOARA", image: "/images/destinations/brasil-jericoacoara.jpg", available: false },
     { name: "BELO HORIZONTE / CABO FRIO", image: "/images/destinations/brasil-cabo-frio.webp" }
   ],
   colombia: [
@@ -82,7 +82,7 @@ const countryDestinations: Record<string, { name: string; image: string; availab
     { name: "BOGOTÁ / BUCARAMANGA", image: "/images/destinations/colombia-santander.jpg" },
     { name: "SANTA MARTA / BOGOTÁ", image: "/images/destinations/colombia-santa-marta.jpeg" },
     { name: "CALI / MEDELLÍN", image: "/images/destinations/colombia-medellin.jpeg" },
-    { name: "BOGOTÁ / ARMENIA", image: "/images/destinations/colombia-armenia.jpg" },
+    { name: "BOGOTÁ / ARMENIA", image: "/images/destinations/colombia-armenia.jpg", available: false },
     { name: "CARTAGENA / MONTERÍA", image: "/images/destinations/colombia-monteria.jpeg" },
     { name: "BARRANQUILLA / MEDELLÍN", image: "/images/destinations/colombia-medellin.jpg" },
     { name: "BOGOTÁ / MANIZALES", image: "/images/destinations/colombia-manizales.jpg" },
@@ -100,7 +100,7 @@ const countryDestinations: Record<string, { name: string; image: string; availab
     { name: "SANTIAGO / CONCEPCIÓN", image: "/images/destinations/chile-concepcion.png" },
     { name: "SANTIAGO / LA SERENA", image: "/images/destinations/chile-serena.jpg" },
     { name: "PUERTO MONTT / TEMUCO", image: "/images/destinations/chile-puerto-montt.jpg" },
-    { name: "SANTIAGO / MENDOZA", image: "/images/destinations/chile-mendoza.jpg" },
+    { name: "SANTIAGO / MENDOZA", image: "/images/destinations/chile-mendoza.jpg", available: false },
     { name: "ANTOFAGASTA / CALAMA", image: "/images/destinations/chile-calama.webp" },
     { name: "SANTIAGO / COQUIMBO", image: "/images/destinations/chile-coquimbo.jpg" },
     { name: "VALPARAÍSO / SANTIAGO", image: "/images/destinations/chile-valpo.jpg" },
@@ -114,7 +114,7 @@ const countryDestinations: Record<string, { name: string; image: string; availab
     { name: "ASUNCIÓN / BUENOS AIRES", image: "/images/destinations/paraguay-buenos-aires.jpg" },
     { name: "ASUNCIÓN / VILLARRICA", image: "/images/destinations/paraguay-villarrica.jpg" },
     { name: "ASUNCIÓN / SALTO DEL GUAIRÁ", image: "/images/destinations/paraguay-salto-del-guaira.jpg" },
-    { name: "CORONEL OVIEDO / ASUNCIÓN", image: "/images/destinations/paraguay-coronel-oviedo.jpg" }
+    { name: "CORONEL OVIEDO / ASUNCIÓN", image: "/images/destinations/paraguay-coronel-oviedo.jpg", available: false }
   ]
 };
 
