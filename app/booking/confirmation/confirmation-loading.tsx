@@ -49,6 +49,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
     setBancardProcessId,
     bancardShopProcessId,
     setBancardShopProcessId,
+    bancardIsVisa,
   } = useBookingStore();
 
   const primaryPassenger = passengerDetails[0];
@@ -389,8 +390,12 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
         const docNum = primaryPassenger?.documentNumber || "1234567";
 
         try {
-          // Ya no confirmamos la preautorización porque ahora usamos Venta Directa (preauthorization: false).
-          // Bancard captura el dinero automáticamente. Confiamos en el retorno exitoso del iframe.
+          const isVisa =
+            bancardIsVisa ||
+            (typeof window !== "undefined"
+              ? localStorage.getItem("bancard_is_visa") === "true"
+              : false);
+
           const isSuccess = paymentStatus === "payment_success" || !paymentStatus;
 
           if (isSuccess) {
@@ -399,6 +404,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
             if (typeof window !== "undefined") {
               localStorage.removeItem("bancard_shop_process_id");
               localStorage.removeItem("bancard_process_id");
+              localStorage.removeItem("bancard_is_visa");
             }
             let finalRef = bookingReference;
             if (!finalRef) {
@@ -409,7 +415,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
             
             const realPaymentDetails = {
               pagado: true,
-              forma_pago: "Bancard",
+              forma_pago: isVisa ? "Bancard (VISA)" : "Bancard",
               fecha_pago: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
               monto: totalPrice.toFixed(2),
               hash_pedido: processId || shopProcessId || "bancard-payment",
@@ -462,46 +468,50 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 return;
               }
 
-              // Si los boletos se emitieron correctamente, AHORA CONFIRMAMOS LA PREAUTORIZACIÓN para capturar el dinero
-              console.log("Asientos emitidos. Confirmando la preautorización para capturar el dinero...");
-              try {
-                const confirmRes = await fetch("/api/bancard/confirmar-transaccion", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    shopProcessId: shopProcessId ? parseInt(shopProcessId) : 0,
-                    processId: processId,
-                    id: docNum,
-                    amount: totalPrice.toFixed(2)
-                  }),
-                });
-                const confirmData = await confirmRes.json();
-                
-                const responseCode =
-                  confirmData.data?.confirmation?.responseCode ||
-                  confirmData.data?.confirmation?.response_code ||
-                  confirmData.data?.rawResponse?.confirmation?.response_code ||
-                  confirmData.operation?.response_code;
+              // Si fue tarjeta VISA (Venta directa / preautorización false), obviamos el proceso de confirmación.
+              // Solo confirmamos la preautorización cuando NO es VISA (preautorización true).
+              if (isVisa) {
+                console.log("Pago con Tarjeta VISA detectado (preautorización=false). Se omite la confirmación explícita.");
+              } else {
+                console.log("Asientos emitidos. Confirmando la preautorización para capturar el dinero...");
+                try {
+                  const confirmRes = await fetch("/api/bancard/confirmar-transaccion", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      shopProcessId: shopProcessId ? parseInt(shopProcessId) : 0,
+                      processId: processId,
+                      id: docNum,
+                      amount: totalPrice.toFixed(2)
+                    }),
+                  });
+                  const confirmData = await confirmRes.json();
+                  
+                  const responseCode =
+                    confirmData.data?.confirmation?.responseCode ||
+                    confirmData.data?.confirmation?.response_code ||
+                    confirmData.data?.rawResponse?.confirmation?.response_code ||
+                    confirmData.operation?.response_code;
 
-                const isConfirmSuccess =
-                  (confirmData.status === "success" && responseCode === "00") ||
-                  (confirmData.status === "success" && confirmData.operation?.response === "S") ||
-                  (confirmData.status === "success" && confirmData.data?.status === "success") ||
-                  confirmData.status === "approved" ||
-                  confirmData.success === true ||
-                  confirmData.data?.processed === true;
+                  const isConfirmSuccess =
+                    (confirmData.status === "success" && responseCode === "00") ||
+                    (confirmData.status === "success" && confirmData.operation?.response === "S") ||
+                    (confirmData.status === "success" && confirmData.data?.status === "success") ||
+                    confirmData.status === "approved" ||
+                    confirmData.success === true ||
+                    confirmData.data?.processed === true;
 
-                if (!isConfirmSuccess) {
-                  console.error("ALERTA CRÍTICA: Se emitieron los boletos pero falló la captura del pago en Bancard.", confirmData);
-                  // Podrías enviar un email al admin aquí notificando la discrepancia
-                } else {
-                  console.log("Dinero capturado con éxito.");
-                  realPaymentDetails.numero_factura = 
-                    confirmData.operation?.billing_response?.data?.invoice_number ||
-                    confirmData.data?.confirmation?.electronicBillNumber || "";
+                  if (!isConfirmSuccess) {
+                    console.error("ALERTA CRÍTICA: Se emitieron los boletos pero falló la captura del pago en Bancard.", confirmData);
+                  } else {
+                    console.log("Dinero capturado con éxito.");
+                    realPaymentDetails.numero_factura = 
+                      confirmData.operation?.billing_response?.data?.invoice_number ||
+                      confirmData.data?.confirmation?.electronicBillNumber || "";
+                  }
+                } catch (err) {
+                  console.error("ALERTA CRÍTICA: Error de red al intentar confirmar la preautorización.", err);
                 }
-              } catch (err) {
-                console.error("ALERTA CRÍTICA: Error de red al intentar confirmar la preautorización.", err);
               }
 
               if (Object.keys(ticketMap).length > 0) {

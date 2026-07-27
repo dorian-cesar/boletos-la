@@ -54,6 +54,7 @@ export default function CheckoutPage() {
     setBancardProcessId,
     bancardShopProcessId,
     setBancardShopProcessId,
+    setBancardIsVisa,
   } = useBookingStore();
 
   const [isExpired, setIsExpired] = useState(false);
@@ -81,6 +82,10 @@ export default function CheckoutPage() {
   const executeBancardPayment = async (isVisa: boolean) => {
     setShowVisaModal(false);
     setIsProcessing(true);
+    setBancardIsVisa(isVisa);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("bancard_is_visa", isVisa ? "true" : "false");
+    }
     try {
       const primaryPassenger = passengerDetails[0];
       const response = await fetch("/api/bancard/crear-transaccion", {
