@@ -67,10 +67,10 @@ const countryDestinations: Record<string, { name: string; image: string; availab
   brasil: [
     { name: "SÃO PAULO / RIO DE JANEIRO", image: "/images/destinations/brasil-sao-paulo.jpg" },
     { name: "SÃO PAULO / BELO HORIZONTE", image: "/images/destinations/brasil-belo-horizonte.webp" },
-    { name: "RIO DE JANEIRO / BÚZIOS", image: "/images/destinations/brasil-rio.jpeg", available: false },
+    { name: "RIO DE JANEIRO / BÚZIOS", image: "/images/destinations/brasil-buzios.jpg" },
     { name: "CURITIBA / FLORIANÓPOLIS", image: "/images/destinations/brasil-floripa.jpg" },
-    { name: "SALVADOR / PORTO SEGURO", image: "/images/destinations/brasil-salvador.jpg", available: false },
-    { name: "BRASÍLIA / GOIÂNIA", image: "/images/destinations/brasil-goiana.jpg", available: false },
+    { name: "SALVADOR / PORTO SEGURO", image: "/images/destinations/brasil-porto-seguro.jpg" },
+    { name: "BRASÍLIA / GOIÂNIA", image: "/images/destinations/brasil-brasilia.jpg" },
     { name: "SÃO PAULO / CURITIBA", image: "/images/destinations/brasil-curitiba.jpg" },
     { name: "FORTALEZA / JERICOACOARA", image: "/images/destinations/brasil-jericoacoara.jpg" },
     { name: "BELO HORIZONTE / CABO FRIO", image: "/images/destinations/brasil-cabo-frio.webp" }
@@ -82,11 +82,11 @@ const countryDestinations: Record<string, { name: string; image: string; availab
     { name: "BOGOTÁ / BUCARAMANGA", image: "/images/destinations/colombia-santander.jpg" },
     { name: "SANTA MARTA / BOGOTÁ", image: "/images/destinations/colombia-santa-marta.jpeg" },
     { name: "CALI / MEDELLÍN", image: "/images/destinations/colombia-medellin.jpeg" },
-    { name: "BOGOTÁ / ARMENIA", image: "/images/destinations/colombia-bogota.jpg", available: false },
+    { name: "BOGOTÁ / ARMENIA", image: "/images/destinations/colombia-armenia.jpg" },
     { name: "CARTAGENA / MONTERÍA", image: "/images/destinations/colombia-monteria.jpeg" },
     { name: "BARRANQUILLA / MEDELLÍN", image: "/images/destinations/colombia-medellin.jpg" },
     { name: "BOGOTÁ / MANIZALES", image: "/images/destinations/colombia-manizales.jpg" },
-    { name: "CARTAGENA / CÚCUTA", image: "/images/destinations/colombia-cartagena.jpg", available: false },
+    { name: "CARTAGENA / CÚCUTA", image: "/images/destinations/colombia-cucuta.jpg" },
     { name: "MEDELLÍN / BARRANQUILLA", image: "/images/destinations/colombia-barranquilla-2.jpg" },
     { name: "MEDELLÍN / BOGOTÁ", image: "/images/destinations/colombia-medellin.jpg" },
     { name: "SANTA MARTA / MEDELLÍN", image: "/images/destinations/colombia-santa-marta-.jpeg" },
@@ -99,22 +99,22 @@ const countryDestinations: Record<string, { name: string; image: string; availab
     { name: "SANTIAGO / VIÑA DEL MAR", image: "/images/destinations/chile-vina-del-mar.jpg" },
     { name: "SANTIAGO / CONCEPCIÓN", image: "/images/destinations/chile-concepcion.png" },
     { name: "SANTIAGO / LA SERENA", image: "/images/destinations/chile-serena.jpg" },
-    { name: "PUERTO MONTT / TEMUCO", image: "/images/destinations/chile-temuco.jpeg", available: false },
+    { name: "PUERTO MONTT / TEMUCO", image: "/images/destinations/chile-puerto-montt.jpg" },
     { name: "SANTIAGO / MENDOZA", image: "/images/destinations/chile-mendoza.jpg" },
     { name: "ANTOFAGASTA / CALAMA", image: "/images/destinations/chile-calama.webp" },
     { name: "SANTIAGO / COQUIMBO", image: "/images/destinations/chile-coquimbo.jpg" },
     { name: "VALPARAÍSO / SANTIAGO", image: "/images/destinations/chile-valpo.jpg" },
-    { name: "PUERTO MONTT / BARILOCHE", image: "/images/destinations/chile-patagonia.jpg", available: false }
+    { name: "PUERTO MONTT / BARILOCHE", image: "/images/destinations/chile-puerto-montt.jpg" }
   ],
   paraguay: [
     { name: "ASUNCIÓN / CIUDAD DEL ESTE", image: "/images/destinations/ciudad-del-este-paraguay.png" },
     { name: "ASUNCIÓN / ENCARNACIÓN", image: "/images/destinations/py-encarnacion.jpg" },
     { name: "ASUNCIÓN / PEDRO JUAN CABALLERO", image: "/images/destinations/pedro-juan-caballero-py.png" },
     { name: "CIUDAD DEL ESTE / ENCARNACIÓN", image: "/images/destinations/cde.jpg" },
-    { name: "ASUNCIÓN / BUENOS AIRES", image: "/images/destinations/asuncion.jpg", available: false },
+    { name: "ASUNCIÓN / BUENOS AIRES", image: "/images/destinations/paraguay-buenos-aires.jpg" },
     { name: "ASUNCIÓN / VILLARRICA", image: "/images/destinations/paraguay-villarrica.jpg" },
-    { name: "ASUNCIÓN / SALTO DEL GUAIRÁ", image: "/images/destinations/paraguay-sd-guaira.jpg", available: false },
-    { name: "CORONEL OVIEDO / ASUNCIÓN", image: "/images/destinations/paraguay-asuncion.jpg", available: false }
+    { name: "ASUNCIÓN / SALTO DEL GUAIRÁ", image: "/images/destinations/paraguay-salto-del-guaira.jpg" },
+    { name: "CORONEL OVIEDO / ASUNCIÓN", image: "/images/destinations/paraguay-coronel-oviedo.jpg" }
   ]
 };
 
