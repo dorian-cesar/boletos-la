@@ -3,11 +3,11 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { shopProcessId, processId, amount } = body;
+    const { shopProcessId, processId, amount, action } = body;
 
-    if (!processId || !amount) {
+    if (!processId) {
       return NextResponse.json(
-        { success: false, message: "processId y amount son requeridos" },
+        { success: false, message: "processId es requerido" },
         { status: 400 }
       );
     }
@@ -18,14 +18,14 @@ export async function POST(request: Request) {
     }
 
     const targetUrl = `${baseUrl}/api/pagosimple`;
-    console.log("[Bancard Preauth Confirm API] Calling URL:", targetUrl);
+    console.log("[Bancard Confirm API] Calling URL:", targetUrl);
 
-    const payload = {
-      action: "preauth-confirm",
-      shopProcessId: shopProcessId ? Number(shopProcessId) : 0,
+    const payload: Record<string, any> = {
+      action: action || "confirmation",
       processId: processId,
-      amount: Number(amount)
     };
+    if (shopProcessId) payload.shopProcessId = Number(shopProcessId);
+    if (amount) payload.amount = Number(amount);
 
     const response = await fetch(targetUrl, {
       method: "POST",

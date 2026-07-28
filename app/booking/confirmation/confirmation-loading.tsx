@@ -413,6 +413,57 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
             }
             setStorePaymentStatus("completed");
             
+            // 1. Polling (Reintentos) en la confirmación para obtener el electronicBillCdc
+            let electronicBillCdc: string | null = null;
+            let electronicBillNumber: string | null = null;
+            let confirmData: any = null;
+
+            const maxAttempts = 5;
+            for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+              console.log(`[Bancard Confirmation] Polling intento ${attempt}/${maxAttempts}...`);
+              try {
+                const confirmRes = await fetch("/api/bancard/confirmar-transaccion", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    action: "confirmation",
+                    processId: processId,
+                    shopProcessId: shopProcessId ? parseInt(shopProcessId) : 0,
+                    amount: totalPrice.toFixed(2),
+                  }),
+                });
+
+                if (confirmRes.ok) {
+                  const rawData = await confirmRes.json();
+                  confirmData = rawData;
+
+                  const cdc =
+                    rawData?.data?.confirmation?.electronicBillCdc ||
+                    rawData?.confirmation?.electronicBillCdc;
+                  const billNum =
+                    rawData?.data?.confirmation?.electronicBillNumber ||
+                    rawData?.confirmation?.electronicBillNumber;
+
+                  if (cdc) {
+                    electronicBillCdc = cdc;
+                    electronicBillNumber = billNum || "";
+                    console.log(`[Bancard Confirmation] CDC obtenido en intento ${attempt}: ${cdc}`);
+                    break;
+                  }
+                }
+              } catch (pollErr) {
+                console.error(`[Bancard Confirmation] Error en intento ${attempt}:`, pollErr);
+              }
+
+              if (attempt < maxAttempts) {
+                await new Promise((resolve) => setTimeout(resolve, 2500));
+              }
+            }
+
+            if (!electronicBillCdc) {
+              console.warn("[Bancard Confirmation] No se obtuvo electronicBillCdc tras agotar los 5 reintentos.");
+            }
+
             const realPaymentDetails = {
               pagado: true,
               forma_pago: isVisa ? "Bancard (VISA)" : "Bancard",
@@ -421,7 +472,8 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               hash_pedido: processId || shopProcessId || "bancard-payment",
               numero_pedido: shopProcessId || "bancard-payment",
               token: processId || shopProcessId || "bancard-payment",
-              numero_factura: "",
+              numero_factura: electronicBillNumber || "",
+              cdc: electronicBillCdc || "",
             };
 
             if (selectedOutboundTrip) {
@@ -440,6 +492,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 (selectedReturnTrip ? selectedReturnSeats.length : 0);
               const actualTicketsCount = Object.keys(ticketMap).length;
 
+              // 3. Manejo de Rollback si el GDS falla en la emisión del pasaje
               if (actualTicketsCount < expectedTicketsCount) {
                 console.error(
                   "GDS sell failed for Bancard: expected",
@@ -448,70 +501,23 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                   actualTicketsCount,
                 );
 
-                // Realizar rollback de la preautorización porque los asientos no se pudieron comprar
                 try {
-                  console.log("Iniciando rollback por falla de GDS...");
+                  console.log("Iniciando rollback por falla de emisión GDS...");
                   await fetch("/api/bancard/rollback-transaccion", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                       shopProcessId: shopProcessId ? parseInt(shopProcessId) : 0,
-                      processId: processId
+                      processId: processId,
                     }),
                   });
-                  console.log("Rollback de Bancard completado.");
+                  console.log("Rollback de Bancard completado con éxito.");
                 } catch (rollbackErr) {
                   console.error("Error al hacer rollback de Bancard:", rollbackErr);
                 }
 
                 setStatus("failed");
                 return;
-              }
-
-              // Si fue tarjeta VISA (Venta directa / preautorización false), obviamos el proceso de confirmación.
-              // Solo confirmamos la preautorización cuando NO es VISA (preautorización true).
-              if (isVisa) {
-                console.log("Pago con Tarjeta VISA detectado (preautorización=false). Se omite la confirmación explícita.");
-              } else {
-                console.log("Asientos emitidos. Confirmando la preautorización para capturar el dinero...");
-                try {
-                  const confirmRes = await fetch("/api/bancard/confirmar-transaccion", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      shopProcessId: shopProcessId ? parseInt(shopProcessId) : 0,
-                      processId: processId,
-                      id: docNum,
-                      amount: totalPrice.toFixed(2)
-                    }),
-                  });
-                  const confirmData = await confirmRes.json();
-                  
-                  const responseCode =
-                    confirmData.data?.confirmation?.responseCode ||
-                    confirmData.data?.confirmation?.response_code ||
-                    confirmData.data?.rawResponse?.confirmation?.response_code ||
-                    confirmData.operation?.response_code;
-
-                  const isConfirmSuccess =
-                    (confirmData.status === "success" && responseCode === "00") ||
-                    (confirmData.status === "success" && confirmData.operation?.response === "S") ||
-                    (confirmData.status === "success" && confirmData.data?.status === "success") ||
-                    confirmData.status === "approved" ||
-                    confirmData.success === true ||
-                    confirmData.data?.processed === true;
-
-                  if (!isConfirmSuccess) {
-                    console.error("ALERTA CRÍTICA: Se emitieron los boletos pero falló la captura del pago en Bancard.", confirmData);
-                  } else {
-                    console.log("Dinero capturado con éxito.");
-                    realPaymentDetails.numero_factura = 
-                      confirmData.operation?.billing_response?.data?.invoice_number ||
-                      confirmData.data?.confirmation?.electronicBillNumber || "";
-                  }
-                } catch (err) {
-                  console.error("ALERTA CRÍTICA: Error de red al intentar confirmar la preautorización.", err);
-                }
               }
 
               if (Object.keys(ticketMap).length > 0) {
