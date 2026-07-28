@@ -91,13 +91,15 @@ export async function POST(request: NextRequest) {
       console.error("Error en backend de analíticas:", {
         status: response.status,
         data: responseData,
+        sentPayload: payload,
       });
 
       return NextResponse.json(
         {
           success: false,
-          message: "Error al guardar el ticket en analíticas",
+          message: responseData?.message || responseData?.error || "Error al guardar el ticket en analíticas",
           externalResponse: responseData,
+          sentPayload: payload,
         },
         {
           status: response.status,

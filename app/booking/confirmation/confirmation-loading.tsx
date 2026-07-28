@@ -182,50 +182,58 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           tickets[`${label}-${seat.number}`] || `${activeRef}-${seat.number}`;
 
         const payload = {
-          ticket_number: ticketNumber,
-          connection_id: connId,
-          first_name: passenger.firstName,
-          last_name: passenger.lastName,
-          document_number: passenger.documentNumber,
-          document_type_code: passenger.docType?.codigo || "N/A",
-          document_type_name: passenger.docType?.nombre || "N/A",
-          email: passenger.email || primaryPassenger?.email,
-          phone: passenger.phone || primaryPassenger?.phone,
-          occupation: passenger.occupation || "N/A",
-          birth_date: passenger.birthDate,
-          gender: passenger.gender,
-          nationality: passenger.nationality,
-          country: passenger.country,
-          seat_number: seat.number,
-          seat_type: seat.type,
+          ticket_number: String(ticketNumber),
+          connection_id: String(connId || ""),
+          first_name: String(passenger.firstName || "").trim(),
+          last_name: String(passenger.lastName || "").trim(),
+          document_number: String(passenger.documentNumber || "").replace(/[.\-\s]/g, ""),
+          document_type_code: String(passenger.docType?.codigo || "C"),
+          document_type_name: String(passenger.docType?.nombre || "C.I. Paraguaya"),
+          email: String(passenger.email || primaryPassenger?.email || ""),
+          phone: String(passenger.phone || primaryPassenger?.phone || "").replace(/\D/g, ""),
+          occupation: String(passenger.occupation || "EMPLEADO"),
+          birth_date: passenger.birthDate
+            ? String(passenger.birthDate).replace(/\//g, "-")
+            : "1990-01-01",
+          gender: String(passenger.gender || "M"),
+          nationality: String(passenger.nationality || "PY"),
+          country: String(passenger.country || "PY"),
+          seat_number: String(seat.number),
+          seat_type: String(seat.type || "standard"),
           seat_status: "occupied",
-          quality_code: seat.qualityCode,
-          trip_id: trip.id,
-          origin_id: trip.origin,
-          destination_id: trip.destination,
-          origin_title: origin,
-          destination_title: dest,
-          departure_date: date,
+          quality_code: String(seat.qualityCode || "CA"),
+          trip_id: String(trip.id),
+          origin_id: String(trip.origin),
+          destination_id: String(trip.destination),
+          origin_title: String(origin || ""),
+          destination_title: String(dest || ""),
+          departure_date: String(date || ""),
           departure_time:
+            trip.departureTime &&
             trip.departureTime.includes(":") &&
             trip.departureTime.split(":").length === 2
               ? `${trip.departureTime}:00`
-              : trip.departureTime,
+              : String(trip.departureTime || "00:00:00"),
           arrival_time:
+            trip.arrivalTime &&
             trip.arrivalTime.includes(":") &&
             trip.arrivalTime.split(":").length === 2
               ? `${trip.arrivalTime}:00`
-              : trip.arrivalTime,
-          duration: trip.duration,
-          bus_type: trip.busType,
-          company: trip.company,
-          seat_price: seat.price,
-          total_booking_price: totalPrice,
+              : String(trip.arrivalTime || "00:00:00"),
+          duration: String(trip.duration || ""),
+          bus_type: String(trip.busType || ""),
+          company: String(trip.company || ""),
+          seat_price: Number(seat.price || trip.price || 0),
+          total_booking_price: Number(totalPrice || 0),
           payment_status: "completed",
-          payment_amount: seat.price,
-          payment_paid: paymentDetails.pagado,
-          payment_token: String(paymentDetails.token || ""),
-          payment_hash: String(paymentDetails.hash_pedido || ""),
+          payment_amount: Number(seat.price || trip.price || 0),
+          payment_paid: Boolean(paymentDetails.pagado),
+          payment_token: String(paymentDetails.token || paymentDetails.hash_pedido || ""),
+          payment_hash: String(paymentDetails.hash_pedido || paymentDetails.token || ""),
+          cdc: String(paymentDetails.cdc || ""),
+          electronic_bill_cdc: String(paymentDetails.cdc || ""),
+          electronic_bill_number: String(paymentDetails.numero_factura || ""),
+          invoice_number: String(paymentDetails.numero_factura || ""),
         };
 
         try {
