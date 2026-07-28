@@ -116,7 +116,8 @@ export default function SeatsPage() {
             serviceId: selectedOutboundTrip?.id,
             originId: selectedOutboundTrip?.origin,
             destinationId: selectedOutboundTrip?.destination,
-            seats: selectedSeats.map((s) => s.number).join(", "),
+            seats: selectedSeats.map((s) => s.number).join(","),
+            ...(outboundConnectionId && { connectionId: outboundConnectionId }),
           }),
         });
 
@@ -141,6 +142,7 @@ export default function SeatsPage() {
             blockData.Descripcion ||
             blockData.raw?.Descripcion ||
             blockData.message ||
+            blockData.error?.message ||
             blockData.error;
           throw new Error(
             detail
@@ -178,7 +180,8 @@ export default function SeatsPage() {
               serviceId: selectedReturnTrip.id,
               originId: selectedReturnTrip.origin,
               destinationId: selectedReturnTrip.destination,
-              seats: selectedReturnSeats.map((s) => s.number).join(", "),
+              seats: selectedReturnSeats.map((s) => s.number).join(","),
+              ...(returnConnectionId && { connectionId: returnConnectionId }),
             }),
           });
 
@@ -206,6 +209,7 @@ export default function SeatsPage() {
               returnBlockData.Descripcion ||
               returnBlockData.raw?.Descripcion ||
               returnBlockData.message ||
+              returnBlockData.error?.message ||
               returnBlockData.error;
             throw new Error(
               detail
