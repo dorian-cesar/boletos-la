@@ -315,6 +315,10 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           Math.floor(Math.random() * 16).toString(16),
         ).join("");
 
+        const simBillNum = `001-001-${Math.floor(1000000 + Math.random() * 9000000)}`;
+        const simCdc = `01801715709001001000${Math.floor(100000000000000000000000 + Math.random() * 900000000000000000000000)}`;
+        const simTimbrado = "18903263";
+
         const simulatedPaymentDetails = {
           pagado: true,
           forma_pago: "Tarjetas de crédito",
@@ -328,6 +332,9 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           cancelado: false,
           forma_pago_identificador: "9",
           token: simToken,
+          numero_factura: simBillNum,
+          cdc: simCdc,
+          timbrado: simTimbrado,
           mensaje_resultado_pago: {
             titulo: "Pedido pagado exitosamente",
             descripcion: "",
