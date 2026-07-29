@@ -354,6 +354,23 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
             outboundConnectionId,
             returnConnectionId,
           });
+
+          const expectedTicketsCount =
+            selectedSeats.length +
+            (selectedReturnTrip ? selectedReturnSeats.length : 0);
+          const actualTicketsCount = Object.keys(ticketMap).length;
+
+          if (actualTicketsCount < expectedTicketsCount) {
+            console.error(
+              "GDS sell failed in simulation: expected",
+              expectedTicketsCount,
+              "tickets but got",
+              actualTicketsCount,
+            );
+            setStatus("failed");
+            return;
+          }
+
           if (Object.keys(ticketMap).length > 0) {
             assignTicketNumbers(ticketMap);
             const first = Object.values(ticketMap)[0];
@@ -780,12 +797,12 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                   <h3 className="font-semibold text-amber-300 mb-2">
                     {status === "cancelled"
                       ? "Pago cancelado"
-                      : "Pago no completado"}
+                      : "La confirmación del pasaje no se pudo realizar"}
                   </h3>
                   <p className="text-sm text-amber-400 mb-4">
                     {status === "cancelled"
                       ? "El pago fue cancelado."
-                      : "No detectamos un pago exitoso para esta reserva."}
+                      : "No se pudo completar la reserva o emisión de los pasajes en el sistema. Por favor, intentá nuevamente."}
                   </p>
                   <Button
                     onClick={() => router.push("/booking/checkout")}
