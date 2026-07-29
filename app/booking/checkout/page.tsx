@@ -313,7 +313,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background overflow-x-hidden">
+    <div className="min-h-screen w-full bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background">
       {/* Background Effects - Ajustados para no causar overflow */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
@@ -619,7 +619,7 @@ export default function CheckoutPage() {
             </div>
 
             {/* Order Summary sidebar */}
-            <div className="lg:col-span-1 w-full">
+            <div className="lg:col-span-1 w-full lg:sticky lg:top-24 self-start z-20">
               <Card className="p-4 sm:p-6 sticky top-24 animate-slide-in-right bg-background/5 backdrop-blur-sm border-background/20 w-full">
                 <div className="flex flex-col items-start gap-4 mb-6">
                   <h3 className="text-lg sm:text-xl font-bold text-background truncate w-full">

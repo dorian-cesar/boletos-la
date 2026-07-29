@@ -338,7 +338,7 @@ export default function SeatsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background w-full overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background w-full">
       {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
@@ -363,7 +363,7 @@ export default function SeatsPage() {
               </Alert>
             )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
               {/* Seat Selection */}
               <div className="lg:col-span-2">
                 {/* Trip Info Card */}
@@ -632,7 +632,7 @@ export default function SeatsPage() {
               </div>
 
               {/* Summary Sidebar */}
-              <div className="lg:col-span-1">
+              <div className="lg:col-span-1 lg:sticky lg:top-24 self-start z-20">
                 <Card className="p-4 md:p-6 sticky top-24 animate-slide-in-right bg-background/5 backdrop-blur-sm border-background/20">
                   <h3 className="text-lg md:text-xl font-bold mb-4 md:mb-6 text-background">
                     Resumen de Reserva

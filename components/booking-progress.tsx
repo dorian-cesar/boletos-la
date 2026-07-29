@@ -15,7 +15,7 @@ export function BookingProgress() {
   const { step } = useBookingStore();
 
   return (
-    <div className="bg-gradient-to-b from-[#1a2332] to-[#0f1419] border-b border-background/10 sticky top-0 z-40 w-full overflow-hidden">
+    <div className="bg-gradient-to-b from-[#1a2332] to-[#0f1419] border-b border-background/10 relative z-30 w-full overflow-hidden">
       {/* Background glow */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/4 w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-primary/10 rounded-full blur-[80px] md:blur-[120px]" />
