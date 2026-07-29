@@ -7,7 +7,7 @@ import { es } from "date-fns/locale";
 import { BookingProgress } from "@/components/booking-progress";
 import { useBookingStore } from "@/lib/booking-store";
 import { sellGdsSeats } from "@/lib/gds-sell";
-import { AlertCircle, Loader2, Wallet } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader2, Mail, MessageSquare, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
@@ -18,7 +18,7 @@ interface Props {
   onReady: (paymentDetails: any, isTarjeta: boolean) => void;
 }
 
-type Status = "checking" | "pending" | "cancelled" | "failed";
+type Status = "checking" | "pending" | "cancelled" | "failed" | "issue_failed";
 
 export default function ConfirmationLoading({ hash, onReady }: Props) {
   const router = useRouter();
@@ -367,7 +367,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               "tickets but got",
               actualTicketsCount,
             );
-            setStatus("failed");
+            setStatus("issue_failed");
             return;
           }
 
@@ -573,7 +573,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                   console.error("Error al hacer rollback de Bancard:", rollbackErr);
                 }
 
-                setStatus("failed");
+                setStatus("issue_failed");
                 return;
               }
 
@@ -680,7 +680,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                   "tickets but got",
                   actualTicketsCount,
                 );
-                setStatus("failed");
+                setStatus("issue_failed");
                 return;
               }
 
@@ -764,7 +764,94 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
       <div className="relative z-10">
         <BookingProgress />
         <div className="container mx-auto px-4 py-8">
-          {status === "pending" ? (
+          {status === "issue_failed" ? (
+            <Card className="p-6 sm:p-8 bg-[#1a2332]/90 backdrop-blur-md border border-emerald-500/30 rounded-2xl shadow-2xl text-left max-w-xl mx-auto">
+              <div className="flex flex-col items-center text-center gap-4">
+                <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/40 rounded-full flex items-center justify-center">
+                  <CheckCircle2 className="h-9 w-9 text-emerald-400" />
+                </div>
+                <div>
+                  <span className="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-semibold rounded-full mb-2">
+                    Pago Registrado Exitosamente
+                  </span>
+                  <h2 className="text-2xl font-bold text-white">
+                    Tu pago fue procesado correctamente
+                  </h2>
+                </div>
+
+                <div className="w-full bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-left my-2">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="h-6 w-6 text-amber-400 shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="font-semibold text-amber-300 text-sm">
+                        Inconveniente en la emisión del pasaje
+                      </h3>
+                      <p className="text-xs text-amber-200/90 mt-1 leading-relaxed">
+                        Tu pago fue recibido, pero ocurrió una demora técnica al emitir los boletos en el sistema de transporte. No te preocupes, tus pasajes y fondos están resguardados.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {bookingReference && (
+                  <div className="w-full bg-slate-800/80 rounded-xl p-4 border border-slate-700/60 text-xs space-y-2">
+                    <div className="flex justify-between text-slate-300">
+                      <span>Código de referencia:</span>
+                      <span className="font-mono font-bold text-emerald-400">{bookingReference}</span>
+                    </div>
+                    {totalPrice > 0 && (
+                      <div className="flex justify-between text-slate-300">
+                        <span>Monto abonado:</span>
+                        <span className="font-bold text-white">Gs. {totalPrice.toLocaleString("es-PY")}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <p className="text-sm text-slate-300 mt-1">
+                  Por favor, contactate con nuestro equipo de soporte para la emisión directa de tus boletos:
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-3 w-full mt-2">
+                  <Button
+                    onClick={() => {
+                      const msg = encodeURIComponent(
+                        `Hola, mi pago fue procesado correctamente pero ocurrió un inconveniente en la emisión de boletos. Mi código de referencia es: ${bookingReference || "Sin código"}.`
+                      );
+                      window.open(`https://wa.me/595991224613?text=${msg}`, "_blank");
+                    }}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium flex-1 py-5 rounded-xl shadow-lg flex items-center justify-center gap-2"
+                  >
+                    <MessageSquare className="h-5 w-5" />
+                    Contactar por WhatsApp
+                  </Button>
+
+                  <Button
+                    onClick={() => {
+                      const subject = encodeURIComponent(`Soporte Emisión - Ref: ${bookingReference || ""}`);
+                      const body = encodeURIComponent(
+                        `Hola equipo de Soporte,\n\nMi pago fue confirmado pero ocurrió un error en la emisión automática de pasajes.\n\nCódigo de referencia: ${bookingReference || ""}\nMonto: Gs. ${totalPrice}\n\nQuedo a la espera de sus comentarios.`
+                      );
+                      window.location.href = `mailto:soporte@boletos.la?subject=${subject}&body=${body}`;
+                    }}
+                    variant="outline"
+                    className="border-slate-600 text-slate-200 hover:bg-slate-800 font-medium flex-1 py-5 rounded-xl flex items-center justify-center gap-2"
+                  >
+                    <Mail className="h-5 w-5" />
+                    Contactar por Email
+                  </Button>
+                </div>
+
+                <Button
+                  variant="ghost"
+                  onClick={() => router.push("/")}
+                  className="text-xs text-slate-400 hover:text-white mt-2"
+                >
+                  Volver al inicio
+                </Button>
+              </div>
+            </Card>
+          ) : status === "pending" ? (
             <Card className="p-6 bg-yellow-500/10 backdrop-blur-sm border-yellow-500/30">
               <div className="flex items-start gap-4">
                 <AlertCircle className="h-8 w-8 text-yellow-400 mt-0.5 shrink-0" />
