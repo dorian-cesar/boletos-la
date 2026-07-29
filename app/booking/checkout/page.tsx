@@ -92,7 +92,8 @@ export default function CheckoutPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: totalPrice,
+          amount: 834, // TODO: restaurar a totalPrice para producción
+          // amount: totalPrice,
           client_ruc: primaryPassenger?.documentNumber || "fallback",
           client_name:
             `${primaryPassenger?.firstName} ${primaryPassenger?.lastName}`.toUpperCase(),
@@ -854,8 +855,8 @@ export default function CheckoutPage() {
             </h3>
             <p className="text-sm text-gray-300 mb-6 leading-relaxed">
               Por favor indícanos si utilizarás una tarjeta de crédito o débito{" "}
-              <strong className="text-blue-400">VISA</strong> para aplicar la configuración
-              de procesamiento requerida por Bancard.
+              <strong className="text-blue-400">VISA</strong> para aplicar la
+              configuración de procesamiento requerida por Bancard.
             </p>
             <div className="flex flex-col gap-3">
               <Button
@@ -867,7 +868,7 @@ export default function CheckoutPage() {
               <Button
                 onClick={() => executeBancardPayment(false)}
                 variant="outline"
-                className="w-full border-gray-700 hover:bg-gray-800 text-gray-200 font-medium py-3 h-12 rounded-xl transition-all"
+                className="w-full border-gray-700 hover:bg-gray-800 hover:text-gray-200 text-gray-700 font-medium py-3 h-12 rounded-xl transition-all"
               >
                 No (Otra tarjeta / medio)
               </Button>

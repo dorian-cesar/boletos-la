@@ -47,6 +47,8 @@ export default function SeatsPage() {
     totalPrice,
     originTitle,
     destinationTitle,
+    outboundConnectionId,
+    returnConnectionId,
     setOutboundConnectionId,
     setReturnConnectionId,
     addFailedSeats,
