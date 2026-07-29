@@ -316,7 +316,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
         ).join("");
 
         const simBillNum = `001-001-${Math.floor(1000000 + Math.random() * 9000000)}`;
-        const simCdc = `01801715709001001000${Math.floor(100000000000000000000000 + Math.random() * 900000000000000000000000)}`;
+        const simCdc = "01801715709001001000" + Array.from({ length: 24 }, () => Math.floor(Math.random() * 10)).join("");
         const simTimbrado = "18903263";
 
         const simulatedPaymentDetails = {
