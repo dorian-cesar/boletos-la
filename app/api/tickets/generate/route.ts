@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// URL del backend externo para generar PDFs
-const EXTERNAL_PDF_API_URL =
-  "https://pdf-mail.dev-wit.com/api/tickets/generate";
+const PDF_BASE_URL =
+  process.env.EXTERNAL_PDF_API_URL || "https://pdf-mail.dev-wit.com";
 
-// const EXTERNAL_PDF_API_URL = "http://localhost:3001/api/tickets/generate";
+const EXTERNAL_PDF_API_URL = `${PDF_BASE_URL}/api/tickets/generate`;
 
 export async function POST(request: NextRequest) {
   try {

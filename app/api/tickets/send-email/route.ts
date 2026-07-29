@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// URL del backend externo para enviar emails
-const EXTERNAL_EMAIL_API_URL =
-  "https://pdf-mail.dev-wit.com/api/mail/send-ticket";
+const PDF_BASE_URL =
+  process.env.EXTERNAL_PDF_API_URL || "https://pdf-mail.dev-wit.com";
 
-// const EXTERNAL_EMAIL_API_URL = "http://localhost:3001/api/mail/send-ticket";
+const EXTERNAL_EMAIL_API_URL = `${PDF_BASE_URL}/api/mail/send-ticket`;
 
 export async function POST(request: NextRequest) {
   try {

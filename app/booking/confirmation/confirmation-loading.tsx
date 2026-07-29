@@ -72,9 +72,13 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
       label: string,
     ) => {
       const reservaCodigo = getTicketNumber(label, seat.number);
+      const cdcValue = paymentDetails?.cdc || "";
+      const qrContent = cdcValue
+        ? `https://ekuatia.set.gov.py/consultas/${cdcValue}`
+        : reservaCodigo;
 
       // Generar QR en base64
-      const qrBase64 = await QRCode.toDataURL(reservaCodigo);
+      const qrBase64 = await QRCode.toDataURL(qrContent);
 
       const payload = {
         emailDestino: primaryPassenger.email,

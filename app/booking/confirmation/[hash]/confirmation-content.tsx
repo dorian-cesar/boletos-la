@@ -170,8 +170,13 @@ export default function ConfirmationPageContent({
           seatsArray[seatIndex]?.ticketNumber ||
           `${bookingReference}-${passengerSeat}`;
 
+        const cdcValue = paymentDetails?.cdc || "";
+        const qrContent = cdcValue
+          ? `https://ekuatia.set.gov.py/consultas/${cdcValue}`
+          : reservaCodigo;
+
         // Generar QR en base64
-        const qrBase64 = await QRCode.toDataURL(reservaCodigo);
+        const qrBase64 = await QRCode.toDataURL(qrContent);
 
         // Calcular precio por pasajero
         const pricePerPassenger = Math.round(
