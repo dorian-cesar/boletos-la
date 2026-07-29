@@ -235,6 +235,9 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           payment_paid: Boolean(paymentDetails.pagado),
           payment_token: String(paymentDetails.token || paymentDetails.hash_pedido || ""),
           payment_hash: String(paymentDetails.hash_pedido || paymentDetails.token || ""),
+          numero_factura: String(paymentDetails.numero_factura || ""),
+          cdc: String(paymentDetails.cdc || ""),
+          timbrado: String(paymentDetails.timbrado || ""),
         };
 
         try {
