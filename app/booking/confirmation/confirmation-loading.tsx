@@ -835,7 +835,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                       window.location.href = `mailto:soporte@boletos.la?subject=${subject}&body=${body}`;
                     }}
                     variant="outline"
-                    className="border-slate-600 text-slate-200 hover:bg-slate-800 font-medium flex-1 py-5 rounded-xl flex items-center justify-center gap-2"
+                    className="bg-slate-100 border-slate-300 text-slate-800 hover:bg-slate-200 hover:text-slate-900 font-medium flex-1 py-5 rounded-xl flex items-center justify-center gap-2"
                   >
                     <Mail className="h-5 w-5" />
                     Contactar por Email
