@@ -457,6 +457,9 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                   const cdc =
                     rawData?.data?.confirmation?.electronicBillCdc ||
                     rawData?.confirmation?.electronicBillCdc;
+                  const billNum =
+                    rawData?.data?.confirmation?.electronicBillNumber ||
+                    rawData?.confirmation?.electronicBillNumber;
                   const stamp =
                     rawData?.data?.confirmation?.commerceStamp ||
                     rawData?.confirmation?.commerceStamp;
