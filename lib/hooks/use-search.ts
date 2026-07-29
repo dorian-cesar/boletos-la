@@ -103,7 +103,7 @@ export function useSearch({
             departureTime: depTime,
             arrivalTime: arrTime,
             duration: durationStr,
-            price: Number(t.price ?? t.amount ?? t.fare ?? t.totalAmount ?? 0),
+            price: Number(t.minFare ?? 0),
             busType: t.serviceClass || "Bus",
             company: t.company,
             amenities,
