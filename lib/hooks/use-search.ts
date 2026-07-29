@@ -103,7 +103,7 @@ export function useSearch({
             departureTime: depTime,
             arrivalTime: arrTime,
             duration: durationStr,
-            price: 6549, // Equivalent to 1000 CLP as per user rate
+            price: Number(t.price ?? t.amount ?? t.fare ?? t.totalAmount ?? 0),
             busType: t.serviceClass || "Bus",
             company: t.company,
             amenities,
