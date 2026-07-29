@@ -112,6 +112,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
         pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
         numeroFactura: paymentDetails?.numero_factura || "",
+        timbrado: paymentDetails?.timbrado || "",
         fechaVenta: format(new Date(), "dd/MM/yyyy HH:mm"),
         asiento: seat.number,
         servicio: trip.busType,
@@ -424,6 +425,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
             // 1. Polling (Reintentos) en la confirmación para obtener el electronicBillCdc
             let electronicBillCdc: string | null = null;
             let electronicBillNumber: string | null = null;
+            let electronicBillStamp: string | null = null;
             let confirmData: any = null;
 
             const maxAttempts = 5;
@@ -448,13 +450,14 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                   const cdc =
                     rawData?.data?.confirmation?.electronicBillCdc ||
                     rawData?.confirmation?.electronicBillCdc;
-                  const billNum =
-                    rawData?.data?.confirmation?.electronicBillNumber ||
-                    rawData?.confirmation?.electronicBillNumber;
+                  const stamp =
+                    rawData?.data?.confirmation?.commerceStamp ||
+                    rawData?.confirmation?.commerceStamp;
 
                   if (cdc) {
                     electronicBillCdc = cdc;
                     electronicBillNumber = billNum || "";
+                    electronicBillStamp = stamp || "";
                     console.log(`[Bancard Confirmation] CDC obtenido en intento ${attempt}: ${cdc}`);
                     break;
                   }
@@ -497,6 +500,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               token: processId || shopProcessId || "bancard-payment",
               numero_factura: electronicBillNumber || "",
               cdc: electronicBillCdc || "",
+              timbrado: electronicBillStamp || "",
             };
 
             if (selectedOutboundTrip) {

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const PDF_BASE_URL =
-  process.env.EXTERNAL_PDF_API_URL || "https://pdf-mail.dev-wit.com";
+  process.env.EXTERNAL_PDF_API_URL || "https://new-backend-pdf.dev-wit.com";
 
 const EXTERNAL_EMAIL_API_URL = `${PDF_BASE_URL}/api/mail/send-ticket`;
 
@@ -72,6 +72,7 @@ export async function POST(request: NextRequest) {
       type: "boletos.la",
       reservaCodigo: body.reservaCodigo,
       numeroFactura: body.numeroFactura,
+      timbrado: body.timbrado || "",
       fechaVenta: body.fechaVenta,
       origen: body.origen,
       destino: body.destino,
