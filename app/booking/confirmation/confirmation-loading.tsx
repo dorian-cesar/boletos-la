@@ -112,7 +112,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
         asiento: seat.number,
         servicio: trip.busType,
         qrBase64: qrBase64,
-        cdc: "0180012667000100100012341202404221100000000",
+        cdc: paymentDetails?.cdc || "",
       };
 
       try {
@@ -465,7 +465,22 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
             }
 
             if (!electronicBillCdc) {
-              console.warn("[Bancard Confirmation] No se obtuvo electronicBillCdc tras agotar los 5 reintentos.");
+              console.warn("[Bancard Confirmation] No se obtuvo electronicBillCdc tras agotar los 5 reintentos. Ejecutando rollback...");
+              try {
+                await fetch("/api/bancard/rollback-transaccion", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    shopProcessId: shopProcessId ? parseInt(shopProcessId) : 0,
+                    processId: processId,
+                  }),
+                });
+                console.log("[Bancard Rollback] Rollback completado por falta de CDC.");
+              } catch (rollbackErr) {
+                console.error("[Bancard Rollback] Error al realizar rollback por falta de CDC:", rollbackErr);
+              }
+              setStatus("failed");
+              return;
             }
 
             const realPaymentDetails = {
