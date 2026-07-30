@@ -238,6 +238,15 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           numero_factura: String(paymentDetails.numero_factura || ""),
           cdc: String(paymentDetails.cdc || ""),
           timbrado: String(paymentDetails.timbrado || ""),
+          origen_transaccion: "web",
+          tipo_pago: (
+            bancardIsVisa ||
+            (typeof window !== "undefined"
+              ? localStorage.getItem("bancard_is_visa") === "true"
+              : false)
+          )
+            ? "VISA_BANCARD"
+            : "MASTERCARD_BANCARD",
         };
 
         try {
