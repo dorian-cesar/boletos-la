@@ -1,14 +1,15 @@
+import { BACKEND_URL, AUTH_EMAIL, AUTH_PASSWORD } from "@/lib/config";
 import { NextResponse } from "next/server";
 
 export async function POST() {
   try {
-    const email = process.env.AUTH_EMAIL;
-    const password = process.env.AUTH_PASSWORD;
-    const backendUrl = process.env.BACKEND_URL;
+    const email = AUTH_EMAIL;
+    const password = AUTH_PASSWORD;
+    const backendUrl = BACKEND_URL;
 
     if (!email || !password || !backendUrl) {
       return NextResponse.json(
-        { error: "Faltan variables de entorno" },
+        { error: "Faltan variables de entorno: BACKEND_URL, AUTH_EMAIL o AUTH_PASSWORD" },
         { status: 500 },
       );
     }

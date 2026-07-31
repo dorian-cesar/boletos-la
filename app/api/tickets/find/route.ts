@@ -1,8 +1,6 @@
+import { ANALYTICS_BASE_URL, AUTH_EMAIL, AUTH_PASSWORD } from "@/lib/config";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-
-// URL base del backend para analíticas desde variables de entorno
-const ANALYTICS_BASE_URL = process.env.DB_URL;
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,8 +28,8 @@ export async function POST(request: NextRequest) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: process.env.AUTH_EMAIL,
-          password: process.env.AUTH_PASSWORD,
+          email: AUTH_EMAIL,
+          password: AUTH_PASSWORD,
         }),
       });
 

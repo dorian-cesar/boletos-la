@@ -1,8 +1,16 @@
+import { BACKEND_URL, AUTH_EMAIL, AUTH_PASSWORD } from "@/lib/config";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
+    if (!BACKEND_URL || !AUTH_EMAIL || !AUTH_PASSWORD) {
+      return NextResponse.json(
+        { error: "Faltan variables de entorno: BACKEND_URL, AUTH_EMAIL o AUTH_PASSWORD" },
+        { status: 500 },
+      );
+    }
+
     const { searchParams } = req.nextUrl;
     const originId = searchParams.get("originId");
     const destinationId = searchParams.get("destinationId");
@@ -25,12 +33,12 @@ export async function GET(req: NextRequest) {
     if (existingToken) {
       token = existingToken;
     } else {
-      const authRes = await fetch(`${process.env.BACKEND_URL}/api/auth/email`, {
+      const authRes = await fetch(`${BACKEND_URL}/api/auth/email`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: process.env.AUTH_EMAIL,
-          password: process.env.AUTH_PASSWORD,
+          email: AUTH_EMAIL,
+          password: AUTH_PASSWORD,
         }),
       });
 
@@ -66,7 +74,7 @@ export async function GET(req: NextRequest) {
     const params = new URLSearchParams({ originId, destinationId, date });
 
     const apiRes = await fetch(
-      `${process.env.BACKEND_URL}/api/gds/delta/search?${params.toString()}`,
+      `${BACKEND_URL}/api/gds/delta/search?${params.toString()}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
