@@ -58,6 +58,7 @@ export async function GET() {
       {
         headers: {
           Authorization: `Bearer ${token}`,
+          "X-Channel": process.env.NEXT_PUBLIC_APP_CHANNEL || "web",
         },
       },
     );
