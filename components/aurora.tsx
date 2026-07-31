@@ -1,5 +1,6 @@
 "use client";
 
+// @ts-ignore
 import { Renderer, Program, Mesh, Color, Triangle } from 'ogl';
 import { useEffect, useRef } from 'react';
 import './aurora.css';

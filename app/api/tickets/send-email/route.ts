@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// URL del backend externo para enviar emails (NUEVO ENDPOINT)
-const EXTERNAL_EMAIL_API_URL =
-  "https://pdf-mail.dev-wit.com/api/mail/send-ticket";
+const PDF_BASE_URL =
+  process.env.EXTERNAL_PDF_API_URL || "https://new-backend-pdf.dev-wit.com";
+
+const EXTERNAL_EMAIL_API_URL = `${PDF_BASE_URL}/api/mail/send-ticket`;
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,66 +21,74 @@ export async function POST(request: NextRequest) {
     // 3. Validar datos mínimos requeridos por el backend externo
     const requiredFields = [
       "reservaCodigo",
-      "horaSalida",
       "origen",
-      "horaLlegada",
       "destino",
       "fechaViaje",
+      "horaSalida",
+      "horaLlegada",
       "duracion",
-      "empresa",
-      "servicioTipo",
-      "asientos",
-      "terminal",
-      "puerta",
+      "asiento",
+      "servicio",
       "pasajeroNombre",
       "documento",
-      "telefono",
-      "subtotal",
-      "iva",
-      "cargoServicio",
+      "email",
+      "fechaNacimiento",
       "total",
-      "pagoFecha",
-      "metodoPago",
+      "cdc",
+      "qrBase64",
+      "numeroFactura",
+      "fechaVenta",
     ];
 
     const missingFields = requiredFields.filter((field) => !body[field]);
 
     if (missingFields.length > 0) {
+      console.error(
+        "Campos requeridos faltantes en send-email:",
+        missingFields,
+      );
       return NextResponse.json(
         {
           success: false,
           message: `Campos requeridos faltantes: ${missingFields.join(", ")}`,
+          missingFields,
         },
         { status: 400 },
       );
     }
 
     // 4. Preparar payload para el backend externo
-    // El backend externo ahora generará el PDF automáticamente
+    // Limpiar el QR de prefijos si existen
+    const cleanQrBase64 = body.qrBase64.replace(
+      /^data:image\/[a-z]+;base64,/,
+      "",
+    );
+
     const externalPayload = {
-      templateName: "ticket-boleto", // Template fijo para boletos
+      templateName: "ticket-boleto",
       emailDestino: body.emailDestino,
+      logo: "logo-santaniana-blanco.png",
+      logoBoletos: "logo-boletos.png",
+      type: "boletos.la",
       reservaCodigo: body.reservaCodigo,
-      horaSalida: body.horaSalida,
+      numeroFactura: body.numeroFactura,
+      timbrado: body.timbrado || "",
+      fechaVenta: body.fechaVenta,
       origen: body.origen,
-      horaLlegada: body.horaLlegada,
       destino: body.destino,
       fechaViaje: body.fechaViaje,
+      horaSalida: body.horaSalida,
+      horaLlegada: body.horaLlegada,
       duracion: body.duracion,
-      empresa: body.empresa,
-      servicioTipo: body.servicioTipo,
-      asientos: body.asientos,
-      terminal: body.terminal,
-      puerta: body.puerta,
+      asiento: body.asiento,
+      servicio: body.servicio,
       pasajeroNombre: body.pasajeroNombre,
       documento: body.documento,
-      telefono: body.telefono,
-      subtotal: body.subtotal,
-      iva: body.iva,
-      cargoServicio: body.cargoServicio,
+      email: body.email,
+      fechaNacimiento: body.fechaNacimiento,
       total: body.total,
-      pagoFecha: body.pagoFecha,
-      metodoPago: body.metodoPago,
+      cdc: body.cdc,
+      qrBase64: cleanQrBase64,
     };
 
     console.log("📧 Enviando email a backend externo:", {
@@ -108,7 +117,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!emailResponse.ok) {
-      console.error("❌ Error en backend externo:", {
+      console.error("Error en backend externo:", {
         status: emailResponse.status,
         statusText: emailResponse.statusText,
         data: responseData,
@@ -126,7 +135,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 7. Respuesta exitosa
-    console.log("✅ Email enviado exitosamente:", {
+    console.log("Email enviado exitosamente:", {
       email: externalPayload.emailDestino,
       reservaCodigo: externalPayload.reservaCodigo,
       response: responseData,
@@ -141,7 +150,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     // Manejo de errores
-    console.error("❌ Error en API send-email:", {
+    console.error("Error en API send-email:", {
       name: error.name,
       message: error.message,
       stack: error.stack,

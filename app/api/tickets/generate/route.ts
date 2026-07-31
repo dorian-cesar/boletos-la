@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// URL del backend externo para generar PDFs
-const EXTERNAL_PDF_API_URL =
-  "https://pdf-mail.dev-wit.com/api/tickets/generate";
+const PDF_BASE_URL =
+  process.env.EXTERNAL_PDF_API_URL || "https://new-backend-pdf.dev-wit.com";
+
+const EXTERNAL_PDF_API_URL = `${PDF_BASE_URL}/api/tickets/generate`;
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,26 +25,23 @@ export async function POST(request: NextRequest) {
     // 3. Validar campos adicionales requeridos por el backend externo
     const requiredFields = [
       "reservaCodigo",
-      "horaSalida",
       "origen",
-      "horaLlegada",
       "destino",
       "fechaViaje",
+      "horaSalida",
+      "horaLlegada",
       "duracion",
-      "empresa",
-      "servicioTipo",
-      "asientos",
-      "terminal",
-      "puerta",
+      "asiento",
+      "servicio",
       "pasajeroNombre",
       "documento",
-      "telefono",
-      "subtotal",
-      "iva",
-      "cargoServicio",
+      "email",
+      "fechaNacimiento",
       "total",
-      "pagoFecha",
-      "metodoPago",
+      "cdc",
+      "qrBase64",
+      "numeroFactura",
+      "fechaVenta",
     ];
 
     const missingFields = requiredFields.filter((field) => !body[field]);
@@ -61,35 +59,40 @@ export async function POST(request: NextRequest) {
     }
 
     // 4. Preparar payload para el backend externo
+    // Limpiar el QR de prefijos si existen
+    const cleanQrBase64 = body.qrBase64.replace(
+      /^data:image\/[a-z]+;base64,/,
+      "",
+    );
+
     const externalPayload = {
       templateName: "ticket-boleto",
+      logo: "logo-santaniana-blanco.png",
       reservaCodigo: body.reservaCodigo,
-      horaSalida: body.horaSalida,
+      numeroFactura: body.numeroFactura,
+      timbrado: body.timbrado || "",
+      fechaVenta: body.fechaVenta,
       origen: body.origen,
-      horaLlegada: body.horaLlegada,
       destino: body.destino,
       fechaViaje: body.fechaViaje,
+      horaSalida: body.horaSalida,
+      horaLlegada: body.horaLlegada,
       duracion: body.duracion,
-      empresa: body.empresa,
-      servicioTipo: body.servicioTipo,
-      asientos: body.asientos,
-      terminal: body.terminal,
-      puerta: body.puerta,
+      asiento: body.asiento,
+      servicio: body.servicio,
       pasajeroNombre: body.pasajeroNombre,
       documento: body.documento,
-      telefono: body.telefono,
-      subtotal: body.subtotal,
-      iva: body.iva,
-      cargoServicio: body.cargoServicio,
+      email: body.email,
+      fechaNacimiento: body.fechaNacimiento,
       total: body.total,
-      pagoFecha: body.pagoFecha,
-      metodoPago: body.metodoPago,
+      cdc: body.cdc,
+      qrBase64: cleanQrBase64,
     };
 
     console.log("Solicitando generación de PDF al backend externo:", {
       reservaCodigo: externalPayload.reservaCodigo,
       pasajero: externalPayload.pasajeroNombre,
-      asientos: externalPayload.asientos,
+      asientos: externalPayload.asiento,
     });
 
     // 5. Llamar al backend externo

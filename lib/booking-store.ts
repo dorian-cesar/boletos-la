@@ -23,9 +23,11 @@ export interface Seat {
   row: number;
   column: number;
   floor: number;
-  type: "standard" | "premium" | "vip";
-  status: "available" | "occupied" | "selected";
+  type: "standard" | "vip" | "premium";
+  status: "available" | "occupied" | "selected" | "blocked";
   price: number;
+  qualityCode: string; // Código de calidad del asiento (ej: "CA") — requerido por GDS /sell
+  ticketNumber?: string; // Número de ticket asignado por el GDS tras /sell exitoso
 }
 
 export interface Passenger {
@@ -34,8 +36,26 @@ export interface Passenger {
   firstName: string;
   lastName: string;
   documentNumber: string;
+  docType?: { codigo: string; nombre: string };
   email: string;
   phone: string;
+  occupation?: string;
+  birthDate?: string;
+  gender?: string;
+  nationality?: string;
+  country?: string;
+}
+
+export interface Stop {
+  id: string;
+  name: string;
+}
+
+export interface PaymentResult {
+  monto: string;
+  pagado: boolean;
+  token: string;
+  hash_pedido: string;
 }
 
 export interface BookingState {
@@ -54,6 +74,15 @@ export interface BookingState {
   totalPrice: number;
   bookingReference: string;
   paymentStatus: "pending" | "processing" | "completed" | "failed";
+  originTitle: string;
+  destinationTitle: string;
+  outboundConnectionId: string | null;
+  returnConnectionId: string | null;
+  paymentResult: PaymentResult | null;
+  failedSeats: Record<string, string[]>;
+  bancardProcessId: string | null;
+  bancardShopProcessId: string | null;
+  bancardIsVisa: boolean | null;
 
   setStep: (step: number) => void;
   setTripType: (type: "one-way" | "round-trip") => void;
@@ -70,11 +99,24 @@ export interface BookingState {
   removeReturnSeat: (seatId: string) => void;
   setPassengerDetails: (details: Passenger[]) => void;
   updatePassenger: (index: number, data: Partial<Passenger>) => void;
+  initPassengers: () => void;
   calculateTotal: () => void;
   setBookingReference: (ref: string) => void;
   setPaymentStatus: (
     status: "pending" | "processing" | "completed" | "failed",
   ) => void;
+  setOriginTitle: (title: string) => void;
+  setDestinationTitle: (title: string) => void;
+  setOutboundConnectionId: (id: string | null) => void;
+  setReturnConnectionId: (id: string | null) => void;
+  setPaymentResult: (result: PaymentResult | null) => void;
+  setBancardProcessId: (id: string | null) => void;
+  setBancardShopProcessId: (id: string | null) => void;
+  setBancardIsVisa: (isVisa: boolean | null) => void;
+  addFailedSeats: (tripId: string, seatNumbers: string[]) => void;
+  clearFailedSeats: (tripId: string) => void;
+  assignTicketNumbers: (ticketMap: Record<string, string>) => void;
+  swapTitles: () => void;
   resetBooking: () => void;
 }
 
@@ -94,6 +136,15 @@ const initialState = {
   totalPrice: 0,
   bookingReference: "",
   paymentStatus: "pending" as const,
+  originTitle: "",
+  destinationTitle: "",
+  outboundConnectionId: null,
+  returnConnectionId: null,
+  paymentResult: null,
+  failedSeats: {},
+  bancardProcessId: null,
+  bancardShopProcessId: null,
+  bancardIsVisa: null,
 };
 
 export const useBookingStore = create<BookingState>()(
@@ -157,6 +208,90 @@ export const useBookingStore = create<BookingState>()(
         set({ passengerDetails: updated });
       },
 
+      initPassengers: () => {
+        const { selectedSeats, selectedReturnSeats, passengerDetails } = get();
+
+        // El array plano resultante: [outbound seats..., return seats...]
+        const totalSlots = selectedSeats.length + selectedReturnSeats.length;
+        if (totalSlots === 0) {
+          set({ passengerDetails: [] });
+          return;
+        }
+
+        const updated: Passenger[] = [];
+
+        // Asientos de IDA
+        for (let i = 0; i < selectedSeats.length; i++) {
+          const seat = selectedSeats[i];
+          const existing = passengerDetails[i];
+          updated.push(
+            existing && existing.seatId === seat.id
+              ? existing
+              : {
+                  seatId: seat.id,
+                  seatNumber: seat.number,
+                  firstName: existing?.firstName ?? "",
+                  lastName: existing?.lastName ?? "",
+                  documentNumber: existing?.documentNumber ?? "",
+                  docType: existing?.docType ?? { codigo: "", nombre: "" },
+                  email: existing?.email ?? "",
+                  phone: existing?.phone ?? "",
+                  occupation: existing?.occupation ?? "",
+                  birthDate: existing?.birthDate ?? "",
+                  gender: existing?.gender ?? "M",
+                  nationality: existing?.nationality ?? "",
+                  country: existing?.country ?? "",
+                },
+          );
+        }
+
+        // Asientos de VUELTA — mismos datos del pasajero de ida (por orden)
+        for (let i = 0; i < selectedReturnSeats.length; i++) {
+          const retSeat = selectedReturnSeats[i];
+          // El pasajero correspondiente ya está en updated[i] (el de ida)
+          const outPassenger = updated[i];
+          const existingRet = passengerDetails[selectedSeats.length + i];
+
+          updated.push(
+            existingRet && existingRet.seatId === retSeat.id
+              ? {
+                  ...existingRet,
+                  firstName: outPassenger?.firstName ?? existingRet.firstName,
+                  lastName: outPassenger?.lastName ?? existingRet.lastName,
+                  documentNumber:
+                    outPassenger?.documentNumber ?? existingRet.documentNumber,
+                  docType: outPassenger?.docType ?? existingRet.docType,
+                  email: outPassenger?.email ?? existingRet.email,
+                  phone: outPassenger?.phone ?? existingRet.phone,
+                  occupation:
+                    outPassenger?.occupation ?? existingRet.occupation,
+                  birthDate: outPassenger?.birthDate ?? existingRet.birthDate,
+                  gender: outPassenger?.gender ?? existingRet.gender,
+                  nationality:
+                    outPassenger?.nationality ?? existingRet.nationality,
+                  country: outPassenger?.country ?? existingRet.country,
+                }
+              : {
+                  seatId: retSeat.id,
+                  seatNumber: retSeat.number,
+                  firstName: outPassenger?.firstName ?? "",
+                  lastName: outPassenger?.lastName ?? "",
+                  documentNumber: outPassenger?.documentNumber ?? "",
+                  docType: outPassenger?.docType ?? { codigo: "", nombre: "" },
+                  email: outPassenger?.email ?? "",
+                  phone: outPassenger?.phone ?? "",
+                  occupation: outPassenger?.occupation ?? "",
+                  birthDate: outPassenger?.birthDate ?? "",
+                  gender: outPassenger?.gender ?? "M",
+                  nationality: outPassenger?.nationality ?? "",
+                  country: outPassenger?.country ?? "",
+                },
+          );
+        }
+
+        set({ passengerDetails: updated });
+      },
+
       calculateTotal: () => {
         const {
           selectedOutboundTrip,
@@ -182,6 +317,48 @@ export const useBookingStore = create<BookingState>()(
 
       setBookingReference: (bookingReference) => set({ bookingReference }),
       setPaymentStatus: (paymentStatus) => set({ paymentStatus }),
+      setOriginTitle: (originTitle) => set({ originTitle }),
+      setDestinationTitle: (destinationTitle) => set({ destinationTitle }),
+      setOutboundConnectionId: (outboundConnectionId) => set({ outboundConnectionId }),
+      setReturnConnectionId: (returnConnectionId) => set({ returnConnectionId }),
+      setPaymentResult: (paymentResult) => set({ paymentResult }),
+      setBancardProcessId: (bancardProcessId) => set({ bancardProcessId }),
+      setBancardShopProcessId: (bancardShopProcessId) => set({ bancardShopProcessId }),
+      setBancardIsVisa: (bancardIsVisa) => set({ bancardIsVisa }),
+      addFailedSeats: (tripId, seatNumbers) => {
+        const { failedSeats } = get();
+        const currentFailed = failedSeats[tripId] || [];
+        set({
+          failedSeats: {
+            ...failedSeats,
+            [tripId]: [...new Set([...currentFailed, ...seatNumbers])],
+          },
+        });
+      },
+      clearFailedSeats: (tripId) => {
+        const { failedSeats } = get();
+        const updated = { ...failedSeats };
+        delete updated[tripId];
+        set({ failedSeats: updated });
+      },
+      assignTicketNumbers: (ticketMap) => {
+        const { selectedSeats, selectedReturnSeats } = get();
+        set({
+          selectedSeats: selectedSeats.map((seat) => ({
+            ...seat,
+            ticketNumber: ticketMap[`Ida-${seat.number}`] ?? seat.ticketNumber,
+          })),
+          selectedReturnSeats: selectedReturnSeats.map((seat) => ({
+            ...seat,
+            ticketNumber:
+              ticketMap[`Vuelta-${seat.number}`] ?? seat.ticketNumber,
+          })),
+        });
+      },
+      swapTitles: () => {
+        const { originTitle, destinationTitle } = get();
+        set({ originTitle: destinationTitle, destinationTitle: originTitle });
+      },
 
       resetBooking: () => {
         // Limpiar localStorage al hacer reset
@@ -210,6 +387,15 @@ export const useBookingStore = create<BookingState>()(
         totalPrice: state.totalPrice,
         bookingReference: state.bookingReference,
         paymentStatus: state.paymentStatus,
+        originTitle: state.originTitle,
+        destinationTitle: state.destinationTitle,
+        outboundConnectionId: state.outboundConnectionId,
+        returnConnectionId: state.returnConnectionId,
+        paymentResult: state.paymentResult,
+        failedSeats: state.failedSeats,
+        bancardProcessId: state.bancardProcessId,
+        bancardShopProcessId: state.bancardShopProcessId,
+        bancardIsVisa: state.bancardIsVisa,
       }),
       // Versión para migraciones futuras
       version: 1,
@@ -296,7 +482,7 @@ export const generateTrips = (
       departureTime: time,
       arrivalTime: `${arrivalHour.toString().padStart(2, "0")}:${arrivalMinute}`,
       duration: `${duration}h ${Math.random() > 0.5 ? "30" : "00"}min`,
-      price: 1000,
+      price: 6549, // Equivalent to 1000 CLP
       busType: busTypes[index % busTypes.length],
       company: companies[index % companies.length],
       amenities: amenities[index % amenities.length],
@@ -312,7 +498,7 @@ export const generateSeats = (tripId: string, floor: number = 1): Seat[] => {
 
   for (let row = 1; row <= rows; row++) {
     for (let col = 1; col <= columns; col++) {
-      const isOccupied = Math.random() < 0.3; // 30% ocupados
+      const isOccupied = Math.random() < 0.3;
       const isPremium = row <= 3;
       const isVip = floor === 2 && row <= 2;
 
@@ -325,6 +511,7 @@ export const generateSeats = (tripId: string, floor: number = 1): Seat[] => {
         type: isVip ? "vip" : isPremium ? "premium" : "standard",
         status: isOccupied ? "occupied" : "available",
         price: 1000,
+        qualityCode: "CA",
       });
     }
   }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from 'react';
+// @ts-ignore
 import { Renderer, Program, Triangle, Mesh } from 'ogl';
 import './light-rays.css';
 
