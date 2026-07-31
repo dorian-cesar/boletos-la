@@ -138,8 +138,8 @@ export function HeroSection({ country }: HeroSectionProps) {
           <div 
             key={index}
             className={cn(
-              "absolute inset-0 transition-opacity duration-[3000ms] ease-in-out",
-              index === currentImageIndex ? "opacity-100 z-0" : "opacity-0 -z-10"
+              "absolute inset-0 transition-opacity duration-1000 ease-in-out",
+              index === currentImageIndex ? "opacity-100 z-10" : "opacity-0 z-0"
             )}
           >
             <Image
@@ -148,7 +148,7 @@ export function HeroSection({ country }: HeroSectionProps) {
               fill
               sizes="100vw"
               className={cn(
-                "object-cover object-center transform transition-transform duration-[15000ms] ease-out",
+                "object-cover object-center transition-transform duration-[10000ms] ease-linear",
                 index === currentImageIndex ? "scale-110" : "scale-100"
               )}
               priority={index === 0}
