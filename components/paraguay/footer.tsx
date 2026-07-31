@@ -171,7 +171,9 @@ export function ParaguayFooter() {
               <li className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-primary mt-0.5" />
                 <span className="text-background/60">
-                  Av. Mariscal López 1234
+                  Av. Aviadores del Chaco 3207
+                  <br />
+                  Edificio Trading Park
                   <br />
                   Asunción, Paraguay
                 </span>
@@ -184,7 +186,7 @@ export function ParaguayFooter() {
                   rel="noopener noreferrer"
                   className="text-background/60 hover:text-primary transition-colors"
                 >
-                  +595 991 224613
+                  +595 21 123 4567
                 </a>
               </li>
               <li className="flex items-center gap-3">
@@ -204,11 +206,11 @@ export function ParaguayFooter() {
                 Medios de Pago
               </h5>
               <div className="flex items-center">
-                <Image 
-                  src="/logos/logo-bancard-blanco.png" 
-                  alt="Bancard" 
-                  width={110} 
-                  height={30} 
+                <Image
+                  src="/logos/logo-bancard-blanco.png"
+                  alt="Bancard"
+                  width={110}
+                  height={30}
                   className="h-8 w-auto opacity-80 hover:opacity-100 transition-opacity object-contain"
                 />
               </div>
