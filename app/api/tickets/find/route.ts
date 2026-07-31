@@ -1,9 +1,12 @@
-import { ANALYTICS_BASE_URL, AUTH_EMAIL, AUTH_PASSWORD } from "@/lib/config";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
+    const analyticsBaseUrl = process.env.NEXT_PUBLIC_DB_URL || process.env.DB_URL;
+    const authEmail = process.env.NEXT_PUBLIC_AUTH_EMAIL || process.env.AUTH_EMAIL;
+    const authPassword = process.env.NEXT_PUBLIC_AUTH_PASSWORD || process.env.AUTH_PASSWORD;
+
     const { ticketNumber } = await request.json();
 
     if (!ticketNumber) {
@@ -22,14 +25,14 @@ export async function POST(request: NextRequest) {
     if (existingToken) {
       token = existingToken;
     } else {
-      const authRes = await fetch(`${ANALYTICS_BASE_URL}/api/auth/login`, {
+      const authRes = await fetch(`${analyticsBaseUrl}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: AUTH_EMAIL,
-          password: AUTH_PASSWORD,
+          email: authEmail,
+          password: authPassword,
         }),
       });
 
@@ -61,7 +64,7 @@ export async function POST(request: NextRequest) {
     }
 
     const response = await fetch(
-      `${ANALYTICS_BASE_URL}/api/tickets/number/${ticketNumber}`,
+      `${analyticsBaseUrl}/api/tickets/number/${ticketNumber}`,
       {
         method: "GET",
         headers: {
