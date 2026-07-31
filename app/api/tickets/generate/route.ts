@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const PDF_BASE_URL =
-  process.env.EXTERNAL_PDF_API_URL || "https://new-backend-pdf.dev-wit.com";
+  process.env.NEXT_PUBLIC_EXTERNAL_PDF_API_URL ||
+  "https://new-backend-pdf.dev-wit.com";
 
-const EXTERNAL_PDF_API_URL = `${PDF_BASE_URL}/api/tickets/generate`;
+const NEXT_PUBLIC_EXTERNAL_PDF_API_URL = `${PDF_BASE_URL}/api/tickets/generate`;
 
 export async function POST(request: NextRequest) {
   try {
@@ -96,7 +97,7 @@ export async function POST(request: NextRequest) {
     });
 
     // 5. Llamar al backend externo
-    const pdfResponse = await fetch(EXTERNAL_PDF_API_URL, {
+    const pdfResponse = await fetch(NEXT_PUBLIC_EXTERNAL_PDF_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -209,7 +210,7 @@ export async function POST(request: NextRequest) {
 // Opcional: Endpoint GET para health check
 export async function GET(request: NextRequest) {
   try {
-    const response = await fetch(EXTERNAL_PDF_API_URL, {
+    const response = await fetch(NEXT_PUBLIC_EXTERNAL_PDF_API_URL, {
       method: "HEAD",
       signal: AbortSignal.timeout(5000),
     });

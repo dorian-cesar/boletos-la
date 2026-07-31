@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const analyticsBaseUrl = process.env.NEXT_PUBLIC_DB_URL || process.env.DB_URL;
-    const authEmail = process.env.NEXT_PUBLIC_AUTH_EMAIL || process.env.AUTH_EMAIL;
-    const authPassword = process.env.NEXT_PUBLIC_AUTH_PASSWORD || process.env.AUTH_PASSWORD;
+    const analyticsBaseUrl = process.env.NEXT_PUBLIC_DB_URL;
+    const authEmail = process.env.NEXT_PUBLIC_AUTH_EMAIL;
+    const authPassword = process.env.NEXT_PUBLIC_AUTH_PASSWORD;
 
     const { ticketNumber } = await request.json();
 

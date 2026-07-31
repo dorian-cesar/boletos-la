@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const PDF_BASE_URL =
-  process.env.EXTERNAL_PDF_API_URL || "https://new-backend-pdf.dev-wit.com";
+  process.env.NEXT_PUBLIC_EXTERNAL_PDF_API_URL ||
+  "https://new-backend-pdf.dev-wit.com";
 
 const EXTERNAL_EMAIL_API_URL = `${PDF_BASE_URL}/api/mail/send-ticket`;
 

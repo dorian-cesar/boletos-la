@@ -1,9 +1,13 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-const analyticsBaseUrl = process.env.NEXT_PUBLIC_DB_URL || process.env.DB_URL;
-const authEmail = process.env.NEXT_PUBLIC_AUTH_EMAIL || process.env.AUTH_EMAIL;
-const authPassword = process.env.NEXT_PUBLIC_AUTH_PASSWORD || process.env.AUTH_PASSWORD;
+const analyticsBaseUrl =
+  process.env.NEXT_PUBLIC_DB_URL || process.env.NEXT_PUBLIC_DB_URL;
+const authEmail =
+  process.env.NEXT_PUBLIC_AUTH_EMAIL || process.env.NEXT_PUBLIC_AUTH_EMAIL;
+const authPassword =
+  process.env.NEXT_PUBLIC_AUTH_PASSWORD ||
+  process.env.NEXT_PUBLIC_AUTH_PASSWORD;
 
 // URL base del backend para analíticas desde variables de entorno
 const ANALYTICS_API_URL = `${analyticsBaseUrl}/api/tickets`;
@@ -100,7 +104,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          message: responseData?.message || responseData?.error || "Error al guardar el ticket en analíticas",
+          message:
+            responseData?.message ||
+            responseData?.error ||
+            "Error al guardar el ticket en analíticas",
           externalResponse: responseData,
           sentPayload: payload,
         },

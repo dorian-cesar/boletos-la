@@ -3,13 +3,21 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.BACKEND_URL;
-    const authEmail = process.env.NEXT_PUBLIC_AUTH_EMAIL || process.env.AUTH_EMAIL;
-    const authPassword = process.env.NEXT_PUBLIC_AUTH_PASSWORD || process.env.AUTH_PASSWORD;
+    const backendUrl =
+      process.env.NEXT_PUBLIC_BACKEND_URL ||
+      process.env.NEXT_PUBLIC_BACKEND_URL;
+    const authEmail =
+      process.env.NEXT_PUBLIC_AUTH_EMAIL || process.env.NEXT_PUBLIC_AUTH_EMAIL;
+    const authPassword =
+      process.env.NEXT_PUBLIC_AUTH_PASSWORD ||
+      process.env.NEXT_PUBLIC_AUTH_PASSWORD;
 
     if (!backendUrl || !authEmail || !authPassword) {
       return NextResponse.json(
-        { error: "Faltan variables de entorno: NEXT_PUBLIC_BACKEND_URL, NEXT_PUBLIC_AUTH_EMAIL o NEXT_PUBLIC_AUTH_PASSWORD" },
+        {
+          error:
+            "Faltan variables de entorno: NEXT_PUBLIC_BACKEND_URL, NEXT_PUBLIC_AUTH_EMAIL o NEXT_PUBLIC_AUTH_PASSWORD",
+        },
         { status: 500 },
       );
     }
@@ -64,15 +72,12 @@ export async function GET() {
       });
     }
 
-    const apiRes = await fetch(
-      `${backendUrl}/api/gds/delta/stops`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "X-Channel": process.env.NEXT_PUBLIC_APP_CHANNEL || "web",
-        },
+    const apiRes = await fetch(`${backendUrl}/api/gds/delta/stops`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-Channel": process.env.NEXT_PUBLIC_APP_CHANNEL || "web",
       },
-    );
+    });
 
     if (!apiRes.ok) {
       const errorText = await apiRes.text();

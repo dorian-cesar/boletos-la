@@ -1,17 +1,27 @@
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  const bancardUrl = process.env.BANCARD_API_URL || "https://wit-bancard.dev-wit.com";
+  const bancardUrl =
+    process.env.NEXT_PUBLIC_BANCARD_API_URL ||
+    "https://wit-bancard.dev-wit.com";
   try {
     const body = await request.json();
-    const { amount, client_ruc, client_name, client_email, total_items, preauthorization } = body;
+    const {
+      amount,
+      client_ruc,
+      client_name,
+      client_email,
+      total_items,
+      preauthorization,
+    } = body;
 
     // Detectar el host dinámico para las URLs de retorno
     const host = request.headers.get("host") || "localhost:3000";
     const protocol = host.includes("localhost") ? "http" : "https";
     const appBaseUrl = `${protocol}://${host}`;
 
-    const usePreauthorization = typeof preauthorization === "boolean" ? preauthorization : true;
+    const usePreauthorization =
+      typeof preauthorization === "boolean" ? preauthorization : true;
 
     const payload = {
       action: "single-buy",
@@ -65,7 +75,10 @@ export async function POST(request: Request) {
     }
 
     const apiResponse = await response.json();
-    console.log("[Bancard Crear] Response:", JSON.stringify(apiResponse, null, 2));
+    console.log(
+      "[Bancard Crear] Response:",
+      JSON.stringify(apiResponse, null, 2),
+    );
 
     if (
       apiResponse.status === "success" ||
@@ -93,7 +106,10 @@ export async function POST(request: Request) {
               shopProcessId = shopData.data.shopProcessId;
             }
           } else {
-            console.log("[Bancard Crear] Error en shop-process-id endpoint:", shopRes.status);
+            console.log(
+              "[Bancard Crear] Error en shop-process-id endpoint:",
+              shopRes.status,
+            );
           }
         } catch (err) {
           console.error("No se pudo obtener el shopProcessId de soporte:", err);
@@ -109,7 +125,7 @@ export async function POST(request: Request) {
     } else {
       throw new Error(
         apiResponse.message ||
-        "La API no devolvió un processId válido para la transacción",
+          "La API no devolvió un processId válido para la transacción",
       );
     }
   } catch (error: any) {

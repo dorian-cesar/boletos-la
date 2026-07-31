@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-const BACKEND_URL =
+const NEXT_PUBLIC_BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_PAGOPAR_URL || "http://localhost:3001";
 
 export async function POST(request: NextRequest) {
@@ -26,12 +26,12 @@ export async function POST(request: NextRequest) {
     if (existingToken) {
       token = existingToken;
     } else {
-      const authRes = await fetch(`${BACKEND_URL}/api/auth/login`, {
+      const authRes = await fetch(`${NEXT_PUBLIC_BACKEND_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: process.env.AUTH_EMAIL,
-          password: process.env.AUTH_PASSWORD,
+          email: process.env.NEXT_PUBLIC_AUTH_EMAIL,
+          password: process.env.NEXT_PUBLIC_AUTH_PASSWORD,
         }),
       });
 
@@ -65,14 +65,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Consultar al backend
-    const apiRes = await fetch(`${BACKEND_URL}/api/pagopar/consultar-estado`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+    const apiRes = await fetch(
+      `${NEXT_PUBLIC_BACKEND_URL}/api/pagopar/consultar-estado`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ hash_pedido }),
       },
-      body: JSON.stringify({ hash_pedido }),
-    });
+    );
 
     const resultado = await apiRes.json();
 

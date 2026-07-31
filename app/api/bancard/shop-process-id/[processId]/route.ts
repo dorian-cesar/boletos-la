@@ -2,15 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ processId: string }> }
+  { params }: { params: Promise<{ processId: string }> },
 ) {
-  const bancardUrl = process.env.BANCARD_API_URL || "https://wit-bancard.dev-wit.com";
+  const bancardUrl =
+    process.env.NEXT_PUBLIC_BANCARD_API_URL ||
+    "https://wit-bancard.dev-wit.com";
   const { processId } = await params;
 
   if (!processId) {
     return NextResponse.json(
       { status: "error", message: "processId es requerido" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -28,8 +30,11 @@ export async function GET(
     if (!response.ok) {
       const errorText = await response.text();
       return NextResponse.json(
-        { status: "error", message: `Error del Gateway: ${response.status} - ${errorText}` },
-        { status: response.status }
+        {
+          status: "error",
+          message: `Error del Gateway: ${response.status} - ${errorText}`,
+        },
+        { status: response.status },
       );
     }
 
@@ -39,7 +44,7 @@ export async function GET(
     console.error("Error obteniendo shopProcessId:", error);
     return NextResponse.json(
       { status: "error", message: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
