@@ -7,7 +7,14 @@ import { es } from "date-fns/locale";
 import { BookingProgress } from "@/components/paraguay/booking-progress";
 import { useBookingStore } from "@/lib/booking-store";
 import { sellGdsSeats } from "@/lib/gds-sell";
-import { AlertCircle, CheckCircle2, Loader2, Mail, MessageSquare, Wallet } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle2,
+  Loader2,
+  Mail,
+  MessageSquare,
+  Wallet,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
@@ -191,11 +198,18 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           connection_id: String(connId || ""),
           first_name: String(passenger.firstName || "").trim(),
           last_name: String(passenger.lastName || "").trim(),
-          document_number: String(passenger.documentNumber || "").replace(/[.\-\s]/g, ""),
+          document_number: String(passenger.documentNumber || "").replace(
+            /[.\-\s]/g,
+            "",
+          ),
           document_type_code: String(passenger.docType?.codigo || "C"),
-          document_type_name: String(passenger.docType?.nombre || "C.I. Paraguaya"),
+          document_type_name: String(
+            passenger.docType?.nombre || "C.I. Paraguaya",
+          ),
           email: String(passenger.email || primaryPassenger?.email || ""),
-          phone: String(passenger.phone || primaryPassenger?.phone || "").replace(/\D/g, ""),
+          phone: String(
+            passenger.phone || primaryPassenger?.phone || "",
+          ).replace(/\D/g, ""),
           occupation: String(passenger.occupation || "EMPLEADO"),
           birth_date: passenger.birthDate
             ? String(passenger.birthDate).replace(/\//g, "-")
@@ -233,8 +247,12 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           payment_status: "completed",
           payment_amount: Number(seat.price || trip.price || 0),
           payment_paid: Boolean(paymentDetails.pagado),
-          payment_token: String(paymentDetails.token || paymentDetails.hash_pedido || ""),
-          payment_hash: String(paymentDetails.hash_pedido || paymentDetails.token || ""),
+          payment_token: String(
+            paymentDetails.token || paymentDetails.hash_pedido || "",
+          ),
+          payment_hash: String(
+            paymentDetails.hash_pedido || paymentDetails.token || "",
+          ),
           numero_factura: String(paymentDetails.numero_factura || ""),
           cdc: String(paymentDetails.cdc || ""),
           timbrado: String(paymentDetails.timbrado || ""),
@@ -321,7 +339,11 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
         ).join("");
 
         const simBillNum = `001-001-${Math.floor(1000000 + Math.random() * 9000000)}`;
-        const simCdc = "01801715709001001000" + Array.from({ length: 24 }, () => Math.floor(Math.random() * 10)).join("");
+        const simCdc =
+          "01801715709001001000" +
+          Array.from({ length: 24 }, () => Math.floor(Math.random() * 10)).join(
+            "",
+          );
         const simTimbrado = "18903263";
 
         const simulatedPaymentDetails = {
@@ -407,7 +429,9 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
       if (hash === "bancard") {
         const paymentStatus = searchParams.get("status");
         if (paymentStatus === "payment_fail") {
-          console.error("El pago fue rechazado o cancelado en el iframe de Bancard.");
+          console.error(
+            "El pago fue rechazado o cancelado en el iframe de Bancard.",
+          );
           setStatus("failed");
           return;
         }
@@ -434,7 +458,8 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               ? localStorage.getItem("bancard_is_visa") === "true"
               : false);
 
-          const isSuccess = paymentStatus === "payment_success" || !paymentStatus;
+          const isSuccess =
+            paymentStatus === "payment_success" || !paymentStatus;
 
           if (isSuccess) {
             setBancardProcessId(null);
@@ -450,7 +475,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               setBookingReference(finalRef);
             }
             setStorePaymentStatus("completed");
-            
+
             // 1. Polling (Reintentos) en la confirmación para obtener el electronicBillCdc
             let electronicBillCdc: string | null = null;
             let electronicBillNumber: string | null = null;
@@ -459,18 +484,25 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
 
             const maxAttempts = 5;
             for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-              console.log(`[Bancard Confirmation] Polling intento ${attempt}/${maxAttempts}...`);
+              console.log(
+                `[Bancard Confirmation] Polling intento ${attempt}/${maxAttempts}...`,
+              );
               try {
-                const confirmRes = await fetch("/api/bancard/confirmar-transaccion", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    action: "confirmation",
-                    processId: processId,
-                    shopProcessId: shopProcessId ? parseInt(shopProcessId) : 0,
-                    amount: totalPrice.toFixed(2),
-                  }),
-                });
+                const confirmRes = await fetch(
+                  "/api/bancard/confirmar-transaccion",
+                  {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      action: "confirmation",
+                      processId: processId,
+                      shopProcessId: shopProcessId
+                        ? parseInt(shopProcessId)
+                        : 0,
+                      amount: totalPrice.toFixed(2),
+                    }),
+                  },
+                );
 
                 if (confirmRes.ok) {
                   const rawData = await confirmRes.json();
@@ -490,12 +522,17 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                     electronicBillCdc = cdc;
                     electronicBillNumber = billNum || "";
                     electronicBillStamp = stamp || "";
-                    console.log(`[Bancard Confirmation] CDC obtenido en intento ${attempt}: ${cdc}`);
+                    console.log(
+                      `[Bancard Confirmation] CDC obtenido en intento ${attempt}: ${cdc}`,
+                    );
                     break;
                   }
                 }
               } catch (pollErr) {
-                console.error(`[Bancard Confirmation] Error en intento ${attempt}:`, pollErr);
+                console.error(
+                  `[Bancard Confirmation] Error en intento ${attempt}:`,
+                  pollErr,
+                );
               }
 
               if (attempt < maxAttempts) {
@@ -503,24 +540,31 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               }
             }
 
-            if (!electronicBillCdc) {
-              console.warn("[Bancard Confirmation] No se obtuvo electronicBillCdc tras agotar los 5 reintentos. Ejecutando rollback...");
-              try {
-                await fetch("/api/bancard/rollback-transaccion", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    shopProcessId: shopProcessId ? parseInt(shopProcessId) : 0,
-                    processId: processId,
-                  }),
-                });
-                console.log("[Bancard Rollback] Rollback completado por falta de CDC.");
-              } catch (rollbackErr) {
-                console.error("[Bancard Rollback] Error al realizar rollback por falta de CDC:", rollbackErr);
-              }
-              setStatus("failed");
-              return;
-            }
+            // if (!electronicBillCdc) {
+            //   console.warn(
+            //     "[Bancard Confirmation] No se obtuvo electronicBillCdc tras agotar los 5 reintentos. Ejecutando rollback...",
+            //   );
+            //   try {
+            //     await fetch("/api/bancard/rollback-transaccion", {
+            //       method: "POST",
+            //       headers: { "Content-Type": "application/json" },
+            //       body: JSON.stringify({
+            //         shopProcessId: shopProcessId ? parseInt(shopProcessId) : 0,
+            //         processId: processId,
+            //       }),
+            //     });
+            //     console.log(
+            //       "[Bancard Rollback] Rollback completado por falta de CDC.",
+            //     );
+            //   } catch (rollbackErr) {
+            //     console.error(
+            //       "[Bancard Rollback] Error al realizar rollback por falta de CDC:",
+            //       rollbackErr,
+            //     );
+            //   }
+            //   setStatus("failed");
+            //   return;
+            // }
 
             const realPaymentDetails = {
               pagado: true,
@@ -552,32 +596,32 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               const actualTicketsCount = Object.keys(ticketMap).length;
 
               // 3. Manejo de Rollback si el GDS falla en la emisión del pasaje
-              if (actualTicketsCount < expectedTicketsCount) {
-                console.error(
-                  "GDS sell failed for Bancard: expected",
-                  expectedTicketsCount,
-                  "tickets but got",
-                  actualTicketsCount,
-                );
+              // if (actualTicketsCount < expectedTicketsCount) {
+              //   console.error(
+              //     "GDS sell failed for Bancard: expected",
+              //     expectedTicketsCount,
+              //     "tickets but got",
+              //     actualTicketsCount,
+              //   );
 
-                try {
-                  console.log("Iniciando rollback por falla de emisión GDS...");
-                  await fetch("/api/bancard/rollback-transaccion", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      shopProcessId: shopProcessId ? parseInt(shopProcessId) : 0,
-                      processId: processId,
-                    }),
-                  });
-                  console.log("Rollback de Bancard completado con éxito.");
-                } catch (rollbackErr) {
-                  console.error("Error al hacer rollback de Bancard:", rollbackErr);
-                }
+              //   try {
+              //     console.log("Iniciando rollback por falla de emisión GDS...");
+              //     await fetch("/api/bancard/rollback-transaccion", {
+              //       method: "POST",
+              //       headers: { "Content-Type": "application/json" },
+              //       body: JSON.stringify({
+              //         shopProcessId: shopProcessId ? parseInt(shopProcessId) : 0,
+              //         processId: processId,
+              //       }),
+              //     });
+              //     console.log("Rollback de Bancard completado con éxito.");
+              //   } catch (rollbackErr) {
+              //     console.error("Error al hacer rollback de Bancard:", rollbackErr);
+              //   }
 
-                setStatus("issue_failed");
-                return;
-              }
+              //   setStatus("issue_failed");
+              //   return;
+              // }
 
               if (Object.keys(ticketMap).length > 0) {
                 assignTicketNumbers(ticketMap);
@@ -789,7 +833,9 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                         Inconveniente en la emisión del pasaje
                       </h3>
                       <p className="text-xs text-amber-200/90 mt-1 leading-relaxed">
-                        Tu pago fue recibido, pero ocurrió una demora técnica al emitir los boletos en el sistema de transporte. No te preocupes, tus pasajes y fondos están resguardados.
+                        Tu pago fue recibido, pero ocurrió una demora técnica al
+                        emitir los boletos en el sistema de transporte. No te
+                        preocupes, tus pasajes y fondos están resguardados.
                       </p>
                     </div>
                   </div>
@@ -799,28 +845,36 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                   <div className="w-full bg-slate-800/80 rounded-xl p-4 border border-slate-700/60 text-xs space-y-2">
                     <div className="flex justify-between text-slate-300">
                       <span>Código de referencia:</span>
-                      <span className="font-mono font-bold text-emerald-400">{bookingReference}</span>
+                      <span className="font-mono font-bold text-emerald-400">
+                        {bookingReference}
+                      </span>
                     </div>
                     {totalPrice > 0 && (
                       <div className="flex justify-between text-slate-300">
                         <span>Monto abonado:</span>
-                        <span className="font-bold text-white">Gs. {totalPrice.toLocaleString("es-PY")}</span>
+                        <span className="font-bold text-white">
+                          Gs. {totalPrice.toLocaleString("es-PY")}
+                        </span>
                       </div>
                     )}
                   </div>
                 )}
 
                 <p className="text-sm text-slate-300 mt-1">
-                  Por favor, contactate con nuestro equipo de soporte para la emisión directa de tus boletos:
+                  Por favor, contactate con nuestro equipo de soporte para la
+                  emisión directa de tus boletos:
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-3 w-full mt-2">
                   <Button
                     onClick={() => {
                       const msg = encodeURIComponent(
-                        `Hola, mi pago fue procesado correctamente pero ocurrió un inconveniente en la emisión de boletos. Mi código de referencia es: ${bookingReference || "Sin código"}.`
+                        `Hola, mi pago fue procesado correctamente pero ocurrió un inconveniente en la emisión de boletos. Mi código de referencia es: ${bookingReference || "Sin código"}.`,
                       );
-                      window.open(`https://wa.me/595991224613?text=${msg}`, "_blank");
+                      window.open(
+                        `https://wa.me/595991224613?text=${msg}`,
+                        "_blank",
+                      );
                     }}
                     className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium flex-1 py-5 rounded-xl shadow-lg flex items-center justify-center gap-2"
                   >
@@ -830,9 +884,11 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
 
                   <Button
                     onClick={() => {
-                      const subject = encodeURIComponent(`Soporte Emisión - Ref: ${bookingReference || ""}`);
+                      const subject = encodeURIComponent(
+                        `Soporte Emisión - Ref: ${bookingReference || ""}`,
+                      );
                       const body = encodeURIComponent(
-                        `Hola equipo de Soporte,\n\nMi pago fue confirmado pero ocurrió un error en la emisión automática de pasajes.\n\nCódigo de referencia: ${bookingReference || ""}\nMonto: Gs. ${totalPrice}\n\nQuedo a la espera de sus comentarios.`
+                        `Hola equipo de Soporte,\n\nMi pago fue confirmado pero ocurrió un error en la emisión automática de pasajes.\n\nCódigo de referencia: ${bookingReference || ""}\nMonto: Gs. ${totalPrice}\n\nQuedo a la espera de sus comentarios.`,
                       );
                       window.location.href = `mailto:soporte@boletos.la?subject=${subject}&body=${body}`;
                     }}
