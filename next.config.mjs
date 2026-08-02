@@ -7,6 +7,16 @@ const nextConfig = {
   },
 
   serverExternalPackages: ["@sparticuz/chromium", "puppeteer-core"],
+
+  async redirects() {
+    return [
+      {
+        source: '/booking/confirmation/:path*',
+        destination: '/paraguay/booking/confirmation/:path*',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

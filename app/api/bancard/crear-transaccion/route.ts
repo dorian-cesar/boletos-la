@@ -35,8 +35,8 @@ export async function POST(request: Request) {
         total_items && total_items > 1
           ? "Compra de boletos - Boletos.la"
           : "Compra de boleto - Boletos.la",
-      returnUrl: `${appBaseUrl}/booking/confirmation/bancard?status=payment_success`,
-      cancelUrl: `${appBaseUrl}/booking/confirmation/bancard?status=payment_fail`,
+      returnUrl: `${appBaseUrl}/paraguay/booking/confirmation/bancard?status=payment_success`,
+      cancelUrl: `${appBaseUrl}/paraguay/booking/confirmation/bancard?status=payment_fail`,
       billing: {
         client_ruc: client_ruc || "123456-1",
         client_name: client_name || "fallback",
