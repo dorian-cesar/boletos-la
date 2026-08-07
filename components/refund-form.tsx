@@ -15,7 +15,7 @@ export function RefundForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  
+
   const [attempts, setAttempts] = useState(0);
   const [lockedUntil, setLockedUntil] = useState<number | null>(null);
 
@@ -24,7 +24,7 @@ export function RefundForm() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [reason, setReason] = useState("");
-  
+
   const [requestType, setRequestType] = useState<"anulacion" | "reembolso">("anulacion");
   const [bankName, setBankName] = useState("");
   const [accountType, setAccountType] = useState("");
@@ -35,9 +35,9 @@ export function RefundForm() {
   useEffect(() => {
     const savedAttempts = parseInt(localStorage.getItem("refund_attempts") || "0");
     const savedLockedUntil = parseInt(localStorage.getItem("refund_locked_until") || "0");
-    
+
     const now = Date.now();
-    
+
     if (savedLockedUntil && savedLockedUntil > now) {
       setLockedUntil(savedLockedUntil);
       setAttempts(savedAttempts);
@@ -60,12 +60,12 @@ export function RefundForm() {
     const now = Date.now();
     if (lockedUntil && lockedUntil > now) {
       const minutesLeft = Math.ceil((lockedUntil - now) / 60000);
-      setError(`Has superado el límite de intentos. Por favor, intenta de nuevo en ${minutesLeft} minutos.`);
+      setError(`Superaste el límite de intentos. Por favor, intentá de nuevo en ${minutesLeft} minutos.`);
       return;
     }
 
     if (!ticketNumber.trim()) {
-      setError("Por favor ingresa un número de ticket.");
+      setError("Por favor ingresá tu número de pasaje o boleto.");
       return;
     }
 
@@ -75,31 +75,31 @@ export function RefundForm() {
     try {
       const response = await fetch(`/api/ticket/search?number=${ticketNumber}`);
       const result = await response.json();
-      
+
       if (response.ok && result.success) {
         setTicketData(result.data);
         setEmail(result.data.email || "");
         setPhone(result.data.phone || "");
-        
+
         setAttempts(0);
         localStorage.removeItem("refund_attempts");
       } else {
         const newAttempts = attempts + 1;
         setAttempts(newAttempts);
         localStorage.setItem("refund_attempts", newAttempts.toString());
-        
+
         if (newAttempts >= MAX_ATTEMPTS) {
           const lockTime = now + LOCK_TIME_MS;
           setLockedUntil(lockTime);
           localStorage.setItem("refund_locked_until", lockTime.toString());
-          setError(`Has superado el límite de intentos (5). Por favor, intenta de nuevo en 10 minutos.`);
+          setError(`Superaste el límite de intentos (5). Por favor, intentá de nuevo en 10 minutos.`);
         } else {
-          setError(`No se encontró el ticket. Intento ${newAttempts} de ${MAX_ATTEMPTS}. Verifique el número e intente de nuevo.`);
+          setError(`No se encontró el pasaje. Intento ${newAttempts} de ${MAX_ATTEMPTS}. Verificá el número e intentá de nuevo.`);
         }
       }
     } catch (err) {
       console.error("Error searching ticket:", err);
-      setError("Ocurrió un error al consultar el ticket. Intente de nuevo más tarde.");
+      setError("Ocurrió un error al consultar el pasaje. Intentá de nuevo más tarde.");
     } finally {
       setIsSearching(false);
       setLoading(false);
@@ -109,16 +109,16 @@ export function RefundForm() {
   const handleSubmitRefund = (e: React.FormEvent) => {
     e.preventDefault();
     if (!reason.trim()) {
-      setError("Por favor, especifica el motivo de tu solicitud.");
+      setError("Por favor, especificá el motivo de tu solicitud.");
       return;
     }
-    
+
     // TODO: Endpoint real para procesar la devolución
-    console.log("Enviando devolución:", { 
-      ticketNumber, 
-      email, 
-      phone, 
-      reason, 
+    console.log("Enviando devolución:", {
+      ticketNumber,
+      email,
+      phone,
+      reason,
       requestType,
       ...(requestType === "reembolso" && { bankName, accountType, accountNumber, accountHolder, holderDocument })
     });
@@ -127,14 +127,14 @@ export function RefundForm() {
 
   return (
     <div className="w-full max-w-3xl mx-auto p-6 md:p-8 bg-[#1a1a1a] rounded-2xl border border-white/10 shadow-2xl">
-      <h2 className="text-3xl font-bold text-white mb-2">Anulación y Reembolso</h2>
+      <h2 className="text-3xl font-bold text-white mb-2">Anulación o Reembolso</h2>
       <p className="text-gray-400 mb-8">
-        Ingresa tu número de ticket para buscar los detalles de tu viaje y procesar la solicitud de anulación o reembolso.
+        Ingresá tu número de pasaje o boleto para buscar los detalles de tu viaje y procesar la solicitud de anulación o reembolso.
       </p>
 
       <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4 mb-8">
         <div className="flex-1">
-          <Label htmlFor="ticketNumber" className="text-gray-300">Número de Ticket</Label>
+          <Label htmlFor="ticketNumber" className="text-gray-300">Nro. de Pasaje / Boleto</Label>
           <Input
             id="ticketNumber"
             value={ticketNumber}
@@ -145,12 +145,12 @@ export function RefundForm() {
           />
         </div>
         <div className="flex items-end">
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             disabled={loading || (lockedUntil !== null && lockedUntil > Date.now())}
             className="h-12 px-8 bg-[#00c7cc] hover:bg-[#00a8ad] text-black font-bold rounded-full transition-all"
           >
-            {isSearching ? "Buscando..." : "Buscar Ticket"}
+            {isSearching ? "Buscando..." : "Buscar Pasaje"}
           </Button>
         </div>
       </form>
@@ -171,9 +171,9 @@ export function RefundForm() {
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="p-6 bg-white/5 border border-white/10 rounded-xl space-y-6">
             <h3 className="text-xl font-semibold text-white border-b border-white/10 pb-2">
-              Detalles del Boleto
+              Detalles del Pasaje / Boleto
             </h3>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               <div>
                 <Label className="text-gray-400 text-xs uppercase tracking-wider">Nombres</Label>
@@ -188,7 +188,7 @@ export function RefundForm() {
                 <Input value={ticketData.documentType} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
               </div>
               <div>
-                <Label className="text-gray-400 text-xs uppercase tracking-wider">No. Documento</Label>
+                <Label className="text-gray-400 text-xs uppercase tracking-wider">Nro. de Cédula / Doc.</Label>
                 <Input value={ticketData.documentNumber} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
               </div>
               <div>
@@ -215,22 +215,22 @@ export function RefundForm() {
               <Label className="text-gray-300 font-semibold text-lg">Tipo de Solicitud</Label>
               <div className="flex flex-col sm:flex-row gap-4 p-4 rounded-xl border border-white/10 bg-white/5">
                 <label className="flex items-center space-x-3 cursor-pointer">
-                  <input 
-                    type="radio" 
-                    value="anulacion" 
-                    checked={requestType === "anulacion"} 
-                    onChange={() => setRequestType("anulacion")} 
-                    className="h-4 w-4 text-[#00c7cc] bg-transparent border-white/30 focus:ring-[#00c7cc] focus:ring-offset-0 focus:ring-1" 
+                  <input
+                    type="radio"
+                    value="anulacion"
+                    checked={requestType === "anulacion"}
+                    onChange={() => setRequestType("anulacion")}
+                    className="h-4 w-4 text-[#00c7cc] bg-transparent border-white/30 focus:ring-[#00c7cc] focus:ring-offset-0 focus:ring-1"
                   />
                   <span className="text-white">Anulación / Cancelación</span>
                 </label>
                 <label className="flex items-center space-x-3 cursor-pointer">
-                  <input 
-                    type="radio" 
-                    value="reembolso" 
-                    checked={requestType === "reembolso"} 
-                    onChange={() => setRequestType("reembolso")} 
-                    className="h-4 w-4 text-[#00c7cc] bg-transparent border-white/30 focus:ring-[#00c7cc] focus:ring-offset-0 focus:ring-1" 
+                  <input
+                    type="radio"
+                    value="reembolso"
+                    checked={requestType === "reembolso"}
+                    onChange={() => setRequestType("reembolso")}
+                    className="h-4 w-4 text-[#00c7cc] bg-transparent border-white/30 focus:ring-[#00c7cc] focus:ring-offset-0 focus:ring-1"
                   />
                   <span className="text-white">Reembolso (Transferencia)</span>
                 </label>
@@ -262,7 +262,7 @@ export function RefundForm() {
                     <Input id="accountHolder" value={accountHolder} onChange={(e) => setAccountHolder(e.target.value)} required={requestType === "reembolso"} className="mt-1 bg-black/20 border-white/10 text-white focus:border-[#00c7cc]" />
                   </div>
                   <div>
-                    <Label htmlFor="holderDocument" className="text-gray-400 text-sm">Documento del Titular</Label>
+                    <Label htmlFor="holderDocument" className="text-gray-400 text-sm">Cédula / RUC del Titular</Label>
                     <Input id="holderDocument" value={holderDocument} onChange={(e) => setHolderDocument(e.target.value)} required={requestType === "reembolso"} placeholder="C.I. / RUC" className="mt-1 bg-black/20 border-white/10 text-white focus:border-[#00c7cc]" />
                   </div>
                 </div>
@@ -276,29 +276,29 @@ export function RefundForm() {
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label htmlFor="email" className="text-gray-300">Correo Electrónico de Contacto</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="mt-1 bg-white/5 border-white/10 text-white h-12 focus:border-[#00c7cc]"
-                  required
-                />
+                <div>
+                  <Label htmlFor="email" className="text-gray-300">Correo Electrónico de Contacto</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="mt-1 bg-white/5 border-white/10 text-white h-12 focus:border-[#00c7cc]"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="phone" className="text-gray-300">Nro. de Celular / Teléfono</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="mt-1 bg-white/5 border-white/10 text-white h-12 focus:border-[#00c7cc]"
+                    required
+                  />
+                </div>
               </div>
-              <div>
-                <Label htmlFor="phone" className="text-gray-300">Teléfono de Contacto</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="mt-1 bg-white/5 border-white/10 text-white h-12 focus:border-[#00c7cc]"
-                  required
-                />
-              </div>
-            </div>
             </div>
 
             <div>
@@ -307,14 +307,14 @@ export function RefundForm() {
                 id="reason"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
-                placeholder="Por favor explica el motivo de tu solicitud..."
+                placeholder="Por favor explicá el motivo de tu solicitud..."
                 className="mt-1 bg-white/5 border-white/10 text-white h-32 focus:border-[#00c7cc] resize-none overflow-y-auto"
                 required
               />
             </div>
 
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full h-14 text-lg bg-[#00c7cc] hover:bg-[#00a8ad] text-black font-bold rounded-full transition-all"
             >
               Enviar Solicitud
