@@ -222,27 +222,40 @@ export function RefundForm() {
           <form onSubmit={handleSubmitRefund} className="space-y-8">
             <div className="space-y-4">
               <Label className="text-gray-300 font-semibold text-lg">Tipo de Solicitud</Label>
-              <div className="flex flex-col sm:flex-row gap-4 p-4 rounded-xl border border-white/10 bg-white/5">
-                <label className="flex items-center space-x-3 cursor-pointer">
-                  <input
-                    type="radio"
-                    value="anulacion"
-                    checked={requestType === "anulacion"}
-                    onChange={() => setRequestType("anulacion")}
-                    className="h-4 w-4 text-[#00c7cc] bg-transparent border-white/30 focus:ring-[#00c7cc] focus:ring-offset-0 focus:ring-1"
-                  />
-                  <span className="text-white">Anulación / Cancelación</span>
-                </label>
-                <label className="flex items-center space-x-3 cursor-pointer">
-                  <input
-                    type="radio"
-                    value="reembolso"
-                    checked={requestType === "reembolso"}
-                    onChange={() => setRequestType("reembolso")}
-                    className="h-4 w-4 text-[#00c7cc] bg-transparent border-white/30 focus:ring-[#00c7cc] focus:ring-offset-0 focus:ring-1"
-                  />
-                  <span className="text-white">Reembolso (Transferencia)</span>
-                </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div
+                  onClick={() => setRequestType("anulacion")}
+                  className={`relative flex flex-col p-5 rounded-xl cursor-pointer border transition-all duration-300 ${
+                    requestType === "anulacion"
+                      ? "bg-[#00c7cc]/10 border-[#00c7cc] shadow-[0_0_15px_rgba(0,199,204,0.15)]"
+                      : "bg-white/5 border-white/10 hover:border-white/30"
+                  }`}
+                >
+                  <div className="flex items-center space-x-3 mb-2">
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${requestType === "anulacion" ? "border-[#00c7cc]" : "border-gray-500"}`}>
+                      {requestType === "anulacion" && <div className="w-2.5 h-2.5 rounded-full bg-[#00c7cc]" />}
+                    </div>
+                    <span className={`font-semibold ${requestType === "anulacion" ? "text-white" : "text-gray-300"}`}>Anulación / Cancelación</span>
+                  </div>
+                  <p className="text-xs text-gray-400 pl-8 leading-relaxed">Cancelá tu pasaje. El pasaje será anulado sin solicitud de depósito bancario directo.</p>
+                </div>
+
+                <div
+                  onClick={() => setRequestType("reembolso")}
+                  className={`relative flex flex-col p-5 rounded-xl cursor-pointer border transition-all duration-300 ${
+                    requestType === "reembolso"
+                      ? "bg-[#00c7cc]/10 border-[#00c7cc] shadow-[0_0_15px_rgba(0,199,204,0.15)]"
+                      : "bg-white/5 border-white/10 hover:border-white/30"
+                  }`}
+                >
+                  <div className="flex items-center space-x-3 mb-2">
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${requestType === "reembolso" ? "border-[#00c7cc]" : "border-gray-500"}`}>
+                      {requestType === "reembolso" && <div className="w-2.5 h-2.5 rounded-full bg-[#00c7cc]" />}
+                    </div>
+                    <span className={`font-semibold ${requestType === "reembolso" ? "text-white" : "text-gray-300"}`}>Reembolso (Transferencia)</span>
+                  </div>
+                  <p className="text-xs text-gray-400 pl-8 leading-relaxed">Solicitá la devolución de tu dinero a través de una transferencia a tu cuenta bancaria local.</p>
+                </div>
               </div>
             </div>
 

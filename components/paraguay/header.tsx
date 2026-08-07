@@ -36,7 +36,7 @@ export function ParaguayHeader() {
               className="flex items-center gap-2 hover:text-[#00c7cc] transition-colors"
             >
               <MessageCircle className="h-4 w-4 text-[#00c7cc]" />
-              +595 21 123 4567
+              +595 991 224613
             </a>
             <a
               href="mailto:contacto@boletos.la"

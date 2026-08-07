@@ -186,7 +186,7 @@ export function ParaguayFooter() {
                   rel="noopener noreferrer"
                   className="text-background/60 hover:text-primary transition-colors"
                 >
-                  +595 21 123 4567
+                  +595 991 224613
                 </a>
               </li>
               <li className="flex items-center gap-3">
