@@ -279,7 +279,7 @@ export function RefundForm() {
             id="ticketNumber"
             value={ticketNumber}
             onChange={(e) => setTicketNumber(e.target.value)}
-            placeholder="Ej: TK-987654321"
+            placeholder="Ej: 123456789012345"
             disabled={loading || (lockedUntil !== null && lockedUntil > Date.now())}
             className="mt-1 bg-white/5 border-white/10 text-white placeholder:text-gray-500 h-12"
           />
