@@ -39,6 +39,8 @@ export function RefundForm() {
   const [accountHolder, setAccountHolder] = useState("");
   const [holderDocument, setHolderDocument] = useState("");
 
+  const [gdsStatus, setGdsStatus] = useState<"idle" | "loading" | "success" | "not-found" | "error">("idle");
+
   useEffect(() => {
     const savedAttempts = parseInt(localStorage.getItem("refund_attempts") || "0");
     const savedLockedUntil = parseInt(localStorage.getItem("refund_locked_until") || "0");
@@ -57,6 +59,32 @@ export function RefundForm() {
       setAttempts(savedAttempts);
     }
   }, []);
+
+  const checkGdsPassenger = async (docType: string, docNumber: string) => {
+    setGdsStatus("loading");
+    try {
+      const mappedType = docType.toLowerCase().includes('cedula') || docType.toLowerCase().includes('ci') ? 'CI' : 'PASSPORT';
+      const response = await fetch('/api/gds/passenger', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ docType: mappedType, docNumber })
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success && result.data?.passenger) {
+          setGdsStatus("success");
+        } else {
+          setGdsStatus("not-found");
+        }
+      } else {
+        setGdsStatus("error");
+      }
+    } catch (e) {
+      console.error("Error checking GDS passenger:", e);
+      setGdsStatus("error");
+    }
+  };
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,6 +118,11 @@ export function RefundForm() {
 
         setAttempts(0);
         localStorage.removeItem("refund_attempts");
+        
+        // Verificación silenciosa en GDS
+        if (result.data.documentNumber) {
+          checkGdsPassenger(result.data.documentType || "CI", result.data.documentNumber);
+        }
       } else {
         const newAttempts = attempts + 1;
         setAttempts(newAttempts);
@@ -220,10 +253,35 @@ export function RefundForm() {
                 <Input value={ticketData.seatNumber || "N/A"} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
               </div>
               <div>
-                <Label className="text-gray-400 text-xs uppercase tracking-wider">Monto</Label>
-                <Input value={`Gs. ${ticketData.amount || "0"}`} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
+                <Label className="text-gray-400 text-xs uppercase tracking-wider">Monto Pagado</Label>
+                <Input value={ticketData.totalAmount ? `Gs. ${Number(ticketData.totalAmount).toLocaleString('es-PY')}` : 'Gs. 0'} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
               </div>
             </div>
+
+            {gdsStatus === "loading" && (
+              <div className="flex items-center space-x-3 text-gray-400 text-sm mt-4 p-4 bg-black/20 rounded-lg">
+                <div className="w-4 h-4 rounded-full border-2 border-t-transparent border-gray-400 animate-spin" />
+                <span>Verificando pasajero en GDS...</span>
+              </div>
+            )}
+            {gdsStatus === "success" && (
+              <div className="flex items-center space-x-3 text-green-400 text-sm mt-4 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+                <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                <span>Pasajero verificado correctamente en el sistema GDS del operador.</span>
+              </div>
+            )}
+            {gdsStatus === "not-found" && (
+              <div className="flex items-center space-x-3 text-orange-400 text-sm mt-4 p-4 bg-orange-500/10 border border-orange-500/20 rounded-lg">
+                <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                <span>El pasajero no fue hallado en los registros del GDS. Esto podría demorar la gestión.</span>
+              </div>
+            )}
+            {gdsStatus === "error" && (
+              <div className="flex items-center space-x-3 text-gray-400 text-sm mt-4 p-4 bg-white/5 border border-white/10 rounded-lg">
+                <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span>No se pudo verificar el estado en el GDS en este momento.</span>
+              </div>
+            )}
           </div>
 
           <form onSubmit={handleSubmitRefund} className="space-y-8">
