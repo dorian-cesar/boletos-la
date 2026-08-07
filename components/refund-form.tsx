@@ -299,6 +299,7 @@ export function RefundForm() {
                 />
               </div>
             </div>
+            </div>
 
             <div>
               <Label htmlFor="reason" className="text-gray-300">Motivo de la Devolución</Label>
