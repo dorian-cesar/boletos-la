@@ -63,15 +63,28 @@ export function RefundForm() {
   const checkGdsPassenger = async (docType: string, docNumber: string) => {
     setGdsStatus("loading");
     try {
-      const mappedType = docType.toLowerCase().includes('cedula') || docType.toLowerCase().includes('ci') ? 'CI' : 'PASSPORT';
-      const response = await fetch('/api/gds/passenger', {
+      const isLocal = ['cedula', 'ci', 'c.i.', 'paraguay', 'dni', 'c'].some(val => docType.toLowerCase().includes(val));
+      let mappedType = isLocal ? 'CI' : 'PASSPORT';
+      
+      let response = await fetch('/api/gds/passenger', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ docType: mappedType, docNumber })
       });
+      let result = await response.json();
+      
+      // Si no encuentra con el primer tipo, intenta con el alternativo
+      if (response.ok && result.success && !result.data?.passenger) {
+        const fallbackType = mappedType === 'CI' ? 'PASSPORT' : 'CI';
+        response = await fetch('/api/gds/passenger', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ docType: fallbackType, docNumber })
+        });
+        result = await response.json();
+      }
       
       if (response.ok) {
-        const result = await response.json();
         if (result.success && result.data?.passenger) {
           setGdsStatus("success");
         } else {
