@@ -80,7 +80,9 @@ export async function GET(request: Request) {
       email: ticketData.email || ticketData.passenger?.email || "",
       phone: ticketData.phone || ticketData.passenger?.phone || "",
       firstName: ticketData.first_name || ticketData.passenger?.name || ticketData.name || "Usuario",
-      lastName: ticketData.last_name || ticketData.passenger?.surname || ticketData.surname || ""
+      lastName: ticketData.last_name || ticketData.passenger?.surname || ticketData.surname || "",
+      seatNumber: ticketData.seat_number || "N/A",
+      amount: ticketData.payment_amount || ticketData.seat_price || "0"
     };
 
     return NextResponse.json({ success: true, data: formattedData });

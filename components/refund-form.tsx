@@ -24,6 +24,13 @@ export function RefundForm() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [reason, setReason] = useState("");
+  
+  const [requestType, setRequestType] = useState<"anulacion" | "reembolso">("anulacion");
+  const [bankName, setBankName] = useState("");
+  const [accountType, setAccountType] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
+  const [accountHolder, setAccountHolder] = useState("");
+  const [holderDocument, setHolderDocument] = useState("");
 
   useEffect(() => {
     const savedAttempts = parseInt(localStorage.getItem("refund_attempts") || "0");
@@ -107,7 +114,14 @@ export function RefundForm() {
     }
     
     // TODO: Endpoint real para procesar la devolución
-    console.log("Enviando devolución:", { ticketNumber, email, phone, reason });
+    console.log("Enviando devolución:", { 
+      ticketNumber, 
+      email, 
+      phone, 
+      reason, 
+      requestType,
+      ...(requestType === "reembolso" && { bankName, accountType, accountNumber, accountHolder, holderDocument })
+    });
     setSuccess(true);
   };
 
@@ -185,15 +199,83 @@ export function RefundForm() {
                 <Label className="text-gray-400 text-xs uppercase tracking-wider">Fecha de Viaje</Label>
                 <Input value={ticketData.date} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
               </div>
+              <div>
+                <Label className="text-gray-400 text-xs uppercase tracking-wider">Asiento</Label>
+                <Input value={ticketData.seatNumber || "N/A"} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
+              </div>
+              <div>
+                <Label className="text-gray-400 text-xs uppercase tracking-wider">Monto</Label>
+                <Input value={`Gs. ${ticketData.amount || "0"}`} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
+              </div>
             </div>
           </div>
 
-          <form onSubmit={handleSubmitRefund} className="space-y-6">
-            <p className="text-xs text-[#00c7cc] font-medium bg-[#00c7cc]/10 p-3 rounded-lg border border-[#00c7cc]/20">
-              💡 Puedes modificar el correo o teléfono de contacto si deseas recibir las notificaciones de la devolución en un medio distinto al del registro.
-            </p>
+          <form onSubmit={handleSubmitRefund} className="space-y-8">
+            <div className="space-y-4">
+              <Label className="text-gray-300 font-semibold text-lg">Tipo de Solicitud</Label>
+              <div className="flex flex-col sm:flex-row gap-4 p-4 rounded-xl border border-white/10 bg-white/5">
+                <label className="flex items-center space-x-3 cursor-pointer">
+                  <input 
+                    type="radio" 
+                    value="anulacion" 
+                    checked={requestType === "anulacion"} 
+                    onChange={() => setRequestType("anulacion")} 
+                    className="h-4 w-4 text-[#00c7cc] bg-transparent border-white/30 focus:ring-[#00c7cc] focus:ring-offset-0 focus:ring-1" 
+                  />
+                  <span className="text-white">Anulación / Cancelación</span>
+                </label>
+                <label className="flex items-center space-x-3 cursor-pointer">
+                  <input 
+                    type="radio" 
+                    value="reembolso" 
+                    checked={requestType === "reembolso"} 
+                    onChange={() => setRequestType("reembolso")} 
+                    className="h-4 w-4 text-[#00c7cc] bg-transparent border-white/30 focus:ring-[#00c7cc] focus:ring-offset-0 focus:ring-1" 
+                  />
+                  <span className="text-white">Reembolso (Transferencia)</span>
+                </label>
+              </div>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {requestType === "reembolso" && (
+              <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
+                <h4 className="text-gray-300 font-semibold">Datos Bancarios para el Reembolso</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-xl border border-white/10 bg-white/5">
+                  <div>
+                    <Label htmlFor="bankName" className="text-gray-400 text-sm">Banco / Entidad</Label>
+                    <Input id="bankName" value={bankName} onChange={(e) => setBankName(e.target.value)} required={requestType === "reembolso"} placeholder="Ej. Banco Itaú" className="mt-1 bg-black/20 border-white/10 text-white focus:border-[#00c7cc]" />
+                  </div>
+                  <div>
+                    <Label htmlFor="accountType" className="text-gray-400 text-sm">Tipo de Cuenta</Label>
+                    <select id="accountType" value={accountType} onChange={(e) => setAccountType(e.target.value)} required={requestType === "reembolso"} className="mt-1 w-full bg-black/20 border border-white/10 text-white rounded-md h-10 px-3 focus:border-[#00c7cc] focus:ring-1 focus:ring-[#00c7cc] outline-none">
+                      <option value="" className="bg-[#1a1a1a]">Seleccionar tipo...</option>
+                      <option value="Ahorro" className="bg-[#1a1a1a]">Caja de Ahorro</option>
+                      <option value="Corriente" className="bg-[#1a1a1a]">Cuenta Corriente</option>
+                    </select>
+                  </div>
+                  <div>
+                    <Label htmlFor="accountNumber" className="text-gray-400 text-sm">Nro. de Cuenta</Label>
+                    <Input id="accountNumber" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value)} required={requestType === "reembolso"} className="mt-1 bg-black/20 border-white/10 text-white focus:border-[#00c7cc]" />
+                  </div>
+                  <div>
+                    <Label htmlFor="accountHolder" className="text-gray-400 text-sm">Nombre del Titular</Label>
+                    <Input id="accountHolder" value={accountHolder} onChange={(e) => setAccountHolder(e.target.value)} required={requestType === "reembolso"} className="mt-1 bg-black/20 border-white/10 text-white focus:border-[#00c7cc]" />
+                  </div>
+                  <div>
+                    <Label htmlFor="holderDocument" className="text-gray-400 text-sm">Documento del Titular</Label>
+                    <Input id="holderDocument" value={holderDocument} onChange={(e) => setHolderDocument(e.target.value)} required={requestType === "reembolso"} placeholder="C.I. / RUC" className="mt-1 bg-black/20 border-white/10 text-white focus:border-[#00c7cc]" />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <h4 className="text-gray-300 font-semibold">Datos de Contacto</h4>
+              <p className="text-xs text-[#00c7cc] font-medium bg-[#00c7cc]/10 p-3 rounded-lg border border-[#00c7cc]/20">
+                💡 Puedes modificar el correo o teléfono de contacto si deseas recibir las notificaciones de la devolución en un medio distinto al del registro.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="email" className="text-gray-300">Correo Electrónico de Contacto</Label>
                 <Input
