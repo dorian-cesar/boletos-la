@@ -80,8 +80,7 @@ export function RefundForm() {
         ...(mensajeError && { mensaje_error: mensajeError })
       };
 
-      const publicidadUrl = process.env.NEXT_PUBLIC_BACKEND_PUBLICIDAD_URL || "https://backend-boletos-publicidad.dev-wit.com";
-      await fetch(`${publicidadUrl}/api/logs-operaciones`, {
+      await fetch("/api/logs-operaciones", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -243,8 +242,7 @@ export function RefundForm() {
         tipo_solicitud: requestType
       };
 
-      const publicidadUrl = process.env.NEXT_PUBLIC_BACKEND_PUBLICIDAD_URL || "https://backend-boletos-publicidad.dev-wit.com";
-      const response = await fetch(`${publicidadUrl}/api/devoluciones`, {
+      const response = await fetch("/api/devoluciones", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
