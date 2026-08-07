@@ -193,7 +193,16 @@ export function RefundForm() {
               </div>
               <div>
                 <Label className="text-gray-400 text-xs uppercase tracking-wider">Ruta</Label>
-                <Input value={ticketData.route} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
+                <div 
+                  className="mt-1 h-10 bg-white/5 border border-white/10 rounded-md px-3 flex items-center overflow-hidden relative text-white opacity-70 text-sm font-medium cursor-default"
+                  title={ticketData.route}
+                >
+                  <div className="w-full overflow-hidden whitespace-nowrap">
+                    <span className="inline-block animate-route-marquee">
+                      {ticketData.route}
+                    </span>
+                  </div>
+                </div>
               </div>
               <div>
                 <Label className="text-gray-400 text-xs uppercase tracking-wider">Fecha de Viaje</Label>

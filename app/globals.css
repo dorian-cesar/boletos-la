@@ -150,4 +150,28 @@ div[class*="Popover_dropdown"] {
   border-color: #e65c00 !important;
 }
 
+/* Route Marquee Animation */
+@keyframes routeMarquee {
+  0%, 20% {
+    transform: translateX(0%);
+  }
+  50%, 70% {
+    transform: translateX(calc(-100% + 160px));
+  }
+  90%, 100% {
+    transform: translateX(0%);
+  }
+}
+
+.animate-route-marquee {
+  display: inline-block;
+  white-space: nowrap;
+  animation: routeMarquee 6s ease-in-out infinite;
+}
+
+.animate-route-marquee:hover {
+  animation-play-state: paused;
+}
+
+
 
