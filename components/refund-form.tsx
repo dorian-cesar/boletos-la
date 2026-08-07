@@ -263,7 +263,24 @@ export function RefundForm() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-xl border border-white/10 bg-white/5">
                   <div>
                     <Label htmlFor="bankName" className="text-gray-400 text-sm">Banco / Entidad</Label>
-                    <Input id="bankName" value={bankName} onChange={(e) => setBankName(e.target.value)} required={requestType === "reembolso"} placeholder="Ej. Banco Itaú" className="mt-1 bg-black/20 border-white/10 text-white focus:border-[#00c7cc]" />
+                    <select id="bankName" value={bankName} onChange={(e) => setBankName(e.target.value)} required={requestType === "reembolso"} className="mt-1 w-full bg-black/20 border border-white/10 text-white rounded-md h-10 px-3 focus:border-[#00c7cc] focus:ring-1 focus:ring-[#00c7cc] outline-none">
+                      <option value="" className="bg-[#1a1a1a]">Seleccionar banco...</option>
+                      <option value="Banco Itaú Paraguay" className="bg-[#1a1a1a]">Banco Itaú Paraguay</option>
+                      <option value="Banco Continental" className="bg-[#1a1a1a]">Banco Continental</option>
+                      <option value="Sudameris Bank" className="bg-[#1a1a1a]">Sudameris Bank</option>
+                      <option value="ueno bank" className="bg-[#1a1a1a]">ueno bank</option>
+                      <option value="Banco GNB Paraguay" className="bg-[#1a1a1a]">Banco GNB Paraguay</option>
+                      <option value="Banco Basa" className="bg-[#1a1a1a]">Banco Basa</option>
+                      <option value="Banco Familiar" className="bg-[#1a1a1a]">Banco Familiar</option>
+                      <option value="Banco Nacional de Fomento (BNF)" className="bg-[#1a1a1a]">Banco Nacional de Fomento (BNF)</option>
+                      <option value="Banco Atlas" className="bg-[#1a1a1a]">Banco Atlas</option>
+                      <option value="Banco Río" className="bg-[#1a1a1a]">Banco Río</option>
+                      <option value="Interfisa Banco" className="bg-[#1a1a1a]">Interfisa Banco</option>
+                      <option value="Solar Banco" className="bg-[#1a1a1a]">Solar Banco</option>
+                      <option value="Financiera Finexpar / Zeta Banco" className="bg-[#1a1a1a]">Financiera Finexpar / Zeta Banco</option>
+                      <option value="Tigo Money / Billeteras" className="bg-[#1a1a1a]">Tigo Money / Billeteras</option>
+                      <option value="Otro" className="bg-[#1a1a1a]">Otro / Otra Entidad</option>
+                    </select>
                   </div>
                   <div>
                     <Label htmlFor="accountType" className="text-gray-400 text-sm">Tipo de Cuenta</Label>
