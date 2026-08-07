@@ -70,18 +70,17 @@ export async function GET(request: Request) {
 
     const ticketData = await ticketRes.json();
 
-    // Map the backend data to our frontend format.
-    // Assuming backend returns standard fields. We provide fallbacks in case it differs.
+    // Map the backend data to our frontend format based on real database schema
     const formattedData = {
       id: ticketData.id || ticketNumber,
-      documentType: ticketData.passenger?.docType || ticketData.docType || "Documento",
-      documentNumber: ticketData.passenger?.docNumber || ticketData.docNumber || "N/A",
-      route: `${ticketData.origin || 'Origen'} - ${ticketData.destination || 'Destino'}`,
-      date: ticketData.date || "Fecha de viaje",
-      email: ticketData.passenger?.email || ticketData.email || "",
-      phone: ticketData.passenger?.phone || ticketData.phone || "",
-      firstName: ticketData.passenger?.name || ticketData.name || "Usuario",
-      lastName: ticketData.passenger?.surname || ticketData.surname || ""
+      documentType: ticketData.document_type_name || ticketData.passenger?.docType || ticketData.docType || "Documento",
+      documentNumber: ticketData.document_number || ticketData.passenger?.docNumber || ticketData.docNumber || "N/A",
+      route: `${ticketData.origin_title || ticketData.origin || 'Origen'} - ${ticketData.destination_title || ticketData.destination || 'Destino'}`,
+      date: ticketData.departure_date || ticketData.date || "Fecha de viaje",
+      email: ticketData.email || ticketData.passenger?.email || "",
+      phone: ticketData.phone || ticketData.passenger?.phone || "",
+      firstName: ticketData.first_name || ticketData.passenger?.name || ticketData.name || "Usuario",
+      lastName: ticketData.last_name || ticketData.passenger?.surname || ticketData.surname || ""
     };
 
     return NextResponse.json({ success: true, data: formattedData });
