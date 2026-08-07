@@ -109,7 +109,7 @@ export function RefundForm() {
   const handleSubmitRefund = (e: React.FormEvent) => {
     e.preventDefault();
     if (!reason.trim()) {
-      setError("Por favor, especifica el motivo de la devolución.");
+      setError("Por favor, especifica el motivo de tu solicitud.");
       return;
     }
     
@@ -127,9 +127,9 @@ export function RefundForm() {
 
   return (
     <div className="w-full max-w-3xl mx-auto p-6 md:p-8 bg-[#1a1a1a] rounded-2xl border border-white/10 shadow-2xl">
-      <h2 className="text-3xl font-bold text-white mb-2">Solicitar Devolución</h2>
+      <h2 className="text-3xl font-bold text-white mb-2">Anulación y Reembolso</h2>
       <p className="text-gray-400 mb-8">
-        Ingresa tu número de ticket para buscar los detalles de tu viaje y procesar la solicitud de devolución.
+        Ingresa tu número de ticket para buscar los detalles de tu viaje y procesar la solicitud de anulación o reembolso.
       </p>
 
       <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4 mb-8">
@@ -163,7 +163,7 @@ export function RefundForm() {
 
       {success && (
         <div className="p-4 mb-8 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
-          Tu solicitud de devolución ha sido enviada exitosamente. Nos pondremos en contacto contigo a la brevedad.
+          Tu solicitud ha sido enviada exitosamente. Nos pondremos en contacto contigo a la brevedad.
         </div>
       )}
 
@@ -272,7 +272,7 @@ export function RefundForm() {
             <div className="space-y-4">
               <h4 className="text-gray-300 font-semibold">Datos de Contacto</h4>
               <p className="text-xs text-[#00c7cc] font-medium bg-[#00c7cc]/10 p-3 rounded-lg border border-[#00c7cc]/20">
-                💡 Puedes modificar el correo o teléfono de contacto si deseas recibir las notificaciones de la devolución en un medio distinto al del registro.
+                💡 Puedes modificar el correo o teléfono de contacto si deseas recibir las notificaciones de tu solicitud en un medio distinto al del registro.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -302,12 +302,12 @@ export function RefundForm() {
             </div>
 
             <div>
-              <Label htmlFor="reason" className="text-gray-300">Motivo de la Devolución</Label>
+              <Label htmlFor="reason" className="text-gray-300">Motivo de la Solicitud</Label>
               <Textarea
                 id="reason"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
-                placeholder="Por favor explica el motivo por el cual solicitas la devolución del boleto..."
+                placeholder="Por favor explica el motivo de tu solicitud..."
                 className="mt-1 bg-white/5 border-white/10 text-white h-32 focus:border-[#00c7cc] resize-none overflow-y-auto"
                 required
               />
@@ -317,7 +317,7 @@ export function RefundForm() {
               type="submit" 
               className="w-full h-14 text-lg bg-[#00c7cc] hover:bg-[#00a8ad] text-black font-bold rounded-full transition-all"
             >
-              Solicitar Devolución
+              Enviar Solicitud
             </Button>
           </form>
         </div>
