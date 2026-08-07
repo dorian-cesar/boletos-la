@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Loader2, Search } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -22,6 +23,7 @@ export function RefundForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [attempts, setAttempts] = useState(0);
   const [lockedUntil, setLockedUntil] = useState<number | null>(null);
@@ -159,23 +161,67 @@ export function RefundForm() {
     }
   };
 
-  const handleSubmitRefund = (e: React.FormEvent) => {
+  const handleSubmitRefund = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!reason.trim()) {
       setError("Por favor, especificá el motivo de tu solicitud.");
       return;
     }
 
-    // TODO: Endpoint real para procesar la devolución
-    console.log("Enviando devolución:", {
-      ticketNumber,
-      email,
-      phone,
-      reason,
-      requestType,
-      ...(requestType === "reembolso" && { bankName, accountType, accountNumber, accountHolder, holderDocument })
-    });
-    setSuccess(true);
+    if (!ticketData) {
+      setError("No hay información del boleto para procesar.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      const [origen, destino] = (ticketData.route || "").split(" - ");
+      
+      const payload = {
+        ticket_number: ticketNumber,
+        monto: parseFloat(ticketData.totalAmount || "0"),
+        datos_pasajero: {
+          nombre: `${ticketData.firstName || ""} ${ticketData.lastName || ""}`.trim(),
+          documento: ticketData.documentNumber || "",
+          email: email
+        },
+        datos_boleto: {
+          origen: origen || "",
+          destino: destino || ""
+        },
+        datos_bancarios: requestType === "reembolso" ? {
+          banco: bankName,
+          tipo_cuenta: accountType,
+          numero_cuenta: accountNumber,
+          tipo_documento_beneficiario: "CI",
+          documento_beneficiario: holderDocument,
+          nombre_beneficiario: accountHolder
+        } : null,
+        motivo: reason,
+        tipo_solicitud: requestType
+      };
+
+      const response = await fetch("https://backend-boletos-publicidad.dev-wit.com/api/devoluciones", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error("Error en la respuesta del servidor");
+      }
+
+      setSuccess(true);
+    } catch (err) {
+      console.error("Error submitting refund:", err);
+      setError("Ocurrió un error al procesar tu solicitud. Por favor, intenta de nuevo más tarde.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -201,9 +247,19 @@ export function RefundForm() {
           <Button
             type="submit"
             disabled={loading || (lockedUntil !== null && lockedUntil > Date.now())}
-            className="h-12 px-8 bg-[#00c7cc] hover:bg-[#00a8ad] text-black font-bold rounded-full transition-all"
+            className="h-12 px-8 bg-[#00c7cc] hover:bg-[#00a8ad] text-black font-bold rounded-full transition-all flex items-center gap-2"
           >
-            {isSearching ? "Buscando..." : "Buscar Pasaje"}
+            {isSearching ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                <span>Buscando...</span>
+              </>
+            ) : (
+              <>
+                <Search className="w-5 h-5 stroke-[2.5]" />
+                <span>Buscar Pasaje</span>
+              </>
+            )}
           </Button>
         </div>
       </form>
@@ -436,12 +492,20 @@ export function RefundForm() {
               />
             </div>
 
-            <Button
-              type="submit"
-              className="w-full h-14 text-lg bg-[#00c7cc] hover:bg-[#00a8ad] text-black font-bold rounded-full transition-all"
-            >
-              Enviar Solicitud
-            </Button>
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="w-full h-14 bg-[#00c7cc] hover:bg-[#00a8ad] text-black font-bold text-lg rounded-xl transition-all shadow-[0_0_20px_rgba(0,199,204,0.3)] hover:shadow-[0_0_30px_rgba(0,199,204,0.5)] flex items-center justify-center gap-2"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-6 h-6 animate-spin" />
+                      <span>Procesando...</span>
+                    </>
+                  ) : (
+                    "Enviar Solicitud"
+                  )}
+                </Button>
           </form>
         </div>
       )}
