@@ -5,6 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const LOCK_TIME_MS = 10 * 60 * 1000;
 const MAX_ATTEMPTS = 5;
@@ -263,32 +270,40 @@ export function RefundForm() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-xl border border-white/10 bg-white/5">
                   <div>
                     <Label htmlFor="bankName" className="text-gray-400 text-sm">Banco / Entidad</Label>
-                    <select id="bankName" value={bankName} onChange={(e) => setBankName(e.target.value)} required={requestType === "reembolso"} className="mt-1 w-full bg-black/20 border border-white/10 text-white rounded-md h-10 px-3 focus:border-[#00c7cc] focus:ring-1 focus:ring-[#00c7cc] outline-none">
-                      <option value="" className="bg-[#1a1a1a]">Seleccionar banco...</option>
-                      <option value="Banco Itaú Paraguay" className="bg-[#1a1a1a]">Banco Itaú Paraguay</option>
-                      <option value="Banco Continental" className="bg-[#1a1a1a]">Banco Continental</option>
-                      <option value="Sudameris Bank" className="bg-[#1a1a1a]">Sudameris Bank</option>
-                      <option value="ueno bank" className="bg-[#1a1a1a]">ueno bank</option>
-                      <option value="Banco GNB Paraguay" className="bg-[#1a1a1a]">Banco GNB Paraguay</option>
-                      <option value="Banco Basa" className="bg-[#1a1a1a]">Banco Basa</option>
-                      <option value="Banco Familiar" className="bg-[#1a1a1a]">Banco Familiar</option>
-                      <option value="Banco Nacional de Fomento (BNF)" className="bg-[#1a1a1a]">Banco Nacional de Fomento (BNF)</option>
-                      <option value="Banco Atlas" className="bg-[#1a1a1a]">Banco Atlas</option>
-                      <option value="Banco Río" className="bg-[#1a1a1a]">Banco Río</option>
-                      <option value="Interfisa Banco" className="bg-[#1a1a1a]">Interfisa Banco</option>
-                      <option value="Solar Banco" className="bg-[#1a1a1a]">Solar Banco</option>
-                      <option value="Financiera Finexpar / Zeta Banco" className="bg-[#1a1a1a]">Financiera Finexpar / Zeta Banco</option>
-                      <option value="Tigo Money / Billeteras" className="bg-[#1a1a1a]">Tigo Money / Billeteras</option>
-                      <option value="Otro" className="bg-[#1a1a1a]">Otro / Otra Entidad</option>
-                    </select>
+                    <Select value={bankName} onValueChange={setBankName} required={requestType === "reembolso"}>
+                      <SelectTrigger id="bankName" className="mt-1 w-full bg-black/20 border border-white/10 text-white rounded-md h-10 px-3 focus:border-[#00c7cc] focus:ring-1 focus:ring-[#00c7cc] outline-none">
+                        <SelectValue placeholder="Seleccionar banco..." />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#1a1a1a] text-white border-white/10 max-h-60 overflow-y-auto">
+                        <SelectItem value="Banco Itaú Paraguay">Banco Itaú Paraguay</SelectItem>
+                        <SelectItem value="Banco Continental">Banco Continental</SelectItem>
+                        <SelectItem value="Sudameris Bank">Sudameris Bank</SelectItem>
+                        <SelectItem value="ueno bank">ueno bank</SelectItem>
+                        <SelectItem value="Banco GNB Paraguay">Banco GNB Paraguay</SelectItem>
+                        <SelectItem value="Banco Basa">Banco Basa</SelectItem>
+                        <SelectItem value="Banco Familiar">Banco Familiar</SelectItem>
+                        <SelectItem value="Banco Nacional de Fomento (BNF)">Banco Nacional de Fomento (BNF)</SelectItem>
+                        <SelectItem value="Banco Atlas">Banco Atlas</SelectItem>
+                        <SelectItem value="Banco Río">Banco Río</SelectItem>
+                        <SelectItem value="Interfisa Banco">Interfisa Banco</SelectItem>
+                        <SelectItem value="Solar Banco">Solar Banco</SelectItem>
+                        <SelectItem value="Financiera Finexpar / Zeta Banco">Financiera Finexpar / Zeta Banco</SelectItem>
+                        <SelectItem value="Tigo Money / Billeteras">Tigo Money / Billeteras</SelectItem>
+                        <SelectItem value="Otro">Otro / Otra Entidad</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
                     <Label htmlFor="accountType" className="text-gray-400 text-sm">Tipo de Cuenta</Label>
-                    <select id="accountType" value={accountType} onChange={(e) => setAccountType(e.target.value)} required={requestType === "reembolso"} className="mt-1 w-full bg-black/20 border border-white/10 text-white rounded-md h-10 px-3 focus:border-[#00c7cc] focus:ring-1 focus:ring-[#00c7cc] outline-none">
-                      <option value="" className="bg-[#1a1a1a]">Seleccionar tipo...</option>
-                      <option value="Ahorro" className="bg-[#1a1a1a]">Caja de Ahorro</option>
-                      <option value="Corriente" className="bg-[#1a1a1a]">Cuenta Corriente</option>
-                    </select>
+                    <Select value={accountType} onValueChange={setAccountType} required={requestType === "reembolso"}>
+                      <SelectTrigger id="accountType" className="mt-1 w-full bg-black/20 border border-white/10 text-white rounded-md h-10 px-3 focus:border-[#00c7cc] focus:ring-1 focus:ring-[#00c7cc] outline-none">
+                        <SelectValue placeholder="Seleccionar tipo..." />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#1a1a1a] text-white border-white/10">
+                        <SelectItem value="Ahorro">Caja de Ahorro</SelectItem>
+                        <SelectItem value="Corriente">Cuenta Corriente</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
                     <Label htmlFor="accountNumber" className="text-gray-400 text-sm">Nro. de Cuenta</Label>
