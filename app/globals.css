@@ -173,29 +173,36 @@ div[class*="Popover_dropdown"] {
   animation-play-state: paused;
 }
 
-/* Custom scrollbar for dark theme dropdowns */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 4px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #00c7cc;
-  border-radius: 4px;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #00e5eb;
-}
-
+/* Force custom scrollbar on Radix Select Viewport */
+[data-radix-select-viewport],
 .custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: #00c7cc rgba(255, 255, 255, 0.08);
+  scrollbar-width: thin !important;
+  scrollbar-color: #00c7cc rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-radix-select-viewport]::-webkit-scrollbar,
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px !important;
+  height: 8px !important;
+  display: block !important;
+}
+
+[data-radix-select-viewport]::-webkit-scrollbar-track,
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 4px !important;
+}
+
+[data-radix-select-viewport]::-webkit-scrollbar-thumb,
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #00c7cc !important;
+  border-radius: 4px !important;
+  border: 1px solid rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-radix-select-viewport]::-webkit-scrollbar-thumb:hover,
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #00e5eb !important;
 }
 
 
