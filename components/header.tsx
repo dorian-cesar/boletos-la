@@ -66,6 +66,7 @@ export function Header({ country }: HeaderProps) {
                       { name: "Servicios", href: "#servicios" },
                       { name: "Finanzas", href: "#finanzas" },
                       { name: "Contacto", href: "#contacto" },
+                      ...(country?.toLowerCase() === "paraguay" ? [{ name: "Ayuda", href: "/paraguay/ayuda" }] : []),
                     ];
 
                 return links.map((item) => (

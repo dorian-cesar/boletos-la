@@ -115,6 +115,12 @@ export function ParaguayHeader() {
                 >
                   Contacto
                 </Link>
+                <Link
+                  href="/paraguay/ayuda"
+                  className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
+                >
+                  Ayuda
+                </Link>
               </nav>
             )}
 
@@ -183,15 +189,22 @@ export function ParaguayHeader() {
                 >
                   Contacto
                 </Link>
+                <Link
+                  href="/paraguay/ayuda"
+                  className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
+                >
+                  Ayuda
+                </Link>
               </>
             )}
+            
             <div className="flex flex-col gap-2 pt-4 border-t border-white/20">
               <Button
                 onClick={() => {
                   setIsMobileMenuOpen(false);
                   window.location.href = "/paraguay/mi-boleto";
                 }}
-                className="w-full bg-[#ffaa00] text-black border-0"
+                className="w-full bg-[#ffaa00] text-black border-0 hover:bg-[#ffaa00]/90"
               >
                 <Search className="h-4 w-4" />
                 Buscá tu Boleto
