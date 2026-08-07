@@ -220,7 +220,7 @@ export function RefundForm() {
       
       const payload = {
         ticket_number: ticketNumber,
-        monto: parseFloat(ticketData.totalAmount || "0"),
+        monto: parseFloat(ticketData.amount || "0"),
         datos_pasajero: {
           nombre: `${ticketData.firstName || ""} ${ticketData.lastName || ""}`.trim(),
           documento: ticketData.documentNumber || "",
@@ -279,7 +279,7 @@ export function RefundForm() {
             id="ticketNumber"
             value={ticketNumber}
             onChange={(e) => setTicketNumber(e.target.value)}
-            placeholder="Ej: 12345"
+            placeholder="Ej: 90012350000001"
             disabled={loading || (lockedUntil !== null && lockedUntil > Date.now())}
             className="mt-1 bg-white/5 border-white/10 text-white placeholder:text-gray-500 h-12"
           />
@@ -364,7 +364,7 @@ export function RefundForm() {
               </div>
               <div>
                 <Label className="text-gray-400 text-xs uppercase tracking-wider">Monto Pagado</Label>
-                <Input value={ticketData.totalAmount ? `Gs. ${Number(ticketData.totalAmount).toLocaleString('es-PY')}` : 'Gs. 0'} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
+                <Input value={ticketData.amount ? `Gs. ${Number(ticketData.amount).toLocaleString('es-PY')}` : 'Gs. 0'} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
               </div>
             </div>
 
@@ -475,15 +475,15 @@ export function RefundForm() {
                   </div>
                   <div>
                     <Label htmlFor="accountNumber" className="text-gray-400 text-sm">Nro. de Cuenta</Label>
-                    <Input id="accountNumber" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value)} required={requestType === "reembolso"} className="mt-1 bg-black/20 border-white/10 text-white focus:border-[#00c7cc]" />
+                    <Input id="accountNumber" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value)} required={requestType === "reembolso"} placeholder="Ej: 123456789" className="mt-1 bg-black/20 border-white/10 text-white placeholder:text-gray-600 focus:border-[#00c7cc]" />
                   </div>
                   <div>
                     <Label htmlFor="accountHolder" className="text-gray-400 text-sm">Nombre del Titular</Label>
-                    <Input id="accountHolder" value={accountHolder} onChange={(e) => setAccountHolder(e.target.value)} required={requestType === "reembolso"} className="mt-1 bg-black/20 border-white/10 text-white focus:border-[#00c7cc]" />
+                    <Input id="accountHolder" value={accountHolder} onChange={(e) => setAccountHolder(e.target.value)} required={requestType === "reembolso"} placeholder="Ej: Juan Pérez" className="mt-1 bg-black/20 border-white/10 text-white placeholder:text-gray-600 focus:border-[#00c7cc]" />
                   </div>
                   <div>
                     <Label htmlFor="holderDocument" className="text-gray-400 text-sm">Cédula / RUC del Titular</Label>
-                    <Input id="holderDocument" value={holderDocument} onChange={(e) => setHolderDocument(e.target.value)} required={requestType === "reembolso"} placeholder="C.I. / RUC" className="mt-1 bg-black/20 border-white/10 text-white focus:border-[#00c7cc]" />
+                    <Input id="holderDocument" value={holderDocument} onChange={(e) => setHolderDocument(e.target.value)} required={requestType === "reembolso"} placeholder="Ej: 1234567-8" className="mt-1 bg-black/20 border-white/10 text-white placeholder:text-gray-600 focus:border-[#00c7cc]" />
                   </div>
                 </div>
               </div>
