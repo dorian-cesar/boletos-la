@@ -24,6 +24,7 @@ export function RefundForm() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [gdsResultData, setGdsResultData] = useState<any>(null);
 
   const [attempts, setAttempts] = useState(0);
   const [lockedUntil, setLockedUntil] = useState<number | null>(null);
@@ -62,6 +63,33 @@ export function RefundForm() {
     }
   }, []);
 
+  const saveIntegrationLog = async (
+    ticket: string,
+    operacion: string,
+    estado: "EXITO" | "ERROR",
+    respuestaIntegracion?: any,
+    mensajeError?: string
+  ) => {
+    try {
+      const payload = {
+        ticket_number: ticket,
+        operacion,
+        estado,
+        pais: "PY",
+        ...(respuestaIntegracion && { respuesta_integracion: respuestaIntegracion }),
+        ...(mensajeError && { mensaje_error: mensajeError })
+      };
+
+      await fetch("https://backend-boletos-publicidad.dev-wit.com/api/logs-operaciones", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+    } catch (err) {
+      console.error("Error saving integration log:", err);
+    }
+  };
+
   const checkGdsPassenger = async (docType: string, docNumber: string) => {
     setGdsStatus("loading");
     try {
@@ -86,18 +114,29 @@ export function RefundForm() {
         result = await response.json();
       }
       
+      setGdsResultData(result);
+      let estadoLog: "EXITO" | "ERROR" = "EXITO";
+      let mensajeErrorLog = "";
+      
       if (response.ok) {
         if (result.success && result.data?.passenger) {
           setGdsStatus("success");
         } else {
           setGdsStatus("not-found");
+          estadoLog = "ERROR";
+          mensajeErrorLog = "El pasajero no existe o no se encontraron coincidencias.";
         }
       } else {
         setGdsStatus("error");
+        estadoLog = "ERROR";
+        mensajeErrorLog = "Error al comunicarse con el GDS.";
       }
+
+      await saveIntegrationLog(ticketNumber, "CONSULTA", estadoLog, result, mensajeErrorLog);
     } catch (e) {
       console.error("Error checking GDS passenger:", e);
       setGdsStatus("error");
+      await saveIntegrationLog(ticketNumber, "CONSULTA", "ERROR", null, "Excepción al consultar GDS.");
     }
   };
 
@@ -216,9 +255,11 @@ export function RefundForm() {
       }
 
       setSuccess(true);
+      await saveIntegrationLog(ticketNumber, "SOLICITUD_DEVOLUCION", "EXITO", gdsResultData);
     } catch (err) {
       console.error("Error submitting refund:", err);
       setError("Ocurrió un error al procesar tu solicitud. Por favor, intenta de nuevo más tarde.");
+      await saveIntegrationLog(ticketNumber, "SOLICITUD_DEVOLUCION", "ERROR", gdsResultData, "Ocurrió un error al procesar la solicitud de devolución.");
     } finally {
       setIsSubmitting(false);
     }
