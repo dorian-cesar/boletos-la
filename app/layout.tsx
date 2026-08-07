@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import GoogleTagManager from "@/components/google-tag-manager";
+import MetaPixel from "@/components/meta-pixel";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -38,6 +39,7 @@ export default function RootLayout({
     <html lang="es" className="scroll-smooth" suppressHydrationWarning>
       <body className={`${inter.variable} antialiased`} suppressHydrationWarning>
         <GoogleTagManager />
+        <MetaPixel />
         <div className="zoom-wrapper">
           {children}
         </div>
