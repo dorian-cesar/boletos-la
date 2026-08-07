@@ -274,7 +274,7 @@ export function RefundForm() {
                       <SelectTrigger id="bankName" className="mt-1 w-full bg-black/20 border border-white/10 text-white rounded-md h-10 px-3 focus:border-[#00c7cc] focus:ring-1 focus:ring-[#00c7cc] outline-none">
                         <SelectValue placeholder="Seleccionar banco..." />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#1a1a1a] text-white border-white/10 max-h-60 overflow-y-auto">
+                      <SelectContent className="bg-[#1a1a1a] text-white border-white/10 max-h-60">
                         <SelectItem value="Banco Itaú Paraguay">Banco Itaú Paraguay</SelectItem>
                         <SelectItem value="Banco Continental">Banco Continental</SelectItem>
                         <SelectItem value="Sudameris Bank">Sudameris Bank</SelectItem>
