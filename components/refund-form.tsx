@@ -11,6 +11,7 @@ const MAX_ATTEMPTS = 5;
 
 export function RefundForm() {
   const [ticketNumber, setTicketNumber] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -62,28 +63,16 @@ export function RefundForm() {
     }
 
     setLoading(true);
+    setIsSearching(true);
 
     try {
-      // TODO: Endpoint real del backend para buscar el ticket
-      // const response = await fetch(`EL_ENDPOINT_QUE_ME_DARAN?ticket=${ticketNumber}`);
-      // const data = await response.json();
+      const response = await fetch(`/api/ticket/search?number=${ticketNumber}`);
+      const result = await response.json();
       
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulando latencia
-
-      if (ticketNumber === "12345") {
-        const mockData = {
-          firstName: "Juan",
-          lastName: "Pérez",
-          documentType: "Cédula de Identidad",
-          documentNumber: "1234567",
-          route: "Asunción - Ciudad del Este",
-          date: "15 Octubre 2026",
-          email: "juan.perez@example.com",
-          phone: "+595 981 123456"
-        };
-        setTicketData(mockData);
-        setEmail(mockData.email);
-        setPhone(mockData.phone);
+      if (response.ok && result.success) {
+        setTicketData(result.data);
+        setEmail(result.data.email || "");
+        setPhone(result.data.phone || "");
         
         setAttempts(0);
         localStorage.removeItem("refund_attempts");
@@ -102,8 +91,10 @@ export function RefundForm() {
         }
       }
     } catch (err) {
-      setError("Ocurrió un error al consultar el ticket. Inténtalo más tarde.");
+      console.error("Error searching ticket:", err);
+      setError("Ocurrió un error al consultar el ticket. Intente de nuevo más tarde.");
     } finally {
+      setIsSearching(false);
       setLoading(false);
     }
   };
@@ -145,7 +136,7 @@ export function RefundForm() {
             disabled={loading || (lockedUntil !== null && lockedUntil > Date.now())}
             className="h-12 px-8 bg-[#00c7cc] hover:bg-[#00a8ad] text-black font-bold rounded-full transition-all"
           >
-            {loading ? "Buscando..." : "Buscar Ticket"}
+            {isSearching ? "Buscando..." : "Buscar Ticket"}
           </Button>
         </div>
       </form>
