@@ -198,9 +198,13 @@ export function RefundForm() {
           </div>
 
           <form onSubmit={handleSubmitRefund} className="space-y-6">
+            <p className="text-xs text-[#00c7cc] font-medium bg-[#00c7cc]/10 p-3 rounded-lg border border-[#00c7cc]/20">
+              💡 Puedes modificar el correo o teléfono de contacto si deseas recibir las notificaciones de la devolución en un medio distinto al del registro.
+            </p>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <Label htmlFor="email" className="text-gray-300">Correo Electrónico</Label>
+                <Label htmlFor="email" className="text-gray-300">Correo Electrónico de Contacto</Label>
                 <Input
                   id="email"
                   type="email"
@@ -211,7 +215,7 @@ export function RefundForm() {
                 />
               </div>
               <div>
-                <Label htmlFor="phone" className="text-gray-300">Teléfono</Label>
+                <Label htmlFor="phone" className="text-gray-300">Teléfono de Contacto</Label>
                 <Input
                   id="phone"
                   type="tel"
