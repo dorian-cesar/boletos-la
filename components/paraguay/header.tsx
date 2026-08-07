@@ -83,34 +83,33 @@ export function ParaguayHeader() {
             </Link>
 
             {/* Desktop Navigation */}
-            {isHome && (
-              <nav className="hidden lg:flex items-center gap-8">
-                <Link
-                  href="/paraguay"
+            <nav className="hidden lg:flex items-center gap-8">
+              <Link
+                href="/paraguay"
                   className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
                 >
                   Inicio
                 </Link>
                 <Link
-                  href="#destinos"
+                href="/paraguay#destinos"
                   className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
                 >
                   Destinos
                 </Link>
                 <Link
-                  href="#servicios"
+                href="/paraguay#servicios"
                   className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
                 >
                   Servicios
                 </Link>
                 <Link
-                  href="#empresas"
+                href="/paraguay#empresas"
                   className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
                 >
                   Empresas
                 </Link>
                 <Link
-                  href="#contacto"
+                href="/paraguay#contacto"
                   className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
                 >
                   Contacto
@@ -121,8 +120,7 @@ export function ParaguayHeader() {
                 >
                   Ayuda
                 </Link>
-              </nav>
-            )}
+            </nav>
 
             {/* CTA Button */}
             <div className="hidden lg:flex items-center gap-4">
@@ -157,46 +155,42 @@ export function ParaguayHeader() {
           )}
         >
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-4">
-            {isHome && (
-              <>
-                <Link
-                  href="/paraguay"
+            <Link
+              href="/paraguay"
                   className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
                 >
                   Inicio
                 </Link>
-                <Link
-                  href="#destinos"
+            <Link
+              href="/paraguay#destinos"
                   className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
                 >
                   Destinos
                 </Link>
-                <Link
-                  href="#servicios"
+            <Link
+              href="/paraguay#servicios"
                   className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
                 >
                   Servicios
                 </Link>
-                <Link
-                  href="#empresas"
+            <Link
+              href="/paraguay#empresas"
                   className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
                 >
                   Empresas
                 </Link>
-                <Link
-                  href="#contacto"
+            <Link
+              href="/paraguay#contacto"
                   className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
                 >
                   Contacto
                 </Link>
-                <Link
-                  href="/paraguay/ayuda"
-                  className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
-                >
-                  Ayuda
-                </Link>
-              </>
-            )}
+            <Link
+              href="/paraguay/ayuda"
+              className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
+            >
+              Ayuda
+            </Link>
             
             <div className="flex flex-col gap-2 pt-4 border-t border-white/20">
               <Button
