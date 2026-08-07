@@ -230,7 +230,7 @@ export function RefundForm() {
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 placeholder="Por favor explica el motivo por el cual solicitas la devolución del boleto..."
-                className="mt-1 bg-white/5 border-white/10 text-white min-h-[120px] focus:border-[#00c7cc] resize-y"
+                className="mt-1 bg-white/5 border-white/10 text-white h-32 focus:border-[#00c7cc] resize-none overflow-y-auto"
                 required
               />
             </div>
