@@ -81,12 +81,57 @@ export async function GET(request: Request) {
       companyFormatted = "Empresa de Transporte";
     }
 
+    const rawPurchaseDate = ticketData.created_at || ticketData.purchase_date;
+    let formattedPurchaseDate = "N/A";
+    if (rawPurchaseDate) {
+      try {
+        const dateObj = new Date(rawPurchaseDate);
+        if (!isNaN(dateObj.getTime())) {
+          const day = String(dateObj.getDate()).padStart(2, '0');
+          const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+          const year = dateObj.getFullYear();
+          const hours = String(dateObj.getHours()).padStart(2, '0');
+          const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+          formattedPurchaseDate = `${day}/${month}/${year} ${hours}:${minutes}`;
+        } else {
+          formattedPurchaseDate = rawPurchaseDate;
+        }
+      } catch (e) {
+        formattedPurchaseDate = rawPurchaseDate;
+      }
+    }
+
+    const rawDepartureDate = ticketData.departure_date || ticketData.date;
+    const rawDepartureTime = ticketData.departure_time;
+    let formattedDepartureDate = "Fecha de viaje";
+    
+    if (rawDepartureDate) {
+      const parts = String(rawDepartureDate).split("-");
+      if (parts.length === 3) {
+        // Assuming format is YYYY-MM-DD
+        const day = parts[2].substring(0, 2);
+        const month = parts[1];
+        const year = parts[0];
+        
+        if (rawDepartureTime) {
+          const timeParts = String(rawDepartureTime).split(":");
+          const hours = timeParts[0];
+          const minutes = timeParts[1];
+          formattedDepartureDate = `${day}/${month}/${year} ${hours}:${minutes}`;
+        } else {
+          formattedDepartureDate = `${day}/${month}/${year}`;
+        }
+      } else {
+        formattedDepartureDate = rawDepartureDate;
+      }
+    }
+
     const formattedData = {
       id: ticketData.id || ticketNumber,
       documentType: ticketData.document_type_name || ticketData.passenger?.docType || ticketData.docType || "Documento",
       documentNumber: ticketData.document_number || ticketData.passenger?.docNumber || ticketData.docNumber || "N/A",
       route: `${ticketData.origin_title || ticketData.origin || 'Origen'} - ${ticketData.destination_title || ticketData.destination || 'Destino'}`,
-      date: ticketData.departure_date || ticketData.date || "Fecha de viaje",
+      date: formattedDepartureDate,
       email: ticketData.email || ticketData.passenger?.email || "",
       phone: ticketData.phone || ticketData.passenger?.phone || "",
       firstName: ticketData.first_name || ticketData.passenger?.name || ticketData.name || "Usuario",
@@ -94,7 +139,7 @@ export async function GET(request: Request) {
       seatNumber: ticketData.seat_number || "N/A",
       amount: ticketData.payment_amount || ticketData.seat_price || "0",
       company: companyFormatted,
-      purchaseDate: ticketData.created_at || ticketData.purchase_date || "N/A"
+      purchaseDate: formattedPurchaseDate
     };
 
     return NextResponse.json({ success: true, data: formattedData });
