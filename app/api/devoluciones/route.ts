@@ -5,7 +5,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     
     const baseUrl = process.env.NEXT_PUBLIC_BACKEND_PUBLICIDAD_URL;
-    const apiKey = process.env.PUBLICIDAD_API_KEY;
+    const apiKey = process.env.NEXT_PUBLIC_PUBLICIDAD_API_KEY;
 
     if (!baseUrl || !apiKey) {
       return NextResponse.json({ error: 'Falta configurar variables de entorno del servidor de publicidad' }, { status: 500 });
