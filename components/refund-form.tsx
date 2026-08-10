@@ -32,9 +32,12 @@ export function RefundForm() {
   const [ticketData, setTicketData] = useState<any>(null);
 
   const [email, setEmail] = useState("");
+  const [phonePrefix, setPhonePrefix] = useState("+595");
   const [phone, setPhone] = useState("");
   const [reason, setReason] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
+  const [transactionCountry, setTransactionCountry] = useState("PY");
   const [requestType, setRequestType] = useState<"anulacion" | "reembolso">("anulacion");
   const [bankName, setBankName] = useState("");
   const [accountType, setAccountType] = useState("");
@@ -75,18 +78,21 @@ export function RefundForm() {
         ticket_number: ticket,
         operacion,
         estado,
-        pais: "PY",
+        pais: transactionCountry,
         ...(respuestaIntegracion && { respuesta_integracion: respuestaIntegracion }),
         ...(mensajeError && { mensaje_error: mensajeError })
       };
 
-      await fetch("/api/logs-operaciones", {
+      const res = await fetch("/api/logs-operaciones", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
+      if (!res.ok) {
+        console.error("Error from backend saving log:", await res.text());
+      }
     } catch (err) {
-      console.error("Error saving integration log:", err);
+      console.error("Network error saving integration log:", err);
     }
   };
 
@@ -202,8 +208,40 @@ export function RefundForm() {
 
   const handleSubmitRefund = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!reason.trim()) {
-      setError("Por favor, especificá el motivo de tu solicitud.");
+    setError("");
+    setFieldErrors({});
+
+    let hasErrors = false;
+    const newErrors: Record<string, string> = {};
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      newErrors.email = "Por favor, ingresá un correo electrónico válido.";
+      hasErrors = true;
+    }
+
+    const phoneRegex = /^\d{6,15}$/;
+    if (!phoneRegex.test(phone)) {
+      newErrors.phone = "Por favor, ingresá un número de teléfono válido.";
+      hasErrors = true;
+    }
+
+    if (reason.length > 500) {
+      newErrors.reason = "El motivo no puede exceder los 500 caracteres.";
+      hasErrors = true;
+    } else if (!reason.trim()) {
+      newErrors.reason = "Por favor, especificá el motivo de tu solicitud.";
+      hasErrors = true;
+    }
+
+    if (hasErrors) {
+      setFieldErrors(newErrors);
+      const firstErrorField = Object.keys(newErrors)[0];
+      const element = document.getElementById(firstErrorField);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+        element.focus();
+      }
       return;
     }
 
@@ -221,14 +259,20 @@ export function RefundForm() {
       const payload = {
         ticket_number: ticketNumber,
         monto: parseFloat(ticketData.amount || "0"),
+        origen: "WEB",
+        pais: transactionCountry,
         datos_pasajero: {
           nombre: `${ticketData.firstName || ""} ${ticketData.lastName || ""}`.trim(),
           documento: ticketData.documentNumber || "",
-          email: email
+          email: email,
+          telefono: `${phonePrefix}${phone}`
         },
         datos_boleto: {
           origen: origen || "",
-          destino: destino || ""
+          destino: destino || "",
+          empresa: ticketData.company || "N/A",
+          fecha_viaje: ticketData.date || "",
+          fecha_compra: ticketData.purchaseDate || ""
         },
         datos_bancarios: requestType === "reembolso" ? {
           banco: bankName,
@@ -251,15 +295,18 @@ export function RefundForm() {
       });
 
       if (!response.ok) {
-        throw new Error("Error en la respuesta del servidor");
+        const errorData = await response.json().catch(() => null);
+        const serverMessage = errorData?.body?.message || errorData?.message;
+        throw new Error(serverMessage || "Error en la respuesta del servidor");
       }
 
       setSuccess(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       await saveIntegrationLog(ticketNumber, "SOLICITUD_DEVOLUCION", "EXITO", gdsResultData);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error submitting refund:", err);
-      setError("Ocurrió un error al procesar tu solicitud. Por favor, intenta de nuevo más tarde.");
-      await saveIntegrationLog(ticketNumber, "SOLICITUD_DEVOLUCION", "ERROR", gdsResultData, "Ocurrió un error al procesar la solicitud de devolución.");
+      setError(err.message || "Ocurrió un error al procesar tu solicitud. Por favor, intenta de nuevo más tarde.");
+      await saveIntegrationLog(ticketNumber, "SOLICITUD_DEVOLUCION", "ERROR", gdsResultData, err.message || "Ocurrió un error al procesar la solicitud de devolución.");
     } finally {
       setIsSubmitting(false);
     }
@@ -305,7 +352,7 @@ export function RefundForm() {
         </div>
       </form>
 
-      {error && (
+      {error && !ticketData && (
         <div className="p-4 mb-8 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
           {error}
         </div>
@@ -355,8 +402,27 @@ export function RefundForm() {
                 </div>
               </div>
               <div>
+                <Label className="text-gray-400 text-xs uppercase tracking-wider">Empresa</Label>
+                <Input 
+                  value={
+                    ticketData.company 
+                      ? (ticketData.company.toUpperCase().includes("LSA") ? "La Santaniana Argentina" : 
+                         ticketData.company.toUpperCase().includes("LSN") ? "La Santaniana Nacional" : 
+                         ticketData.company.toUpperCase().includes("LSP") ? "La San Pedrana" : 
+                         ticketData.company)
+                      : "Empresa de Transporte"
+                  } 
+                  readOnly 
+                  className="mt-1 bg-white/5 border-white/10 text-white opacity-70" 
+                />
+              </div>
+              <div>
                 <Label className="text-gray-400 text-xs uppercase tracking-wider">Fecha de Viaje</Label>
                 <Input value={ticketData.date} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
+              </div>
+              <div>
+                <Label className="text-gray-400 text-xs uppercase tracking-wider">Fecha de Compra</Label>
+                <Input value={ticketData.purchaseDate} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
               </div>
               <div>
                 <Label className="text-gray-400 text-xs uppercase tracking-wider">Asiento</Label>
@@ -371,30 +437,78 @@ export function RefundForm() {
             {gdsStatus === "loading" && (
               <div className="flex items-center space-x-3 text-gray-400 text-sm mt-4 p-4 bg-black/20 rounded-lg">
                 <div className="w-4 h-4 rounded-full border-2 border-t-transparent border-gray-400 animate-spin" />
-                <span>Verificando pasajero en GDS...</span>
+                <span>Verificando los datos del pasajero con la empresa de transporte...</span>
               </div>
             )}
             {gdsStatus === "success" && (
               <div className="flex items-center space-x-3 text-green-400 text-sm mt-4 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
                 <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                <span>Pasajero verificado correctamente en el sistema GDS del operador.</span>
+                <span>Datos del pasajero verificados exitosamente con la empresa de transporte.</span>
               </div>
             )}
             {gdsStatus === "not-found" && (
               <div className="flex items-center space-x-3 text-orange-400 text-sm mt-4 p-4 bg-orange-500/10 border border-orange-500/20 rounded-lg">
                 <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                <span>El pasajero no fue hallado en los registros del GDS. Esto podría demorar la gestión.</span>
+                <span>No se encontraron coincidencias del pasajero con la empresa de transporte. Esto podría demorar la gestión.</span>
               </div>
             )}
             {gdsStatus === "error" && (
               <div className="flex items-center space-x-3 text-gray-400 text-sm mt-4 p-4 bg-white/5 border border-white/10 rounded-lg">
                 <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                <span>No se pudo verificar el estado en el GDS en este momento.</span>
+                <span>No se pudo consultar a la empresa de transporte en este momento.</span>
               </div>
             )}
           </div>
 
           <form onSubmit={handleSubmitRefund} className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="transactionCountry" className="text-gray-300 font-semibold text-sm">País de la Transacción</Label>
+                <Select value={transactionCountry} onValueChange={setTransactionCountry}>
+                  <SelectTrigger id="transactionCountry" className="w-full bg-[#1a1a1a] border-white/10 text-white h-12 focus:ring-[#00c7cc]">
+                    <SelectValue placeholder="Seleccionar país..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#1a1a1a] text-white border-white/10 max-h-60">
+                    <SelectItem value="PY">Paraguay</SelectItem>
+                    <SelectItem value="AR">Argentina</SelectItem>
+                    <SelectItem value="BO">Bolivia</SelectItem>
+                    <SelectItem value="BR">Brasil</SelectItem>
+                    <SelectItem value="CA">Canadá</SelectItem>
+                    <SelectItem value="CL">Chile</SelectItem>
+                    <SelectItem value="CO">Colombia</SelectItem>
+                    <SelectItem value="CR">Costa Rica</SelectItem>
+                    <SelectItem value="CU">Cuba</SelectItem>
+                    <SelectItem value="EC">Ecuador</SelectItem>
+                    <SelectItem value="SV">El Salvador</SelectItem>
+                    <SelectItem value="US">Estados Unidos</SelectItem>
+                    <SelectItem value="GT">Guatemala</SelectItem>
+                    <SelectItem value="HN">Honduras</SelectItem>
+                    <SelectItem value="MX">México</SelectItem>
+                    <SelectItem value="NI">Nicaragua</SelectItem>
+                    <SelectItem value="PA">Panamá</SelectItem>
+                    <SelectItem value="PE">Perú</SelectItem>
+                    <SelectItem value="DO">República Dominicana</SelectItem>
+                    <SelectItem value="UY">Uruguay</SelectItem>
+                    <SelectItem value="VE">Venezuela</SelectItem>
+                    <SelectItem value="AG">Antigua y Barbuda</SelectItem>
+                    <SelectItem value="BS">Bahamas</SelectItem>
+                    <SelectItem value="BB">Barbados</SelectItem>
+                    <SelectItem value="BZ">Belice</SelectItem>
+                    <SelectItem value="DM">Dominica</SelectItem>
+                    <SelectItem value="GD">Granada</SelectItem>
+                    <SelectItem value="GY">Guyana</SelectItem>
+                    <SelectItem value="HT">Haití</SelectItem>
+                    <SelectItem value="JM">Jamaica</SelectItem>
+                    <SelectItem value="KN">San Cristóbal y Nieves</SelectItem>
+                    <SelectItem value="LC">Santa Lucía</SelectItem>
+                    <SelectItem value="VC">San Vicente y las Granadinas</SelectItem>
+                    <SelectItem value="SR">Surinam</SelectItem>
+                    <SelectItem value="TT">Trinidad y Tobago</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
             <div className="space-y-4">
               <Label className="text-gray-300 font-semibold text-lg">Tipo de Solicitud</Label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -502,36 +616,82 @@ export function RefundForm() {
                     id="email"
                     type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="mt-1 bg-white/5 border-white/10 text-white h-12 focus:border-[#00c7cc]"
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (fieldErrors.email) setFieldErrors(prev => ({ ...prev, email: "" }));
+                    }}
+                    maxLength={100}
+                    className={`mt-1 bg-white/5 border-white/10 text-white h-12 focus:border-[#00c7cc] ${fieldErrors.email ? 'border-red-500 focus:border-red-500' : ''}`}
                     required
                   />
+                  {fieldErrors.email && (
+                    <p className="text-red-500 text-sm mt-1">{fieldErrors.email}</p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="phone" className="text-gray-300">Nro. de Celular / Teléfono</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="mt-1 bg-white/5 border-white/10 text-white h-12 focus:border-[#00c7cc]"
-                    required
-                  />
+                  <div className="flex mt-1 gap-2">
+                    <Select value={phonePrefix} onValueChange={setPhonePrefix}>
+                      <SelectTrigger className="w-[100px] bg-[#1a1a1a] border-white/10 text-white h-12 focus:ring-[#00c7cc]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#1a1a1a] text-white border-white/10">
+                        <SelectItem value="+595">+595</SelectItem>
+                        <SelectItem value="+54">+54</SelectItem>
+                        <SelectItem value="+55">+55</SelectItem>
+                        <SelectItem value="+56">+56</SelectItem>
+                        <SelectItem value="+598">+598</SelectItem>
+                        <SelectItem value="+591">+591</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => {
+                        setPhone(e.target.value.replace(/\D/g, ''));
+                        if (fieldErrors.phone) setFieldErrors(prev => ({ ...prev, phone: "" }));
+                      }}
+                      maxLength={15}
+                      placeholder="981234567"
+                      className={`flex-1 bg-white/5 border-white/10 text-white h-12 focus:border-[#00c7cc] ${fieldErrors.phone ? 'border-red-500 focus:border-red-500' : ''}`}
+                      required
+                    />
+                  </div>
+                  {fieldErrors.phone && (
+                    <p className="text-red-500 text-sm mt-1">{fieldErrors.phone}</p>
+                  )}
                 </div>
               </div>
             </div>
 
             <div>
-              <Label htmlFor="reason" className="text-gray-300">Motivo de la Solicitud</Label>
+              <div className="flex justify-between items-center mb-1">
+                <Label htmlFor="reason" className="text-gray-300">Motivo de la Solicitud</Label>
+                <span className="text-xs text-gray-500">{reason.length}/500</span>
+              </div>
               <Textarea
                 id="reason"
                 value={reason}
-                onChange={(e) => setReason(e.target.value)}
+                onChange={(e) => {
+                  setReason(e.target.value);
+                  if (fieldErrors.reason) setFieldErrors(prev => ({ ...prev, reason: "" }));
+                }}
+                maxLength={500}
                 placeholder="Por favor explicá el motivo de tu solicitud..."
-                className="mt-1 bg-white/5 border-white/10 text-white h-32 focus:border-[#00c7cc] resize-none overflow-y-auto"
+                className={`bg-white/5 border-white/10 text-white h-32 focus:border-[#00c7cc] resize-none overflow-y-auto ${fieldErrors.reason ? 'border-red-500 focus:border-red-500' : ''}`}
                 required
               />
+              {fieldErrors.reason && (
+                <p className="text-red-500 text-sm mt-1">{fieldErrors.reason}</p>
+              )}
             </div>
+
+            {error && (
+              <div className="p-4 mb-6 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm shadow-[0_0_15px_rgba(239,68,68,0.1)]">
+                {error}
+              </div>
+            )}
 
                 <Button 
                   type="submit" 

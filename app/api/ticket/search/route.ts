@@ -70,7 +70,17 @@ export async function GET(request: Request) {
 
     const ticketData = await ticketRes.json();
 
-    // Map the backend data to our frontend format based on real database schema
+    const rawCompany = ticketData.company_name || ticketData.company || ticketData.carrier || "";
+    let companyFormatted = rawCompany;
+    if (rawCompany) {
+      const upperComp = String(rawCompany).toUpperCase();
+      if (upperComp.includes("LSA")) companyFormatted = "La Santaniana Argentina";
+      else if (upperComp.includes("LSN")) companyFormatted = "La Santaniana Nacional";
+      else if (upperComp.includes("LSP")) companyFormatted = "La San Pedrana";
+    } else {
+      companyFormatted = "Empresa de Transporte";
+    }
+
     const formattedData = {
       id: ticketData.id || ticketNumber,
       documentType: ticketData.document_type_name || ticketData.passenger?.docType || ticketData.docType || "Documento",
@@ -82,7 +92,9 @@ export async function GET(request: Request) {
       firstName: ticketData.first_name || ticketData.passenger?.name || ticketData.name || "Usuario",
       lastName: ticketData.last_name || ticketData.passenger?.surname || ticketData.surname || "",
       seatNumber: ticketData.seat_number || "N/A",
-      amount: ticketData.payment_amount || ticketData.seat_price || "0"
+      amount: ticketData.payment_amount || ticketData.seat_price || "0",
+      company: companyFormatted,
+      purchaseDate: ticketData.created_at || ticketData.purchase_date || "N/A"
     };
 
     return NextResponse.json({ success: true, data: formattedData });
