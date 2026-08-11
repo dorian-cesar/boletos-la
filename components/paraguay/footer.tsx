@@ -239,12 +239,12 @@ export function ParaguayFooter() {
 
             {/* Links */}
             <div className="flex items-center gap-6 text-sm">
-              <a
-                href="#"
+              <Link
+                href="/terminos-y-condiciones"
                 className="text-background/50 hover:text-primary transition-colors"
               >
                 Términos y Condiciones
-              </a>
+              </Link>
               <a
                 href="#"
                 className="text-background/50 hover:text-primary transition-colors"

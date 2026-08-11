@@ -194,11 +194,16 @@ export function Footer({ country }: FooterProps) {
             <ul className="space-y-3 text-sm text-neutral-400">
               {currentFooter.col2Links.map((link: string, idx: number) => (
                 <li key={idx}>
-                  <a href="#" className="hover:text-white transition-colors no-underline">
+                  <Link href="#" className="hover:text-white transition-colors no-underline">
                     {link}
-                  </a>
+                  </Link>
                 </li>
               ))}
+              <li>
+                <a href="/terminos-y-condiciones" className="hover:text-white transition-colors no-underline">
+                  Términos y condiciones
+                </a>
+              </li>
             </ul>
           </div>
         </div>
