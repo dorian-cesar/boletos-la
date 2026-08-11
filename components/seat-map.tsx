@@ -71,7 +71,7 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
 
       {/* Floor Selector */}
       <div className="flex justify-center gap-3 mb-8">
-        {[1, 2].map((floor) => (
+        {[2, 1].map((floor) => (
           <button
             key={floor}
             onClick={() => setActiveFloor(floor)}
@@ -82,7 +82,7 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
                 : "bg-background/10 text-background/80 hover:bg-background/20 border-background/30",
             )}
           >
-            {floor === 1 ? "Piso Inferior" : "Piso Superior"}
+            {floor === 1 ? "Piso Superior" : "Piso Inferior"}
           </button>
         ))}
       </div>
