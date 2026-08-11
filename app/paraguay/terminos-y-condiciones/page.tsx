@@ -6,7 +6,7 @@ import { ScrollToTop } from "@/components/scroll-to-top";
 
 export default function TerminosYCondicionesPage() {
   return (
-    <main className="min-h-screen bg-[#0a0a0a] flex flex-col relative overflow-hidden">
+    <main className="min-h-screen bg-[#0a0a0a] flex flex-col relative overflow-x-clip">
       <ParaguayHeader />
       
       {/* Background decorations matching the app's style */}
