@@ -199,11 +199,6 @@ export function Footer({ country }: FooterProps) {
                   </Link>
                 </li>
               ))}
-              <li>
-                <a href="/terminos-y-condiciones" className="hover:text-white transition-colors no-underline">
-                  Términos y condiciones
-                </a>
-              </li>
             </ul>
           </div>
         </div>
