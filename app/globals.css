@@ -107,6 +107,10 @@ body {
   zoom: 0.8;
 }
 
+.zoom-wrapper:has(.paraguay-zoom-override) {
+  zoom: 1;
+}
+
 /* Distribusion Widget Custom Overrides */
 body > div[class*="mantine-Portal"],
 body > div.mantine-Portal-root,

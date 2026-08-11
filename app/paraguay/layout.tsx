@@ -16,5 +16,5 @@ export default function ParaguayLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return <div className="paraguay-zoom-override">{children}</div>;
 }
