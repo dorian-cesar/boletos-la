@@ -117,21 +117,21 @@ export function ParaguayFooter() {
             </h4>
             <ul className="space-y-4">
               {[
-                "Inicio",
-                "Destinos",
-                "Servicios",
-                "Empresas",
-                "Ofertas",
-                "Blog",
+                { name: "Inicio", href: "/paraguay" },
+                { name: "Destinos", href: "/paraguay#destinos" },
+                { name: "Servicios", href: "/paraguay#servicios" },
+                { name: "Empresas", href: "/paraguay#empresas" },
+                { name: "Ofertas", href: "/paraguay#ofertas" },
+                { name: "Blog", href: "/paraguay/blog" },
               ].map((link) => (
-                <li key={link}>
-                  <a
-                    href="#"
+                <li key={link.name}>
+                  <Link
+                    href={link.href}
                     className="text-background/60 hover:text-primary transition-colors duration-300 flex items-center gap-2 group"
                   >
                     <ArrowRight className="h-4 w-4 opacity-0 -ml-6 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />
-                    {link}
-                  </a>
+                    {link.name}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -152,13 +152,13 @@ export function ParaguayFooter() {
                 "Salto del Guairá",
               ].map((city) => (
                 <li key={city}>
-                  <a
-                    href="#"
+                  <Link
+                    href="/paraguay#destinos"
                     className="text-background/60 hover:text-primary transition-colors duration-300 flex items-center gap-2 group"
                   >
                     <MapPin className="h-4 w-4 text-primary/50 group-hover:text-primary transition-colors" />
                     {city}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -251,12 +251,12 @@ export function ParaguayFooter() {
               >
                 Política de Privacidad
               </Link>
-              <a
-                href="#"
+              <Link
+                href="/paraguay/ayuda"
                 className="text-background/50 hover:text-primary transition-colors"
               >
                 Ayuda
-              </a>
+              </Link>
             </div>
           </div>
         </div>
