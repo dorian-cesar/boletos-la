@@ -3,6 +3,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { trackViewContent, trackInitiateCheckout } from "@/lib/meta-pixel";
 import { format, parse } from "date-fns";
 import { es } from "date-fns/locale";
 import {
@@ -70,14 +71,25 @@ export default function ServicesPage() {
     setStep(1);
 
     if (origin && destination && departureDate) {
-      setOutboundTrips(generateTrips(origin, destination, departureDate));
+      const outTrips = generateTrips(origin, destination, departureDate);
+      setOutboundTrips(outTrips);
       if (tripType === "round-trip" && returnDate) {
         setReturnTrips(generateTrips(destination, origin, returnDate));
+      }
+      if (outTrips.length > 0) {
+        const originName = cities.find((c) => c.id === origin)?.name || origin;
+        const destName = cities.find((c) => c.id === destination)?.name || destination;
+        trackViewContent({
+          content_name: `${originName} - ${destName}`,
+          content_category: "paraguay",
+          content_ids: outTrips.map((t) => t.id),
+        });
       }
     }
   }, [origin, destination, departureDate, returnDate, tripType, setStep]);
 
   const handleSelectTrip = (trip: Trip) => {
+    trackInitiateCheckout();
     if (!showingReturn) {
       setSelectedOutboundTrip(trip);
       if (tripType === "round-trip") {

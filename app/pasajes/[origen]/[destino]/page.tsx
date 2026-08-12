@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ParaguayHeader } from '@/components/paraguay/header';
 import { ParaguayFooter } from '@/components/paraguay/footer';
+import RouteViewContentTracker from '@/components/route-view-content-tracker';
 import { formatCityName, getPasajesRoutes } from '@/lib/pasajes-urls';
 import { ArrowRight, Bus, Calendar, Clock, MapPin, ShieldCheck, Ticket } from 'lucide-react';
 
@@ -106,6 +107,11 @@ export default async function PasajesRoutePage({ params }: PageProps) {
 
   return (
     <main className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col justify-between">
+      <RouteViewContentTracker
+        contentName={`${origenTitle} - ${destinoTitle}`}
+        contentCategory="paraguay"
+        contentIds={[`${origen}-${destino}`]}
+      />
       {/* Google Schema structured data */}
       <script
         type="application/ld+json"

@@ -1,9 +1,38 @@
-import React from "react";
-import Script from "next/script";
+"use client";
 
-const FB_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || "2216070672513633";
+import React, { useEffect, useState } from "react";
+import Script from "next/script";
+import { usePathname, useSearchParams } from "next/navigation";
+import { FB_PIXEL_ID, isPixelAllowed, trackPageView } from "@/lib/meta-pixel";
+
+function PixelNavigationTracker() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [isFirstRender, setIsFirstRender] = useState(true);
+
+  useEffect(() => {
+    // Evitar duplicar el primer PageView que se dispara al inicializar el script
+    if (isFirstRender) {
+      setIsFirstRender(false);
+      return;
+    }
+    trackPageView();
+  }, [pathname, searchParams]);
+
+  return null;
+}
 
 export default function MetaPixel() {
+  const [allowed, setAllowed] = useState(false);
+
+  useEffect(() => {
+    setAllowed(isPixelAllowed());
+  }, []);
+
+  if (!allowed) {
+    return null;
+  }
+
   return (
     <>
       <Script
@@ -24,6 +53,7 @@ export default function MetaPixel() {
           `,
         }}
       />
+      <PixelNavigationTracker />
       <noscript>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -37,3 +67,4 @@ export default function MetaPixel() {
     </>
   );
 }
+

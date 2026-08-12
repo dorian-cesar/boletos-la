@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { trackInitiateCheckout } from "@/lib/meta-pixel";
 import { format, parse } from "date-fns";
 import { es } from "date-fns/locale";
 import {
@@ -236,6 +237,7 @@ export default function SeatsPage() {
         }
       }
 
+      trackInitiateCheckout();
       router.push("/paraguay/booking/checkout");
     } catch (err: any) {
       console.error("Block error:", err);

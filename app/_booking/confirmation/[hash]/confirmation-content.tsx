@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { trackPurchase } from "@/lib/meta-pixel";
 import { format, parse } from "date-fns";
 import { es } from "date-fns/locale";
 import {
@@ -105,6 +106,22 @@ export default function ConfirmationPageContent({
     setBookingReference,
     setPaymentStatus: setStorePaymentStatus,
   } = useBookingStore();
+
+  const trackedPurchaseRef = useRef(false);
+
+  useEffect(() => {
+    if (!trackedPurchaseRef.current && totalPrice && totalPrice > 0) {
+      trackedPurchaseRef.current = true;
+      trackPurchase({
+        value: totalPrice,
+        currency: "PYG",
+        content_category: "paraguay",
+        content_ids: selectedOutboundTrip?.id
+          ? [selectedOutboundTrip.id]
+          : ["pasaje-paraguay"],
+      });
+    }
+  }, [totalPrice, selectedOutboundTrip]);
 
   const originCity = cities.find((c) => c.id === selectedOutboundTrip?.origin);
   const destinationCity = cities.find(

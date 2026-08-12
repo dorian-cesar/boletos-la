@@ -3,6 +3,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { trackViewContent, trackInitiateCheckout } from "@/lib/meta-pixel";
 import { format, parse } from "date-fns";
 import { es } from "date-fns/locale";
 import {
@@ -76,7 +77,18 @@ export default function ServicesPage() {
     setStep(1);
   }, [setStep]);
 
+  useEffect(() => {
+    if (!searchLoading && currentTrips && currentTrips.length > 0) {
+      trackViewContent({
+        content_name: `${originTitle || origin} - ${destinationTitle || destination}`,
+        content_category: "paraguay",
+        content_ids: currentTrips.slice(0, 10).map((t) => t.id),
+      });
+    }
+  }, [searchLoading, currentTrips, originTitle, destinationTitle, origin, destination]);
+
   const handleSelectTrip = (trip: Trip) => {
+    trackInitiateCheckout();
     if (!showingReturn) {
       setSelectedOutboundTrip(trip);
       if (tripType === "round-trip") {

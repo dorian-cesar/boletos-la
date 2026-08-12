@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { trackInitiateCheckout } from "@/lib/meta-pixel";
 import { format, parse } from "date-fns";
 import { es } from "date-fns/locale";
 import {
@@ -55,6 +56,7 @@ export default function SeatsPage() {
     if (tripType === "round-trip" && !selectingReturn && selectedReturnTrip) {
       setSelectingReturn(true);
     } else {
+      trackInitiateCheckout();
       router.push("/booking/checkout");
     }
   };
