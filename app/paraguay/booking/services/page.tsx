@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookingProgress } from "@/components/paraguay/booking-progress";
-import { AlternateDatesModal } from "@/components/paraguay/alternate-dates-modal";
+import { AlternateDatesInline } from "@/components/paraguay/alternate-dates-inline";
 import { useBookingStore, Trip } from "@/lib/booking-store";
 import { useSearch } from "@/lib/hooks/use-search";
 import { cn } from "@/lib/utils";
@@ -54,6 +54,7 @@ export default function ServicesPage() {
     tripType,
     selectedOutboundTrip,
     setSelectedOutboundTrip,
+    selectedReturnTrip,
     setSelectedReturnTrip,
     setStep,
     originTitle,
@@ -63,7 +64,6 @@ export default function ServicesPage() {
   } = useBookingStore();
 
   const [showingReturn, setShowingReturn] = useState(false);
-  const [isAltDatesModalOpen, setIsAltDatesModalOpen] = useState(false);
 
   const {
     trips: currentTrips,
@@ -87,8 +87,6 @@ export default function ServicesPage() {
         content_category: "paraguay",
         content_ids: currentTrips.slice(0, 10).map((t) => t.id),
       });
-    } else if (!searchLoading && currentTrips && currentTrips.length === 0) {
-      setIsAltDatesModalOpen(true);
     }
   }, [searchLoading, currentTrips, originTitle, destinationTitle, origin, destination]);
 
@@ -253,18 +251,27 @@ export default function ServicesPage() {
                 </Button>
               </div>
             ) : trips.length === 0 ? (
-              <div className="text-center py-12 bg-background/5 rounded-3xl border border-background/10">
-                <Bus className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-xl font-semibold mb-2">
-                  No se encontraron servicios
-                </p>
-                <p className="text-muted-foreground mb-6">
-                  Intenta con otra fecha o ruta
-                </p>
-                <Button onClick={() => setIsAltDatesModalOpen(true)} className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 rounded-xl font-semibold shadow-md">
-                  Buscar fechas alternativas
-                </Button>
-              </div>
+              <AlternateDatesInline
+                originalDate={
+                  showingReturn
+                    ? returnDate
+                      ? parse(returnDate, "yyyy-MM-dd", new Date())
+                      : null
+                    : departureDate
+                      ? parse(departureDate, "yyyy-MM-dd", new Date())
+                      : null
+                }
+                originId={showingReturn ? destination : origin}
+                destinationId={showingReturn ? origin : destination}
+                onSelectDate={(newDate) => {
+                  const formatted = format(newDate, "yyyy-MM-dd");
+                  if (showingReturn) {
+                    setReturnDate(formatted);
+                  } else {
+                    setDepartureDate(formatted);
+                  }
+                }}
+              />
             ) : (
               <div className="space-y-4">
                 {trips.map((trip, index) => (
@@ -451,31 +458,6 @@ export default function ServicesPage() {
           </div>
         </div>
       </div>
-      
-      <AlternateDatesModal
-        isOpen={isAltDatesModalOpen}
-        originalDate={
-          showingReturn
-            ? returnDate
-              ? parse(returnDate, "yyyy-MM-dd", new Date())
-              : null
-            : departureDate
-              ? parse(departureDate, "yyyy-MM-dd", new Date())
-              : null
-        }
-        originId={showingReturn ? destination : origin}
-        destinationId={showingReturn ? origin : destination}
-        onSelectDate={(newDate) => {
-          const formatted = format(newDate, "yyyy-MM-dd");
-          if (showingReturn) {
-            setReturnDate(formatted);
-          } else {
-            setDepartureDate(formatted);
-          }
-          setIsAltDatesModalOpen(false);
-        }}
-        onClose={() => setIsAltDatesModalOpen(false)}
-      />
     </div>
   );
 }
