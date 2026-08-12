@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, X, CalendarSearch, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
@@ -85,19 +84,8 @@ export function AlternateDatesModal({
     : "";
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
-      >
-        <motion.div
-          initial={{ scale: 0.9, y: 20, opacity: 0 }}
-          animate={{ scale: 1, y: 0, opacity: 1 }}
-          exit={{ scale: 0.9, y: 20, opacity: 0 }}
-          className="bg-[#1a2332] w-full max-w-3xl rounded-[2rem] shadow-[0_0_80px_rgba(0,0,0,0.8)] border border-white/10 overflow-hidden flex flex-col relative"
-        >
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
+      <div className="bg-[#1a2332] w-full max-w-3xl rounded-[2rem] shadow-[0_0_80px_rgba(0,0,0,0.8)] border border-white/10 overflow-hidden flex flex-col relative animate-in zoom-in-95 slide-in-from-bottom-4 duration-300">
           {/* Subtle Ambient Glow */}
           <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
 
@@ -198,8 +186,7 @@ export function AlternateDatesModal({
               </div>
             )}
           </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+      </div>
+    </div>
   );
 }
