@@ -101,7 +101,7 @@ export function AlternateDatesInline({
             <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
             <h3 className="text-lg sm:text-xl font-semibold text-background mb-2">Buscando alternativas...</h3>
             <p className="text-muted-foreground text-sm sm:text-base text-center max-w-sm">
-              Verificando disponibilidad en los próximos días para esta ruta.
+              Verificando disponibilidad en los próximos 7 días para esta ruta.
             </p>
           </div>
         ) : options.length > 0 ? (
@@ -156,7 +156,7 @@ export function AlternateDatesInline({
             </div>
             <h3 className="text-xl font-semibold text-background mb-2 text-center">No hay alternativas cercanas</h3>
             <p className="text-muted-foreground text-sm sm:text-base text-center max-w-sm mb-6">
-              Lo sentimos, no hemos encontrado servicios disponibles en los próximos días para esta ruta.
+              Lo sentimos, no hemos encontrado servicios disponibles en los próximos 7 días para esta ruta.
             </p>
           </div>
         )}
