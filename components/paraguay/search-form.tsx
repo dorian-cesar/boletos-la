@@ -311,11 +311,13 @@ export function ParaguaySearchForm() {
                     />
                     <CommandList>
                       <CommandEmpty className="text-gray-500">
-                        {stopsLoading
+                        {stopsLoading || destLoading
                           ? "Cargando ciudades..."
                           : stopsError
                             ? "Error al cargar ciudades"
-                            : "No se encontró la ciudad."}
+                            : filteredStops.length === 0 && origin
+                              ? "No hay rutas disponibles para esta fecha"
+                              : "No se encontró la ciudad."}
                       </CommandEmpty>
                       <CommandGroup className="bg-transparent">
                         {stops.map((city) => (
@@ -436,7 +438,13 @@ export function ParaguaySearchForm() {
                             : "No se encontró la ciudad."}
                       </CommandEmpty>
                       <CommandGroup className="bg-transparent">
-                        {stops
+                        {originTitle && (
+                          <div className="px-2 py-2 text-xs font-semibold text-gray-700 bg-white/40 backdrop-blur-sm rounded-lg mb-2 flex items-center gap-2 border border-white/50 shadow-sm">
+                            <MapPin className="h-3.5 w-3.5" />
+                            Rutas disponibles desde {originTitle}
+                          </div>
+                        )}
+                        {filteredStops
                           .filter((c) => String(c.id) !== String(origin))
                           .map((city) => (
                             <CommandItem
