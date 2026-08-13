@@ -118,7 +118,7 @@ export function ParaguaySearchForm() {
     if (!origin || !departureDate) return stops;
     if (destLoading) return [];
     if (availableDestinations.length === 0) return [];
-    return stops.filter(stop => availableDestinations.includes(stop.name));
+    return stops.filter(stop => availableDestinations.some(d => d.trim().toLowerCase() === stop.name.trim().toLowerCase()));
   }, [stops, origin, departureDate, destLoading, availableDestinations]);
 
   const {
