@@ -330,6 +330,8 @@ export function ParaguaySearchForm() {
                             onSelect={() => {
                               setOrigin(city.id);
                               setOriginTitle(city.name);
+                              setDestination("");
+                              setDestinationTitle("");
                               setOriginOpen(false);
                             }}
                             className="cursor-pointer py-3 text-gray-700 hover:bg-white/20"
