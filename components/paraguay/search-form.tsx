@@ -143,10 +143,24 @@ export function ParaguaySearchForm() {
   useEffect(() => {
     if (!mounted || stops.length === 0) return;
 
-    if (origin && !originTitle) {
+    if (!origin) {
+      const asuncion = stops.find(s => s.name.toLowerCase().includes('asunción') || s.name.toLowerCase().includes('asuncion'));
+      if (asuncion) {
+        setOrigin(asuncion.id);
+        setOriginTitle(asuncion.name);
+      }
+    } else if (!originTitle) {
       const stop = stops.find((s) => String(s.id) === String(origin));
       if (stop) setOriginTitle(stop.name);
     }
+
+    if (!departureDate) {
+      const d = new Date();
+      const tzOffset = d.getTimezoneOffset() * 60000;
+      const localISOTime = (new Date(d.getTime() - tzOffset)).toISOString().slice(0, 10);
+      setDepartureDate(localISOTime);
+    }
+
     if (destination && !destinationTitle) {
       const stop = stops.find((s) => String(s.id) === String(destination));
       if (stop) setDestinationTitle(stop.name);
@@ -155,9 +169,12 @@ export function ParaguaySearchForm() {
     mounted,
     stops,
     origin,
+    departureDate,
     destination,
     originTitle,
     destinationTitle,
+    setOrigin,
+    setDepartureDate,
     setOriginTitle,
     setDestinationTitle,
   ]);
