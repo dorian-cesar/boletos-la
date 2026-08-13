@@ -108,19 +108,6 @@ export function ParaguaySearchForm() {
     setMounted(true);
   }, []);
 
-  const { stops, loading: stopsLoading, error: stopsError } = useStops();
-  const { availableDestinations, loading: destLoading } = useAvailableDestinations(
-    origin || null,
-    departureDate || null
-  );
-
-  const filteredStops = useMemo(() => {
-    if (!origin || !departureDate) return stops;
-    if (destLoading) return [];
-    if (availableDestinations.length === 0) return [];
-    return stops.filter(stop => availableDestinations.some(d => d.trim().toLowerCase() === stop.name.trim().toLowerCase()));
-  }, [stops, origin, departureDate, destLoading, availableDestinations]);
-
   const {
     tripType,
     origin,
@@ -138,6 +125,21 @@ export function ParaguaySearchForm() {
     originTitle,
     destinationTitle,
   } = useBookingStore();
+
+  const { stops, loading: stopsLoading, error: stopsError } = useStops();
+  const { availableDestinations, loading: destLoading } = useAvailableDestinations(
+    originTitle || null,
+    departureDate || null
+  );
+
+  const filteredStops = useMemo(() => {
+    if (!origin || !departureDate) return stops;
+    if (destLoading) return [];
+    if (availableDestinations.length === 0) return [];
+    return stops.filter(stop => availableDestinations.some(d => d.trim().toLowerCase() === stop.name.trim().toLowerCase()));
+  }, [stops, origin, departureDate, destLoading, availableDestinations]);
+
+
 
   // Populate titles if they are missing but IDs exist (e.g. on page load with persisted state)
   useEffect(() => {
