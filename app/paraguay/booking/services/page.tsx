@@ -163,6 +163,16 @@ export default function ServicesPage() {
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-4 text-center lg:text-left">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2 border-background/20 bg-background/5 text-background hover:bg-background/20 hover:text-background flex-shrink-0"
+                  onClick={() => router.push("/paraguay")}
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  <span>Volver</span>
+                </Button>
+                <div className="h-8 w-px bg-background/20 hidden sm:block" />
                 <div>
                   <p className="text-sm text-background/60">
                     {showingReturn ? "Viaje de Regreso" : "Viaje de Ida"}
