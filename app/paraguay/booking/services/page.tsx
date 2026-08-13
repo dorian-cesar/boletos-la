@@ -290,17 +290,41 @@ export default function ServicesPage() {
                       <div className="flex flex-col lg:flex-row lg:items-center gap-6">
                         {/* Company Info */}
                         <div className="flex items-center gap-4 lg:w-48">
-                          <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <Bus className="h-8 w-8 text-primary" />
-                          </div>
-                          <div>
-                            <p className="font-bold text-background">
-                              {trip.company}
-                            </p>
-                            <p className="text-sm text-background/60">
-                              {trip.busType}
-                            </p>
-                          </div>
+                          {(() => {
+                            const code = (trip.company || '').toUpperCase();
+                            let name = trip.company;
+                            let logo = null;
+                            let isObjectFitContain = false;
+                            
+                            if (code === 'LSN' || code === 'LSA' || code.includes('SANTANIANA')) {
+                              name = code === 'LSA' ? 'La Santaniana Argentina' : 'La Santaniana';
+                              logo = '/logos/santaniana-color.jpeg';
+                            } else if (code === 'LSP' || code.includes('SAMPEDRANA')) {
+                              name = 'La Sampedrana';
+                              logo = '/logos/logo-la-sampedrana.original.png';
+                              isObjectFitContain = true;
+                            }
+                            
+                            return (
+                              <>
+                                <div className="w-16 h-16 rounded-xl bg-background/5 border border-background/20 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                  {logo ? (
+                                    <Image src={logo} alt={name} width={64} height={64} className={cn("w-full h-full", isObjectFitContain ? "object-contain scale-150" : "object-cover")} />
+                                  ) : (
+                                    <Bus className="h-8 w-8 text-primary" />
+                                  )}
+                                </div>
+                                <div>
+                                  <p className="font-bold text-background leading-tight">
+                                    {name}
+                                  </p>
+                                  <p className="text-sm text-background/60 mt-1">
+                                    {trip.busType}
+                                  </p>
+                                </div>
+                              </>
+                            );
+                          })()}
                         </div>
 
                         {/* Time Info */}

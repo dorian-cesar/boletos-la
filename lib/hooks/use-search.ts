@@ -104,7 +104,12 @@ export function useSearch({
             arrivalTime: arrTime,
             duration: durationStr,
             price: Number(t.minFare ?? 0),
-            busType: t.serviceClass || "Bus",
+            busType: t.serviceClass 
+              ? (t.serviceClass.toUpperCase() === 'SC' ? 'Semi Cama' 
+                : t.serviceClass.toUpperCase() === 'C' ? 'Cama' 
+                : (t.serviceClass.toUpperCase() === 'CO' || t.serviceClass.toUpperCase() === 'COMUN') ? 'Común' 
+                : t.serviceClass) 
+              : "Bus",
             company: t.company,
             amenities,
             availableSeats: t.availableSeats || 0,
