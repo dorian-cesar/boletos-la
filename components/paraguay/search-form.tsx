@@ -29,6 +29,8 @@ import {
 } from "@/components/ui/command";
 import { useBookingStore } from "@/lib/booking-store";
 import { useStops } from "@/lib/hooks/use-stops";
+import { useAvailableDestinations } from "@/lib/hooks/use-available-destinations";
+import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { format, parse } from "date-fns";
 import { es } from "date-fns/locale";
@@ -107,6 +109,17 @@ export function ParaguaySearchForm() {
   }, []);
 
   const { stops, loading: stopsLoading, error: stopsError } = useStops();
+  const { availableDestinations, loading: destLoading } = useAvailableDestinations(
+    origin || null,
+    departureDate || null
+  );
+
+  const filteredStops = useMemo(() => {
+    if (!origin || !departureDate) return stops;
+    if (destLoading) return [];
+    if (availableDestinations.length === 0) return [];
+    return stops.filter(stop => availableDestinations.includes(stop.name));
+  }, [stops, origin, departureDate, destLoading, availableDestinations]);
 
   const {
     tripType,
