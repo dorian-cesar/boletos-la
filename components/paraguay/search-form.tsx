@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   Calendar,
@@ -30,7 +30,6 @@ import {
 import { useBookingStore } from "@/lib/booking-store";
 import { useStops } from "@/lib/hooks/use-stops";
 import { useAvailableDestinations } from "@/lib/hooks/use-available-destinations";
-import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { format, parse } from "date-fns";
 import { es } from "date-fns/locale";
@@ -145,31 +144,35 @@ export function ParaguaySearchForm() {
 
 
 
-  // Populate titles if they are missing but IDs exist (e.g. on page load with persisted state)
+  const hasInitializedDefault = useRef(false);
+
+  // Forzar Asunción y fecha actual obligatoriamente al cargar la página (ignorar persistencia anterior)
   useEffect(() => {
     if (!mounted || stops.length === 0) return;
 
-    if (!origin) {
+    if (!hasInitializedDefault.current) {
       const asuncion = stops.find(s => s.name.toLowerCase().includes('asunción') || s.name.toLowerCase().includes('asuncion'));
       if (asuncion) {
         setOrigin(asuncion.id);
         setOriginTitle(asuncion.name);
       }
-    } else if (!originTitle) {
-      const stop = stops.find((s) => String(s.id) === String(origin));
-      if (stop) setOriginTitle(stop.name);
-    }
-
-    if (!departureDate) {
+      
       const d = new Date();
       const tzOffset = d.getTimezoneOffset() * 60000;
       const localISOTime = (new Date(d.getTime() - tzOffset)).toISOString().slice(0, 10);
       setDepartureDate(localISOTime);
-    }
 
-    if (destination && !destinationTitle) {
-      const stop = stops.find((s) => String(s.id) === String(destination));
-      if (stop) setDestinationTitle(stop.name);
+      hasInitializedDefault.current = true;
+    } else {
+      if (origin && !originTitle) {
+        const stop = stops.find((s) => String(s.id) === String(origin));
+        if (stop) setOriginTitle(stop.name);
+      }
+      
+      if (destination && !destinationTitle) {
+        const stop = stops.find((s) => String(s.id) === String(destination));
+        if (stop) setDestinationTitle(stop.name);
+      }
     }
   }, [
     mounted,
