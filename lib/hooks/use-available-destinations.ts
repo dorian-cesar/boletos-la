@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export function useAvailableDestinations(originId: string | null, date: Date | null) {
+export function useAvailableDestinations(originId: string | null, date: string | null) {
   const [availableDestinations, setAvailableDestinations] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -17,8 +17,7 @@ export function useAvailableDestinations(originId: string | null, date: Date | n
       setLoading(true);
       setError(null);
       try {
-        const formattedDate = date.toISOString().split("T")[0]; // YYYY-MM-DD
-        const res = await fetch(`/api/gds/delta/available-destinations?originId=${originId}&date=${formattedDate}`);
+        const res = await fetch(`/api/gds/delta/available-destinations?originId=${originId}&date=${date}`);
         
         if (!res.ok) {
           throw new Error("Error fetching destinations");
