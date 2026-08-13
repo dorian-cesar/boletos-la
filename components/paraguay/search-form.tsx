@@ -128,15 +128,19 @@ export function ParaguaySearchForm() {
 
   const { stops, loading: stopsLoading, error: stopsError } = useStops();
   const { availableDestinations, loading: destLoading } = useAvailableDestinations(
-    originTitle || null,
+    origin || null,
     departureDate || null
   );
 
   const filteredStops = useMemo(() => {
     if (!origin || !departureDate) return stops;
     if (destLoading) return [];
+    
+    // Si llega vacío (0), significa NO HAY RUTAS y no mostramos nada
     if (availableDestinations.length === 0) return [];
-    return stops.filter(stop => availableDestinations.some(d => d.trim().toLowerCase() === stop.name.trim().toLowerCase()));
+    
+    // Filtramos comparando los IDs
+    return stops.filter(stop => availableDestinations.includes(String(stop.id)));
   }, [stops, origin, departureDate, destLoading, availableDestinations]);
 
 

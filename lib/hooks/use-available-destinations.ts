@@ -18,7 +18,7 @@ export function useAvailableDestinations(originId: string | null, date: Date | n
       setError(null);
       try {
         const formattedDate = date.toISOString().split("T")[0]; // YYYY-MM-DD
-        const res = await fetch(`/api/gds/available-destinations?origin=${originId}&date=${formattedDate}`);
+        const res = await fetch(`/api/gds/delta/available-destinations?originId=${originId}&date=${formattedDate}`);
         
         if (!res.ok) {
           throw new Error("Error fetching destinations");
@@ -27,7 +27,7 @@ export function useAvailableDestinations(originId: string | null, date: Date | n
         const json = await res.json();
         
         if (mounted) {
-          setAvailableDestinations(json.destinations || []);
+          setAvailableDestinations(json.data?.destinations || []);
         }
       } catch (err: any) {
         if (mounted) {
