@@ -440,7 +440,9 @@ export function ParaguaySearchForm() {
                           ? "Cargando ciudades..."
                           : stopsError
                             ? "Error al cargar ciudades"
-                            : "No se encontró la ciudad."}
+                            : availableDestinations.length === 0
+                              ? "No existen servicios disponibles para fechas cercanas desde este origen."
+                              : "No se encontró la ciudad."}
                       </CommandEmpty>
                       <CommandGroup className="bg-transparent">
                         {originTitle && (
