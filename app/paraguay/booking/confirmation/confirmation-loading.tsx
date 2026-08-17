@@ -90,174 +90,59 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
       const qrBase64 = await QRCode.toDataURL(qrContent);
 
       const payload = {
-        emailDestino: primaryPassenger.email,
-        reservaCodigo,
-        horaSalida: trip.departureTime,
-        origen:
-          (label === "Ida" ? originTitle : destinationTitle) || trip.origin,
-        horaLlegada: trip.arrivalTime,
-        destino:
-          (label === "Ida" ? destinationTitle : originTitle) ||
-          trip.destination,
-        fechaViaje: format(
-          parse(
-            (label === "Ida" ? departureDate : returnDate) || "",
-            "yyyy-MM-dd",
-            new Date(),
+          ticket_number: String(seat.ticketNumber || ticketMap[seatKey] || ""),
+          connection_id: String(connectionId || ""),
+          first_name: String(
+            passenger.firstName || primaryPassenger?.firstName || "",
           ),
-          "d 'de' MMMM, yyyy",
-          { locale: es },
-        ),
-        duracion: trip.duration,
-        empresa: trip.company,
-        servicioTipo: trip.busType,
-        asientos: seat.number,
-        pasajeroNombre: `${passenger.firstName} ${passenger.lastName}`,
-        documento: passenger.documentNumber || "Sin documento",
-        email: passenger.email || "Sin email",
-        fechaNacimiento: passenger.birthDate || "01/01/1990",
-        telefono: passenger.phone || "Sin teléfono",
-        total: `Gs. ${seat.price.toLocaleString("es-PY")}`,
-        pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
-        metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
-        numeroFactura: paymentDetails?.numero_factura || "",
-        timbrado: paymentDetails?.timbrado || "",
-        fechaVenta: format(new Date(), "dd/MM/yyyy HH:mm"),
-        asiento: seat.number,
-        servicio: trip.busType,
-        qrBase64: qrBase64,
-        cdc: paymentDetails?.cdc || "",
-      };
-
-      try {
-        const response = await fetch("/api/tickets/send-email", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (!response.ok) {
-          const errData = await response.json();
-          console.error(
-            "Error al enviar email (status code no exitoso):",
-            response.status,
-            errData,
-          );
-        } else {
-          console.log(
-            "Email enviado exitosamente para el asiento:",
-            seat.number,
-          );
-        }
-      } catch (err) {
-        console.error("Error enviando email:", err);
-      }
-    };
-
-    const tasks: Promise<void>[] = [];
-    selectedSeats.forEach((seat, idx) => {
-      const pass = passengerDetails[idx];
-      if (pass)
-        tasks.push(sendTripEmail(selectedOutboundTrip, seat, pass, "Ida"));
-    });
-
-    if (selectedReturnTrip && selectedReturnSeats.length > 0) {
-      selectedReturnSeats.forEach((seat, idx) => {
-        const pass = passengerDetails[selectedSeats.length + idx];
-        if (pass)
-          tasks.push(sendTripEmail(selectedReturnTrip, seat, pass, "Vuelta"));
-      });
-    }
-
-    await Promise.allSettled(tasks);
-  };
-
-  const saveTicketsInBackground = async (
-    paymentDetails: any,
-    activeRef: string,
-    tickets: Record<string, string>,
-  ) => {
-    if (!selectedOutboundTrip) return;
-
-    const saveTripTickets = async (
-      trip: any,
-      seats: any[],
-      label: string,
-      passengerStartIndex: number,
-      connId: string,
-      origin: string,
-      dest: string,
-      date: string,
-    ) => {
-      const tasks = seats.map(async (seat, idx) => {
-        const passenger = passengerDetails[passengerStartIndex + idx];
-        if (!passenger) return;
-
-        const ticketNumber =
-          tickets[`${label}-${seat.number}`] || `${activeRef}-${seat.number}`;
-
-        const payload = {
-          ticket_number: String(ticketNumber),
-          connection_id: String(connId || ""),
-          first_name: String(passenger.firstName || "").trim(),
-          last_name: String(passenger.lastName || "").trim(),
-          document_number: String(passenger.documentNumber || "").replace(
-            /[.\-\s]/g,
-            "",
+          last_name: String(
+            passenger.lastName || primaryPassenger?.lastName || "",
           ),
-          document_type_code: String(passenger.docType?.codigo || "C"),
+          document_number: String(
+            passenger.documentNumber || primaryPassenger?.documentNumber || "",
+          ),
+          document_type_code: String(
+            passenger.docType?.codigo ||
+              primaryPassenger?.docType?.codigo ||
+              "C",
+          ),
           document_type_name: String(
-            passenger.docType?.nombre || "C.I. Paraguaya",
+            passenger.docType?.nombre ||
+              primaryPassenger?.docType?.nombre ||
+              "Paraguay",
           ),
-          email: String(passenger.email || primaryPassenger?.email || ""),
-          phone: String(
-            passenger.phone || primaryPassenger?.phone || "",
-          ).replace(/\D/g, ""),
-          occupation: String(passenger.occupation || "EMPLEADO"),
-          birth_date: passenger.birthDate
-            ? String(passenger.birthDate).replace(/\//g, "-")
-            : "1990-01-01",
-          gender: String(passenger.gender || "M"),
-          nationality: String(passenger.nationality || "PY"),
-          country: String(passenger.country || "PY"),
-          seat_number: String(seat.number),
-          seat_type: String(seat.type || "standard"),
+          email: passenger.email || primaryPassenger?.email || null,
+          phone: passenger.phone || primaryPassenger?.phone ? String(passenger.phone || primaryPassenger?.phone).replace(/\D/g, "") : null,
+          occupation: passenger.occupation || null,
+          birth_date: passenger.birthDate ? String(passenger.birthDate).replace(/\//g, "-") : null,
+          gender: passenger.gender || null,
+          nationality: passenger.nationality || null,
+          country: passenger.country || "PY",
+          seat_number: seat.number || null,
+          seat_type: seat.type || null,
           seat_status: "occupied",
-          quality_code: String(seat.qualityCode || "CA"),
-          trip_id: String(trip.id),
-          origin_id: String(trip.origin),
-          destination_id: String(trip.destination),
-          origin_title: String(origin || ""),
-          destination_title: String(dest || ""),
-          departure_date: String(date || ""),
-          departure_time:
-            trip.departureTime &&
-            trip.departureTime.includes(":") &&
-            trip.departureTime.split(":").length === 2
-              ? `${trip.departureTime}:00`
-              : String(trip.departureTime || "00:00:00"),
-          arrival_time:
-            trip.arrivalTime &&
-            trip.arrivalTime.includes(":") &&
-            trip.arrivalTime.split(":").length === 2
-              ? `${trip.arrivalTime}:00`
-              : String(trip.arrivalTime || "00:00:00"),
-          duration: String(trip.duration || ""),
-          bus_type: String(trip.busType || ""),
-          company: String(trip.company || ""),
+          quality_code: seat.qualityCode || "CA",
+          trip_id: trip.id || null,
+          origin_id: trip.origin || null,
+          destination_id: trip.destination || null,
+          origin_title: origin || null,
+          destination_title: dest || null,
+          departure_date: date || null,
+          departure_time: trip.departureTime && trip.departureTime.includes(":") && trip.departureTime.split(":").length === 2 ? `${trip.departureTime}:00` : (trip.departureTime || null),
+          arrival_time: trip.arrivalTime && trip.arrivalTime.includes(":") && trip.arrivalTime.split(":").length === 2 ? `${trip.arrivalTime}:00` : (trip.arrivalTime || null),
+          duration: trip.duration || null,
+          bus_type: trip.busType || null,
+          company: trip.company || null,
           seat_price: Number(seat.price || trip.price || 0),
           total_booking_price: Number(totalPrice || 0),
           payment_status: "completed",
           payment_amount: Number(seat.price || trip.price || 0),
           payment_paid: Boolean(paymentDetails.pagado),
-          payment_token: String(
-            paymentDetails.token || paymentDetails.hash_pedido || "",
-          ),
-          payment_hash: String(
-            paymentDetails.hash_pedido || paymentDetails.token || "",
-          ),
-          numero_factura: String(paymentDetails.numero_factura || ""),
-          cdc: String(paymentDetails.cdc || ""),
-          timbrado: String(paymentDetails.timbrado || ""),
+          payment_token: paymentDetails.token || paymentDetails.hash_pedido || null,
+          payment_hash: paymentDetails.hash_pedido || paymentDetails.token || null,
+          numero_factura: paymentDetails.numero_factura || null,
+          cdc: paymentDetails.cdc || null,
+          timbrado: paymentDetails.timbrado || null,
           origen_transaccion: "web",
           tipo_pago: "BANCARD",
         };
