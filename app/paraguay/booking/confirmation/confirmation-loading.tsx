@@ -7,6 +7,7 @@ import { es } from "date-fns/locale";
 import { BookingProgress } from "@/components/paraguay/booking-progress";
 import { useBookingStore } from "@/lib/booking-store";
 import { sellGdsSeats } from "@/lib/gds-sell";
+import { trackPurchase } from "@/lib/meta-pixel";
 import {
   AlertCircle,
   CheckCircle2,
@@ -31,6 +32,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const processingRef = useRef(false);
+  const trackedPurchaseRef = useRef(false);
   const [status, setStatus] = useState<Status>("checking");
   const [pagoparHash, setPagoparHash] = useState<string | null>(null);
 
@@ -507,6 +509,18 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 if (confirmRes.ok) {
                   const rawData = await confirmRes.json();
                   confirmData = rawData;
+
+                  if (!trackedPurchaseRef.current) {
+                    trackedPurchaseRef.current = true;
+                    trackPurchase({
+                      value: totalPrice && totalPrice > 0 ? totalPrice : (rawData?.amount ? Number(rawData.amount) : 0),
+                      currency: "PYG",
+                      content_category: "paraguay",
+                      content_ids: selectedOutboundTrip?.id
+                        ? [selectedOutboundTrip.id]
+                        : ["pasaje-paraguay"],
+                    });
+                  }
 
                   const cdc =
                     rawData?.data?.confirmation?.electronicBillCdc ||

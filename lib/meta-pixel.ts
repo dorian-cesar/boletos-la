@@ -94,13 +94,19 @@ export interface PurchaseParams {
  * Envía el evento estándar 'Purchase' al completar exitosamente una compra
  */
 export function trackPurchase(params: PurchaseParams): void {
-  if (!isPixelAllowed()) return;
+  if (!isPixelAllowed()) {
+    console.log("[MetaPixel] Purchase tracking omitted (pixel disabled or test environment).");
+    return;
+  }
   if (typeof window.fbq === "function") {
+    console.log("[MetaPixel] Firing Purchase event:", params);
     window.fbq("track", "Purchase", {
       value: params.value,
       currency: params.currency || "PYG",
       content_category: params.content_category || "paraguay",
       content_ids: params.content_ids || [],
     });
+  } else {
+    console.warn("[MetaPixel] window.fbq is not available.");
   }
 }
