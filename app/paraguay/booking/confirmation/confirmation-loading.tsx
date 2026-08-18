@@ -125,6 +125,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           cdc: paymentDetails.cdc || null,
           timbrado: paymentDetails.timbrado || null,
           origen_transaccion: "web",
+          agencia_delta: "B02",
           tipo_pago: "BANCARD",
         };
 
