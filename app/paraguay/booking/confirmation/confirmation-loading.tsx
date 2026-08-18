@@ -84,6 +84,19 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
         const qrContent = cdcValue ? `https://ekuatia.set.gov.py/consultas/${cdcValue}` : reservaCodigo;
         const qrBase64 = await QRCode.toDataURL(qrContent);
 
+        
+    const resolveCompany = (code: string | null | undefined) => {
+      if (!code) return null;
+      const upper = String(code).toUpperCase();
+      if (upper === 'LSN') return 'La Santaniana';
+      if (upper === 'LSA') return 'La Santaniana Argentina';
+      if (upper === 'LSP') return 'La Sampedrana';
+      if (upper === 'RYSA') return 'RYSA';
+      if (upper === 'NSA') return 'Nuestra Señora de la Asunción';
+      if (upper === 'SLT') return 'San Luis S.A.';
+      return code;
+    };
+
         const payload = {
           ticket_number: String(seat.ticketNumber || tickets[`${label}-${seat.number}`] || ""),
           connection_id: String(connectionId || ""),
@@ -114,6 +127,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           duration: trip.duration || null,
           bus_type: trip.busType || null,
           company: trip.company || null,
+          empresa_transporte: resolveCompany(trip.company),
           seat_price: Number(seat.price || trip.price || 0),
           total_booking_price: Number(totalPrice || 0),
           payment_status: "completed",
