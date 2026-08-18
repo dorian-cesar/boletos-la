@@ -134,10 +134,10 @@ export function ParaguaySearchForm() {
   const filteredStops = useMemo(() => {
     if (!origin || !departureDate) return stops;
     if (destLoading) return [];
-    
+
     // Si llega vacío (0), significa NO HAY RUTAS y no mostramos nada
     if (availableDestinations.length === 0) return [];
-    
+
     // Filtramos comparando los IDs
     return stops.filter(stop => availableDestinations.includes(String(stop.id)));
   }, [stops, origin, departureDate, destLoading, availableDestinations]);
@@ -156,7 +156,7 @@ export function ParaguaySearchForm() {
         setOrigin(asuncion.id);
         setOriginTitle(asuncion.name);
       }
-      
+
       const d = new Date();
       const tzOffset = d.getTimezoneOffset() * 60000;
       const localISOTime = (new Date(d.getTime() - tzOffset)).toISOString().slice(0, 10);
@@ -168,7 +168,7 @@ export function ParaguaySearchForm() {
         const stop = stops.find((s) => String(s.id) === String(origin));
         if (stop) setOriginTitle(stop.name);
       }
-      
+
       if (destination && !destinationTitle) {
         const stop = stops.find((s) => String(s.id) === String(destination));
         if (stop) setDestinationTitle(stop.name);
@@ -232,7 +232,7 @@ export function ParaguaySearchForm() {
         className="w-full flex justify-center px-4 animate-scale-in"
         style={{ animationDelay: "0.6s" }}
       >
-        <div className="bg-white/40 backdrop-blur-md rounded-3xl shadow-2xl p-6 lg:p-8 border border-white/30 relative overflow-hidden w-full max-w-7xl">
+        <div className="bg-white/50 backdrop-blur-md rounded-3xl shadow-2xl p-6 lg:p-8 border border-white/20 relative overflow-hidden w-full max-w-7xl">
           {/* Efecto de vidrio con gradiente sutil */}
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl pointer-events-none" />
 
@@ -244,8 +244,8 @@ export function ParaguaySearchForm() {
                 className={cn(
                   "px-6 py-2 rounded-full font-medium transition-all duration-300 relative",
                   tripType === "one-way"
-                    ? "bg-white/20 text-gray-800 shadow-lg"
-                    : "text-gray-600 hover:text-gray-800 hover:bg-white/5",
+                    ? "bg-white text-gray-900 shadow-lg"
+                    : "text-white/70 hover:text-white hover:bg-white/10",
                 )}
               >
                 Solo Ida
@@ -255,8 +255,8 @@ export function ParaguaySearchForm() {
                 className={cn(
                   "px-6 py-2 rounded-full font-medium transition-all duration-300 relative",
                   tripType === "round-trip"
-                    ? "bg-white/20 text-gray-800 shadow-lg"
-                    : "text-gray-600 hover:text-gray-800 hover:bg-white/5",
+                    ? "bg-white text-gray-900 shadow-lg"
+                    : "text-white/70 hover:text-white hover:bg-white/10",
                 )}
               >
                 Ida y Vuelta
@@ -268,7 +268,7 @@ export function ParaguaySearchForm() {
           <div className="flex flex-col lg:flex-row gap-4 lg:gap-3 relative z-10 items-stretch lg:items-end">
             {/* Origin */}
             <div className="flex-1 min-w-0">
-              <Label className="text-sm font-medium text-gray-700 mb-2 block">
+              <Label className="text-sm font-medium text-white mb-2 block">
                 Origen
               </Label>
               <Popover
@@ -296,7 +296,7 @@ export function ParaguaySearchForm() {
                           ? "Cargando ciudades..."
                           : origin
                             ? stops.find((c) => String(c.id) === String(origin))
-                                ?.name
+                              ?.name
                             : "Selecciona origen"}
                       </span>
                     </div>
@@ -334,9 +334,9 @@ export function ParaguaySearchForm() {
                               setDestinationTitle("");
                               setOriginOpen(false);
                             }}
-                            className="cursor-pointer py-3 text-gray-700 hover:bg-white/20"
+                            className="cursor-pointer py-3 text-white hover:bg-white/20"
                           >
-                            <MapPin className="h-4 w-4 mr-2 text-gray-500 flex-shrink-0" />
+                            <MapPin className="h-4 w-4 mr-2 text-white/60 flex-shrink-0" />
                             <div className="min-w-0">
                               <p className="font-medium truncate">
                                 {city.name}
@@ -389,7 +389,7 @@ export function ParaguaySearchForm() {
 
             {/* Destination */}
             <div className="flex-1 min-w-0">
-              <Label className="text-sm font-medium text-gray-700 mb-2 block">
+              <Label className="text-sm font-medium text-white mb-2 block">
                 Destino
               </Label>
               <Popover
@@ -417,8 +417,8 @@ export function ParaguaySearchForm() {
                           ? "Cargando ciudades..."
                           : destination
                             ? stops.find(
-                                (c) => String(c.id) === String(destination),
-                              )?.name
+                              (c) => String(c.id) === String(destination),
+                            )?.name
                             : "Selecciona destino"}
                       </span>
                     </div>
@@ -462,9 +462,9 @@ export function ParaguaySearchForm() {
                                 setDestinationTitle(city.name);
                                 setDestinationOpen(false);
                               }}
-                              className="cursor-pointer py-3 text-gray-700 hover:bg-white/20"
+                              className="cursor-pointer py-3 text-white hover:bg-white/20"
                             >
-                              <MapPin className="h-4 w-4 mr-2 text-gray-500 flex-shrink-0" />
+                              <MapPin className="h-4 w-4 mr-2 text-white/60 flex-shrink-0" />
                               <div className="min-w-0">
                                 <p className="font-medium truncate">
                                   {city.name}
@@ -481,7 +481,7 @@ export function ParaguaySearchForm() {
 
             {/* Fecha de Ida */}
             <div className="flex-1 min-w-0">
-              <Label className="text-sm font-medium text-gray-700 mb-2 block">
+              <Label className="text-sm font-medium text-white mb-2 block">
                 Fecha de Ida
               </Label>
               <Popover
@@ -503,8 +503,8 @@ export function ParaguaySearchForm() {
                       >
                         {departureDate
                           ? format(parseDate(departureDate), "dd MMM yyyy", {
-                              locale: es,
-                            })
+                            locale: es,
+                          })
                           : "Selecciona fecha"}
                       </span>
                     </div>
@@ -555,8 +555,8 @@ export function ParaguaySearchForm() {
                         >
                           {returnDate
                             ? format(parseDate(returnDate), "dd MMM yyyy", {
-                                locale: es,
-                              })
+                              locale: es,
+                            })
                             : "Selecciona fecha"}
                         </span>
                       </div>

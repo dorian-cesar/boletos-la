@@ -74,43 +74,24 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
       return tickets[`${label}-${seatNumber}`] || `${activeRef}-${seatNumber}`;
     };
 
-    const sendTripEmail = async (
-      trip: any,
-      seat: any,
-      passenger: any,
-      label: string,
-    ) => {
-      const reservaCodigo = getTicketNumber(label, seat.number);
-      const cdcValue = paymentDetails?.cdc || "";
-      const qrContent = cdcValue
-        ? `https://ekuatia.set.gov.py/consultas/${cdcValue}`
-        : reservaCodigo;
+    const saveTripTickets = async (trip: any, seats: any[], label: string, offset: number, connectionId: string, origin: string, dest: string, date: string) => {
+      const tasks = seats.map(async (seat, index) => {
+        const passenger = passengerDetails[index + offset] || primaryPassenger;
+        if (!passenger) return;
+        
+        const reservaCodigo = getTicketNumber(label, seat.number);
+        const cdcValue = paymentDetails?.cdc || "";
+        const qrContent = cdcValue ? `https://ekuatia.set.gov.py/consultas/${cdcValue}` : reservaCodigo;
+        const qrBase64 = await QRCode.toDataURL(qrContent);
 
-      // Generar QR en base64
-      const qrBase64 = await QRCode.toDataURL(qrContent);
-
-      const payload = {
-          ticket_number: String(seat.ticketNumber || ticketMap[seatKey] || ""),
+        const payload = {
+          ticket_number: String(seat.ticketNumber || tickets[`${label}-${seat.number}`] || ""),
           connection_id: String(connectionId || ""),
-          first_name: String(
-            passenger.firstName || primaryPassenger?.firstName || "",
-          ),
-          last_name: String(
-            passenger.lastName || primaryPassenger?.lastName || "",
-          ),
-          document_number: String(
-            passenger.documentNumber || primaryPassenger?.documentNumber || "",
-          ),
-          document_type_code: String(
-            passenger.docType?.codigo ||
-              primaryPassenger?.docType?.codigo ||
-              "C",
-          ),
-          document_type_name: String(
-            passenger.docType?.nombre ||
-              primaryPassenger?.docType?.nombre ||
-              "Paraguay",
-          ),
+          first_name: String(passenger.firstName || primaryPassenger?.firstName || ""),
+          last_name: String(passenger.lastName || primaryPassenger?.lastName || ""),
+          document_number: String(passenger.documentNumber || primaryPassenger?.documentNumber || ""),
+          document_type_code: String(passenger.docType?.codigo || primaryPassenger?.docType?.codigo || "C"),
+          document_type_name: String(passenger.docType?.nombre || primaryPassenger?.docType?.nombre || "Paraguay"),
           email: passenger.email || primaryPassenger?.email || null,
           phone: passenger.phone || primaryPassenger?.phone ? String(passenger.phone || primaryPassenger?.phone).replace(/\D/g, "") : null,
           occupation: passenger.occupation || null,
@@ -157,7 +138,6 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           console.error("Error saving ticket to analytics:", err);
         }
       });
-
       await Promise.allSettled(tasks);
     };
 
@@ -295,7 +275,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
             finalRef,
             ticketMap,
           );
-          await saveTicketsInBackground(
+          await sendEmailAlertsInBackground(
             simulatedPaymentDetails,
             finalRef,
             ticketMap,
@@ -535,7 +515,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 finalRef,
                 ticketMap,
               );
-              await saveTicketsInBackground(
+              await sendEmailAlertsInBackground(
                 realPaymentDetails,
                 finalRef,
                 ticketMap,
@@ -638,7 +618,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 }
               }
               await sendEmailAlertsInBackground(payment, finalRef, ticketMap);
-              await saveTicketsInBackground(payment, finalRef, ticketMap);
+              await sendEmailAlertsInBackground(payment, finalRef, ticketMap);
             }
 
             setPaymentResult({

@@ -1,7 +1,14 @@
 import { useState, useEffect } from "react";
 
+export interface AvailableDestination {
+  destinationId: string;
+  times: string[];
+  lastServiceTime: string;
+  serviceCount: number;
+}
+
 export function useAvailableDestinations(originId: string | null, date: string | null) {
-  const [availableDestinations, setAvailableDestinations] = useState<string[]>([]);
+  const [availableDestinations, setAvailableDestinations] = useState<(AvailableDestination | string)[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
