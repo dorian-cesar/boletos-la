@@ -24,16 +24,15 @@ export function useAvailableDestinations(originId: string | null, date: string |
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`/api/gds/delta/available-destinations?originId=${originId}&date=${date}`);
-        
-        if (!res.ok) {
-          throw new Error("Error fetching destinations");
-        }
-        
-        const json = await res.json();
+        // const res = await fetch(`/api/gds/delta/available-destinations?originId=${originId}&date=${date}`);
+        // if (!res.ok) {
+        //   throw new Error("Error fetching destinations");
+        // }
+        // const json = await res.json();
         
         if (mounted) {
-          setAvailableDestinations(json.data?.destinations || []);
+          // setAvailableDestinations(json.data?.destinations || []);
+          setAvailableDestinations([]);
         }
       } catch (err: any) {
         if (mounted) {
