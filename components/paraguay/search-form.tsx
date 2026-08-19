@@ -132,15 +132,9 @@ export function ParaguaySearchForm() {
   );
 
   const filteredStops = useMemo(() => {
-    if (!origin || !departureDate) return stops;
-    if (destLoading) return [];
-
-    // Si llega vacío (0), significa NO HAY RUTAS y no mostramos nada
-    if (availableDestinations.length === 0) return [];
-
-    // Filtramos comparando los IDs
-    return stops.filter(stop => availableDestinations.includes(String(stop.id)));
-  }, [stops, origin, departureDate, destLoading, availableDestinations]);
+    // Temporalmente no filtramos por availableDestinations por mantenimiento en backend
+    return stops;
+  }, [stops]);
 
 
 
@@ -440,17 +434,15 @@ export function ParaguaySearchForm() {
                           ? "Cargando ciudades..."
                           : stopsError
                             ? "Error al cargar ciudades"
-                            : availableDestinations.length === 0
-                              ? "No existen servicios disponibles para fechas cercanas desde este origen."
-                              : "No se encontró la ciudad."}
+                            : "No se encontró la ciudad."}
                       </CommandEmpty>
                       <CommandGroup className="bg-transparent">
-                        {originTitle && (
+                        {/* {originTitle && (
                           <div className="px-2 py-2 text-xs font-semibold text-gray-700 bg-white/40 backdrop-blur-sm rounded-lg mb-2 flex items-center gap-2 border border-white/50 shadow-sm">
                             <MapPin className="h-3.5 w-3.5" />
                             Rutas disponibles desde {originTitle}
                           </div>
-                        )}
+                        )} */}
                         {filteredStops
                           .filter((c) => String(c.id) !== String(origin))
                           .map((city) => (
