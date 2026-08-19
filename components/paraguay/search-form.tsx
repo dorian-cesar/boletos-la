@@ -132,9 +132,20 @@ export function ParaguaySearchForm() {
   );
 
   const filteredStops = useMemo(() => {
-    // Temporalmente no filtramos por availableDestinations por mantenimiento en backend
-    return stops;
-  }, [stops]);
+    if (!origin || !departureDate) return stops;
+    if (destLoading) return [];
+
+    // Si llega vacío (0), no filtramos agresivamente
+    if (availableDestinations.length === 0) return stops; // Modificado para coincidir con Totem (no bloquear)
+
+    // Filtramos comparando los IDs
+    return stops.filter(stop => {
+      return availableDestinations.some(d => {
+        if (typeof d === 'string') return d === String(stop.id);
+        return String((d as any).destinationId) === String(stop.id);
+      });
+    });
+  }, [stops, origin, departureDate, destLoading, availableDestinations]);
 
 
 
@@ -314,6 +325,8 @@ export function ParaguaySearchForm() {
                             ? "Error al cargar ciudades"
                             : filteredStops.length === 0 && origin
                               ? "No hay rutas disponibles para esta fecha"
+                              : availableDestinations.length === 0
+                              ? "No existen servicios disponibles para fechas cercanas desde este origen."
                               : "No se encontró la ciudad."}
                       </CommandEmpty>
                       <CommandGroup className="bg-transparent">
@@ -335,8 +348,44 @@ export function ParaguaySearchForm() {
                               <p className="font-medium truncate">
                                 {city.name}
                               </p>
-                            </div>
-                          </CommandItem>
+                            
+                            {(() => {
+                              const destData = availableDestinations.find(d => {
+                                if (typeof d === 'string') return d === String(city.id);
+                                return String((d as any).destinationId) === String(city.id);
+                              });
+                              const isObject = destData && typeof destData === 'object';
+                              let dynamicCount = 0;
+                              if (isObject && (destData as any).times && departureDate) {
+                                const times = (destData as any).times;
+                                const todayDate = new Date();
+                                const tzOffset = todayDate.getTimezoneOffset() * 60000;
+                                const localISOToday = (new Date(todayDate.getTime() - tzOffset)).toISOString().slice(0, 10);
+                                const selectedISODate = new Date(departureDate).toISOString().slice(0, 10);
+
+                                if (selectedISODate === localISOToday) {
+                                  const hours = String(todayDate.getHours()).padStart(2, '0');
+                                  const minutes = String(todayDate.getMinutes()).padStart(2, '0');
+                                  const currentHourMinute = `${hours}:${minutes}`;
+                                  dynamicCount = times.filter((t: string) => t >= currentHourMinute).length;
+                                } else if (selectedISODate > localISOToday) {
+                                  dynamicCount = times.length;
+                                }
+                              } else if (isObject && (destData as any).serviceCount !== undefined) {
+                                dynamicCount = (destData as any).serviceCount;
+                              }
+
+                              if (isObject && dynamicCount > 0) {
+                                return (
+                                  <p className="text-xs text-white/70 mt-0.5">
+                                    {dynamicCount} {dynamicCount === 1 ? 'servicio' : 'servicios'}
+                                  </p>
+                                );
+                              }
+                              return null;
+                            })()}
+                              </div>
+                            </CommandItem>
                         ))}
                       </CommandGroup>
                     </CommandList>
@@ -437,12 +486,12 @@ export function ParaguaySearchForm() {
                             : "No se encontró la ciudad."}
                       </CommandEmpty>
                       <CommandGroup className="bg-transparent">
-                        {/* {originTitle && (
+                        {originTitle && (
                           <div className="px-2 py-2 text-xs font-semibold text-gray-700 bg-white/40 backdrop-blur-sm rounded-lg mb-2 flex items-center gap-2 border border-white/50 shadow-sm">
                             <MapPin className="h-3.5 w-3.5" />
                             Rutas disponibles desde {originTitle}
                           </div>
-                        )} */}
+                        )}
                         {filteredStops
                           .filter((c) => String(c.id) !== String(origin))
                           .map((city) => (
