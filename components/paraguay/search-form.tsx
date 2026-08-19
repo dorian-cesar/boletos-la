@@ -131,20 +131,64 @@ export function ParaguaySearchForm() {
     departureDate || null
   );
 
+  const getStopDynamicCount = (stopId: string | number) => {
+    const destData = availableDestinations.find(d => {
+      if (typeof d === 'string') return d === String(stopId);
+      return String((d as any).destinationId) === String(stopId);
+    });
+    const isObject = destData && typeof destData === 'object';
+    if (!isObject) return 0;
+
+    if ((destData as any).times && departureDate) {
+      const times = (destData as any).times;
+      const todayDate = new Date();
+      const tzOffset = todayDate.getTimezoneOffset() * 60000;
+      const localISOToday = (new Date(todayDate.getTime() - tzOffset)).toISOString().slice(0, 10);
+      const selectedISODate = new Date(departureDate).toISOString().slice(0, 10);
+
+      if (selectedISODate === localISOToday) {
+        const hours = String(todayDate.getHours()).padStart(2, '0');
+        const minutes = String(todayDate.getMinutes()).padStart(2, '0');
+        const currentHourMinute = `${hours}:${minutes}`;
+        return times.filter((t: string) => t >= currentHourMinute).length;
+      } else if (selectedISODate > localISOToday) {
+        return times.length;
+      }
+    }
+    return (destData as any).serviceCount || 0;
+  };
+
   const filteredStops = useMemo(() => {
     if (!origin || !departureDate) return stops;
     if (destLoading) return [];
 
     // Si llega vacío (0), no filtramos agresivamente
-    if (availableDestinations.length === 0) return stops; // Modificado para coincidir con Totem (no bloquear)
+    if (availableDestinations.length === 0) return stops;
 
     // Filtramos comparando los IDs
-    return stops.filter(stop => {
-      return availableDestinations.some(d => {
-        if (typeof d === 'string') return d === String(stop.id);
-        return String((d as any).destinationId) === String(stop.id);
+    return stops
+      .filter(stop => {
+        return availableDestinations.some(d => {
+          if (typeof d === 'string') return d === String(stop.id);
+          return String((d as any).destinationId) === String(stop.id);
+        });
+      })
+      .sort((a, b) => {
+        const countA = getStopDynamicCount(a.id);
+        const countB = getStopDynamicCount(b.id);
+
+        // 1. Destinos con servicios disponibles primero
+        if (countA > 0 && countB === 0) return -1;
+        if (countA === 0 && countB > 0) return 1;
+
+        // 2. Mayor cantidad de servicios primero
+        if (countA > 0 && countB > 0 && countB !== countA) {
+          return countB - countA;
+        }
+
+        // 3. Alfabético por nombre
+        return a.name.localeCompare(b.name);
       });
-    });
   }, [stops, origin, departureDate, destLoading, availableDestinations]);
 
 
@@ -349,41 +393,7 @@ export function ParaguaySearchForm() {
                                 {city.name}
                               </p>
                             
-                            {(() => {
-                              const destData = availableDestinations.find(d => {
-                                if (typeof d === 'string') return d === String(city.id);
-                                return String((d as any).destinationId) === String(city.id);
-                              });
-                              const isObject = destData && typeof destData === 'object';
-                              let dynamicCount = 0;
-                              if (isObject && (destData as any).times && departureDate) {
-                                const times = (destData as any).times;
-                                const todayDate = new Date();
-                                const tzOffset = todayDate.getTimezoneOffset() * 60000;
-                                const localISOToday = (new Date(todayDate.getTime() - tzOffset)).toISOString().slice(0, 10);
-                                const selectedISODate = new Date(departureDate).toISOString().slice(0, 10);
 
-                                if (selectedISODate === localISOToday) {
-                                  const hours = String(todayDate.getHours()).padStart(2, '0');
-                                  const minutes = String(todayDate.getMinutes()).padStart(2, '0');
-                                  const currentHourMinute = `${hours}:${minutes}`;
-                                  dynamicCount = times.filter((t: string) => t >= currentHourMinute).length;
-                                } else if (selectedISODate > localISOToday) {
-                                  dynamicCount = times.length;
-                                }
-                              } else if (isObject && (destData as any).serviceCount !== undefined) {
-                                dynamicCount = (destData as any).serviceCount;
-                              }
-
-                              if (isObject && dynamicCount > 0) {
-                                return (
-                                  <p className="text-xs text-white/70 mt-0.5">
-                                    {dynamicCount} {dynamicCount === 1 ? 'servicio' : 'servicios'}
-                                  </p>
-                                );
-                              }
-                              return null;
-                            })()}
                               </div>
                             </CommandItem>
                         ))}
@@ -510,6 +520,31 @@ export function ParaguaySearchForm() {
                                 <p className="font-medium truncate">
                                   {city.name}
                                 </p>
+                                {(() => {
+                                  const destData = availableDestinations.find(d => {
+                                    if (typeof d === 'string') return d === String(city.id);
+                                    return String((d as any).destinationId) === String(city.id);
+                                  });
+                                  const isObject = destData && typeof destData === 'object';
+                                  const dynamicCount = getStopDynamicCount(city.id);
+
+                                  if (isObject) {
+                                    if (dynamicCount > 0) {
+                                      return (
+                                        <p className="text-xs text-white/70 mt-0.5">
+                                          {dynamicCount} {dynamicCount === 1 ? 'servicio' : 'servicios'}
+                                        </p>
+                                      );
+                                    } else if ((destData as any).times?.length > 0) {
+                                      return (
+                                        <p className="text-xs text-red-400 font-medium mt-0.5">
+                                          Salidas finalizadas por hoy
+                                        </p>
+                                      );
+                                    }
+                                  }
+                                  return null;
+                                })()}
                               </div>
                             </CommandItem>
                           ))}
