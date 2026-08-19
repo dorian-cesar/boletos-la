@@ -69,6 +69,7 @@ export async function POST(request: NextRequest) {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
+          "X-Channel": process.env.NEXT_PUBLIC_APP_CHANNEL || "web",
         },
       },
     );

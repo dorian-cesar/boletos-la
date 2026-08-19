@@ -79,6 +79,7 @@ export async function POST(request: NextRequest) {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          "X-Channel": process.env.NEXT_PUBLIC_APP_CHANNEL || "web",
         },
         body: JSON.stringify({ data }),
       },

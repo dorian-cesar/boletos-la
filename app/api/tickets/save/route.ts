@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-        "X-Channel": "web",
+        "X-Channel": process.env.NEXT_PUBLIC_APP_CHANNEL || "web",
       },
       body: JSON.stringify(payload),
       signal: AbortSignal.timeout(20000), // 20 segundos timeout

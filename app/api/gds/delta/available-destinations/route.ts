@@ -4,11 +4,14 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
-    const originId = searchParams.get('originId');
-    const date = searchParams.get('date');
+    const originId = searchParams.get("originId");
+    const date = searchParams.get("date");
 
     if (!originId || !date) {
-      return NextResponse.json({ error: "Missing originId or date" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing originId or date" },
+        { status: 400 },
+      );
     }
 
     const backendUrl =
@@ -80,12 +83,15 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    const apiRes = await fetch(`${backendUrl}/api/gds/delta/available-destinations?originId=${originId}&date=${date}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "X-Channel": process.env.NEXT_PUBLIC_APP_CHANNEL || "web",
+    const apiRes = await fetch(
+      `${backendUrl}/api/gds/delta/available-destinations?originId=${originId}&date=${date}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-Channel": process.env.NEXT_PUBLIC_APP_CHANNEL || "web",
+        },
       },
-    });
+    );
 
     if (!apiRes.ok) {
       const errorText = await apiRes.text();

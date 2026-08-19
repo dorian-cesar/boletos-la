@@ -13,8 +13,7 @@ export async function POST(req: NextRequest) {
     if (!backendUrl || !authEmail || !authPassword) {
       return NextResponse.json(
         {
-          error:
-            "Faltan variables de entorno para autenticacion en el backend",
+          error: "Faltan variables de entorno para autenticacion en el backend",
         },
         { status: 500 },
       );
@@ -81,6 +80,7 @@ export async function POST(req: NextRequest) {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
+        "X-Channel": process.env.NEXT_PUBLIC_APP_CHANNEL || "web",
       },
       body: JSON.stringify({ docType, docNumber }),
     });
