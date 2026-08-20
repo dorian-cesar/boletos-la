@@ -281,7 +281,7 @@ export function ParaguaySearchForm() {
         className="w-full flex justify-center px-4 animate-scale-in"
         style={{ animationDelay: "0.6s" }}
       >
-        <div className="bg-white/70 backdrop-blur-md rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-8 border border-white/60 relative overflow-hidden w-full max-w-7xl">
+        <div className="bg-white/50 backdrop-blur-md rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-8 border border-white/60 relative overflow-hidden w-full max-w-7xl">
           {/* Efecto de vidrio con gradiente sutil */}
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl pointer-events-none" />
 
@@ -368,8 +368,8 @@ export function ParaguaySearchForm() {
                             : filteredStops.length === 0 && origin
                               ? "No hay rutas disponibles para esta fecha"
                               : availableDestinations.length === 0
-                              ? "No existen servicios disponibles para fechas cercanas desde este origen."
-                              : "No se encontró la ciudad."}
+                                ? "No existen servicios disponibles para fechas cercanas desde este origen."
+                                : "No se encontró la ciudad."}
                       </CommandEmpty>
                       <CommandGroup className="bg-transparent">
                         {stops.map((city) => (
@@ -385,15 +385,15 @@ export function ParaguaySearchForm() {
                             }}
                             className="cursor-pointer py-3 text-white hover:bg-white/20"
                           >
-                            <MapPin className="h-4 w-4 mr-2 text-white/60 flex-shrink-0" />
+                            <MapPin className="h-4 w-4 mr-2 text-white flex-shrink-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
                             <div className="min-w-0">
-                              <p className="font-medium truncate">
+                              <p className="font-semibold truncate tracking-wide [text-shadow:_0_1px_3px_rgb(0_0_0_/_80%)]">
                                 {city.name}
                               </p>
-                            
 
-                              </div>
-                            </CommandItem>
+
+                            </div>
+                          </CommandItem>
                         ))}
                       </CommandGroup>
                     </CommandList>
@@ -511,9 +511,9 @@ export function ParaguaySearchForm() {
                               }}
                               className="cursor-pointer py-3 text-white hover:bg-white/20"
                             >
-                              <MapPin className="h-4 w-4 mr-2 text-white/60 flex-shrink-0" />
+                              <MapPin className="h-4 w-4 mr-2 text-white flex-shrink-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
                               <div className="min-w-0">
-                                <p className="font-medium truncate">
+                                <p className="font-semibold truncate tracking-wide [text-shadow:_0_1px_3px_rgb(0_0_0_/_80%)]">
                                   {city.name}
                                 </p>
                                 {(() => {
