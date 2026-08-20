@@ -506,7 +506,7 @@ export default function CheckoutPage() {
                                   alt={name}
                                   width={64}
                                   height={64}
-                                  className={cn("w-full h-full", isObjectFitContain ? "object-contain p-2" : "object-cover")}
+                                  className={cn("w-full h-full", isObjectFitContain ? "object-contain scale-125" : "object-cover")}
                                 />
                               </div>
                             ) : (
@@ -576,7 +576,7 @@ export default function CheckoutPage() {
                                     alt={name}
                                     width={64}
                                     height={64}
-                                    className={cn("w-full h-full", isObjectFitContain ? "object-contain p-2" : "object-cover")}
+                                    className={cn("w-full h-full", isObjectFitContain ? "object-contain scale-125" : "object-cover")}
                                   />
                                 </div>
                               ) : (
