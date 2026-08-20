@@ -281,12 +281,12 @@ export function ParaguaySearchForm() {
         className="w-full flex justify-center px-4 animate-scale-in"
         style={{ animationDelay: "0.6s" }}
       >
-        <div className="bg-white/75 backdrop-blur-md rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-8 border border-white/60 relative overflow-hidden w-full max-w-7xl">
+        <div className="bg-white/75 lg:bg-white dark:lg:bg-card backdrop-blur-md lg:backdrop-blur-none rounded-3xl lg:rounded-[1.5rem] shadow-2xl lg:shadow-xl p-6 sm:p-8 lg:px-6 lg:py-6 border border-white/60 lg:border-none relative overflow-hidden lg:overflow-visible w-full max-w-7xl mx-auto">
           {/* Efecto de vidrio con gradiente sutil */}
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl pointer-events-none" />
 
           {/* Trip Type Toggle */}
-          <div className="flex justify-center mb-8 relative z-10">
+          <div className="flex lg:hidden justify-center mb-8 relative z-10">
             <div className="inline-flex bg-slate-200/50 backdrop-blur-sm rounded-full p-1 border border-slate-300/50">
               <button
                 onClick={() => setTripType("one-way")}
@@ -314,10 +314,43 @@ export function ParaguaySearchForm() {
           </div>
 
           {/* Search Fields - Responsive con mismo ancho */}
-          <div className="flex flex-col lg:flex-row gap-4 lg:gap-3 relative z-10 items-stretch lg:items-end">
+          <div className="flex flex-col lg:flex-row gap-4 lg:gap-3 relative z-10 items-stretch lg:items-end w-full">
+            {/* Trip Type Selector - Desktop inline */}
+            <div className="hidden lg:flex flex-col flex-shrink-0">
+              <Label className="text-[13px] font-bold text-slate-900 dark:text-slate-200 mb-1 block">
+                Tipo de viaje
+              </Label>
+              <div className="inline-flex h-14 items-center bg-slate-50 dark:bg-slate-800/80 rounded-xl p-1 border border-slate-300 dark:border-slate-700 shadow-sm">
+                <button
+                  type="button"
+                  onClick={() => setTripType("one-way")}
+                  className={cn(
+                    "px-3.5 h-full text-sm rounded-lg font-semibold transition-all duration-200 whitespace-nowrap flex items-center justify-center",
+                    tripType === "one-way"
+                      ? "bg-primary text-white shadow-sm"
+                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                  )}
+                >
+                  Solo Ida
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTripType("round-trip")}
+                  className={cn(
+                    "px-3.5 h-full text-sm rounded-lg font-semibold transition-all duration-200 whitespace-nowrap flex items-center justify-center",
+                    tripType === "round-trip"
+                      ? "bg-primary text-white shadow-sm"
+                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                  )}
+                >
+                  Ida y Vuelta
+                </button>
+              </div>
+            </div>
+
             {/* Origin */}
             <div className="flex-1 min-w-0">
-              <Label className="text-lg sm:text-xl lg:text-base font-extrabold text-slate-900 mb-2 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]">
+              <Label className="text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold text-slate-900 dark:text-slate-200 mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]">
                 Origen
               </Label>
               <Popover
@@ -438,7 +471,7 @@ export function ParaguaySearchForm() {
 
             {/* Destination */}
             <div className="flex-1 min-w-0">
-              <Label className="text-lg sm:text-xl lg:text-base font-extrabold text-slate-900 mb-2 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]">
+              <Label className="text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold text-slate-900 dark:text-slate-200 mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]">
                 Destino
               </Label>
               <Popover
@@ -551,7 +584,7 @@ export function ParaguaySearchForm() {
 
             {/* Fecha de Ida */}
             <div className="flex-1 min-w-0">
-              <Label className="text-lg sm:text-xl lg:text-base font-extrabold text-slate-900 mb-2 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]">
+              <Label className="text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold text-slate-900 dark:text-slate-200 mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]">
                 Fecha de Ida
               </Label>
               <Popover
@@ -606,7 +639,7 @@ export function ParaguaySearchForm() {
             {/* Fecha de Vuelta */}
             {tripType === "round-trip" && (
               <div className="flex-1 min-w-0 animate-in fade-in slide-in-from-right-5 duration-500">
-                <Label className="text-lg sm:text-xl lg:text-base font-extrabold text-slate-900 mb-2 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]">
+                <Label className="text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold text-slate-900 dark:text-slate-200 mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]">
                   Fecha de Vuelta
                 </Label>
                 <Popover open={returnDateOpen} onOpenChange={setReturnDateOpen}>
@@ -656,10 +689,28 @@ export function ParaguaySearchForm() {
                 </Popover>
               </div>
             )}
+
+            {/* Desktop Search Button inline */}
+            <div className="hidden lg:flex flex-shrink-0 items-end ml-auto">
+              <Button
+                onClick={handleSearch}
+                disabled={
+                  stopsLoading ||
+                  !origin ||
+                  !destination ||
+                  !departureDate ||
+                  (tripType === "round-trip" && !returnDate)
+                }
+                className="bg-primary hover:bg-primary/90 text-white h-14 px-8 text-lg font-bold rounded-full shadow-lg transition-all duration-300 hover:scale-105 disabled:opacity-50"
+              >
+                Buscar Boletos
+                <ArrowRight className="h-5 w-5 shrink-0 text-white ml-2" />
+              </Button>
+            </div>
           </div>
 
           {/* Search Button */}
-          <div className="mt-8 flex justify-center relative z-10">
+          <div className="mt-8 flex lg:hidden justify-center relative z-10">
             <Button
               onClick={handleSearch}
               disabled={
