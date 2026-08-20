@@ -313,8 +313,8 @@ export function RefundForm() {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-6 md:p-8 bg-[#1a1a1a] rounded-2xl border border-white/10 shadow-2xl">
-      <h2 className="text-3xl font-bold text-white mb-2">Anulación o Reembolso</h2>
+    <div className="w-full max-w-3xl mx-auto p-6 md:p-8 bg-[#1a1a1a] rounded-2xl border border-black/10 dark:border-white/10 shadow-2xl">
+      <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Anulación o Reembolso</h2>
       <p className="text-gray-400 mb-8">
         Ingresá tu número de pasaje o boleto para buscar los detalles de tu viaje y procesar la solicitud de anulación o reembolso.
       </p>
@@ -328,7 +328,7 @@ export function RefundForm() {
             onChange={(e) => setTicketNumber(e.target.value)}
             placeholder="Ej: 123456789012345"
             disabled={loading || (lockedUntil !== null && lockedUntil > Date.now())}
-            className="mt-1 bg-white/5 border-white/10 text-white placeholder:text-gray-500 h-12"
+            className="mt-1 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-gray-500 h-12"
           />
         </div>
         <div className="flex items-end">
@@ -366,32 +366,32 @@ export function RefundForm() {
 
       {ticketData && !success && (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <div className="p-6 bg-white/5 border border-white/10 rounded-xl space-y-6">
-            <h3 className="text-xl font-semibold text-white border-b border-white/10 pb-2">
+          <div className="p-6 bg-white/5 border border-black/10 dark:border-white/10 rounded-xl space-y-6">
+            <h3 className="text-xl font-semibold text-slate-900 dark:text-white border-b border-black/10 dark:border-white/10 pb-2">
               Detalles del Pasaje / Boleto
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               <div>
                 <Label className="text-gray-400 text-xs uppercase tracking-wider">Nombres</Label>
-                <Input value={ticketData.firstName} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
+                <Input value={ticketData.firstName} readOnly className="mt-1 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white opacity-70" />
               </div>
               <div>
                 <Label className="text-gray-400 text-xs uppercase tracking-wider">Apellidos</Label>
-                <Input value={ticketData.lastName} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
+                <Input value={ticketData.lastName} readOnly className="mt-1 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white opacity-70" />
               </div>
               <div className="sm:col-span-2 md:col-span-1">
                 <Label className="text-gray-400 text-xs uppercase tracking-wider">Tipo Documento</Label>
-                <Input value={ticketData.documentType} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
+                <Input value={ticketData.documentType} readOnly className="mt-1 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white opacity-70" />
               </div>
               <div>
                 <Label className="text-gray-400 text-xs uppercase tracking-wider">Nro. de Cédula / Doc.</Label>
-                <Input value={ticketData.documentNumber} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
+                <Input value={ticketData.documentNumber} readOnly className="mt-1 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white opacity-70" />
               </div>
               <div>
                 <Label className="text-gray-400 text-xs uppercase tracking-wider">Ruta</Label>
                 <div 
-                  className="mt-1 h-10 bg-white/5 border border-white/10 rounded-md px-3 flex items-center overflow-hidden relative text-white opacity-70 text-sm font-medium cursor-default"
+                  className="mt-1 h-10 bg-white/5 border border-black/10 dark:border-white/10 rounded-md px-3 flex items-center overflow-hidden relative text-slate-900 dark:text-white opacity-70 text-sm font-medium cursor-default"
                   title={ticketData.route}
                 >
                   <div className="w-full overflow-hidden whitespace-nowrap">
@@ -413,24 +413,24 @@ export function RefundForm() {
                       : "Empresa de Transporte"
                   } 
                   readOnly 
-                  className="mt-1 bg-white/5 border-white/10 text-white opacity-70" 
+                  className="mt-1 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white opacity-70" 
                 />
               </div>
               <div>
                 <Label className="text-gray-400 text-xs uppercase tracking-wider">Fecha de Viaje</Label>
-                <Input value={ticketData.date} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
+                <Input value={ticketData.date} readOnly className="mt-1 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white opacity-70" />
               </div>
               <div>
                 <Label className="text-gray-400 text-xs uppercase tracking-wider">Fecha de Compra</Label>
-                <Input value={ticketData.purchaseDate} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
+                <Input value={ticketData.purchaseDate} readOnly className="mt-1 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white opacity-70" />
               </div>
               <div>
                 <Label className="text-gray-400 text-xs uppercase tracking-wider">Asiento</Label>
-                <Input value={ticketData.seatNumber || "N/A"} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
+                <Input value={ticketData.seatNumber || "N/A"} readOnly className="mt-1 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white opacity-70" />
               </div>
               <div>
                 <Label className="text-gray-400 text-xs uppercase tracking-wider">Monto Pagado</Label>
-                <Input value={ticketData.amount ? `Gs. ${Number(ticketData.amount).toLocaleString('es-PY')}` : 'Gs. 0'} readOnly className="mt-1 bg-white/5 border-white/10 text-white opacity-70" />
+                <Input value={ticketData.amount ? `Gs. ${Number(ticketData.amount).toLocaleString('es-PY')}` : 'Gs. 0'} readOnly className="mt-1 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white opacity-70" />
               </div>
             </div>
 
@@ -453,7 +453,7 @@ export function RefundForm() {
               </div>
             )}
             {gdsStatus === "error" && (
-              <div className="flex items-center space-x-3 text-gray-400 text-sm mt-4 p-4 bg-white/5 border border-white/10 rounded-lg">
+              <div className="flex items-center space-x-3 text-gray-400 text-sm mt-4 p-4 bg-white/5 border border-black/10 dark:border-white/10 rounded-lg">
                 <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 <span>No se pudo consultar a la empresa de transporte en este momento.</span>
               </div>
@@ -465,10 +465,10 @@ export function RefundForm() {
               <div className="space-y-2">
                 <Label htmlFor="transactionCountry" className="text-gray-300 font-semibold text-sm">País de la Transacción</Label>
                 <Select value={transactionCountry} onValueChange={setTransactionCountry}>
-                  <SelectTrigger id="transactionCountry" className="w-full bg-[#1a1a1a] border-white/10 text-white h-12 focus:ring-[#00c7cc]">
+                  <SelectTrigger id="transactionCountry" className="w-full bg-[#1a1a1a] border-black/10 dark:border-white/10 text-slate-900 dark:text-white h-12 focus:ring-[#00c7cc]">
                     <SelectValue placeholder="Seleccionar país..." />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#1a1a1a] text-white border-white/10 max-h-60">
+                  <SelectContent className="bg-[#1a1a1a] text-slate-900 dark:text-white border-black/10 dark:border-white/10 max-h-60">
                     <SelectItem value="PY">Paraguay</SelectItem>
                     <SelectItem value="AR">Argentina</SelectItem>
                     <SelectItem value="BO">Bolivia</SelectItem>
@@ -517,14 +517,14 @@ export function RefundForm() {
                   className={`relative flex items-center p-4 rounded-xl cursor-pointer border transition-all duration-300 ${
                     requestType === "anulacion"
                       ? "bg-[#00c7cc]/10 border-[#00c7cc] shadow-[0_0_15px_rgba(0,199,204,0.15)]"
-                      : "bg-white/5 border-white/10 hover:border-white/30"
+                      : "bg-white/5 border-black/10 dark:border-white/10 hover:border-black/15 dark:border-white/30"
                   }`}
                 >
                   <div className="flex items-center space-x-3">
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${requestType === "anulacion" ? "border-[#00c7cc]" : "border-gray-500"}`}>
                       {requestType === "anulacion" && <div className="w-2.5 h-2.5 rounded-full bg-[#00c7cc]" />}
                     </div>
-                    <span className={`font-semibold ${requestType === "anulacion" ? "text-white" : "text-gray-300"}`}>Anulación / Cancelación</span>
+                    <span className={`font-semibold ${requestType === "anulacion" ? "text-slate-900 dark:text-white" : "text-gray-300"}`}>Anulación / Cancelación</span>
                   </div>
                 </div>
 
@@ -533,14 +533,14 @@ export function RefundForm() {
                   className={`relative flex items-center p-4 rounded-xl cursor-pointer border transition-all duration-300 ${
                     requestType === "reembolso"
                       ? "bg-[#00c7cc]/10 border-[#00c7cc] shadow-[0_0_15px_rgba(0,199,204,0.15)]"
-                      : "bg-white/5 border-white/10 hover:border-white/30"
+                      : "bg-white/5 border-black/10 dark:border-white/10 hover:border-black/15 dark:border-white/30"
                   }`}
                 >
                   <div className="flex items-center space-x-3">
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${requestType === "reembolso" ? "border-[#00c7cc]" : "border-gray-500"}`}>
                       {requestType === "reembolso" && <div className="w-2.5 h-2.5 rounded-full bg-[#00c7cc]" />}
                     </div>
-                    <span className={`font-semibold ${requestType === "reembolso" ? "text-white" : "text-gray-300"}`}>Reembolso (Transferencia)</span>
+                    <span className={`font-semibold ${requestType === "reembolso" ? "text-slate-900 dark:text-white" : "text-gray-300"}`}>Reembolso (Transferencia)</span>
                   </div>
                 </div>
               </div>
@@ -549,14 +549,14 @@ export function RefundForm() {
             {requestType === "reembolso" && (
               <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
                 <h4 className="text-gray-300 font-semibold">Datos Bancarios para el Reembolso</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-xl border border-white/10 bg-white/5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-xl border border-black/10 dark:border-white/10 bg-white/5">
                   <div>
                     <Label htmlFor="bankName" className="text-gray-400 text-sm">Banco / Entidad</Label>
                     <Select value={bankName} onValueChange={setBankName} required={requestType === "reembolso"}>
-                      <SelectTrigger id="bankName" className="mt-1 w-full bg-black/20 border border-white/10 text-white rounded-md h-10 px-3 focus:border-[#00c7cc] focus:ring-1 focus:ring-[#00c7cc] outline-none">
+                      <SelectTrigger id="bankName" className="mt-1 w-full bg-black/20 border border-black/10 dark:border-white/10 text-slate-900 dark:text-white rounded-md h-10 px-3 focus:border-[#00c7cc] focus:ring-1 focus:ring-[#00c7cc] outline-none">
                         <SelectValue placeholder="Seleccionar banco..." />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#1a1a1a] text-white border-white/10 max-h-60">
+                      <SelectContent className="bg-[#1a1a1a] text-slate-900 dark:text-white border-black/10 dark:border-white/10 max-h-60">
                         <SelectItem value="Banco Itaú Paraguay">Banco Itaú Paraguay</SelectItem>
                         <SelectItem value="Banco Continental">Banco Continental</SelectItem>
                         <SelectItem value="Sudameris Bank">Sudameris Bank</SelectItem>
@@ -578,10 +578,10 @@ export function RefundForm() {
                   <div>
                     <Label htmlFor="accountType" className="text-gray-400 text-sm">Tipo de Cuenta</Label>
                     <Select value={accountType} onValueChange={setAccountType} required={requestType === "reembolso"}>
-                      <SelectTrigger id="accountType" className="mt-1 w-full bg-black/20 border border-white/10 text-white rounded-md h-10 px-3 focus:border-[#00c7cc] focus:ring-1 focus:ring-[#00c7cc] outline-none">
+                      <SelectTrigger id="accountType" className="mt-1 w-full bg-black/20 border border-black/10 dark:border-white/10 text-slate-900 dark:text-white rounded-md h-10 px-3 focus:border-[#00c7cc] focus:ring-1 focus:ring-[#00c7cc] outline-none">
                         <SelectValue placeholder="Seleccionar tipo..." />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#1a1a1a] text-white border-white/10">
+                      <SelectContent className="bg-[#1a1a1a] text-slate-900 dark:text-white border-black/10 dark:border-white/10">
                         <SelectItem value="Ahorro">Caja de Ahorro</SelectItem>
                         <SelectItem value="Corriente">Cuenta Corriente</SelectItem>
                       </SelectContent>
@@ -589,15 +589,15 @@ export function RefundForm() {
                   </div>
                   <div>
                     <Label htmlFor="accountNumber" className="text-gray-400 text-sm">Nro. de Cuenta</Label>
-                    <Input id="accountNumber" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value)} required={requestType === "reembolso"} placeholder="Ej: 123456789" className="mt-1 bg-black/20 border-white/10 text-white placeholder:text-gray-600 focus:border-[#00c7cc]" />
+                    <Input id="accountNumber" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value)} required={requestType === "reembolso"} placeholder="Ej: 123456789" className="mt-1 bg-black/20 border-black/10 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-gray-600 focus:border-[#00c7cc]" />
                   </div>
                   <div>
                     <Label htmlFor="accountHolder" className="text-gray-400 text-sm">Nombre del Titular</Label>
-                    <Input id="accountHolder" value={accountHolder} onChange={(e) => setAccountHolder(e.target.value)} required={requestType === "reembolso"} placeholder="Ej: Juan Pérez" className="mt-1 bg-black/20 border-white/10 text-white placeholder:text-gray-600 focus:border-[#00c7cc]" />
+                    <Input id="accountHolder" value={accountHolder} onChange={(e) => setAccountHolder(e.target.value)} required={requestType === "reembolso"} placeholder="Ej: Juan Pérez" className="mt-1 bg-black/20 border-black/10 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-gray-600 focus:border-[#00c7cc]" />
                   </div>
                   <div>
                     <Label htmlFor="holderDocument" className="text-gray-400 text-sm">Cédula / RUC del Titular</Label>
-                    <Input id="holderDocument" value={holderDocument} onChange={(e) => setHolderDocument(e.target.value)} required={requestType === "reembolso"} placeholder="Ej: 1234567-8" className="mt-1 bg-black/20 border-white/10 text-white placeholder:text-gray-600 focus:border-[#00c7cc]" />
+                    <Input id="holderDocument" value={holderDocument} onChange={(e) => setHolderDocument(e.target.value)} required={requestType === "reembolso"} placeholder="Ej: 1234567-8" className="mt-1 bg-black/20 border-black/10 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-gray-600 focus:border-[#00c7cc]" />
                   </div>
                 </div>
               </div>
@@ -621,7 +621,7 @@ export function RefundForm() {
                       if (fieldErrors.email) setFieldErrors(prev => ({ ...prev, email: "" }));
                     }}
                     maxLength={100}
-                    className={`mt-1 bg-white/5 border-white/10 text-white h-12 focus:border-[#00c7cc] ${fieldErrors.email ? 'border-red-500 focus:border-red-500' : ''}`}
+                    className={`mt-1 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white h-12 focus:border-[#00c7cc] ${fieldErrors.email ? 'border-red-500 focus:border-red-500' : ''}`}
                     required
                   />
                   {fieldErrors.email && (
@@ -632,10 +632,10 @@ export function RefundForm() {
                   <Label htmlFor="phone" className="text-gray-300">Nro. de Celular / Teléfono</Label>
                   <div className="flex mt-1 gap-2">
                     <Select value={phonePrefix} onValueChange={setPhonePrefix}>
-                      <SelectTrigger className="w-[100px] bg-[#1a1a1a] border-white/10 text-white h-12 focus:ring-[#00c7cc]">
+                      <SelectTrigger className="w-[100px] bg-[#1a1a1a] border-black/10 dark:border-white/10 text-slate-900 dark:text-white h-12 focus:ring-[#00c7cc]">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#1a1a1a] text-white border-white/10">
+                      <SelectContent className="bg-[#1a1a1a] text-slate-900 dark:text-white border-black/10 dark:border-white/10">
                         <SelectItem value="+595">+595</SelectItem>
                         <SelectItem value="+54">+54</SelectItem>
                         <SelectItem value="+55">+55</SelectItem>
@@ -654,7 +654,7 @@ export function RefundForm() {
                       }}
                       maxLength={15}
                       placeholder="981234567"
-                      className={`flex-1 bg-white/5 border-white/10 text-white h-12 focus:border-[#00c7cc] ${fieldErrors.phone ? 'border-red-500 focus:border-red-500' : ''}`}
+                      className={`flex-1 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white h-12 focus:border-[#00c7cc] ${fieldErrors.phone ? 'border-red-500 focus:border-red-500' : ''}`}
                       required
                     />
                   </div>
@@ -679,7 +679,7 @@ export function RefundForm() {
                 }}
                 maxLength={500}
                 placeholder="Por favor explicá el motivo de tu solicitud..."
-                className={`bg-white/5 border-white/10 text-white h-32 focus:border-[#00c7cc] resize-none overflow-y-auto ${fieldErrors.reason ? 'border-red-500 focus:border-red-500' : ''}`}
+                className={`bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white h-32 focus:border-[#00c7cc] resize-none overflow-y-auto ${fieldErrors.reason ? 'border-red-500 focus:border-red-500' : ''}`}
                 required
               />
               {fieldErrors.reason && (

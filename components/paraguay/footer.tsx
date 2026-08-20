@@ -36,7 +36,7 @@ export function ParaguayFooter() {
   return (
     <footer
       id="contacto"
-      className="bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background relative overflow-hidden"
+      className="bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] text-slate-900 dark:text-slate-900 dark:text-white relative overflow-hidden"
     >
       {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none">
@@ -45,14 +45,14 @@ export function ParaguayFooter() {
       </div>
 
       {/* Newsletter Section */}
-      <div className="border-b border-background/10 relative z-10">
+      <div className="border-b border-black/10 dark:border-black/10 dark:border-white/10 relative z-10">
         <div className="container mx-auto px-4 py-12">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div>
               <h3 className="text-2xl md:text-3xl font-bold mb-2">
                 Recibí <span className="text-primary">ofertas exclusivas</span>
               </h3>
-              <p className="text-background/60">
+              <p className="text-slate-900 dark:text-slate-900 dark:text-white/60">
                 Suscríbete y obtén descuentos especiales en tus próximos viajes.
               </p>
             </div>
@@ -62,7 +62,7 @@ export function ParaguayFooter() {
                 name="newsletter-subscribe-email"
                 autoComplete="newsletter-email"
                 placeholder="Tu correo electrónico"
-                className="bg-background/10 border-background/20 text-background placeholder:text-background/50 h-12 w-full lg:w-80"
+                className="bg-black/10 dark:bg-white/10 border-black/10 dark:border-black/10 dark:border-white/20 text-slate-900 dark:text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-slate-900 dark:text-white/50 h-12 w-full lg:w-80"
               />
               <Button className="bg-secondary hover:bg-secondary/90 text-secondary-foreground h-12 px-6">
                 Suscribirse
@@ -88,7 +88,7 @@ export function ParaguayFooter() {
                 loading="eager"
               />
             </Link>
-            <p className="text-background/60 mb-6 leading-relaxed">
+            <p className="text-slate-900 dark:text-slate-900 dark:text-white/60 mb-6 leading-relaxed">
               Tu plataforma de confianza para reservar boletos de bus en todo
               Paraguay. Viaja seguro, viaja con nosotros.
             </p>
@@ -101,7 +101,7 @@ export function ParaguayFooter() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110"
+                    className="w-10 h-10 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110"
                   >
                     <Icon className="h-5 w-5" />
                   </a>
@@ -112,7 +112,7 @@ export function ParaguayFooter() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-bold mb-6 text-background">
+            <h4 className="text-lg font-bold mb-6 text-slate-900 dark:text-slate-900 dark:text-white">
               Enlaces Rápidos
             </h4>
             <ul className="space-y-4">
@@ -127,7 +127,7 @@ export function ParaguayFooter() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-background/60 hover:text-primary transition-colors duration-300 flex items-center gap-2 group"
+                    className="text-slate-900 dark:text-slate-900 dark:text-white/60 hover:text-primary transition-colors duration-300 flex items-center gap-2 group"
                   >
                     <ArrowRight className="h-4 w-4 opacity-0 -ml-6 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />
                     {link.name}
@@ -139,7 +139,7 @@ export function ParaguayFooter() {
 
           {/* Destinos */}
           <div>
-            <h4 className="text-lg font-bold mb-6 text-background">
+            <h4 className="text-lg font-bold mb-6 text-slate-900 dark:text-slate-900 dark:text-white">
               Destinos Populares
             </h4>
             <ul className="space-y-4">
@@ -154,7 +154,7 @@ export function ParaguayFooter() {
                 <li key={city}>
                   <Link
                     href="/paraguay#destinos"
-                    className="text-background/60 hover:text-primary transition-colors duration-300 flex items-center gap-2 group"
+                    className="text-slate-900 dark:text-slate-900 dark:text-white/60 hover:text-primary transition-colors duration-300 flex items-center gap-2 group"
                   >
                     <MapPin className="h-4 w-4 text-primary/50 group-hover:text-primary transition-colors" />
                     {city}
@@ -166,11 +166,11 @@ export function ParaguayFooter() {
 
           {/* Contact */}
           <div>
-            <h4 className="text-lg font-bold mb-6 text-background">Contacto</h4>
+            <h4 className="text-lg font-bold mb-6 text-slate-900 dark:text-slate-900 dark:text-white">Contacto</h4>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-primary mt-0.5" />
-                <span className="text-background/60">
+                <span className="text-slate-900 dark:text-slate-900 dark:text-white/60">
                   Av. Aviadores del Chaco 3207
                   <br />
                   Edificio Trading Park
@@ -184,7 +184,7 @@ export function ParaguayFooter() {
                   href="https://wa.me/595991224613?text=Hola%2C%20me%20gustar%C3%ADa%20recibir%20informaci%C3%B3n%20sobre%20los%20servicios%20que%20ofrece%20www.boletos.la%20en%20Paraguay.%0A%0A%C2%BFPodr%C3%ADan%20asesorarme%3F%20Muchas%20gracias"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-background/60 hover:text-primary transition-colors"
+                  className="text-slate-900 dark:text-slate-900 dark:text-white/60 hover:text-primary transition-colors"
                 >
                   +595 991 224613
                 </a>
@@ -193,7 +193,7 @@ export function ParaguayFooter() {
                 <Mail className="h-5 w-5 text-primary" />
                 <a
                   href="mailto:contacto@boletos.la"
-                  className="text-background/60 hover:text-primary transition-colors"
+                  className="text-slate-900 dark:text-slate-900 dark:text-white/60 hover:text-primary transition-colors"
                 >
                   contacto@boletos.la
                 </a>
@@ -202,7 +202,7 @@ export function ParaguayFooter() {
 
             {/* Payment Methods */}
             <div className="mt-8">
-              <h5 className="text-sm font-medium mb-3 text-background/80">
+              <h5 className="text-sm font-medium mb-3 text-slate-900 dark:text-slate-900 dark:text-white/80">
                 Medios de Pago
               </h5>
               <div className="flex items-center">
@@ -220,11 +220,11 @@ export function ParaguayFooter() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-background/10">
+      <div className="border-t border-black/10 dark:border-black/10 dark:border-white/10">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Año + logo */}
-            <div className="flex items-center gap-2 text-background/50 text-sm">
+            <div className="flex items-center gap-2 text-slate-900 dark:text-slate-900 dark:text-white/50 text-sm">
               <Image
                 src="/logos/logo-boletos.png"
                 alt="Boletos.la"
@@ -241,19 +241,19 @@ export function ParaguayFooter() {
             <div className="flex items-center gap-6 text-sm">
               <Link
                 href="/paraguay/terminos-y-condiciones"
-                className="text-background/50 hover:text-primary transition-colors"
+                className="text-slate-900 dark:text-slate-900 dark:text-white/50 hover:text-primary transition-colors"
               >
                 Términos y Condiciones
               </Link>
               <Link
                 href="/paraguay/politica-de-privacidad"
-                className="text-background/50 hover:text-primary transition-colors"
+                className="text-slate-900 dark:text-slate-900 dark:text-white/50 hover:text-primary transition-colors"
               >
                 Política de Privacidad
               </Link>
               <Link
                 href="/paraguay/ayuda"
-                className="text-background/50 hover:text-primary transition-colors"
+                className="text-slate-900 dark:text-slate-900 dark:text-white/50 hover:text-primary transition-colors"
               >
                 Ayuda
               </Link>

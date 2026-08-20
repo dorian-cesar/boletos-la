@@ -60,7 +60,7 @@ export function FeaturesSection() {
     <section
       ref={sectionRef}
       id="servicios"
-      className="py-24 bg-gradient-to-b from-[#1a2332] to-[#0f1419] relative overflow-hidden"
+      className="py-24 bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] relative overflow-hidden"
     >
       {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none">
@@ -84,7 +84,7 @@ export function FeaturesSection() {
 
           <h2
             className={cn(
-              "text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight transition-all duration-700 delay-100",
+              "text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white mb-6 leading-tight transition-all duration-700 delay-100",
               isVisible
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-10",
@@ -97,7 +97,7 @@ export function FeaturesSection() {
 
           {/* <Button
             className={cn(
-              "bg-secondary text-white hover:bg-secondary/90 rounded-full px-8 py-6 font-semibold text-base transition-all duration-700 delay-200 hover:scale-105 hover:shadow-lg hover:shadow-secondary/30",
+              "bg-secondary text-slate-900 dark:text-white hover:bg-secondary/90 rounded-full px-8 py-6 font-semibold text-base transition-all duration-700 delay-200 hover:scale-105 hover:shadow-lg hover:shadow-secondary/30",
               isVisible
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-10",
@@ -123,7 +123,7 @@ export function FeaturesSection() {
       {/* Scroll to Top Button */}
       <button
         className={cn(
-          "fixed bottom-8 right-8 w-14 h-14 rounded-full border-2 border-[#00c7cc] text-[#00c7cc] flex items-center justify-center transition-all duration-500 hover:bg-[#00c7cc] hover:text-white hover:scale-110 z-50",
+          "fixed bottom-8 right-8 w-14 h-14 rounded-full border-2 border-[#00c7cc] text-[#00c7cc] flex items-center justify-center transition-all duration-500 hover:bg-[#00c7cc] hover:text-slate-900 dark:text-white hover:scale-110 z-50",
           isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10",
         )}
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -159,14 +159,14 @@ function FeatureCard({
   return (
     <div
       className={cn(
-        "group relative bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-700 hover:shadow-2xl hover:-translate-y-2 border border-white/10",
+        "group relative bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-700 hover:shadow-2xl hover:-translate-y-2 border border-black/10 dark:border-white/10",
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10",
       )}
       style={{ transitionDelay: `${(index + 3) * 100}ms` }}
     >
       {/* Icon Badge */}
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
-        <div className="w-16 h-16 rounded-full bg-[#ffaa00] border-4 border-white/20 flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-[#ffaa00]/50">
+        <div className="w-16 h-16 rounded-full bg-[#ffaa00] border-4 border-black/10 dark:border-white/20 flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-[#ffaa00]/50">
           <feature.icon className="w-7 h-7 text-black" />
         </div>
       </div>
@@ -185,10 +185,10 @@ function FeatureCard({
 
       {/* Content */}
       <div className="p-6 pt-4 text-center">
-        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#00c7cc] transition-colors duration-300">
+        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-[#00c7cc] transition-colors duration-300">
           {feature.title}
         </h3>
-        <p className="text-white/70 text-sm leading-relaxed">
+        <p className="text-slate-900 dark:text-white/70 text-sm leading-relaxed">
           {feature.description}
         </p>
 

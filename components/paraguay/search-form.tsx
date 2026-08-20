@@ -49,7 +49,7 @@ function ComingSoonModal({
   // Usamos portal para renderizar directamente en el body
   return createPortal(
     <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="relative max-w-4xl w-full bg-gradient-to-br from-[#1a2332] to-[#0f1419] rounded-2xl shadow-2xl border border-white/10 overflow-hidden animate-in zoom-in-95 duration-300">
+      <div className="relative max-w-4xl w-full bg-gradient-to-br from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] rounded-2xl shadow-2xl border border-black/10 dark:border-white/10 overflow-hidden animate-in zoom-in-95 duration-300">
         {/* Background Effects */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/4 w-[200px] h-[200px] bg-primary/20 rounded-full blur-[80px]" />
@@ -83,7 +83,7 @@ function ComingSoonModal({
           {/* Button */}
           <Button
             onClick={onClose}
-            className="bg-primary hover:bg-primary/90 text-white px-8 py-6 text-lg rounded-full transition-all duration-300 hover:scale-105"
+            className="bg-primary hover:bg-primary/90 text-slate-900 dark:text-white px-8 py-6 text-lg rounded-full transition-all duration-300 hover:scale-105"
           >
             Entendido
           </Button>
@@ -265,7 +265,7 @@ export function ParaguaySearchForm() {
   if (!mounted) {
     return (
       <div className="w-full flex justify-center px-4">
-        <div className="bg-white/20 backdrop-blur-md rounded-3xl shadow-2xl p-6 lg:p-8 border border-white/30 w-full max-w-7xl h-[400px] flex items-center justify-center">
+        <div className="bg-white/20 backdrop-blur-md rounded-3xl shadow-2xl p-6 lg:p-8 border border-black/15 dark:border-white/30 w-full max-w-7xl h-[400px] flex items-center justify-center">
           <div className="animate-pulse flex flex-col items-center gap-4 text-gray-400">
             <Bus className="h-12 w-12 text-gray-400" />
             <p>Preparando buscador...</p>
@@ -281,7 +281,7 @@ export function ParaguaySearchForm() {
         className="w-full flex justify-center px-4 animate-scale-in"
         style={{ animationDelay: "0.6s" }}
       >
-        <div className="bg-white/75 backdrop-blur-md rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-8 border border-white/60 relative overflow-hidden w-full max-w-7xl">
+        <div className="bg-white/75 backdrop-blur-md rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-8 border border-black/30 dark:border-white/60 relative overflow-hidden w-full max-w-7xl">
           {/* Efecto de vidrio con gradiente sutil */}
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl pointer-events-none" />
 
@@ -293,7 +293,7 @@ export function ParaguaySearchForm() {
                 className={cn(
                   "px-6 py-2 text-sm sm:text-base rounded-full font-semibold transition-all duration-300 relative",
                   tripType === "one-way"
-                    ? "bg-primary text-white shadow-md"
+                    ? "bg-primary text-slate-900 dark:text-white shadow-md"
                     : "text-slate-600 hover:text-slate-900 hover:bg-white/50",
                 )}
               >
@@ -304,7 +304,7 @@ export function ParaguaySearchForm() {
                 className={cn(
                   "px-6 py-2 text-sm sm:text-base rounded-full font-semibold transition-all duration-300 relative",
                   tripType === "round-trip"
-                    ? "bg-primary text-white shadow-md"
+                    ? "bg-primary text-slate-900 dark:text-white shadow-md"
                     : "text-slate-600 hover:text-slate-900 hover:bg-white/50",
                 )}
               >
@@ -351,13 +351,13 @@ export function ParaguaySearchForm() {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
-                  className="w-full p-0 backdrop-blur-md bg-white/60 border-white/40 min-w-[var(--radix-popover-trigger-width)]"
+                  className="w-full p-0 backdrop-blur-md bg-white/60 border-black/20 dark:border-white/40 min-w-[var(--radix-popover-trigger-width)]"
                   align="start"
                 >
                   <Command className="bg-transparent">
                     <CommandInput
                       placeholder="Buscá ciudad..."
-                      className="h-12 bg-transparent border-b border-white/40 text-gray-700 placeholder:text-gray-500"
+                      className="h-12 bg-transparent border-b border-black/20 dark:border-white/40 text-gray-700 placeholder:text-gray-500"
                     />
                     <CommandList>
                       <CommandEmpty className="text-gray-500">
@@ -383,11 +383,11 @@ export function ParaguaySearchForm() {
                               setDestinationTitle("");
                               setOriginOpen(false);
                             }}
-                            className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-primary data-[selected=true]:text-white hover:bg-primary hover:text-white transition-colors duration-150 rounded-lg px-2"
+                            className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-primary data-[selected=true]:text-slate-900 dark:text-white hover:bg-primary hover:text-slate-900 dark:text-white transition-colors duration-150 rounded-lg px-2"
                           >
-                            <MapPin className="h-4 w-4 mr-2 text-chart-4 shrink-0 group-hover:text-white group-data-[selected=true]:text-white transition-colors" strokeWidth={2.2} />
+                            <MapPin className="h-4 w-4 mr-2 text-chart-4 shrink-0 group-hover:text-slate-900 dark:text-white group-data-[selected=true]:text-slate-900 dark:text-white transition-colors" strokeWidth={2.2} />
                             <div className="min-w-0">
-                              <p className="font-bold truncate tracking-wide text-slate-900 group-hover:text-white group-data-[selected=true]:text-white [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
+                              <p className="font-bold truncate tracking-wide text-slate-900 group-hover:text-slate-900 dark:text-white group-data-[selected=true]:text-slate-900 dark:text-white [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
                                 {city.name}
                               </p>
                             </div>
@@ -473,13 +473,13 @@ export function ParaguaySearchForm() {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
-                  className="w-full p-0 backdrop-blur-md bg-white/60 border-white/40 min-w-[var(--radix-popover-trigger-width)]"
+                  className="w-full p-0 backdrop-blur-md bg-white/60 border-black/20 dark:border-white/40 min-w-[var(--radix-popover-trigger-width)]"
                   align="start"
                 >
                   <Command className="bg-transparent">
                     <CommandInput
                       placeholder="Buscá ciudad..."
-                      className="h-12 bg-transparent border-b border-white/40 text-gray-700 placeholder:text-gray-500"
+                      className="h-12 bg-transparent border-b border-black/20 dark:border-white/40 text-gray-700 placeholder:text-gray-500"
                     />
                     <CommandList>
                       <CommandEmpty className="text-gray-500">
@@ -491,7 +491,7 @@ export function ParaguaySearchForm() {
                       </CommandEmpty>
                       <CommandGroup className="bg-transparent">
                         {originTitle && (
-                          <div className="px-2 py-2 text-xs font-semibold text-gray-700 bg-white/40 backdrop-blur-sm rounded-lg mb-2 flex items-center gap-2 border border-white/50 shadow-sm">
+                          <div className="px-2 py-2 text-xs font-semibold text-gray-700 bg-white/40 backdrop-blur-sm rounded-lg mb-2 flex items-center gap-2 border border-black/25 dark:border-white/50 shadow-sm">
                             <MapPin className="h-3.5 w-3.5 text-chart-4" />
                             Rutas disponibles desde {originTitle}
                           </div>
@@ -507,11 +507,11 @@ export function ParaguaySearchForm() {
                                 setDestinationTitle(city.name);
                                 setDestinationOpen(false);
                               }}
-                              className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-primary data-[selected=true]:text-white hover:bg-primary hover:text-white transition-colors duration-150 rounded-lg px-2"
+                              className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-primary data-[selected=true]:text-slate-900 dark:text-white hover:bg-primary hover:text-slate-900 dark:text-white transition-colors duration-150 rounded-lg px-2"
                             >
-                              <MapPin className="h-4 w-4 mr-2 text-chart-4 shrink-0 group-hover:text-white group-data-[selected=true]:text-white transition-colors" strokeWidth={2.2} />
+                              <MapPin className="h-4 w-4 mr-2 text-chart-4 shrink-0 group-hover:text-slate-900 dark:text-white group-data-[selected=true]:text-slate-900 dark:text-white transition-colors" strokeWidth={2.2} />
                               <div className="min-w-0">
-                                <p className="font-bold truncate tracking-wide text-slate-900 group-hover:text-white group-data-[selected=true]:text-white [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
+                                <p className="font-bold truncate tracking-wide text-slate-900 group-hover:text-slate-900 dark:text-white group-data-[selected=true]:text-slate-900 dark:text-white [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
                                   {city.name}
                                 </p>
                                 {(() => {
@@ -525,7 +525,7 @@ export function ParaguaySearchForm() {
                                   if (isObject) {
                                     if (dynamicCount > 0) {
                                       return (
-                                        <p className="text-xs text-slate-700 font-medium mt-0.5 group-hover:text-white group-data-[selected=true]:text-white [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
+                                        <p className="text-xs text-slate-700 font-medium mt-0.5 group-hover:text-slate-900 dark:text-white group-data-[selected=true]:text-slate-900 dark:text-white [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
                                           {dynamicCount} {dynamicCount === 1 ? 'servicio' : 'servicios'}
                                         </p>
                                       );
@@ -581,7 +581,7 @@ export function ParaguaySearchForm() {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
-                  className="w-auto p-0 backdrop-blur-md bg-white/60 border-white/40"
+                  className="w-auto p-0 backdrop-blur-md bg-white/60 border-black/20 dark:border-white/40"
                   align="start"
                 >
                   <CalendarComponent
@@ -633,7 +633,7 @@ export function ParaguaySearchForm() {
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent
-                    className="w-auto p-0 backdrop-blur-md bg-white/60 border-white/40"
+                    className="w-auto p-0 backdrop-blur-md bg-white/60 border-black/20 dark:border-white/40"
                     align="start"
                   >
                     <CalendarComponent
@@ -669,10 +669,10 @@ export function ParaguaySearchForm() {
                 !departureDate ||
                 (tripType === "round-trip" && !returnDate)
               }
-              className="bg-primary hover:bg-primary/90 text-white h-14 px-12 text-lg sm:text-xl lg:text-lg font-bold rounded-full shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:transform-none disabled:hover:bg-primary"
+              className="bg-primary hover:bg-primary/90 text-slate-900 dark:text-white h-14 px-12 text-lg sm:text-xl lg:text-lg font-bold rounded-full shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:transform-none disabled:hover:bg-primary"
             >
               Buscar Boletos
-              <ArrowRight className="h-5 w-5 shrink-0 text-white" />
+              <ArrowRight className="h-5 w-5 shrink-0 text-slate-900 dark:text-white" />
             </Button>
           </div>
         </div>

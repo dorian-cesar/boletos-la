@@ -22,7 +22,7 @@ export function ScrollToTop() {
   return (
     <button
       className={cn(
-        "fixed bottom-8 right-8 w-14 h-14 rounded-full border-2 border-[#00c7cc] bg-[#0f1419]/50 backdrop-blur-sm text-[#00c7cc] flex items-center justify-center transition-all duration-500 hover:bg-[#00c7cc] hover:text-white hover:scale-110 z-[100]",
+        "fixed bottom-8 right-8 w-14 h-14 rounded-full border-2 border-[#00c7cc] bg-slate-50 dark:bg-[#0f1419]/50 backdrop-blur-sm text-[#00c7cc] flex items-center justify-center transition-all duration-500 hover:bg-[#00c7cc] hover:text-slate-900 dark:text-white hover:scale-110 z-[100]",
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10 pointer-events-none"
       )}
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}

@@ -281,8 +281,8 @@ export default function CheckoutPage() {
 
   if (!mounted) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-[#1a2332] to-[#0f1419]">
-        <div className="text-center text-background">
+      <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419]">
+        <div className="text-center text-slate-900 dark:text-slate-900 dark:text-white">
           <Image
             src="/logos/logo-boletos.png"
             alt="Logo Boletos.la"
@@ -299,8 +299,8 @@ export default function CheckoutPage() {
 
   if (!selectedOutboundTrip || selectedSeats.length === 0) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-[#1a2332] to-[#0f1419]">
-        <div className="text-center text-background">
+      <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419]">
+        <div className="text-center text-slate-900 dark:text-slate-900 dark:text-white">
           <Image
             src="/logos/logo-boletos.png"
             alt="Logo Boletos.la"
@@ -325,7 +325,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background">
+    <div className="min-h-screen w-full bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] text-slate-900 dark:text-slate-900 dark:text-white">
       {/* Background Effects - Ajustados para no causar overflow */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
@@ -340,7 +340,7 @@ export default function CheckoutPage() {
             {/* Passenger Summary (read-only) */}
             <div className="space-y-6 w-full">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <h2 className="text-xl sm:text-2xl font-bold animate-fade-in text-background">
+                <h2 className="text-xl sm:text-2xl font-bold animate-fade-in text-slate-900 dark:text-slate-900 dark:text-white">
                   Resumen de Pasajeros
                 </h2>
                 {!isFormValid && (
@@ -364,7 +364,7 @@ export default function CheckoutPage() {
                     return (
                       <Card
                         key={`passenger-${i}`}
-                        className="p-4 bg-background/5 backdrop-blur-sm border-background/20 animate-fade-in"
+                        className="p-4 bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-black/10 dark:border-white/20 animate-fade-in"
                         style={{ animationDelay: `${i * 80}ms` }}
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
@@ -374,11 +374,11 @@ export default function CheckoutPage() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
-                                <p className="font-bold text-background text-base truncate">
+                                <p className="font-bold text-slate-900 dark:text-slate-900 dark:text-white text-base truncate">
                                   {hasData ? (
                                     `${p.firstName} ${p.lastName}`
                                   ) : (
-                                    <span className="text-background/40 italic font-normal">
+                                    <span className="text-slate-900 dark:text-slate-900 dark:text-white/40 italic font-normal">
                                       Sin datos
                                     </span>
                                   )}
@@ -393,7 +393,7 @@ export default function CheckoutPage() {
                                   </Badge>
                                 )}
                               </div>
-                              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-background/60 mt-1">
+                              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-900 dark:text-slate-900 dark:text-white/60 mt-1">
                                 {p?.documentNumber && (
                                   <span className="flex items-center gap-1.5">
                                     <span>C.I. {p.documentNumber}</span>
@@ -416,12 +416,12 @@ export default function CheckoutPage() {
                           </div>
 
                           {/* Asientos */}
-                          <div className="flex flex-col gap-2 shrink-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-background/10">
+                          <div className="flex flex-col gap-2 shrink-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-black/10 dark:border-black/10 dark:border-white/10">
                             <div className="flex items-center gap-2">
                               <span className="bg-primary/20 text-primary text-[10px] px-2 py-0.5 rounded uppercase font-bold w-16 text-center border border-primary/20">
                                 Ida
                               </span>
-                              <span className="text-sm font-medium text-background">
+                              <span className="text-sm font-medium text-slate-900 dark:text-slate-900 dark:text-white">
                                 Asiento {outboundSeat.number}
                               </span>
                             </div>
@@ -430,7 +430,7 @@ export default function CheckoutPage() {
                                 <span className="bg-secondary/20 text-secondary text-[10px] px-2 py-0.5 rounded uppercase font-bold w-16 text-center border border-secondary/20">
                                   Regreso
                                 </span>
-                                <span className="text-sm font-medium text-background">
+                                <span className="text-sm font-medium text-slate-900 dark:text-slate-900 dark:text-white">
                                   Asiento {returnSeat.number}
                                 </span>
                               </div>
@@ -471,7 +471,7 @@ export default function CheckoutPage() {
 
             {/* Unified Resumen de Compra & Payment Section */}
             <Card
-              className="p-4 sm:p-6 animate-fade-in bg-background/5 backdrop-blur-sm border-background/20 w-full"
+              className="p-4 sm:p-6 animate-fade-in bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-black/10 dark:border-white/20 w-full"
               style={{ animationDelay: `${totalPassengers * 150}ms` }}
             >
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
@@ -479,7 +479,7 @@ export default function CheckoutPage() {
                   <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center border border-secondary/30 shrink-0">
                     <CreditCard className="h-5 w-5 text-secondary" />
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-background truncate w-full">
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-900 dark:text-white truncate w-full">
                     Resumen de Compra
                   </h3>
                 </div>
@@ -488,9 +488,9 @@ export default function CheckoutPage() {
 
               <div className="flex flex-col gap-6">
                 {/* Trips Summary */}
-                <div className="space-y-6 bg-background/5 p-4 rounded-xl border border-background/10">
+                <div className="space-y-6 bg-black/5 dark:bg-white/5 p-4 rounded-xl border border-black/10 dark:border-black/10 dark:border-white/10">
                   {/* Outbound Trip */}
-                  <div className="pb-6 border-b border-background/20">
+                  <div className="pb-6 border-b border-black/10 dark:border-black/10 dark:border-white/20">
                     <p className="text-sm font-medium text-primary mb-4 text-center">
                       Viaje de Ida
                     </p>
@@ -501,7 +501,7 @@ export default function CheckoutPage() {
                           return (
                             <>
                               {logo ? (
-                                <div className="w-16 h-16 rounded-xl bg-white border border-background/20 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                                <div className="w-16 h-16 rounded-xl bg-white border border-black/10 dark:border-black/10 dark:border-white/20 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
                                   <Image
                                     src={logo}
                                     alt={name}
@@ -516,10 +516,10 @@ export default function CheckoutPage() {
                                 </div>
                               )}
                               <div className="text-left min-w-0 flex-1">
-                                <p className="font-bold text-background truncate">
+                                <p className="font-bold text-slate-900 dark:text-slate-900 dark:text-white truncate">
                                   {name || "Empresa de Transporte"}
                                 </p>
-                                <p className="text-xs text-background/60 truncate">
+                                <p className="text-xs text-slate-900 dark:text-slate-900 dark:text-white/60 truncate">
                                   {selectedOutboundTrip?.busType}
                                 </p>
                               </div>
@@ -527,7 +527,7 @@ export default function CheckoutPage() {
                           );
                         })()}
                       </div>
-                      <div className="shrink-0 w-28 h-16 bg-background/5 border border-background/20 rounded-xl shadow-sm flex items-center justify-center px-3 py-2">
+                      <div className="shrink-0 w-28 h-16 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-black/10 dark:border-white/20 rounded-xl shadow-sm flex items-center justify-center px-3 py-2">
                         <Image
                           src="/logos/logo-bancard-blanco.png"
                           alt="Bancard"
@@ -539,8 +539,8 @@ export default function CheckoutPage() {
                     </div>
                     <div className="space-y-2 text-sm">
                       <p className="flex justify-between gap-2">
-                        <span className="text-background/60 shrink-0">Fecha</span>
-                        <span className="text-background truncate text-right">
+                        <span className="text-slate-900 dark:text-slate-900 dark:text-white/60 shrink-0">Fecha</span>
+                        <span className="text-slate-900 dark:text-slate-900 dark:text-white truncate text-right">
                           {departureDate ? format(
                             parse(departureDate, "yyyy-MM-dd", new Date()),
                             "dd MMM yyyy",
@@ -549,20 +549,20 @@ export default function CheckoutPage() {
                         </span>
                       </p>
                       <p className="flex justify-between gap-2">
-                        <span className="text-background/60 shrink-0">Ruta</span>
-                        <span className="text-background truncate text-right">
+                        <span className="text-slate-900 dark:text-slate-900 dark:text-white/60 shrink-0">Ruta</span>
+                        <span className="text-slate-900 dark:text-slate-900 dark:text-white truncate text-right">
                           {originTitle} - {destinationTitle}
                         </span>
                       </p>
                       <p className="flex justify-between gap-2">
-                        <span className="text-background/60 shrink-0">Horario</span>
-                        <span className="text-background truncate text-right">
+                        <span className="text-slate-900 dark:text-slate-900 dark:text-white/60 shrink-0">Horario</span>
+                        <span className="text-slate-900 dark:text-slate-900 dark:text-white truncate text-right">
                           {selectedOutboundTrip?.departureTime} - {selectedOutboundTrip?.arrivalTime}
                         </span>
                       </p>
                       <p className="flex justify-between gap-2">
-                        <span className="text-background/60 shrink-0">Asientos</span>
-                        <span className="text-background truncate text-right">
+                        <span className="text-slate-900 dark:text-slate-900 dark:text-white/60 shrink-0">Asientos</span>
+                        <span className="text-slate-900 dark:text-slate-900 dark:text-white truncate text-right">
                           {selectedSeats.map((s) => s.number).join(", ")}
                         </span>
                       </p>
@@ -571,7 +571,7 @@ export default function CheckoutPage() {
 
                   {/* Return Trip */}
                   {tripType === "round-trip" && selectedReturnTrip && (
-                    <div className="pb-6 border-b border-background/20">
+                    <div className="pb-6 border-b border-black/10 dark:border-black/10 dark:border-white/20">
                       <p className="text-sm font-medium text-secondary mb-4 text-center">
                         Viaje de Regreso
                       </p>
@@ -581,7 +581,7 @@ export default function CheckoutPage() {
                           return (
                             <>
                               {logo ? (
-                                <div className="w-16 h-16 rounded-xl bg-white border border-background/20 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                                <div className="w-16 h-16 rounded-xl bg-white border border-black/10 dark:border-black/10 dark:border-white/20 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
                                   <Image
                                     src={logo}
                                     alt={name}
@@ -596,10 +596,10 @@ export default function CheckoutPage() {
                                 </div>
                               )}
                               <div className="text-left min-w-0 flex-1">
-                                <p className="font-bold text-background truncate">
+                                <p className="font-bold text-slate-900 dark:text-slate-900 dark:text-white truncate">
                                   {name || "Empresa de Transporte"}
                                 </p>
-                                <p className="text-xs text-background/60 truncate">
+                                <p className="text-xs text-slate-900 dark:text-slate-900 dark:text-white/60 truncate">
                                   {selectedReturnTrip?.busType}
                                 </p>
                               </div>
@@ -609,8 +609,8 @@ export default function CheckoutPage() {
                       </div>
                       <div className="space-y-2 text-sm">
                         <p className="flex justify-between gap-2">
-                          <span className="text-background/60 shrink-0">Fecha</span>
-                          <span className="text-background truncate text-right">
+                          <span className="text-slate-900 dark:text-slate-900 dark:text-white/60 shrink-0">Fecha</span>
+                          <span className="text-slate-900 dark:text-slate-900 dark:text-white truncate text-right">
                             {returnDate ? format(
                               parse(returnDate, "yyyy-MM-dd", new Date()),
                               "dd MMM yyyy",
@@ -619,20 +619,20 @@ export default function CheckoutPage() {
                           </span>
                         </p>
                         <p className="flex justify-between gap-2">
-                          <span className="text-background/60 shrink-0">Ruta</span>
-                          <span className="text-background truncate text-right">
+                          <span className="text-slate-900 dark:text-slate-900 dark:text-white/60 shrink-0">Ruta</span>
+                          <span className="text-slate-900 dark:text-slate-900 dark:text-white truncate text-right">
                             {destinationTitle} - {originTitle}
                           </span>
                         </p>
                         <p className="flex justify-between gap-2">
-                          <span className="text-background/60 shrink-0">Horario</span>
-                          <span className="text-background truncate text-right">
+                          <span className="text-slate-900 dark:text-slate-900 dark:text-white/60 shrink-0">Horario</span>
+                          <span className="text-slate-900 dark:text-slate-900 dark:text-white truncate text-right">
                             {selectedReturnTrip.departureTime} - {selectedReturnTrip.arrivalTime}
                           </span>
                         </p>
                         <p className="flex justify-between gap-2">
-                          <span className="text-background/60 shrink-0">Asientos</span>
-                          <span className="text-background truncate text-right">
+                          <span className="text-slate-900 dark:text-slate-900 dark:text-white/60 shrink-0">Asientos</span>
+                          <span className="text-slate-900 dark:text-slate-900 dark:text-white truncate text-right">
                             {selectedReturnSeats.map((s) => s.number).join(", ")}
                           </span>
                         </p>
@@ -641,12 +641,12 @@ export default function CheckoutPage() {
                   )}
 
                   {/* Price Breakdown */}
-                  <div className="space-y-3 pb-6 border-b border-background/20">
+                  <div className="space-y-3 pb-6 border-b border-black/10 dark:border-black/10 dark:border-white/20">
                     <p className="flex justify-between text-sm gap-2">
-                      <span className="text-background/60 shrink-0">
+                      <span className="text-slate-900 dark:text-slate-900 dark:text-white/60 shrink-0">
                         Asientos ({totalPassengers})
                       </span>
-                      <span className="text-background truncate text-right">
+                      <span className="text-slate-900 dark:text-slate-900 dark:text-white truncate text-right">
                         Gs. {totalPrice.toLocaleString("es-PY")}
                       </span>
                     </p>
@@ -655,7 +655,7 @@ export default function CheckoutPage() {
                   {/* Total */}
                   <div className="pt-2">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                      <span className="text-base sm:text-lg font-medium text-background">
+                      <span className="text-base sm:text-lg font-medium text-slate-900 dark:text-slate-900 dark:text-white">
                         Total a Pagar
                       </span>
                       <span className="text-xl sm:text-2xl font-bold text-secondary break-words">
@@ -665,7 +665,7 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-background/20 mt-2">
+                <div className="pt-6 border-t border-black/10 dark:border-black/10 dark:border-white/20 mt-2">
                   <Button
                     onClick={handlePayment}
                     disabled={
@@ -703,7 +703,7 @@ export default function CheckoutPage() {
       {/* Overlay de procesamiento */}
       {isProcessing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-xl p-4">
-          <div className="text-center w-full max-w-md p-6 sm:p-8 bg-[#0f1419] border border-gray-700 rounded-2xl shadow-2xl">
+          <div className="text-center w-full max-w-md p-6 sm:p-8 bg-slate-50 dark:bg-[#0f1419] border border-gray-700 rounded-2xl shadow-2xl">
             <div
               className={`w-20 h-20 sm:w-24 sm:h-24 ${selectedPaymentMethod === "tarjeta" ? "bg-purple-500/20" : "bg-blue-500/20"} rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 border-4 ${selectedPaymentMethod === "tarjeta" ? "border-purple-500/40" : "border-blue-500/40"}`}
             >
@@ -713,7 +713,7 @@ export default function CheckoutPage() {
                 <Wallet className="h-10 w-10 sm:h-12 sm:w-12 text-blue-300" />
               )}
             </div>
-            <h3 className="text-xl sm:text-2xl font-bold mb-2 text-white break-words">
+            <h3 className="text-xl sm:text-2xl font-bold mb-2 text-slate-900 dark:text-white break-words">
               {selectedPaymentMethod === "tarjeta"
                 ? "Procesando pago con Tarjeta"
                 : "Conectando con Bancard..."}
@@ -735,10 +735,10 @@ export default function CheckoutPage() {
       {/* Modal de selección VISA desactivado */}
       {showVisaModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
-          <div className="relative w-full max-w-md bg-[#0f1419] border border-blue-500/30 rounded-2xl p-6 sm:p-8 shadow-2xl text-center">
+          <div className="relative w-full max-w-md bg-slate-50 dark:bg-[#0f1419] border border-blue-500/30 rounded-2xl p-6 sm:p-8 shadow-2xl text-center">
             <button
               onClick={() => setShowVisaModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white p-1 transition-colors"
+              className="absolute top-4 right-4 text-gray-400 hover:text-slate-900 dark:text-white p-1 transition-colors"
               title="Cerrar"
             >
               <X className="h-5 w-5" />
@@ -746,13 +746,13 @@ export default function CheckoutPage() {
             <div className="w-16 h-16 rounded-full bg-blue-500/15 border border-blue-500/30 flex items-center justify-center mx-auto mb-4">
               <CreditCard className="h-8 w-8 text-blue-400" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
               Confirmar Pago con Bancard
             </h3>
             <div className="flex flex-col gap-3">
               <Button
                 onClick={() => executeBancardPayment()}
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 h-12 rounded-xl transition-all shadow-lg shadow-blue-600/25"
+                className="w-full bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white font-semibold py-3 h-12 rounded-xl transition-all shadow-lg shadow-blue-600/25"
               >
                 Continuar al Pago
               </Button>

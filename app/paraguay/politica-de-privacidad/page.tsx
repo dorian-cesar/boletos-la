@@ -18,7 +18,7 @@ export default function PoliticaDePrivacidadPage() {
       <div className="absolute bottom-20 right-0 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full pointer-events-none opacity-50" />
 
       <div className="flex-1 pt-32 pb-20 container mx-auto px-4 max-w-4xl relative z-10">
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight text-white">
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight text-slate-900 dark:text-white">
           Política de Privacidad
         </h1>
         <p className="text-primary font-medium mb-12">
@@ -36,53 +36,53 @@ export default function PoliticaDePrivacidadPage() {
           </div>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               1. Información que Recopilamos
             </h2>
             <p className="mb-4">Podemos recopilar dos tipos de información a través de nuestra plataforma:</p>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <strong className="text-white font-semibold">Información proporcionada por el Usuario:</strong>{" "}
+                <strong className="text-slate-900 dark:text-white font-semibold">Información proporcionada por el Usuario:</strong>{" "}
                 Datos que tú mismo nos entregas al registrarte o realizar una compra, tales como nombre completo, dirección de correo electrónico, número de teléfono, información de facturación y dirección de envío.
               </li>
               <li>
-                <strong className="text-white font-semibold">Información recopilada automáticamente:</strong>{" "}
+                <strong className="text-slate-900 dark:text-white font-semibold">Información recopilada automáticamente:</strong>{" "}
                 Datos técnicos sobre tu dispositivo y tu interacción con el sitio web, incluyendo dirección IP, tipo de navegador, páginas visitadas, tiempos de acceso y cookies.
               </li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               2. Uso de la Información
             </h2>
             <p className="mb-4">Utilizamos la información recopilada con los siguientes fines:</p>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <strong className="text-white font-semibold">Procesamiento de transacciones:</strong>{" "}
+                <strong className="text-slate-900 dark:text-white font-semibold">Procesamiento de transacciones:</strong>{" "}
                 Para gestionar la compra, emisión y entrega de tus boletos.
               </li>
               <li>
-                <strong className="text-white font-semibold">Atención al cliente:</strong>{" "}
+                <strong className="text-slate-900 dark:text-white font-semibold">Atención al cliente:</strong>{" "}
                 Para responder a tus consultas, solicitudes de soporte o reclamos.
               </li>
               <li>
-                <strong className="text-white font-semibold">Comunicación:</strong>{" "}
+                <strong className="text-slate-900 dark:text-white font-semibold">Comunicación:</strong>{" "}
                 Para enviarte confirmaciones de compra, notificaciones importantes sobre cambios en eventos o actualizaciones de nuestros servicios.
               </li>
               <li>
-                <strong className="text-white font-semibold">Mejora del servicio:</strong>{" "}
+                <strong className="text-slate-900 dark:text-white font-semibold">Mejora del servicio:</strong>{" "}
                 Para analizar el comportamiento del usuario y optimizar la funcionalidad, seguridad y experiencia en nuestro sitio web.
               </li>
               <li>
-                <strong className="text-white font-semibold">Marketing (con consentimiento):</strong>{" "}
+                <strong className="text-slate-900 dark:text-white font-semibold">Marketing (con consentimiento):</strong>{" "}
                 Para enviarte información sobre eventos futuros o promociones, siempre que hayas aceptado recibir dichas comunicaciones.
               </li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               3. Protección de Datos y Seguridad
             </h2>
             <p className="mb-4">
@@ -99,7 +99,7 @@ export default function PoliticaDePrivacidadPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               4. Compartición de Información con Terceros
             </h2>
             <p className="mb-4">
@@ -107,22 +107,22 @@ export default function PoliticaDePrivacidadPage() {
             </p>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <strong className="text-white font-semibold">Proveedores de servicios:</strong>{" "}
+                <strong className="text-slate-900 dark:text-white font-semibold">Proveedores de servicios:</strong>{" "}
                 Con terceros de confianza que nos ayudan a operar el sitio web (procesadores de pagos, servicios de alojamiento, análisis web) y que están obligados a mantener la confidencialidad de la información.
               </li>
               <li>
-                <strong className="text-white font-semibold">Organizadores de eventos:</strong>{" "}
+                <strong className="text-slate-900 dark:text-white font-semibold">Organizadores de eventos:</strong>{" "}
                 Podemos compartir información necesaria con el organizador del evento para la validación y control de acceso de los boletos.
               </li>
               <li>
-                <strong className="text-white font-semibold">Requerimientos legales:</strong>{" "}
+                <strong className="text-slate-900 dark:text-white font-semibold">Requerimientos legales:</strong>{" "}
                 Si la ley, una orden judicial o una autoridad gubernamental competente exige la divulgación de información.
               </li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               5. Cookies y Tecnologías de Seguimiento
             </h2>
             <p>
@@ -131,25 +131,25 @@ export default function PoliticaDePrivacidadPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               6. Derechos del Usuario
             </h2>
             <p className="mb-4">Dependiendo de la jurisdicción, el Usuario tiene derecho a:</p>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <strong className="text-white font-semibold">Acceder:</strong>{" "}
+                <strong className="text-slate-900 dark:text-white font-semibold">Acceder:</strong>{" "}
                 Solicitar una copia de la información personal que tenemos sobre ti.
               </li>
               <li>
-                <strong className="text-white font-semibold">Rectificar:</strong>{" "}
+                <strong className="text-slate-900 dark:text-white font-semibold">Rectificar:</strong>{" "}
                 Solicitar la corrección de datos inexactos o incompletos.
               </li>
               <li>
-                <strong className="text-white font-semibold">Eliminar:</strong>{" "}
+                <strong className="text-slate-900 dark:text-white font-semibold">Eliminar:</strong>{" "}
                 Solicitar la eliminación de tus datos personales, siempre que no debamos conservarlos por obligaciones legales.
               </li>
               <li>
-                <strong className="text-white font-semibold">Oponerse/Restringir:</strong>{" "}
+                <strong className="text-slate-900 dark:text-white font-semibold">Oponerse/Restringir:</strong>{" "}
                 Solicitar que limitemos o detengamos el procesamiento de tus datos para fines específicos.
               </li>
             </ul>
@@ -159,7 +159,7 @@ export default function PoliticaDePrivacidadPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               7. Enlaces a Sitios Externos
             </h2>
             <p>
@@ -168,7 +168,7 @@ export default function PoliticaDePrivacidadPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               8. Cambios en la Política de Privacidad
             </h2>
             <p>
@@ -177,7 +177,7 @@ export default function PoliticaDePrivacidadPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               Contacto
             </h2>
             <p>
