@@ -71,7 +71,6 @@ export default function ParaguayPage() {
       <ParaguayHeroSection />
       <FeaturesSection />
       <DestinationsSection />
-      <CompaniesSection />
       <ParaguayFooter />
     </main>
   );

@@ -67,12 +67,7 @@ export function ParaguayHeader() {
                 >
                   Servicios
                 </Link>
-                <Link
-                href="/paraguay#empresas"
-                  className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
-                >
-                  Empresas
-                </Link>
+
                 <Link
                 href="/paraguay#contacto"
                   className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
@@ -138,12 +133,7 @@ export function ParaguayHeader() {
                 >
                   Servicios
                 </Link>
-            <Link
-              href="/paraguay#empresas"
-                  className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
-                >
-                  Empresas
-                </Link>
+
             <Link
               href="/paraguay#contacto"
                   className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"

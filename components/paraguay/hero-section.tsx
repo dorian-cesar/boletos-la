@@ -46,50 +46,22 @@ export function ParaguayHeroSection() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 py-20 lg:py-32">
-        <div className="text-center mb-12 animate-fade-in">
-          <span className="inline-block px-4 py-2 bg-primary/20 text-primary rounded-full text-sm font-medium mb-6 animate-bounce-in">
-            Tu viaje comienza aquí
-          </span>
+      <div className="relative z-10 container mx-auto px-2 sm:px-4 py-8 sm:py-20 lg:py-24 flex flex-col items-center justify-center mt-12 sm:mt-0">
+        <div className="text-center mb-6 animate-fade-in">
           <h1
-            className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 animate-fade-in-up"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2 animate-fade-in-up"
             style={{ animationDelay: "0.2s" }}
           >
             <span className="text-balance">Viaja por todo </span>
             <span className="text-primary">Paraguay</span>
-            <br />
-            <span className="text-secondary">con nosotros</span>
+            <br className="hidden sm:block" />
+            <span className="text-secondary sm:ml-2">con nosotros</span>
           </h1>
-          <p
-            className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto animate-fade-in-up"
-            style={{ animationDelay: "0.4s" }}
-          >
-            Reservá tus boletos de bus de forma rápida y segura. Las mejores
-            empresas, los mejores precios.
-          </p>
         </div>
 
-        {/* Search Form Component */}
-        <ParaguaySearchForm />
-
-        {/* Stats */}
-        <div
-          className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto animate-fade-in-up"
-          style={{ animationDelay: "0.8s" }}
-        >
-          {[
-            { value: "200+", label: "Destinos" },
-            { value: "40+", label: "Empresas" },
-            { value: "500K+", label: "Viajeros" },
-            { value: "24/7", label: "Soporte" },
-          ].map((stat, index) => (
-            <div key={index} className="text-center group cursor-default">
-              <p className="text-3xl md:text-4xl font-bold text-primary group-hover:text-secondary transition-colors duration-300">
-                {stat.value}
-              </p>
-              <p className="text-white/70 mt-1">{stat.label}</p>
-            </div>
-          ))}
+        {/* Search Form Component - Prominent */}
+        <div className="w-full max-w-[1200px] animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
+          <ParaguaySearchForm />
         </div>
       </div>
 
