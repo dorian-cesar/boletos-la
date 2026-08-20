@@ -351,7 +351,7 @@ export function ParaguaySearchForm() {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
-                  className="w-full p-0 backdrop-blur-md bg-white/30 border-white/40 min-w-[var(--radix-popover-trigger-width)]"
+                  className="w-full p-0 backdrop-blur-md bg-white/60 border-white/40 min-w-[var(--radix-popover-trigger-width)]"
                   align="start"
                 >
                   <Command className="bg-transparent">
@@ -475,7 +475,7 @@ export function ParaguaySearchForm() {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
-                  className="w-full p-0 backdrop-blur-md bg-white/30 border-white/40 min-w-[var(--radix-popover-trigger-width)]"
+                  className="w-full p-0 backdrop-blur-md bg-white/60 border-white/40 min-w-[var(--radix-popover-trigger-width)]"
                   align="start"
                 >
                   <Command className="bg-transparent">
@@ -583,7 +583,7 @@ export function ParaguaySearchForm() {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
-                  className="w-auto p-0 backdrop-blur-md bg-white/30 border-white/40"
+                  className="w-auto p-0 backdrop-blur-md bg-white/60 border-white/40"
                   align="start"
                 >
                   <CalendarComponent
@@ -635,7 +635,7 @@ export function ParaguaySearchForm() {
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent
-                    className="w-auto p-0 backdrop-blur-md bg-white/30 border-white/40"
+                    className="w-auto p-0 backdrop-blur-md bg-white/60 border-white/40"
                     align="start"
                   >
                     <CalendarComponent
