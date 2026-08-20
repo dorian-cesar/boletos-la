@@ -281,20 +281,20 @@ export function ParaguaySearchForm() {
         className="w-full flex justify-center px-4 animate-scale-in"
         style={{ animationDelay: "0.6s" }}
       >
-        <div className="bg-white/50 backdrop-blur-md rounded-3xl shadow-2xl p-6 lg:p-8 border border-white/20 relative overflow-hidden w-full max-w-7xl">
+        <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-8 border border-white/60 relative overflow-hidden w-full max-w-7xl">
           {/* Efecto de vidrio con gradiente sutil */}
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl pointer-events-none" />
 
           {/* Trip Type Toggle */}
           <div className="flex justify-center mb-8 relative z-10">
-            <div className="inline-flex bg-black/20 backdrop-blur-sm rounded-full p-1 border border-white/10">
+            <div className="inline-flex bg-slate-200/50 backdrop-blur-sm rounded-full p-1 border border-slate-300/50">
               <button
                 onClick={() => setTripType("one-way")}
                 className={cn(
-                  "px-6 py-2 rounded-full font-medium transition-all duration-300 relative",
+                  "px-6 py-2 text-sm sm:text-base rounded-full font-semibold transition-all duration-300 relative",
                   tripType === "one-way"
-                    ? "bg-white text-gray-900 shadow-lg"
-                    : "text-white/70 hover:text-white hover:bg-white/10",
+                    ? "bg-primary text-white shadow-md"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-white/50",
                 )}
               >
                 Solo Ida
@@ -302,10 +302,10 @@ export function ParaguaySearchForm() {
               <button
                 onClick={() => setTripType("round-trip")}
                 className={cn(
-                  "px-6 py-2 rounded-full font-medium transition-all duration-300 relative",
+                  "px-6 py-2 text-sm sm:text-base rounded-full font-semibold transition-all duration-300 relative",
                   tripType === "round-trip"
-                    ? "bg-white text-gray-900 shadow-lg"
-                    : "text-white/70 hover:text-white hover:bg-white/10",
+                    ? "bg-primary text-white shadow-md"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-white/50",
                 )}
               >
                 Ida y Vuelta
@@ -317,7 +317,7 @@ export function ParaguaySearchForm() {
           <div className="flex flex-col lg:flex-row gap-4 lg:gap-3 relative z-10 items-stretch lg:items-end">
             {/* Origin */}
             <div className="flex-1 min-w-0">
-              <Label className="text-sm font-medium text-white mb-2 block">
+              <Label className="text-base sm:text-lg lg:text-sm font-bold text-slate-800 mb-2 block">
                 Origen
               </Label>
               <Popover
@@ -332,15 +332,13 @@ export function ParaguaySearchForm() {
                     role="combobox"
                     disabled={stopsLoading}
                     className={cn(
-                      "w-full justify-between h-14 text-left font-normal transition-all duration-300 backdrop-blur-sm",
-                      stopsLoading
-                        ? "bg-white/20 border-white/30 cursor-not-allowed opacity-60"
-                        : "bg-white/10 border-white/40 hover:border-white/60 hover:bg-white/40",
+                      "w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white border-slate-300 shadow-sm hover:border-primary/50 hover:bg-slate-50",
+                      stopsLoading ? "cursor-not-allowed opacity-60" : "",
                     )}
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <MapPin className="h-5 w-5 text-gray-600 flex-shrink-0" />
-                      <span className={cn("text-gray-700 truncate")}>
+                      <MapPin className="h-5 w-5 text-primary/70 flex-shrink-0" />
+                      <span className={cn("text-gray-900 text-lg lg:text-base font-semibold truncate")}>
                         {stopsLoading
                           ? "Cargando ciudades..."
                           : origin
@@ -410,10 +408,10 @@ export function ParaguaySearchForm() {
                 onClick={swapCities}
                 disabled={stopsLoading}
                 className={cn(
-                  "w-10 h-10 flex items-center justify-center text-gray-600 rounded-full shadow-lg transition-all duration-300 backdrop-blur-sm border border-white/40",
+                  "w-10 h-10 flex items-center justify-center text-slate-600 rounded-full shadow-sm transition-all duration-300 bg-white border border-slate-300",
                   stopsLoading
-                    ? "bg-white/20 cursor-not-allowed opacity-50"
-                    : "bg-white/30 hover:scale-110 hover:bg-white/40",
+                    ? "cursor-not-allowed opacity-50"
+                    : "hover:scale-110 hover:text-primary hover:border-primary/40 hover:bg-slate-50",
                 )}
                 aria-label="Intercambiar origen y destino"
               >
@@ -428,10 +426,10 @@ export function ParaguaySearchForm() {
                   onClick={swapCities}
                   disabled={stopsLoading}
                   className={cn(
-                    "w-10 h-10 flex items-center justify-center text-gray-600 rounded-full shadow-lg transition-all duration-300 backdrop-blur-sm border border-white/40",
+                    "w-10 h-10 flex items-center justify-center text-slate-600 rounded-full shadow-sm transition-all duration-300 bg-white border border-slate-300",
                     stopsLoading
-                      ? "bg-white/20 cursor-not-allowed opacity-50"
-                      : "bg-white/30 hover:scale-110 hover:bg-white/40",
+                      ? "cursor-not-allowed opacity-50"
+                      : "hover:scale-110 hover:text-primary hover:border-primary/40 hover:bg-slate-50",
                   )}
                   aria-label="Intercambiar origen y destino"
                 >
@@ -442,7 +440,7 @@ export function ParaguaySearchForm() {
 
             {/* Destination */}
             <div className="flex-1 min-w-0">
-              <Label className="text-sm font-medium text-white mb-2 block">
+              <Label className="text-base sm:text-lg lg:text-sm font-bold text-slate-800 mb-2 block">
                 Destino
               </Label>
               <Popover
@@ -457,15 +455,13 @@ export function ParaguaySearchForm() {
                     role="combobox"
                     disabled={stopsLoading}
                     className={cn(
-                      "w-full justify-between h-14 text-left font-normal transition-all duration-300 backdrop-blur-sm",
-                      stopsLoading
-                        ? "bg-white/20 border-white/30 cursor-not-allowed opacity-60"
-                        : "bg-white/30 border-white/40 hover:border-white/60 hover:bg-white/40",
+                      "w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white border-slate-300 shadow-sm hover:border-primary/50 hover:bg-slate-50",
+                      stopsLoading ? "cursor-not-allowed opacity-60" : "",
                     )}
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <MapPin className="h-5 w-5 text-gray-600 flex-shrink-0" />
-                      <span className={cn("text-gray-700 truncate")}>
+                      <MapPin className="h-5 w-5 text-primary/70 flex-shrink-0" />
+                      <span className={cn("text-gray-900 text-lg lg:text-base font-semibold truncate")}>
                         {stopsLoading
                           ? "Cargando ciudades..."
                           : destination
@@ -557,7 +553,7 @@ export function ParaguaySearchForm() {
 
             {/* Fecha de Ida */}
             <div className="flex-1 min-w-0">
-              <Label className="text-sm font-medium text-white mb-2 block">
+              <Label className="text-base sm:text-lg lg:text-sm font-bold text-slate-800 mb-2 block">
                 Fecha de Ida
               </Label>
               <Popover
@@ -567,14 +563,14 @@ export function ParaguaySearchForm() {
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className="w-full justify-between h-14 text-left font-normal bg-white/30 border-white/40 hover:border-white/60 hover:bg-white/40 transition-all duration-300 backdrop-blur-sm"
+                    className="w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white border-slate-300 shadow-sm hover:border-primary/50 hover:bg-slate-50"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <Calendar className="h-5 w-5 text-gray-600 flex-shrink-0" />
+                      <Calendar className="h-5 w-5 text-primary/70 flex-shrink-0" />
                       <span
                         className={cn(
-                          !departureDate && "text-gray-500",
-                          "text-gray-700 truncate",
+                          !departureDate && "text-gray-400",
+                          "text-gray-900 text-lg lg:text-base font-semibold truncate",
                         )}
                       >
                         {departureDate
@@ -612,21 +608,21 @@ export function ParaguaySearchForm() {
             {/* Fecha de Vuelta */}
             {tripType === "round-trip" && (
               <div className="flex-1 min-w-0 animate-in fade-in slide-in-from-right-5 duration-500">
-                <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                <Label className="text-base sm:text-lg lg:text-sm font-bold text-slate-800 mb-2 block">
                   Fecha de Vuelta
                 </Label>
                 <Popover open={returnDateOpen} onOpenChange={setReturnDateOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      className="w-full justify-between h-14 text-left font-normal bg-white/30 border-white/40 hover:border-white/60 hover:bg-white/40 transition-all duration-300 backdrop-blur-sm"
+                      className="w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white border-slate-300 shadow-sm hover:border-primary/50 hover:bg-slate-50"
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <Calendar className="h-5 w-5 text-gray-600 flex-shrink-0" />
+                        <Calendar className="h-5 w-5 text-primary/70 flex-shrink-0" />
                         <span
                           className={cn(
-                            !returnDate && "text-gray-500",
-                            "text-gray-700 truncate",
+                            !returnDate && "text-gray-400",
+                            "text-gray-900 text-lg lg:text-base font-semibold truncate",
                           )}
                         >
                           {returnDate
@@ -675,10 +671,10 @@ export function ParaguaySearchForm() {
                 !departureDate ||
                 (tripType === "round-trip" && !returnDate)
               }
-              className="bg-white/30 hover:bg-white/40 text-gray-700 h-12 px-12 text-lg font-semibold rounded-full shadow-lg transition-all duration-300 backdrop-blur-sm border border-white/40 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:transform-none disabled:hover:bg-white/30"
+              className="bg-primary hover:bg-primary/90 text-white h-14 px-12 text-lg sm:text-xl lg:text-lg font-bold rounded-full shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:transform-none disabled:hover:bg-primary"
             >
               Buscar Boletos
-              <ArrowRight className="h-5 w-5 shrink-0 text-gray-700" />
+              <ArrowRight className="h-5 w-5 shrink-0 text-white" />
             </Button>
           </div>
         </div>
