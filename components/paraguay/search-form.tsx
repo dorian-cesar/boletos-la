@@ -359,7 +359,7 @@ export function ParaguaySearchForm() {
                 className={cn(
                   "px-6 py-2 text-sm sm:text-base rounded-full font-semibold transition-all duration-300 relative",
                   tripType === "one-way"
-                    ? "bg-primary text-white shadow-md"
+                    ? "bg-secondary text-black shadow-md font-bold"
                     : "text-slate-600 hover:text-slate-900 hover:bg-white/50",
                 )}
               >
@@ -370,7 +370,7 @@ export function ParaguaySearchForm() {
                 className={cn(
                   "px-6 py-2 text-sm sm:text-base rounded-full font-semibold transition-all duration-300 relative",
                   tripType === "round-trip"
-                    ? "bg-primary text-white shadow-md"
+                    ? "bg-secondary text-black shadow-md font-bold"
                     : "text-slate-600 hover:text-slate-900 hover:bg-white/50",
                 )}
               >
@@ -393,7 +393,7 @@ export function ParaguaySearchForm() {
                   className={cn(
                     "px-3.5 h-full text-sm rounded-lg font-semibold transition-all duration-200 whitespace-nowrap flex items-center justify-center",
                     tripType === "one-way"
-                      ? "bg-primary text-white shadow-sm"
+                      ? "bg-secondary text-black shadow-sm font-bold"
                       : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                   )}
                 >
@@ -405,7 +405,7 @@ export function ParaguaySearchForm() {
                   className={cn(
                     "px-3.5 h-full text-sm rounded-lg font-semibold transition-all duration-200 whitespace-nowrap flex items-center justify-center",
                     tripType === "round-trip"
-                      ? "bg-primary text-white shadow-sm"
+                      ? "bg-secondary text-black shadow-sm font-bold"
                       : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                   )}
                 >
@@ -482,11 +482,11 @@ export function ParaguaySearchForm() {
                               setDestinationTitle("");
                               setOriginOpen(false);
                             }}
-                            className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-secondary data-[selected=true]:text-black hover:bg-secondary hover:text-black transition-colors duration-150 rounded-lg px-2"
+                            className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-primary data-[selected=true]:text-white hover:bg-primary hover:text-white transition-colors duration-150 rounded-lg px-2"
                           >
-                            <MapPin className="h-4 w-4 mr-2 text-chart-4 shrink-0 group-hover:text-black group-data-[selected=true]:text-black transition-colors" strokeWidth={2.2} />
+                            <MapPin className="h-4 w-4 mr-2 text-chart-4 shrink-0 group-hover:text-white group-data-[selected=true]:text-white transition-colors" strokeWidth={2.2} />
                             <div className="min-w-0">
-                              <p className="font-bold truncate tracking-wide text-slate-900 group-hover:text-black group-data-[selected=true]:text-black [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
+                              <p className="font-bold truncate tracking-wide text-slate-900 group-hover:text-white group-data-[selected=true]:text-white [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
                                 {city.name}
                               </p>
                             </div>
@@ -508,7 +508,7 @@ export function ParaguaySearchForm() {
                   "w-10 h-10 flex items-center justify-center text-slate-600 rounded-full shadow-sm transition-all duration-300 bg-white border border-slate-300",
                   stopsLoading
                     ? "cursor-not-allowed opacity-50"
-                    : "hover:scale-110 hover:text-primary hover:border-primary/40 hover:bg-slate-50",
+                    : "hover:scale-110 hover:text-secondary hover:border-secondary/40 hover:bg-slate-50",
                 )}
                 aria-label="Intercambiar origen y destino"
               >
@@ -526,7 +526,7 @@ export function ParaguaySearchForm() {
                     "w-10 h-10 flex items-center justify-center text-slate-600 rounded-full shadow-sm transition-all duration-300 bg-white border border-slate-300",
                     stopsLoading
                       ? "cursor-not-allowed opacity-50"
-                      : "hover:scale-110 hover:text-primary hover:border-primary/40 hover:bg-slate-50",
+                      : "hover:scale-110 hover:text-secondary hover:border-secondary/40 hover:bg-slate-50",
                   )}
                   aria-label="Intercambiar origen y destino"
                 >
@@ -552,12 +552,12 @@ export function ParaguaySearchForm() {
                     role="combobox"
                     disabled={stopsLoading}
                     className={cn(
-                      "w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white border-slate-300 shadow-sm hover:border-primary/50 hover:bg-slate-50",
+                      "w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white border-slate-300 shadow-sm hover:border-secondary/50 hover:bg-slate-50",
                       stopsLoading ? "cursor-not-allowed opacity-60" : "",
                     )}
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
-                      <MapPin className="h-5 w-5 text-primary flex-shrink-0" />
+                      <MapPin className="h-5 w-5 text-secondary flex-shrink-0" />
                       <CityMarqueeText
                         text={
                           destination
@@ -592,7 +592,7 @@ export function ParaguaySearchForm() {
                       <CommandGroup className="bg-transparent">
                         {originTitle && (
                           <div className="px-2 py-2 text-xs font-semibold text-gray-700 bg-white/40 backdrop-blur-sm rounded-lg mb-2 flex items-center gap-2 border border-white/50 shadow-sm">
-                            <MapPin className="h-3.5 w-3.5 text-chart-4" />
+                            <MapPin className="h-3.5 w-3.5 text-secondary" />
                             Rutas disponibles desde {originTitle}
                           </div>
                         )}
@@ -609,7 +609,7 @@ export function ParaguaySearchForm() {
                               }}
                               className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-secondary data-[selected=true]:text-black hover:bg-secondary hover:text-black transition-colors duration-150 rounded-lg px-2"
                             >
-                              <MapPin className="h-4 w-4 mr-2 text-chart-4 shrink-0 group-hover:text-black group-data-[selected=true]:text-black transition-colors" strokeWidth={2.2} />
+                              <MapPin className="h-4 w-4 mr-2 text-secondary shrink-0 group-hover:text-black group-data-[selected=true]:text-black transition-colors" strokeWidth={2.2} />
                               <div className="min-w-0">
                                 <p className="font-bold truncate tracking-wide text-slate-900 group-hover:text-black group-data-[selected=true]:text-black [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
                                   {city.name}
@@ -661,10 +661,10 @@ export function ParaguaySearchForm() {
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className="w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white border-slate-300 shadow-sm hover:border-primary/50 hover:bg-slate-50"
+                    className="w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white border-slate-300 shadow-sm hover:border-secondary/50 hover:bg-slate-50"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <Calendar className="h-5 w-5 text-primary/70 flex-shrink-0" />
+                      <Calendar className="h-5 w-5 text-secondary flex-shrink-0" />
                       <span
                         className={cn(
                           !departureDate && "text-gray-400",
@@ -713,10 +713,10 @@ export function ParaguaySearchForm() {
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      className="w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white border-slate-300 shadow-sm hover:border-primary/50 hover:bg-slate-50"
+                      className="w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white border-slate-300 shadow-sm hover:border-secondary/50 hover:bg-slate-50"
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <Calendar className="h-5 w-5 text-primary/70 flex-shrink-0" />
+                        <Calendar className="h-5 w-5 text-secondary flex-shrink-0" />
                         <span
                           className={cn(
                             !returnDate && "text-gray-400",
@@ -768,10 +768,10 @@ export function ParaguaySearchForm() {
                   !departureDate ||
                   (tripType === "round-trip" && !returnDate)
                 }
-                className="bg-accent hover:bg-accent/90 text-white h-14 px-8 text-lg font-bold rounded-full shadow-lg transition-all duration-300 hover:scale-105 disabled:opacity-50"
+                className="bg-secondary hover:bg-secondary/90 text-black h-14 px-8 text-lg font-bold rounded-full shadow-lg transition-all duration-300 hover:scale-105 disabled:opacity-50"
               >
-                Buscar Boletos
-                <ArrowRight className="h-5 w-5 shrink-0 text-white ml-2" />
+                Buscar Viajes
+                <ArrowRight className="h-5 w-5 shrink-0 text-black ml-2" />
               </Button>
             </div>
           </div>
@@ -787,10 +787,10 @@ export function ParaguaySearchForm() {
                 !departureDate ||
                 (tripType === "round-trip" && !returnDate)
               }
-              className="bg-accent hover:bg-accent/90 text-white h-14 px-12 text-lg sm:text-xl lg:text-lg font-bold rounded-full shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:transform-none disabled:hover:bg-accent"
+              className="bg-secondary hover:bg-secondary/90 text-black h-14 px-12 text-lg sm:text-xl lg:text-lg font-bold rounded-full shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:transform-none disabled:hover:bg-secondary"
             >
-              Buscar Boletos
-              <ArrowRight className="h-5 w-5 shrink-0 text-white" />
+              Buscar Viajes
+              <ArrowRight className="h-5 w-5 shrink-0 text-black" />
             </Button>
           </div>
         </div>
