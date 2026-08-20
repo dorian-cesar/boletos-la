@@ -18,7 +18,7 @@ export default function TerminosYCondicionesPage() {
       <div className="absolute bottom-20 right-0 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full pointer-events-none opacity-50" />
 
       <div className="flex-1 pt-32 pb-20 container mx-auto px-4 max-w-4xl relative z-10">
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight text-white">
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight text-slate-900 dark:text-white">
           Términos y Condiciones de Uso
         </h1>
         <p className="text-primary font-medium mb-12">
@@ -43,16 +43,16 @@ export default function TerminosYCondicionesPage() {
           </div>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               1. Identificación y Aceptación
             </h2>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <strong className="text-white font-semibold">Titular del Sitio:</strong>{" "}
+                <strong className="text-slate-900 dark:text-white font-semibold">Titular del Sitio:</strong>{" "}
                 www.boletos.la (en adelante, "la Empresa").
               </li>
               <li>
-                <strong className="text-white font-semibold">Aceptación:</strong> La
+                <strong className="text-slate-900 dark:text-white font-semibold">Aceptación:</strong> La
                 utilización del Sitio Web atribuye la condición de usuario (el
                 "Usuario") e implica la aceptación plena y sin reservas de todas
                 y cada una de las disposiciones incluidas en estos Términos y
@@ -62,7 +62,7 @@ export default function TerminosYCondicionesPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               2. Capacidad Legal
             </h2>
             <p>
@@ -76,25 +76,25 @@ export default function TerminosYCondicionesPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               3. Registro de Usuario y Seguridad
             </h2>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <strong className="text-white font-semibold">Creación de Cuenta:</strong>{" "}
+                <strong className="text-slate-900 dark:text-white font-semibold">Creación de Cuenta:</strong>{" "}
                 Algunas funciones o compras en el Sitio Web pueden requerir el
                 registro del Usuario mediante la creación de una cuenta y la
                 provisión de datos personales (nombre, correo electrónico,
                 contraseña, etc.).
               </li>
               <li>
-                <strong className="text-white font-semibold">Confidencialidad:</strong> El
+                <strong className="text-slate-900 dark:text-white font-semibold">Confidencialidad:</strong> El
                 Usuario es responsable de mantener la confidencialidad de los
                 datos de su cuenta y contraseña, así como de restringir el
                 acceso a su dispositivo.
               </li>
               <li>
-                <strong className="text-white font-semibold">Responsabilidad:</strong> El
+                <strong className="text-slate-900 dark:text-white font-semibold">Responsabilidad:</strong> El
                 Usuario acepta asumir la responsabilidad de todas las actividades
                 que se realicen bajo su cuenta o contraseña.
               </li>
@@ -102,18 +102,18 @@ export default function TerminosYCondicionesPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               4. Proceso de Compra de Boletos
             </h2>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <strong className="text-white font-semibold">Disponibilidad:</strong> Todas
+                <strong className="text-slate-900 dark:text-white font-semibold">Disponibilidad:</strong> Todas
                 las transacciones realizadas a través de www.boletos.la están
                 sujetas a la disponibilidad de boletos para el evento
                 correspondiente y a la verificación y aceptación del pago.
               </li>
               <li>
-                <strong className="text-white font-semibold">Precios y Cargos:</strong> Los
+                <strong className="text-slate-900 dark:text-white font-semibold">Precios y Cargos:</strong> Los
                 precios de los boletos se indican claramente en el Sitio Web e
                 incluyen los impuestos aplicables, a menos que se especifique lo
                 contrario. Podrán aplicarse cargos por servicio o gestión
@@ -121,7 +121,7 @@ export default function TerminosYCondicionesPage() {
                 compra.
               </li>
               <li>
-                <strong className="text-white font-semibold">Confirmación de Compra:</strong>{" "}
+                <strong className="text-slate-900 dark:text-white font-semibold">Confirmación de Compra:</strong>{" "}
                 Una vez procesada exitosamente la transacción, el Usuario recibirá
                 una confirmación de compra por correo electrónico o a través de la
                 plataforma, la cual incluirá el comprobante o boleto digital
@@ -131,12 +131,12 @@ export default function TerminosYCondicionesPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               5. Política de Reembolsos, Cambios y Cancelaciones
             </h2>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <strong className="text-white font-semibold">Venta Final:</strong> Salvo
+                <strong className="text-slate-900 dark:text-white font-semibold">Venta Final:</strong> Salvo
                 disposición legal en contrario o cancelación expresa del evento
                 por parte del organizador, todas las ventas de boletos son
                 definitivas. No se admiten cambios, devoluciones ni reembolsos
@@ -144,7 +144,7 @@ export default function TerminosYCondicionesPage() {
                 cantidad de entradas.
               </li>
               <li>
-                <strong className="text-white font-semibold">
+                <strong className="text-slate-900 dark:text-white font-semibold">
                   Cancelación o Reprogramación de Eventos:
                 </strong>{" "}
                 Si un evento es cancelado definitivamente, www.boletos.la
@@ -159,7 +159,7 @@ export default function TerminosYCondicionesPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               6. Uso del Sitio Web y Conducta Prohibida
             </h2>
             <p className="mb-4">
@@ -182,7 +182,7 @@ export default function TerminosYCondicionesPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               7. Propiedad Intelectual
             </h2>
             <p>
@@ -197,12 +197,12 @@ export default function TerminosYCondicionesPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               8. Limitación de Responsabilidad
             </h2>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <strong className="text-white font-semibold">Intermediación:</strong>{" "}
+                <strong className="text-slate-900 dark:text-white font-semibold">Intermediación:</strong>{" "}
                 www.boletos.la actúa en muchos casos como plataforma intermediaria
                 de comercialización de entradas organizadas por terceros. La
                 Empresa no se hace responsable por la calidad, contenido,
@@ -211,7 +211,7 @@ export default function TerminosYCondicionesPage() {
                 los asistentes.
               </li>
               <li>
-                <strong className="text-white font-semibold">Fallos Técnicos:</strong> La
+                <strong className="text-slate-900 dark:text-white font-semibold">Fallos Técnicos:</strong> La
                 Empresa no garantiza la disponibilidad continua e ininterrumpida
                 del Sitio Web y queda exonerada de cualquier responsabilidad por
                 daños y perjuicios de toda naturaleza derivados de fallos
@@ -222,7 +222,7 @@ export default function TerminosYCondicionesPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               9. Privacidad y Protección de Datos
             </h2>
             <p>
@@ -235,7 +235,7 @@ export default function TerminosYCondicionesPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               10. Modificaciones de los Términos y Condiciones
             </h2>
             <p>
@@ -248,7 +248,7 @@ export default function TerminosYCondicionesPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               11. Ley Aplicable y Jurisdicción
             </h2>
             <p>

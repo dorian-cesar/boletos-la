@@ -30,6 +30,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { ThemeProvider } from "@/components/theme-provider";
+
 export default function RootLayout({
   children,
 }: {
@@ -38,11 +40,18 @@ export default function RootLayout({
   return (
     <html lang="es" className="scroll-smooth" suppressHydrationWarning>
       <body className={`${inter.variable} antialiased`} suppressHydrationWarning>
-        <GoogleTagManager />
-        <MetaPixel />
-        <div className="zoom-wrapper">
-          {children}
-        </div>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <GoogleTagManager />
+          <MetaPixel />
+          <div className="zoom-wrapper">
+            {children}
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

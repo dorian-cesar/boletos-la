@@ -122,17 +122,17 @@ export default async function PasajesRoutePage({ params }: PageProps) {
         <ParaguayHeader />
 
         {/* Hero Section para la Ruta */}
-        <section className="relative pt-32 pb-20 bg-gradient-to-b from-blue-900 via-indigo-900 to-slate-900 text-white overflow-hidden">
+        <section className="relative pt-32 pb-20 bg-gradient-to-b from-blue-900 via-indigo-900 to-slate-900 text-slate-900 dark:text-white overflow-hidden">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-30" />
           
           <div className="container mx-auto px-4 relative z-10">
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm text-blue-200 mb-6" aria-label="Breadcrumb">
-              <Link href="/paraguay" className="hover:underline hover:text-white transition">Inicio</Link>
+              <Link href="/paraguay" className="hover:underline hover:text-slate-900 dark:text-white transition">Inicio</Link>
               <span>/</span>
               <span className="text-blue-300">Pasajes</span>
               <span>/</span>
-              <span className="text-white font-medium">{origenTitle} a {destinoTitle}</span>
+              <span className="text-slate-900 dark:text-white font-medium">{origenTitle} a {destinoTitle}</span>
             </nav>
 
             <div className="max-w-4xl">
@@ -140,7 +140,7 @@ export default async function PasajesRoutePage({ params }: PageProps) {
                 <Bus className="w-4 h-4 text-amber-400" /> Ruta Directa de Colectivos
               </div>
 
-              <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white">
+              <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-slate-900 dark:text-white">
                 Pasajes de Bus de <span className="text-amber-400">{origenTitle}</span> a <span className="text-amber-400">{destinoTitle}</span>
               </h1>
 
@@ -172,7 +172,7 @@ export default async function PasajesRoutePage({ params }: PageProps) {
                   <Clock className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 dark:text-white mb-1">Frecuencia Diaria</h3>
+                  <h3 className="font-bold text-slate-900 dark:text-slate-900 dark:text-white mb-1">Frecuencia Diaria</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400">Salidas diarias en diferentes horarios de la mañana, tarde y noche.</p>
                 </div>
               </div>
@@ -182,7 +182,7 @@ export default async function PasajesRoutePage({ params }: PageProps) {
                   <ShieldCheck className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 dark:text-white mb-1">Compra 100% Segura</h3>
+                  <h3 className="font-bold text-slate-900 dark:text-slate-900 dark:text-white mb-1">Compra 100% Segura</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400">Emisión digital inmediata de boletos válidos para abordar directamente.</p>
                 </div>
               </div>
@@ -192,7 +192,7 @@ export default async function PasajesRoutePage({ params }: PageProps) {
                   <MapPin className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 dark:text-white mb-1">Terminales Principales</h3>
+                  <h3 className="font-bold text-slate-900 dark:text-slate-900 dark:text-white mb-1">Terminales Principales</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400">Salida desde {origenTitle} con llegada a la Terminal de {destinoTitle}.</p>
                 </div>
               </div>
@@ -203,7 +203,7 @@ export default async function PasajesRoutePage({ params }: PageProps) {
         {/* Sección Informativa para SEO */}
         <section className="py-16 bg-slate-50 dark:bg-slate-950">
           <div className="container mx-auto px-4 max-w-4xl">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-slate-900 dark:text-white">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-slate-900 dark:text-slate-900 dark:text-white">
               Información sobre el trayecto {origenTitle} a {destinoTitle}
             </h2>
             <div className="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 space-y-4">
@@ -221,7 +221,7 @@ export default async function PasajesRoutePage({ params }: PageProps) {
         {(relatedFromOrigen.length > 0 || relatedToDestino.length > 0) && (
           <section className="py-16 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
             <div className="container mx-auto px-4">
-              <h2 className="text-2xl font-bold mb-8 text-slate-900 dark:text-white text-center">
+              <h2 className="text-2xl font-bold mb-8 text-slate-900 dark:text-slate-900 dark:text-white text-center">
                 Otras rutas populares en Paraguay
               </h2>
 

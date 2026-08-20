@@ -276,8 +276,8 @@ export function DestinationsSection({ country }: DestinationsSectionProps) {
                     sizes="(max-width: 1024px) 100vw, 600px"
                   />
                   <div className="absolute inset-0 bg-black/30" />
-                  <div className="absolute bottom-3 left-4 text-white flex flex-col justify-end" style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.8)" }}>
-                    <span className="text-xs uppercase tracking-wider text-white/80 leading-none">
+                  <div className="absolute bottom-3 left-4 text-slate-900 dark:text-white flex flex-col justify-end" style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.8)" }}>
+                    <span className="text-xs uppercase tracking-wider text-slate-900 dark:text-white/80 leading-none">
                       {d.country}
                     </span>
                     <h3 className="text-xl font-bold tracking-tight leading-tight mb-1">
@@ -304,8 +304,8 @@ export function DestinationsSection({ country }: DestinationsSectionProps) {
                       sizes="(max-width: 1024px) 50vw, 300px"
                     />
                     <div className="absolute inset-0 bg-black/30" />
-                    <div className="absolute bottom-2 left-3 text-white flex flex-col justify-end" style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.8)" }}>
-                      <span className="text-[10px] uppercase tracking-wider text-white/80 leading-none">
+                    <div className="absolute bottom-2 left-3 text-slate-900 dark:text-white flex flex-col justify-end" style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.8)" }}>
+                      <span className="text-[10px] uppercase tracking-wider text-slate-900 dark:text-white/80 leading-none">
                         {d.country}
                       </span>
                       <h3 className="text-sm lg:text-base font-bold tracking-tight leading-tight mb-1">
@@ -332,8 +332,8 @@ export function DestinationsSection({ country }: DestinationsSectionProps) {
                   sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 300px"
                 />
                 <div className="absolute inset-0 bg-black/30" />
-                <div className="absolute bottom-2 left-3 text-white flex flex-col justify-end" style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.8)" }}>
-                  <span className="text-[10px] uppercase tracking-wider text-white/80 leading-none">
+                <div className="absolute bottom-2 left-3 text-slate-900 dark:text-white flex flex-col justify-end" style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.8)" }}>
+                  <span className="text-[10px] uppercase tracking-wider text-slate-900 dark:text-white/80 leading-none">
                     {d.country}
                   </span>
                   <h3 className="text-sm lg:text-base font-bold tracking-tight leading-tight mb-1">
@@ -391,8 +391,8 @@ export function DestinationsSection({ country }: DestinationsSectionProps) {
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 <div className="absolute bottom-4 left-4">
-                  <div className="bg-black/60 border border-white/50 backdrop-blur-sm px-4 py-2">
-                    <p className="font-medium text-white tracking-wide text-[10px] md:text-xs uppercase">
+                  <div className="bg-black/60 border border-black/25 dark:border-white/50 backdrop-blur-sm px-4 py-2">
+                    <p className="font-medium text-slate-900 dark:text-white tracking-wide text-[10px] md:text-xs uppercase">
                       {city.name}
                     </p>
                     {city.available === false && (
@@ -411,7 +411,7 @@ export function DestinationsSection({ country }: DestinationsSectionProps) {
             <button
               onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
               disabled={currentPage === 0}
-              className="px-6 py-2 rounded-full font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed bg-white border-2 border-[#ff6700] text-[#ff6700] hover:bg-[#ff6700] hover:text-white"
+              className="px-6 py-2 rounded-full font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed bg-white border-2 border-[#ff6700] text-[#ff6700] hover:bg-[#ff6700] hover:text-slate-900 dark:text-white"
             >
               Anterior
             </button>
@@ -421,7 +421,7 @@ export function DestinationsSection({ country }: DestinationsSectionProps) {
             <button
               onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
               disabled={currentPage === totalPages - 1}
-              className="px-6 py-2 rounded-full font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed bg-[#ff6700] text-white border-2 border-[#ff6700] hover:bg-orange-600 hover:border-orange-600 hover:shadow-md"
+              className="px-6 py-2 rounded-full font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed bg-[#ff6700] text-slate-900 dark:text-white border-2 border-[#ff6700] hover:bg-orange-600 hover:border-orange-600 hover:shadow-md"
             >
               Siguiente
             </button>

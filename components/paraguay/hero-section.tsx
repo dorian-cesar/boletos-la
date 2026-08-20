@@ -49,7 +49,7 @@ export function ParaguayHeroSection() {
       <div className="relative z-10 container mx-auto px-2 sm:px-4 py-8 sm:py-20 lg:py-24 flex flex-col items-center justify-center mt-12 sm:mt-0">
         <div className="text-center mb-6 animate-fade-in hidden md:block">
           <h1
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2 animate-fade-in-up"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white mb-2 animate-fade-in-up"
             style={{ animationDelay: "0.2s" }}
           >
             <span className="text-balance">Viaja por todo </span>
@@ -67,7 +67,7 @@ export function ParaguayHeroSection() {
 
       {/* Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <ChevronDown className="h-8 w-8 text-white/50" />
+        <ChevronDown className="h-8 w-8 text-slate-900 dark:text-white/50" />
       </div>
     </section>
   );

@@ -56,7 +56,7 @@ export function CompaniesSection() {
     <section
       ref={sectionRef}
       id="empresas"
-      className="py-24 bg-gradient-to-b from-[#1a2332] to-[#0f1419] relative overflow-hidden"
+      className="py-24 bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] relative overflow-hidden"
     >
       {/* Background Effects - Simple como el FeaturesSection */}
       <div className="absolute inset-0 pointer-events-none">
@@ -79,7 +79,7 @@ export function CompaniesSection() {
           </span>
           <h2
             className={cn(
-              "text-3xl md:text-5xl font-bold text-white mb-4 transition-all duration-700 delay-100",
+              "text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4 transition-all duration-700 delay-100",
               isVisible
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-10",
@@ -90,7 +90,7 @@ export function CompaniesSection() {
           </h2>
           <p
             className={cn(
-              "text-lg text-white/60 max-w-2xl mx-auto transition-all duration-700 delay-200",
+              "text-lg text-slate-900 dark:text-white/60 max-w-2xl mx-auto transition-all duration-700 delay-200",
               isVisible
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-10",
@@ -154,7 +154,7 @@ export function CompaniesSection() {
               <p className="text-4xl md:text-5xl font-bold text-primary mb-2">
                 {stat.value}
               </p>
-              <p className="text-white/60">{stat.label}</p>
+              <p className="text-slate-900 dark:text-white/60">{stat.label}</p>
             </div>
           ))}
         </div>

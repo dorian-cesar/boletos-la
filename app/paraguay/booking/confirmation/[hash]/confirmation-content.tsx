@@ -769,8 +769,8 @@ export default function ConfirmationPageContent({
 
   if (!mounted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#1a2332] to-[#0f1419]">
-        <div className="text-center text-background">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419]">
+        <div className="text-center text-slate-900 dark:text-slate-900 dark:text-white">
           <Image
             src="/logos/logo-boletos.png"
             alt="Logo Boletos.la"
@@ -779,7 +779,7 @@ export default function ConfirmationPageContent({
             className="mx-auto mb-5 animate-bounce"
             priority
           />
-          <p className="text-background/60">Cargando confirmación...</p>
+          <p className="text-slate-900 dark:text-slate-900 dark:text-white/60">Cargando confirmación...</p>
         </div>
       </div>
     );
@@ -787,7 +787,7 @@ export default function ConfirmationPageContent({
 
   if (!selectedOutboundTrip) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#1a2332] to-[#0f1419] relative overflow-x-hidden">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] relative overflow-x-hidden">
         {/* Background Effects */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
@@ -837,7 +837,7 @@ export default function ConfirmationPageContent({
                       onClick={() => {
                         router.push("/booking/checkout");
                       }}
-                      className="border-background/30 text-foreground hover:bg-background/10 w-full sm:w-auto"
+                      className="border-black/15 dark:border-black/15 dark:border-white/30 text-foreground hover:bg-black/10 dark:bg-white/10 w-full sm:w-auto"
                     >
                       Intentar nuevamente
                     </Button>
@@ -854,7 +854,7 @@ export default function ConfirmationPageContent({
   const canShowActions = !!bookingReference;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] text-slate-900 dark:text-slate-900 dark:text-white relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
@@ -897,20 +897,20 @@ export default function ConfirmationPageContent({
             <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-primary/30">
               <CheckCircle2 className="h-14 w-14 text-green-500" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-background mb-3">
+            <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-900 dark:text-white mb-3">
               ¡Reserva Confirmada!
             </h1>
-            <p className="text-lg text-background/60 mb-6">
+            <p className="text-lg text-slate-900 dark:text-slate-900 dark:text-white/60 mb-6">
               {isTarjetaPayment
                 ? "Tu pago con tarjeta ha sido procesado exitosamente. Tu boleto electrónico está listo."
                 : "Tu pago ha sido procesado exitosamente. Tu boleto electrónico está listo."}
             </p>
 
             {/* Booking Reference */}
-            <div className="inline-flex flex-col sm:flex-row items-center gap-2 sm:gap-3 bg-background/10 backdrop-blur-sm rounded-[2.5rem] sm:rounded-full px-8 py-5 sm:py-3 border border-background/20">
+            <div className="inline-flex flex-col sm:flex-row items-center gap-2 sm:gap-3 bg-black/10 dark:bg-white/10 backdrop-blur-sm rounded-[2.5rem] sm:rounded-full px-8 py-5 sm:py-3 border border-black/10 dark:border-black/10 dark:border-white/20">
               <div className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-primary" />
-                <span className="text-background/60 text-sm sm:text-base">
+                <span className="text-slate-900 dark:text-slate-900 dark:text-white/60 text-sm sm:text-base">
                   Código de reserva:
                 </span>
               </div>
@@ -921,13 +921,13 @@ export default function ConfirmationPageContent({
                 {bookingReference && (
                   <button
                     onClick={handleCopyReference}
-                    className="p-1 hover:bg-background/20 rounded transition-colors"
+                    className="p-1 hover:bg-black/20 dark:bg-white/20 rounded transition-colors"
                     title="Copiar código"
                   >
                     {copied ? (
                       <Check className="h-5 w-5 text-green-500" />
                     ) : (
-                      <Copy className="h-5 w-5 text-background/60" />
+                      <Copy className="h-5 w-5 text-slate-900 dark:text-slate-900 dark:text-white/60" />
                     )}
                   </button>
                 )}
@@ -936,16 +936,16 @@ export default function ConfirmationPageContent({
 
             {/* Passenger Info */}
             {primaryPassenger && (
-              <div className="mt-4 text-sm text-background/60">
+              <div className="mt-4 text-sm text-slate-900 dark:text-slate-900 dark:text-white/60">
                 <p>
                   Boleto enviado a:{" "}
-                  <span className="font-medium text-background">
+                  <span className="font-medium text-slate-900 dark:text-slate-900 dark:text-white">
                     {primaryPassenger.email}
                   </span>
                 </p>
                 <p>
                   Documento:{" "}
-                  <span className="font-medium text-background">
+                  <span className="font-medium text-slate-900 dark:text-slate-900 dark:text-white">
                     {primaryPassenger.documentNumber}
                   </span>
                 </p>
@@ -958,12 +958,12 @@ export default function ConfirmationPageContent({
             {/* Trip Details */}
             <div className="lg:col-span-2 space-y-6">
               {/* Outbound Trip */}
-              <Card className="p-6 animate-fade-in bg-background/5 backdrop-blur-sm border-background/20">
+              <Card className="p-6 animate-fade-in bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-black/10 dark:border-white/20">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center border border-primary/30">
                     <MapPin className="h-4 w-4 text-primary" />
                   </div>
-                  <span className="font-bold text-lg text-background">
+                  <span className="font-bold text-lg text-slate-900 dark:text-slate-900 dark:text-white">
                     Viaje de Ida
                   </span>
                 </div>
@@ -972,26 +972,26 @@ export default function ConfirmationPageContent({
                   <div>
                     <div className="flex items-center gap-4 mb-4">
                       <div>
-                        <p className="text-3xl font-bold text-background">
+                        <p className="text-3xl font-bold text-slate-900 dark:text-slate-900 dark:text-white">
                           {selectedOutboundTrip.departureTime}
                         </p>
-                        <p className="text-background/60">{originTitle}</p>
+                        <p className="text-slate-900 dark:text-slate-900 dark:text-white/60">{originTitle}</p>
                       </div>
                       <div className="flex-1 flex items-center">
-                        <div className="w-full h-0.5 bg-background/20 relative">
-                          <Bus className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-primary bg-background/5" />
+                        <div className="w-full h-0.5 bg-black/20 dark:bg-white/20 relative">
+                          <Bus className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-primary bg-black/5 dark:bg-white/5" />
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-3xl font-bold text-background">
+                        <p className="text-3xl font-bold text-slate-900 dark:text-slate-900 dark:text-white">
                           {selectedOutboundTrip.arrivalTime}
                         </p>
-                        <p className="text-background/60">{destinationTitle}</p>
+                        <p className="text-slate-900 dark:text-slate-900 dark:text-white/60">{destinationTitle}</p>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-6 text-sm">
-                      <span className="flex items-center gap-2 text-background/60">
+                      <span className="flex items-center gap-2 text-slate-900 dark:text-slate-900 dark:text-white/60">
                         <Calendar className="h-4 w-4" />
                         {format(
                           parse(departureDate || "", "yyyy-MM-dd", new Date()),
@@ -999,7 +999,7 @@ export default function ConfirmationPageContent({
                           { locale: es },
                         )}
                       </span>
-                      <span className="flex items-center gap-2 text-background/60">
+                      <span className="flex items-center gap-2 text-slate-900 dark:text-slate-900 dark:text-white/60">
                         <Clock className="h-4 w-4" />
                         {selectedOutboundTrip.duration}
                       </span>
@@ -1008,24 +1008,24 @@ export default function ConfirmationPageContent({
 
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
-                      <Bus className="h-5 w-5 text-background/60" />
+                      <Bus className="h-5 w-5 text-slate-900 dark:text-slate-900 dark:text-white/60" />
                       <div>
-                        <p className="font-medium text-background">
+                        <p className="font-medium text-slate-900 dark:text-slate-900 dark:text-white">
                           {selectedOutboundTrip.company}
                         </p>
-                        <p className="text-sm text-background/60">
+                        <p className="text-sm text-slate-900 dark:text-slate-900 dark:text-white/60">
                           {selectedOutboundTrip.busType}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <User className="h-5 w-5 text-background/60" />
+                      <User className="h-5 w-5 text-slate-900 dark:text-slate-900 dark:text-white/60" />
                       <div>
-                        <p className="font-medium text-background">
+                        <p className="font-medium text-slate-900 dark:text-slate-900 dark:text-white">
                           Asientos:{" "}
                           {selectedSeats.map((s) => s.number).join(", ")}
                         </p>
-                        <p className="text-sm text-background/60">
+                        <p className="text-sm text-slate-900 dark:text-slate-900 dark:text-white/60">
                           {selectedSeats.length} pasajero
                           {selectedSeats.length > 1 ? "s" : ""}
                         </p>
@@ -1035,9 +1035,9 @@ export default function ConfirmationPageContent({
                 </div>
 
                 {/* Terminal Info */}
-                <div className="mt-4 pt-4 border-t border-background/20 text-sm">
-                  <p className="text-background/60">
-                    <span className="font-medium text-background">
+                <div className="mt-4 pt-4 border-t border-black/10 dark:border-black/10 dark:border-white/20 text-sm">
+                  <p className="text-slate-900 dark:text-slate-900 dark:text-white/60">
+                    <span className="font-medium text-slate-900 dark:text-slate-900 dark:text-white">
                       Parada de salida:
                     </span>{" "}
                     {originTitle}
@@ -1048,14 +1048,14 @@ export default function ConfirmationPageContent({
               {/* Return Trip */}
               {tripType === "round-trip" && selectedReturnTrip && (
                 <Card
-                  className="p-6 animate-fade-in bg-background/5 backdrop-blur-sm border-background/20"
+                  className="p-6 animate-fade-in bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-black/10 dark:border-white/20"
                   style={{ animationDelay: "0.2s" }}
                 >
                   <div className="flex items-center gap-2 mb-4">
                     <div className="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center border border-secondary/30">
                       <MapPin className="h-4 w-4 text-secondary" />
                     </div>
-                    <span className="font-bold text-lg text-background">
+                    <span className="font-bold text-lg text-slate-900 dark:text-slate-900 dark:text-white">
                       Viaje de Regreso
                     </span>
                   </div>
@@ -1064,28 +1064,28 @@ export default function ConfirmationPageContent({
                     <div>
                       <div className="flex items-center gap-4 mb-4">
                         <div>
-                          <p className="text-3xl font-bold text-background">
+                          <p className="text-3xl font-bold text-slate-900 dark:text-slate-900 dark:text-white">
                             {selectedReturnTrip.departureTime}
                           </p>
-                          <p className="text-background/60">
+                          <p className="text-slate-900 dark:text-slate-900 dark:text-white/60">
                             {destinationTitle}
                           </p>
                         </div>
                         <div className="flex-1 flex items-center">
-                          <div className="w-full h-0.5 bg-background/20 relative">
-                            <Bus className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-secondary bg-background/5" />
+                          <div className="w-full h-0.5 bg-black/20 dark:bg-white/20 relative">
+                            <Bus className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-secondary bg-black/5 dark:bg-white/5" />
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-3xl font-bold text-background">
+                          <p className="text-3xl font-bold text-slate-900 dark:text-slate-900 dark:text-white">
                             {selectedReturnTrip.arrivalTime}
                           </p>
-                          <p className="text-background/60">{originTitle}</p>
+                          <p className="text-slate-900 dark:text-slate-900 dark:text-white/60">{originTitle}</p>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-6 text-sm">
-                        <span className="flex items-center gap-2 text-background/60">
+                        <span className="flex items-center gap-2 text-slate-900 dark:text-slate-900 dark:text-white/60">
                           <Calendar className="h-4 w-4" />
                           {format(
                             parse(returnDate || "", "yyyy-MM-dd", new Date()),
@@ -1093,7 +1093,7 @@ export default function ConfirmationPageContent({
                             { locale: es },
                           )}
                         </span>
-                        <span className="flex items-center gap-2 text-background/60">
+                        <span className="flex items-center gap-2 text-slate-900 dark:text-slate-900 dark:text-white/60">
                           <Clock className="h-4 w-4" />
                           {selectedReturnTrip.duration}
                         </span>
@@ -1102,26 +1102,26 @@ export default function ConfirmationPageContent({
 
                     <div className="space-y-3">
                       <div className="flex items-center gap-3">
-                        <Bus className="h-5 w-5 text-background/60" />
+                        <Bus className="h-5 w-5 text-slate-900 dark:text-slate-900 dark:text-white/60" />
                         <div>
-                          <p className="font-medium text-background">
+                          <p className="font-medium text-slate-900 dark:text-slate-900 dark:text-white">
                             {selectedReturnTrip.company}
                           </p>
-                          <p className="text-sm text-background/60">
+                          <p className="text-sm text-slate-900 dark:text-slate-900 dark:text-white/60">
                             {selectedReturnTrip.busType}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <User className="h-5 w-5 text-background/60" />
+                        <User className="h-5 w-5 text-slate-900 dark:text-slate-900 dark:text-white/60" />
                         <div>
-                          <p className="font-medium text-background">
+                          <p className="font-medium text-slate-900 dark:text-slate-900 dark:text-white">
                             Asientos:{" "}
                             {selectedReturnSeats
                               .map((s) => s.number)
                               .join(", ")}
                           </p>
-                          <p className="text-sm text-background/60">
+                          <p className="text-sm text-slate-900 dark:text-slate-900 dark:text-white/60">
                             {selectedReturnSeats.length} pasajero
                             {selectedReturnSeats.length > 1 ? "s" : ""}
                           </p>
@@ -1131,9 +1131,9 @@ export default function ConfirmationPageContent({
                   </div>
 
                   {/* Terminal Info */}
-                  <div className="mt-4 pt-4 border-t border-background/20 text-sm">
-                    <p className="text-background/60">
-                      <span className="font-medium text-background">
+                  <div className="mt-4 pt-4 border-t border-black/10 dark:border-black/10 dark:border-white/20 text-sm">
+                    <p className="text-slate-900 dark:text-slate-900 dark:text-white/60">
+                      <span className="font-medium text-slate-900 dark:text-slate-900 dark:text-white">
                         Parada de salida:
                       </span>{" "}
                       {destinationTitle}
@@ -1144,39 +1144,39 @@ export default function ConfirmationPageContent({
 
               {/* Passengers */}
               <Card
-                className="p-6 animate-fade-in bg-background/5 backdrop-blur-sm border-background/20"
+                className="p-6 animate-fade-in bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-black/10 dark:border-white/20"
                 style={{ animationDelay: "0.3s" }}
               >
-                <h3 className="font-bold text-lg mb-4 text-background">
+                <h3 className="font-bold text-lg mb-4 text-slate-900 dark:text-slate-900 dark:text-white">
                   Información de Pasajeros
                 </h3>
                 <div className="space-y-4">
                   {passengerDetails.map((passenger, index) => (
                     <div
                       key={index}
-                      className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-background/10 rounded-xl gap-4"
+                      className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-black/10 dark:bg-white/10 rounded-xl gap-4"
                     >
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/30">
                           <User className="h-5 w-5 text-primary" />
                         </div>
                         <div>
-                          <p className="font-medium text-background">
+                          <p className="font-medium text-slate-900 dark:text-slate-900 dark:text-white">
                             {passenger.firstName} {passenger.lastName}
                           </p>
-                          <p className="text-sm text-background/60">
+                          <p className="text-sm text-slate-900 dark:text-slate-900 dark:text-white/60">
                             Documento: {passenger.documentNumber}
                           </p>
                         </div>
                       </div>
                       <div className="text-left md:text-right">
-                        <p className="font-medium text-background">
+                        <p className="font-medium text-slate-900 dark:text-slate-900 dark:text-white">
                           Asiento {passenger.seatNumber}
                         </p>
-                        <p className="text-sm text-background/60">
+                        <p className="text-sm text-slate-900 dark:text-slate-900 dark:text-white/60">
                           {passenger.email}
                         </p>
-                        <p className="text-sm text-background/60">
+                        <p className="text-sm text-slate-900 dark:text-slate-900 dark:text-white/60">
                           Tel: {passenger.phone}
                         </p>
                         {/* Botones para cada pasajero */}
@@ -1233,27 +1233,27 @@ export default function ConfirmationPageContent({
 
               {/* Payment Summary */}
               <Card
-                className="p-6 animate-fade-in bg-background/5 backdrop-blur-sm border-background/20"
+                className="p-6 animate-fade-in bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-black/10 dark:border-white/20"
                 style={{ animationDelay: "0.4s" }}
               >
-                <h3 className="font-bold text-lg mb-4 text-background">
+                <h3 className="font-bold text-lg mb-4 text-slate-900 dark:text-slate-900 dark:text-white">
                   Resumen del Pago
                 </h3>
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-background/60">Asientos</span>
-                    <span className="text-background">
+                    <span className="text-slate-900 dark:text-slate-900 dark:text-white/60">Asientos</span>
+                    <span className="text-slate-900 dark:text-slate-900 dark:text-white">
                       Gs. {totalPrice.toLocaleString("es-PY")}
                     </span>
                   </div>
-                  <div className="pt-3 border-t border-background/20 flex justify-between font-bold text-lg">
-                    <span className="text-background">Total Pagado</span>
+                  <div className="pt-3 border-t border-black/10 dark:border-black/10 dark:border-white/20 flex justify-between font-bold text-lg">
+                    <span className="text-slate-900 dark:text-slate-900 dark:text-white">Total Pagado</span>
                     <span className="text-secondary">
                       Gs. {totalPrice.toLocaleString("es-PY")}
                     </span>
                   </div>
                   {paymentDetails?.fecha_pago && (
-                    <div className="text-xs text-background/60 mt-2">
+                    <div className="text-xs text-slate-900 dark:text-slate-900 dark:text-white/60 mt-2">
                       <p>
                         Pago realizado el{" "}
                         {format(
@@ -1272,8 +1272,8 @@ export default function ConfirmationPageContent({
 
             {/* Actions Sidebar */}
             <div className="lg:col-span-1">
-              <Card className="p-6 sticky top-24 animate-slide-in-right bg-background/5 backdrop-blur-sm border-background/20">
-                <h3 className="text-xl font-bold mb-6 text-background">
+              <Card className="p-6 sticky top-24 animate-slide-in-right bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-black/10 dark:border-white/20">
+                <h3 className="text-xl font-bold mb-6 text-slate-900 dark:text-slate-900 dark:text-white">
                   Tu Boleto Electrónico
                 </h3>
 
@@ -1320,11 +1320,11 @@ export default function ConfirmationPageContent({
                     )}
                   </Button>
 
-                  <div className="pt-4 border-t border-background/20">
+                  <div className="pt-4 border-t border-black/10 dark:border-black/10 dark:border-white/20">
                     <Button
                       onClick={handleNewBooking}
                       variant="ghost"
-                      className="w-full border border-background/30 text-background hover:bg-background/10"
+                      className="w-full border border-black/15 dark:border-black/15 dark:border-white/30 text-slate-900 dark:text-slate-900 dark:text-white hover:bg-black/10 dark:bg-white/10"
                     >
                       <Home className="h-4 w-4" />
                       Nueva Reserva
@@ -1334,8 +1334,8 @@ export default function ConfirmationPageContent({
 
                 {/* Información adicional */}
                 {generatedTickets.length > 0 && (
-                  <div className="mt-6 pt-4 border-t border-background/20">
-                    <p className="text-sm text-background/60 mb-2">
+                  <div className="mt-6 pt-4 border-t border-black/10 dark:border-black/10 dark:border-white/20">
+                    <p className="text-sm text-slate-900 dark:text-slate-900 dark:text-white/60 mb-2">
                       Boletos generados ({generatedTickets.length}/
                       {passengerDetails.length}):
                     </p>
@@ -1343,10 +1343,10 @@ export default function ConfirmationPageContent({
                       {generatedTickets.map((ticket, index) => (
                         <div
                           key={index}
-                          className="flex items-center justify-between p-2 bg-background/10 rounded"
+                          className="flex items-center justify-between p-2 bg-black/10 dark:bg-white/10 rounded"
                         >
                           <div
-                            className="text-xs text-background/60 truncate mr-2"
+                            className="text-xs text-slate-900 dark:text-slate-900 dark:text-white/60 truncate mr-2"
                             title={ticket.fileName}
                           >
                             • {ticket.passengerName} - Asiento {ticket.seat}

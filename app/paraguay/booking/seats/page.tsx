@@ -313,8 +313,8 @@ export default function SeatsPage() {
 
   if (!mounted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#1a2332] to-[#0f1419]">
-        <div className="text-center text-background px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419]">
+        <div className="text-center text-slate-900 dark:text-slate-900 dark:text-white px-4">
           <Image
             src="/logos/logo-boletos.png"
             alt="Logo Boletos.la"
@@ -333,8 +333,8 @@ export default function SeatsPage() {
 
   if (!selectedOutboundTrip) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#1a2332] to-[#0f1419]">
-        <div className="text-center text-background px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419]">
+        <div className="text-center text-slate-900 dark:text-slate-900 dark:text-white px-4">
           <Bus className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
           <p className="text-xl font-semibold mb-2">
             No hay viaje seleccionado
@@ -354,7 +354,7 @@ export default function SeatsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background w-full">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] text-slate-900 dark:text-slate-900 dark:text-white w-full">
       {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
@@ -385,11 +385,11 @@ export default function SeatsPage() {
                 {/* Trip Info Card */}
                 <div className="animate-fade-in">
                   {/* Vista Desktop (Original restaurada) */}
-                  <Card className="hidden sm:block p-4 md:p-6 mb-6 bg-background/5 backdrop-blur-sm border-background/20 overflow-hidden w-full">
-                    <div className="flex flex-row items-center justify-between w-full mb-3 pb-2 border-b border-background/10">
+                  <Card className="hidden sm:block p-4 md:p-6 mb-6 bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-black/10 dark:border-white/20 overflow-hidden w-full">
+                    <div className="flex flex-row items-center justify-between w-full mb-3 pb-2 border-b border-black/10 dark:border-black/10 dark:border-white/10">
                       <div className="flex items-center gap-2 min-w-0 flex-1">
                         {companyLogo ? (
-                          <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 bg-white/10 flex items-center justify-center border border-background/20">
+                          <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 bg-white/10 flex items-center justify-center border border-black/10 dark:border-black/10 dark:border-white/20">
                             <Image 
                               src={companyLogo} 
                               alt={companyName} 
@@ -401,10 +401,10 @@ export default function SeatsPage() {
                         ) : (
                           <Bus className="h-5 w-5 md:h-6 md:w-6 text-primary flex-shrink-0" />
                         )}
-                        <span className="font-bold text-sm md:text-base lg:text-lg text-background truncate">
+                        <span className="font-bold text-sm md:text-base lg:text-lg text-slate-900 dark:text-slate-900 dark:text-white truncate">
                           {companyName}
                         </span>
-                        <span className="text-xs md:text-sm text-background/60 truncate">
+                        <span className="text-xs md:text-sm text-slate-900 dark:text-slate-900 dark:text-white/60 truncate">
                           {currentTrip?.busType}
                         </span>
                       </div>
@@ -423,12 +423,12 @@ export default function SeatsPage() {
                     <div className="flex flex-row items-center justify-between gap-3 w-full">
                       {/* Salida */}
                       <div className="flex flex-col items-start gap-0">
-                        <p className="text-lg md:text-xl lg:text-2xl font-bold text-background">
+                        <p className="text-lg md:text-xl lg:text-2xl font-bold text-slate-900 dark:text-slate-900 dark:text-white">
                           {currentTrip?.departureTime}
                         </p>
                         <div className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3 md:h-4 md:w-4 text-background/60 flex-shrink-0" />
-                          <span className="text-xs md:text-sm text-background/60 truncate max-w-[100px] md:max-w-[120px]">
+                          <MapPin className="h-3 w-3 md:h-4 md:w-4 text-slate-900 dark:text-slate-900 dark:text-white/60 flex-shrink-0" />
+                          <span className="text-xs md:text-sm text-slate-900 dark:text-slate-900 dark:text-white/60 truncate max-w-[100px] md:max-w-[120px]">
                             {currentOriginTitle}
                           </span>
                         </div>
@@ -436,29 +436,29 @@ export default function SeatsPage() {
 
                       {/* Duración */}
                       <div className="flex flex-col items-center justify-center gap-0 px-2 leading-tight">
-                        <Clock className="h-3.5 w-3.5 md:h-4 md:w-4 text-background/60 flex-shrink-0" />
-                        <span className="text-xs text-background/60 whitespace-nowrap">
+                        <Clock className="h-3.5 w-3.5 md:h-4 md:w-4 text-slate-900 dark:text-slate-900 dark:text-white/60 flex-shrink-0" />
+                        <span className="text-xs text-slate-900 dark:text-slate-900 dark:text-white/60 whitespace-nowrap">
                           {currentTrip?.duration}
                         </span>
-                        <div className="w-16 h-0.5 bg-background/20 mt-1" />
+                        <div className="w-16 h-0.5 bg-black/20 dark:bg-white/20 mt-1" />
                       </div>
 
                       {/* Llegada */}
                       <div className="flex flex-col items-end gap-0">
-                        <p className="text-lg md:text-xl lg:text-2xl font-bold text-background">
+                        <p className="text-lg md:text-xl lg:text-2xl font-bold text-slate-900 dark:text-slate-900 dark:text-white">
                           {currentTrip?.arrivalTime}
                         </p>
                         <div className="flex items-center gap-1">
-                          <span className="text-xs md:text-sm text-background/60 truncate max-w-[100px] md:max-w-[120px]">
+                          <span className="text-xs md:text-sm text-slate-900 dark:text-slate-900 dark:text-white/60 truncate max-w-[100px] md:max-w-[120px]">
                             {currentDestinationTitle}
                           </span>
-                          <MapPin className="h-3 w-3 md:h-4 md:w-4 text-background/60 flex-shrink-0" />
+                          <MapPin className="h-3 w-3 md:h-4 md:w-4 text-slate-900 dark:text-slate-900 dark:text-white/60 flex-shrink-0" />
                         </div>
                       </div>
 
                       {/* Fecha y Precio */}
-                      <div className="flex flex-col items-end lg:ml-4 border-l border-background/10 pl-4">
-                        <p className="text-xs md:text-sm text-background/60">
+                      <div className="flex flex-col items-end lg:ml-4 border-l border-black/10 dark:border-black/10 dark:border-white/10 pl-4">
+                        <p className="text-xs md:text-sm text-slate-900 dark:text-slate-900 dark:text-white/60">
                           {format(
                             parse(currentDate || "", "yyyy-MM-dd", new Date()),
                             "EEE d MMM",
@@ -473,7 +473,7 @@ export default function SeatsPage() {
                   </Card>
 
                   {/* Vista Mobile (Optimización nueva) */}
-                  <Card className="sm:hidden p-4 mb-6 bg-background/5 backdrop-blur-md border-background/20 overflow-hidden w-full relative">
+                  <Card className="sm:hidden p-4 mb-6 bg-black/5 dark:bg-white/5 backdrop-blur-md border-black/10 dark:border-black/10 dark:border-white/20 overflow-hidden w-full relative">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
                     <div className="flex items-center justify-between gap-4 mb-6 relative z-10">
                       <div className="flex items-center gap-3 min-w-0">
@@ -491,10 +491,10 @@ export default function SeatsPage() {
                           )}
                         </div>
                         <div className="min-w-0">
-                          <h3 className="font-bold text-sm text-background truncate">
+                          <h3 className="font-bold text-sm text-slate-900 dark:text-slate-900 dark:text-white truncate">
                             {companyName}
                           </h3>
-                          <p className="text-[10px] text-background/50 truncate">
+                          <p className="text-[10px] text-slate-900 dark:text-slate-900 dark:text-white/50 truncate">
                             {currentTrip?.busType}
                           </p>
                         </div>
@@ -514,28 +514,28 @@ export default function SeatsPage() {
                     <div className="flex flex-col gap-4 relative z-10">
                       <div className="flex items-center justify-between">
                         <div className="space-y-1">
-                          <p className="text-xs font-medium text-background/40 uppercase tracking-widest leading-none">
+                          <p className="text-xs font-medium text-slate-900 dark:text-slate-900 dark:text-white/40 uppercase tracking-widest leading-none">
                             Salida
                           </p>
-                          <p className="text-2xl font-bold text-background leading-none">
+                          <p className="text-2xl font-bold text-slate-900 dark:text-slate-900 dark:text-white leading-none">
                             {currentTrip?.departureTime}
                           </p>
                           <div className="flex items-center gap-1">
                             <MapPin className="h-3 w-3 text-primary shrink-0" />
-                            <span className="text-sm text-background/70 truncate max-w-[120px]">
+                            <span className="text-sm text-slate-900 dark:text-slate-900 dark:text-white/70 truncate max-w-[120px]">
                               {currentOriginTitle}
                             </span>
                           </div>
                         </div>
                         <div className="text-right space-y-1">
-                          <p className="text-xs font-medium text-background/40 uppercase tracking-widest leading-none">
+                          <p className="text-xs font-medium text-slate-900 dark:text-slate-900 dark:text-white/40 uppercase tracking-widest leading-none">
                             Llegada
                           </p>
-                          <p className="text-2xl font-bold text-background leading-none">
+                          <p className="text-2xl font-bold text-slate-900 dark:text-slate-900 dark:text-white leading-none">
                             {currentTrip?.arrivalTime}
                           </p>
                           <div className="flex items-center gap-1 justify-end">
-                            <span className="text-sm text-background/70 truncate max-w-[120px]">
+                            <span className="text-sm text-slate-900 dark:text-slate-900 dark:text-white/70 truncate max-w-[120px]">
                               {currentDestinationTitle}
                             </span>
                             <MapPin className="h-3 w-3 text-secondary shrink-0" />
@@ -543,11 +543,11 @@ export default function SeatsPage() {
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between pt-3 border-t border-background/10">
+                      <div className="flex items-center justify-between pt-3 border-t border-black/10 dark:border-black/10 dark:border-white/10">
                         <div className="flex items-center gap-4">
                           <div className="flex items-center gap-1.5">
-                            <Calendar className="h-3.5 w-3.5 text-background/40" />
-                            <span className="text-xs text-background/60">
+                            <Calendar className="h-3.5 w-3.5 text-slate-900 dark:text-slate-900 dark:text-white/40" />
+                            <span className="text-xs text-slate-900 dark:text-slate-900 dark:text-white/60">
                               {format(
                                 parse(currentDate || "", "yyyy-MM-dd", new Date()),
                                 "d MMM",
@@ -556,8 +556,8 @@ export default function SeatsPage() {
                             </span>
                           </div>
                           <div className="flex items-center gap-1.5">
-                            <Clock className="h-3.5 w-3.5 text-background/40" />
-                            <span className="text-xs text-background/60">
+                            <Clock className="h-3.5 w-3.5 text-slate-900 dark:text-slate-900 dark:text-white/40" />
+                            <span className="text-xs text-slate-900 dark:text-slate-900 dark:text-white/60">
                               {currentTrip?.duration}
                             </span>
                           </div>
@@ -588,10 +588,10 @@ export default function SeatsPage() {
                   <div className="mt-6 space-y-4">
                     <div className="flex items-center gap-2">
                       <UserCheck className="h-5 w-5 text-primary" />
-                      <h3 className="text-base font-semibold text-background">
+                      <h3 className="text-base font-semibold text-slate-900 dark:text-slate-900 dark:text-white">
                         Datos de los Pasajeros
                       </h3>
-                      <span className="text-xs text-background/50 ml-1">
+                      <span className="text-xs text-slate-900 dark:text-slate-900 dark:text-white/50 ml-1">
                         ({selectedSeats.length} asiento
                         {selectedSeats.length > 1 ? "s" : ""})
                       </span>
@@ -622,7 +622,7 @@ export default function SeatsPage() {
                   <div className="mt-6">
                     <div className="flex items-center gap-2 mb-3">
                       <UserCheck className="h-5 w-5 text-secondary" />
-                      <h3 className="text-base font-semibold text-background">
+                      <h3 className="text-base font-semibold text-slate-900 dark:text-slate-900 dark:text-white">
                         Pasajeros asignados al regreso
                       </h3>
                     </div>
@@ -633,18 +633,18 @@ export default function SeatsPage() {
                         return (
                           <div
                             key={retSeat.id}
-                            className="flex items-center gap-3 p-3 rounded-lg bg-background/5 border border-secondary/20 animate-fade-in"
+                            className="flex items-center gap-3 p-3 rounded-lg bg-black/5 dark:bg-white/5 border border-secondary/20 animate-fade-in"
                           >
                             <div className="w-7 h-7 rounded-full bg-secondary/10 flex items-center justify-center border border-secondary/30 shrink-0 text-xs font-bold text-secondary">
                               {i + 1}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-background truncate">
+                              <p className="text-sm font-medium text-slate-900 dark:text-slate-900 dark:text-white truncate">
                                 {passenger?.firstName
                                   ? `${passenger.firstName} ${passenger.lastName}`
                                   : "Sin datos (completa el formulario de ida)"}
                               </p>
-                              <p className="text-xs text-background/60">
+                              <p className="text-xs text-slate-900 dark:text-slate-900 dark:text-white/60">
                                 Asiento {retSeat.number}
                               </p>
                             </div>
@@ -661,7 +661,7 @@ export default function SeatsPage() {
                     onClick={() => {
                       router.push("/paraguay/booking/services");
                     }}
-                    className="border-background/20 text-background bg-background/10 hover:bg-background/20"
+                    className="border-black/10 dark:border-black/10 dark:border-white/20 text-slate-900 dark:text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:bg-white/20"
                   >
                     <ArrowLeft className="h-4 w-4" />
                     Volver a seleccionar servicio
@@ -671,15 +671,15 @@ export default function SeatsPage() {
 
               {/* Summary Sidebar */}
               <div className="lg:col-span-1 lg:sticky lg:top-24 self-start z-20">
-                <Card className="p-4 md:p-6 sticky top-24 animate-slide-in-right bg-background/5 backdrop-blur-sm border-background/20">
-                  <h3 className="text-lg md:text-xl font-bold mb-4 md:mb-6 text-background">
+                <Card className="p-4 md:p-6 sticky top-24 animate-slide-in-right bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-black/10 dark:border-white/20">
+                  <h3 className="text-lg md:text-xl font-bold mb-4 md:mb-6 text-slate-900 dark:text-slate-900 dark:text-white">
                     Resumen de Reserva
                   </h3>
 
                   {/* Asientos seleccionados contador */}
-                  <div className="mb-4 p-3 bg-background/10 rounded-lg">
+                  <div className="mb-4 p-3 bg-black/10 dark:bg-white/10 rounded-lg">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs md:text-sm text-background/60">
+                      <span className="text-xs md:text-sm text-slate-900 dark:text-slate-900 dark:text-white/60">
                         Asientos seleccionados:
                       </span>
                       <div
@@ -696,18 +696,18 @@ export default function SeatsPage() {
                   </div>
 
                   {/* Outbound Trip */}
-                  <div className="mb-4 md:mb-6 pb-4 md:pb-6 border-b border-background/20">
+                  <div className="mb-4 md:mb-6 pb-4 md:pb-6 border-b border-black/10 dark:border-black/10 dark:border-white/20">
                     <div className="flex items-center gap-2 mb-3">
                       <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center border border-primary/30 flex-shrink-0">
                         <ArrowRight className="h-3.5 w-3.5 md:h-4 md:w-4 text-primary" />
                       </div>
-                      <span className="font-medium text-sm md:text-base text-background">
+                      <span className="font-medium text-sm md:text-base text-slate-900 dark:text-slate-900 dark:text-white">
                         Viaje de Ida
                       </span>
                     </div>
                     <div className="pl-8 md:pl-10 space-y-1.5 md:space-y-2">
-                      <p className="text-xs md:text-sm text-background/80">
-                        <span className="text-background/60">Fecha:</span>{" "}
+                      <p className="text-xs md:text-sm text-slate-900 dark:text-slate-900 dark:text-white/80">
+                        <span className="text-slate-900 dark:text-slate-900 dark:text-white/60">Fecha:</span>{" "}
                         {format(
                           parse(departureDate || "", "yyyy-MM-dd", new Date()),
                           "dd MMM yyyy",
@@ -716,13 +716,13 @@ export default function SeatsPage() {
                           },
                         )}
                       </p>
-                      <p className="text-xs md:text-sm text-background/80">
-                        <span className="text-background/60">Horario:</span>{" "}
+                      <p className="text-xs md:text-sm text-slate-900 dark:text-slate-900 dark:text-white/80">
+                        <span className="text-slate-900 dark:text-slate-900 dark:text-white/60">Horario:</span>{" "}
                         {selectedOutboundTrip?.departureTime} -{" "}
                         {selectedOutboundTrip?.arrivalTime}
                       </p>
-                      <p className="text-xs md:text-sm text-background/80">
-                        <span className="text-background/60">Asientos:</span>{" "}
+                      <p className="text-xs md:text-sm text-slate-900 dark:text-slate-900 dark:text-white/80">
+                        <span className="text-slate-900 dark:text-slate-900 dark:text-white/60">Asientos:</span>{" "}
                         {selectedSeats.length > 0
                           ? selectedSeats.map((s) => s.number).join(", ")
                           : "Sin seleccionar"}
@@ -743,18 +743,18 @@ export default function SeatsPage() {
 
                   {/* Return Trip */}
                   {tripType === "round-trip" && selectedReturnTrip && (
-                    <div className="mb-4 md:mb-6 pb-4 md:pb-6 border-b border-background/20">
+                    <div className="mb-4 md:mb-6 pb-4 md:pb-6 border-b border-black/10 dark:border-black/10 dark:border-white/20">
                       <div className="flex items-center gap-2 mb-3">
                         <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-secondary/10 flex items-center justify-center border border-secondary/30 flex-shrink-0">
                           <ArrowRight className="h-3.5 w-3.5 md:h-4 md:w-4 text-secondary rotate-180" />
                         </div>
-                        <span className="font-medium text-sm md:text-base text-background">
+                        <span className="font-medium text-sm md:text-base text-slate-900 dark:text-slate-900 dark:text-white">
                           Viaje de Regreso
                         </span>
                       </div>
                       <div className="pl-8 md:pl-10 space-y-1.5 md:space-y-2">
-                        <p className="text-xs md:text-sm text-background/80">
-                          <span className="text-background/60">Fecha:</span>{" "}
+                        <p className="text-xs md:text-sm text-slate-900 dark:text-slate-900 dark:text-white/80">
+                          <span className="text-slate-900 dark:text-slate-900 dark:text-white/60">Fecha:</span>{" "}
                           {format(
                             parse(returnDate || "", "yyyy-MM-dd", new Date()),
                             "dd MMM yyyy",
@@ -763,13 +763,13 @@ export default function SeatsPage() {
                             },
                           )}
                         </p>
-                        <p className="text-xs md:text-sm text-background/80">
-                          <span className="text-background/60">Horario:</span>{" "}
+                        <p className="text-xs md:text-sm text-slate-900 dark:text-slate-900 dark:text-white/80">
+                          <span className="text-slate-900 dark:text-slate-900 dark:text-white/60">Horario:</span>{" "}
                           {selectedReturnTrip?.departureTime} -{" "}
                           {selectedReturnTrip?.arrivalTime}
                         </p>
-                        <p className="text-xs md:text-sm text-background/80">
-                          <span className="text-background/60">Asientos:</span>{" "}
+                        <p className="text-xs md:text-sm text-slate-900 dark:text-slate-900 dark:text-white/80">
+                          <span className="text-slate-900 dark:text-slate-900 dark:text-white/60">Asientos:</span>{" "}
                           {selectedReturnSeats.length > 0
                             ? selectedReturnSeats
                                 .map((s) => s.number)
@@ -793,10 +793,10 @@ export default function SeatsPage() {
                   )}
 
                   {/* Passengers */}
-                  <div className="mb-4 md:mb-6 pb-4 md:pb-6 border-b border-background/20">
+                  <div className="mb-4 md:mb-6 pb-4 md:pb-6 border-b border-black/10 dark:border-black/10 dark:border-white/20">
                     <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 md:h-5 md:w-5 text-background/60 flex-shrink-0" />
-                      <span className="font-medium text-sm md:text-base text-background">
+                      <Users className="h-4 w-4 md:h-5 md:w-5 text-slate-900 dark:text-slate-900 dark:text-white/60 flex-shrink-0" />
+                      <span className="font-medium text-sm md:text-base text-slate-900 dark:text-slate-900 dark:text-white">
                         {selectedSeats.length + selectedReturnSeats.length}{" "}
                         Pasajeros
                       </span>
@@ -806,14 +806,14 @@ export default function SeatsPage() {
                   {/* Total */}
                   <div className="mb-4 md:mb-6">
                     <div className="flex items-center justify-between">
-                      <span className="text-base md:text-lg font-medium text-background">
+                      <span className="text-base md:text-lg font-medium text-slate-900 dark:text-slate-900 dark:text-white">
                         Total
                       </span>
                       <span className="text-xl md:text-2xl lg:text-3xl font-bold text-secondary">
                         Gs. {totalPrice.toLocaleString("es-PY")}
                       </span>
                     </div>
-                    <p className="text-xs text-background/60 mt-1">
+                    <p className="text-xs text-slate-900 dark:text-slate-900 dark:text-white/60 mt-1">
                       Impuestos incluidos
                     </p>
                   </div>
@@ -854,7 +854,7 @@ export default function SeatsPage() {
                   )}
 
                   {!canContinue && (
-                    <p className="text-xs md:text-sm text-background/70 mt-3 text-center">
+                    <p className="text-xs md:text-sm text-slate-900 dark:text-slate-900 dark:text-white/70 mt-3 text-center">
                       {hasExceededLimit
                         ? `Máximo ${maxAllowed} asientos permitidos`
                         : currentSelectedSeats.length === 0
@@ -873,7 +873,7 @@ export default function SeatsPage() {
                     onClick={() => {
                       router.push("/paraguay/booking/services");
                     }}
-                    className="text-background/60 hover:text-background hover:bg-background/5 w-full bg-background/5 border border-background/10 h-12"
+                    className="text-slate-900 dark:text-slate-900 dark:text-white/60 hover:text-slate-900 dark:text-slate-900 dark:text-white hover:bg-black/5 dark:bg-white/5 w-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-black/10 dark:border-white/10 h-12"
                   >
                     <ArrowLeft className="h-4 w-4 mr-2" />
                     Volver a seleccionar servicio

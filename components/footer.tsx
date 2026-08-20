@@ -153,7 +153,7 @@ export function Footer({ country }: FooterProps) {
   return (
     <footer
       id="contacto"
-      className="bg-[#1a1a1a] text-white pt-16 relative overflow-hidden border-t border-neutral-800"
+      className="bg-[#1a1a1a] text-slate-900 dark:text-white pt-16 relative overflow-hidden border-t border-neutral-800"
     >
       <div className="container mx-auto px-4 max-w-[1440px] relative z-10 pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
@@ -178,7 +178,7 @@ export function Footer({ country }: FooterProps) {
             <ul className="space-y-3 text-sm text-neutral-400">
               {currentFooter.col1Links.map((link: string, idx: number) => (
                 <li key={idx}>
-                  <a href="#" className="hover:text-white transition-colors no-underline">
+                  <a href="#" className="hover:text-slate-900 dark:text-white transition-colors no-underline">
                     {link}
                   </a>
                 </li>
@@ -194,7 +194,7 @@ export function Footer({ country }: FooterProps) {
             <ul className="space-y-3 text-sm text-neutral-400">
               {currentFooter.col2Links.map((link: string, idx: number) => (
                 <li key={idx}>
-                  <Link href="#" className="hover:text-white transition-colors no-underline">
+                  <Link href="#" className="hover:text-slate-900 dark:text-white transition-colors no-underline">
                     {link}
                   </Link>
                 </li>
@@ -205,7 +205,7 @@ export function Footer({ country }: FooterProps) {
       </div>
 
       {/* Trust & Payment Badges Bar */}
-      <div className="py-6 border-t border-white/10 relative z-10 text-white">
+      <div className="py-6 border-t border-black/10 dark:border-white/10 relative z-10 text-slate-900 dark:text-white">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             {/* Left: Payment Logos */}
@@ -237,7 +237,7 @@ export function Footer({ country }: FooterProps) {
                 }
 
                 return (
-                  <div key={idx} className="h-8 px-3 border border-white/20 rounded flex items-center bg-white/5 text-xs font-semibold whitespace-nowrap text-white">
+                  <div key={idx} className="h-8 px-3 border border-black/10 dark:border-white/20 rounded flex items-center bg-white/5 text-xs font-semibold whitespace-nowrap text-slate-900 dark:text-white">
                     {gateway}
                   </div>
                 );
@@ -281,7 +281,7 @@ export function Footer({ country }: FooterProps) {
                     <span className="text-[#34A853]">l</span>
                     <span className="text-[#EA4335]">e</span>
                   </div>
-                  <span className="text-[12.5px] font-medium text-white/60 whitespace-nowrap">
+                  <span className="text-[12.5px] font-medium text-slate-900 dark:text-white/60 whitespace-nowrap">
                     Safe browsing
                   </span>
                 </div>
@@ -328,10 +328,10 @@ export function Footer({ country }: FooterProps) {
                   </g>
                 </svg>
                 <div className="flex flex-col leading-none">
-                  <span className="text-[19.85px] font-bold text-white tracking-tight">
+                  <span className="text-[19.85px] font-bold text-slate-900 dark:text-white tracking-tight">
                     100%
                   </span>
-                  <span className="text-[12.5px] font-medium text-white/60 whitespace-nowrap">
+                  <span className="text-[12.5px] font-medium text-slate-900 dark:text-white/60 whitespace-nowrap">
                     Secure purchase
                   </span>
                 </div>
@@ -342,11 +342,11 @@ export function Footer({ country }: FooterProps) {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-white/10">
+      <div className="border-t border-black/10 dark:border-white/10">
         <div className="container mx-auto px-4 max-w-[1440px] py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Año + logo */}
-            <div className="flex items-center gap-4 text-white/50 text-sm">
+            <div className="flex items-center gap-4 text-slate-900 dark:text-white/50 text-sm">
               <Image
                 src="/logos/logo-boletos.png"
                 alt="Boletos.la"
@@ -358,10 +358,10 @@ export function Footer({ country }: FooterProps) {
               <span>Todos los derechos reservados.</span>
             </div>
             {currentFooter.showSelectors && (
-              <div className="flex items-center gap-4 text-white/60 text-sm">
-                <button className="hover:text-white transition-colors">Convertidor de Monedas</button>
+              <div className="flex items-center gap-4 text-slate-900 dark:text-white/60 text-sm">
+                <button className="hover:text-slate-900 dark:text-white transition-colors">Convertidor de Monedas</button>
                 <span>|</span>
-                <button className="hover:text-white transition-colors flex items-center gap-2">
+                <button className="hover:text-slate-900 dark:text-white transition-colors flex items-center gap-2">
                   País: Paraguay
                 </button>
               </div>

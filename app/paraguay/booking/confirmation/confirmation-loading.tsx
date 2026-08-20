@@ -664,7 +664,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
 
   if (status === "checking") {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background relative overflow-x-hidden">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] text-slate-900 dark:text-slate-900 dark:text-white relative overflow-x-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
           <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-secondary/10 rounded-full blur-[100px]" />
@@ -681,10 +681,10 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 priority
               />
             </div>
-            <h1 className="text-3xl font-bold text-background mb-3">
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-900 dark:text-white mb-3">
               Verificando tu pago...
             </h1>
-            <p className="text-background/60 mb-6">
+            <p className="text-slate-900 dark:text-slate-900 dark:text-white/60 mb-6">
               Estamos confirmando tu reserva, no cierres esta ventana.
             </p>
             <Loader2 className="h-8 w-8 text-primary animate-spin mx-auto" />
@@ -696,7 +696,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
 
   // Estados de error / pendiente
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background relative overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] text-slate-900 dark:text-slate-900 dark:text-white relative overflow-x-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-secondary/10 rounded-full blur-[100px]" />
@@ -705,7 +705,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
         <BookingProgress />
         <div className="container mx-auto px-4 py-8">
           {status === "issue_failed" ? (
-            <Card className="p-6 sm:p-8 bg-[#1a2332]/90 backdrop-blur-md border border-emerald-500/30 rounded-2xl shadow-2xl text-left max-w-xl mx-auto">
+            <Card className="p-6 sm:p-8 bg-white dark:bg-[#1a2332]/90 backdrop-blur-md border border-emerald-500/30 rounded-2xl shadow-2xl text-left max-w-xl mx-auto">
               <div className="flex flex-col items-center text-center gap-4">
                 <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/40 rounded-full flex items-center justify-center">
                   <CheckCircle2 className="h-9 w-9 text-emerald-400" />
@@ -714,7 +714,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                   <span className="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-semibold rounded-full mb-2">
                     Pago Registrado Exitosamente
                   </span>
-                  <h2 className="text-2xl font-bold text-white">
+                  <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
                     Tu pago fue procesado correctamente
                   </h2>
                 </div>
@@ -746,7 +746,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                     {totalPrice > 0 && (
                       <div className="flex justify-between text-slate-300">
                         <span>Monto abonado:</span>
-                        <span className="font-bold text-white">
+                        <span className="font-bold text-slate-900 dark:text-white">
                           Gs. {totalPrice.toLocaleString("es-PY")}
                         </span>
                       </div>
@@ -770,7 +770,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                         "_blank",
                       );
                     }}
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium flex-1 py-5 rounded-xl shadow-lg flex items-center justify-center gap-2"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-slate-900 dark:text-white font-medium flex-1 py-5 rounded-xl shadow-lg flex items-center justify-center gap-2"
                   >
                     <MessageSquare className="h-5 w-5" />
                     Contactar por WhatsApp
@@ -797,7 +797,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 <Button
                   variant="ghost"
                   onClick={() => router.push("/paraguay")}
-                  className="text-xs text-slate-400 hover:text-white mt-2"
+                  className="text-xs text-slate-400 hover:text-slate-900 dark:text-white mt-2"
                 >
                   Volver al inicio
                 </Button>

@@ -7,6 +7,7 @@ import { Menu, X, Mail, MapPin, MessageCircle, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function ParaguayHeader() {
   const pathname = usePathname();
@@ -29,7 +30,7 @@ export function ParaguayHeader() {
       {/* Main Header */}
       <header
         className={cn(
-          "sticky top-0 z-50 w-full transition-all duration-500 bg-black",
+          "sticky top-0 z-50 w-full transition-all duration-500 bg-background",
           isScrolled ? "shadow-lg" : "",
         )}
       >
@@ -51,32 +52,32 @@ export function ParaguayHeader() {
             <nav className="hidden lg:flex items-center gap-8">
               <Link
                 href="/paraguay"
-                  className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
-                >
-                  Inicio
-                </Link>
-                <Link
+                className="text-foreground hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
+              >
+                Inicio
+              </Link>
+              <Link
                 href="/paraguay#servicios"
-                  className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
-                >
-                  Servicios
-                </Link>
-                <Link
+                className="text-foreground hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
+              >
+                Servicios
+              </Link>
+              <Link
                 href="/paraguay#destinos"
-                  className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
-                >
-                  Destinos
-                </Link>
+                className="text-foreground hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
+              >
+                Destinos
+              </Link>
 
                 <Link
                 href="/paraguay#contacto"
-                  className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
+                  className="text-foreground hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
                 >
                   Contacto
                 </Link>
                 <Link
                   href="/paraguay/ayuda"
-                  className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
+                  className="text-foreground hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
                 >
                   Ayuda
                 </Link>
@@ -84,6 +85,7 @@ export function ParaguayHeader() {
 
             {/* CTA Button */}
             <div className="hidden lg:flex items-center gap-4">
+              <ThemeToggle />
               <Button
                 onClick={() => (window.location.href = "/paraguay/mi-boleto")}
                 className="bg-[#ffaa00] hover:bg-[#ffaa00]/90 text-black transition-all duration-300 transform hover:scale-105 border-0"
@@ -96,7 +98,7 @@ export function ParaguayHeader() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-white hover:text-[#00c7cc] transition-colors"
+              className="lg:hidden p-2 text-foreground hover:text-[#00c7cc] transition-colors"
             >
               {isMobileMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -110,44 +112,47 @@ export function ParaguayHeader() {
         {/* Mobile Menu */}
         <div
           className={cn(
-            "lg:hidden overflow-hidden transition-all duration-500 ease-in-out bg-black",
+            "lg:hidden overflow-hidden transition-all duration-500 ease-in-out bg-background",
             isMobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0",
           )}
         >
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-4">
             <Link
               href="/paraguay"
-                  className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
-                >
-                  Inicio
-                </Link>
+              className="text-foreground hover:text-[#00c7cc] transition-colors font-medium py-2"
+            >
+              Inicio
+            </Link>
             <Link
               href="/paraguay#servicios"
-                  className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
-                >
-                  Servicios
-                </Link>
+              className="text-foreground hover:text-[#00c7cc] transition-colors font-medium py-2"
+            >
+              Servicios
+            </Link>
             <Link
               href="/paraguay#destinos"
-                  className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
-                >
-                  Destinos
-                </Link>
+              className="text-foreground hover:text-[#00c7cc] transition-colors font-medium py-2"
+            >
+              Destinos
+            </Link>
 
             <Link
               href="/paraguay#contacto"
-                  className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
+                  className="text-foreground hover:text-[#00c7cc] transition-colors font-medium py-2"
                 >
                   Contacto
                 </Link>
             <Link
               href="/paraguay/ayuda"
-              className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
+              className="text-foreground hover:text-[#00c7cc] transition-colors font-medium py-2"
             >
               Ayuda
             </Link>
             
-            <div className="flex flex-col gap-2 pt-4 border-t border-white/20">
+            <div className="flex flex-col gap-2 pt-4 border-t border-black/10 dark:border-white/20">
+              <div className="flex justify-end mb-2">
+                <ThemeToggle />
+              </div>
               <Button
                 onClick={() => {
                   setIsMobileMenuOpen(false);
