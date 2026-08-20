@@ -337,7 +337,7 @@ export function ParaguaySearchForm() {
                     )}
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <MapPin className="h-5 w-5 text-primary flex-shrink-0 fill-primary/15" strokeWidth={2.2} />
+                      <MapPin className="h-5 w-5 text-primary flex-shrink-0" />
                       <span className={cn("text-gray-900 text-lg lg:text-base font-semibold truncate")}>
                         {stopsLoading
                           ? "Cargando ciudades..."
@@ -383,11 +383,11 @@ export function ParaguaySearchForm() {
                               setDestinationTitle("");
                               setOriginOpen(false);
                             }}
-                            className="cursor-pointer py-3 text-slate-900 hover:bg-white/40"
+                            className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-primary data-[selected=true]:text-white hover:bg-primary hover:text-white transition-colors duration-150 rounded-lg px-2"
                           >
-                            <MapPin className="h-4 w-4 mr-2 text-primary flex-shrink-0 fill-primary/15" strokeWidth={2.2} />
+                            <MapPin className="h-4 w-4 mr-2 text-chart-4 shrink-0 group-hover:text-white group-data-[selected=true]:text-white transition-colors" strokeWidth={2.2} />
                             <div className="min-w-0">
-                              <p className="font-semibold truncate tracking-wide [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]">
+                              <p className="font-bold truncate tracking-wide text-slate-900 group-hover:text-white group-data-[selected=true]:text-white [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
                                 {city.name}
                               </p>
                             </div>
@@ -458,7 +458,7 @@ export function ParaguaySearchForm() {
                     )}
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <MapPin className="h-5 w-5 text-primary flex-shrink-0 fill-primary/15" strokeWidth={2.2} />
+                      <MapPin className="h-5 w-5 text-primary flex-shrink-0" />
                       <span className={cn("text-gray-900 text-lg lg:text-base font-semibold truncate")}>
                         {stopsLoading
                           ? "Cargando ciudades..."
@@ -492,7 +492,7 @@ export function ParaguaySearchForm() {
                       <CommandGroup className="bg-transparent">
                         {originTitle && (
                           <div className="px-2 py-2 text-xs font-semibold text-gray-700 bg-white/40 backdrop-blur-sm rounded-lg mb-2 flex items-center gap-2 border border-white/50 shadow-sm">
-                            <MapPin className="h-3.5 w-3.5" />
+                            <MapPin className="h-3.5 w-3.5 text-chart-4" />
                             Rutas disponibles desde {originTitle}
                           </div>
                         )}
@@ -507,11 +507,11 @@ export function ParaguaySearchForm() {
                                 setDestinationTitle(city.name);
                                 setDestinationOpen(false);
                               }}
-                              className="cursor-pointer py-3 text-slate-900 hover:bg-white/40"
+                              className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-primary data-[selected=true]:text-white hover:bg-primary hover:text-white transition-colors duration-150 rounded-lg px-2"
                             >
-                              <MapPin className="h-4 w-4 mr-2 text-primary flex-shrink-0 fill-primary/15" strokeWidth={2.2} />
+                              <MapPin className="h-4 w-4 mr-2 text-chart-4 shrink-0 group-hover:text-white group-data-[selected=true]:text-white transition-colors" strokeWidth={2.2} />
                               <div className="min-w-0">
-                                <p className="font-semibold truncate tracking-wide [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]">
+                                <p className="font-bold truncate tracking-wide text-slate-900 group-hover:text-white group-data-[selected=true]:text-white [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
                                   {city.name}
                                 </p>
                                 {(() => {
@@ -525,13 +525,13 @@ export function ParaguaySearchForm() {
                                   if (isObject) {
                                     if (dynamicCount > 0) {
                                       return (
-                                        <p className="text-xs text-slate-700 font-medium mt-0.5 [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)]">
+                                        <p className="text-xs text-slate-700 font-medium mt-0.5 group-hover:text-white group-data-[selected=true]:text-white [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
                                           {dynamicCount} {dynamicCount === 1 ? 'servicio' : 'servicios'}
                                         </p>
                                       );
                                     } else if ((destData as any).times?.length > 0) {
                                       return (
-                                        <p className="text-xs text-red-600 font-semibold mt-0.5 [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)]">
+                                        <p className="text-xs text-red-600 font-semibold mt-0.5 group-hover:text-red-100 group-data-[selected=true]:text-red-100 [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
                                           Salidas finalizadas por hoy
                                         </p>
                                       );
