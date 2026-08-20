@@ -337,7 +337,7 @@ export function ParaguaySearchForm() {
                     )}
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <MapPin className="h-5 w-5 text-primary/70 flex-shrink-0" />
+                      <MapPin className="h-5 w-5 text-primary/90 flex-shrink-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
                       <span className={cn("text-gray-900 text-lg lg:text-base font-semibold truncate")}>
                         {stopsLoading
                           ? "Cargando ciudades..."
@@ -383,15 +383,13 @@ export function ParaguaySearchForm() {
                               setDestinationTitle("");
                               setOriginOpen(false);
                             }}
-                            className="cursor-pointer py-3 text-white hover:bg-white/20"
+                            className="cursor-pointer py-3 text-slate-900 hover:bg-white/40"
                           >
-                            <MapPin className="h-4 w-4 mr-2 text-white flex-shrink-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
+                            <MapPin className="h-4 w-4 mr-2 text-primary/90 flex-shrink-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
                             <div className="min-w-0">
-                              <p className="font-semibold truncate tracking-wide [text-shadow:_0_1px_3px_rgb(0_0_0_/_80%)]">
+                              <p className="font-semibold truncate tracking-wide [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]">
                                 {city.name}
                               </p>
-
-
                             </div>
                           </CommandItem>
                         ))}
@@ -460,7 +458,7 @@ export function ParaguaySearchForm() {
                     )}
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <MapPin className="h-5 w-5 text-primary/70 flex-shrink-0" />
+                      <MapPin className="h-5 w-5 text-primary/90 flex-shrink-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
                       <span className={cn("text-gray-900 text-lg lg:text-base font-semibold truncate")}>
                         {stopsLoading
                           ? "Cargando ciudades..."
@@ -509,11 +507,11 @@ export function ParaguaySearchForm() {
                                 setDestinationTitle(city.name);
                                 setDestinationOpen(false);
                               }}
-                              className="cursor-pointer py-3 text-white hover:bg-white/20"
+                              className="cursor-pointer py-3 text-slate-900 hover:bg-white/40"
                             >
-                              <MapPin className="h-4 w-4 mr-2 text-white flex-shrink-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
+                              <MapPin className="h-4 w-4 mr-2 text-primary/90 flex-shrink-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
                               <div className="min-w-0">
-                                <p className="font-semibold truncate tracking-wide [text-shadow:_0_1px_3px_rgb(0_0_0_/_80%)]">
+                                <p className="font-semibold truncate tracking-wide [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]">
                                   {city.name}
                                 </p>
                                 {(() => {
@@ -527,13 +525,13 @@ export function ParaguaySearchForm() {
                                   if (isObject) {
                                     if (dynamicCount > 0) {
                                       return (
-                                        <p className="text-xs text-white/70 mt-0.5">
+                                        <p className="text-xs text-slate-700 font-medium mt-0.5 [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)]">
                                           {dynamicCount} {dynamicCount === 1 ? 'servicio' : 'servicios'}
                                         </p>
                                       );
                                     } else if ((destData as any).times?.length > 0) {
                                       return (
-                                        <p className="text-xs text-red-400 font-medium mt-0.5">
+                                        <p className="text-xs text-red-600 font-semibold mt-0.5 [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)]">
                                           Salidas finalizadas por hoy
                                         </p>
                                       );
