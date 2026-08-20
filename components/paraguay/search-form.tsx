@@ -337,7 +337,7 @@ export function ParaguaySearchForm() {
                     )}
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <MapPin className="h-5 w-5 text-primary/90 flex-shrink-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
+                      <MapPin className="h-5 w-5 text-primary flex-shrink-0 fill-primary/15" strokeWidth={2.2} />
                       <span className={cn("text-gray-900 text-lg lg:text-base font-semibold truncate")}>
                         {stopsLoading
                           ? "Cargando ciudades..."
@@ -385,7 +385,7 @@ export function ParaguaySearchForm() {
                             }}
                             className="cursor-pointer py-3 text-slate-900 hover:bg-white/40"
                           >
-                            <MapPin className="h-4 w-4 mr-2 text-primary/90 flex-shrink-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
+                            <MapPin className="h-4 w-4 mr-2 text-primary flex-shrink-0 fill-primary/15" strokeWidth={2.2} />
                             <div className="min-w-0">
                               <p className="font-semibold truncate tracking-wide [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]">
                                 {city.name}
@@ -458,7 +458,7 @@ export function ParaguaySearchForm() {
                     )}
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <MapPin className="h-5 w-5 text-primary/90 flex-shrink-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
+                      <MapPin className="h-5 w-5 text-primary flex-shrink-0 fill-primary/15" strokeWidth={2.2} />
                       <span className={cn("text-gray-900 text-lg lg:text-base font-semibold truncate")}>
                         {stopsLoading
                           ? "Cargando ciudades..."
@@ -509,7 +509,7 @@ export function ParaguaySearchForm() {
                               }}
                               className="cursor-pointer py-3 text-slate-900 hover:bg-white/40"
                             >
-                              <MapPin className="h-4 w-4 mr-2 text-primary/90 flex-shrink-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
+                              <MapPin className="h-4 w-4 mr-2 text-primary flex-shrink-0 fill-primary/15" strokeWidth={2.2} />
                               <div className="min-w-0">
                                 <p className="font-semibold truncate tracking-wide [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]">
                                   {city.name}
