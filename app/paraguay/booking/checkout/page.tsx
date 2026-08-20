@@ -660,10 +660,10 @@ export default function CheckoutPage() {
                     Método de Pago
                   </p>
                   
-                  <div className="flex flex-col md:flex-row gap-4 items-center">
+                  <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
                     {/* Bancard Selection Card - more compact */}
                     <Card
-                      className="p-3 cursor-pointer transition-all duration-200 border-2 bg-blue-500/10 border-blue-500 flex-1 w-full flex items-center justify-between relative"
+                      className="p-3 cursor-pointer transition-all duration-200 border-2 bg-blue-500/10 border-blue-500 w-fit flex items-center justify-between relative gap-6"
                       onClick={() => handlePaymentMethodSelect("bancard")}
                     >
                       <div className="flex items-center gap-4">
