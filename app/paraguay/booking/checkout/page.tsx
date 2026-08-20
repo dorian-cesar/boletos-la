@@ -27,6 +27,24 @@ import { useBookingStore, cities } from "@/lib/booking-store";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
+const resolveCompanyInfo = (companyName: string | undefined | null) => {
+  const code = (companyName || "").toUpperCase();
+  let name = companyName || "";
+  let logo = null;
+  let isObjectFitContain = false;
+
+  if (code === "LSN" || code === "LSA" || code.includes("SANTANIANA")) {
+    name = code === "LSA" ? "La Santaniana Argentina" : "La Santaniana";
+    logo = "/logos/santaniana-color.jpeg";
+  } else if (code === "LSP" || code.includes("SAMPEDRANA")) {
+    name = "La Sampedrana";
+    logo = "/logos/logo-la-sampedrana.original.png";
+    isObjectFitContain = true;
+  }
+
+  return { name, logo, isObjectFitContain };
+};
+
 export default function CheckoutPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -318,9 +336,9 @@ export default function CheckoutPage() {
         <BookingProgress />
 
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="max-w-4xl mx-auto flex flex-col gap-6 lg:gap-8">
             {/* Passenger Summary (read-only) */}
-            <div className="lg:col-span-2 space-y-6 w-full">
+            <div className="space-y-6 w-full">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <h2 className="text-xl sm:text-2xl font-bold animate-fade-in text-background">
                   Resumen de Pasajeros
@@ -449,355 +467,265 @@ export default function CheckoutPage() {
                   </div>
                 </Card>
               )}
-              {/* Payment Section */}
-              <Card
-                className="p-4 sm:p-6 animate-fade-in bg-background/5 backdrop-blur-sm border-background/20 w-full"
-                style={{ animationDelay: `${totalPassengers * 150}ms` }}
-              >
-                <div className="flex items-center gap-3 mb-6">
+              </div>
+
+            {/* Unified Resumen de Compra & Payment Section */}
+            <Card
+              className="p-4 sm:p-6 animate-fade-in bg-background/5 backdrop-blur-sm border-background/20 w-full"
+              style={{ animationDelay: `${totalPassengers * 150}ms` }}
+            >
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+                <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center border border-secondary/30 shrink-0">
                     <CreditCard className="h-5 w-5 text-secondary" />
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold text-background truncate">
-                      Método de Pago
-                    </h3>
-                    <p className="text-sm text-background/60 truncate">
-                      Selecciona tu método de pago preferido
-                    </p>
-                  </div>
-                </div>
-
-                {/* Payment Methods Selection */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 w-full">
-                  {/* Tarjeta de simulación comentada
-                  <Card
-                    className={cn(
-                      "p-4 cursor-pointer transition-all duration-200 border-2 bg-background/5 backdrop-blur-sm w-full relative",
-                      selectedPaymentMethod === "tarjeta"
-                        ? "border-purple-500 bg-purple-500/10"
-                        : "border-background/30 hover:border-purple-500",
-                    )}
-                    onClick={() => handlePaymentMethodSelect("tarjeta")}
-                  >
-                    {selectedPaymentMethod === "tarjeta" && (
-                      <CheckCircle2 className="h-5 w-5 text-purple-500 absolute top-4 right-4" />
-                    )}
-                    <div className="pr-8">
-                      <div className="h-7 mb-2 flex items-center">
-                        <div className="w-10 h-6 bg-purple-500 rounded flex items-center justify-center shrink-0">
-                          <CreditCard className="h-3.5 w-3.5 text-white" />
-                        </div>
-                        <p className="ml-2 font-medium text-background truncate text-sm">
-                          Tarjeta de Crédito / Débito
-                        </p>
-                      </div>
-                      <p className="text-xs text-background/60 leading-relaxed">
-                        Pago inmediato y seguro con tu tarjeta
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap gap-1 mt-4">
-                      {["Visa", "Mastercard", "American Express"].map(
-                        (card) => (
-                          <span
-                            key={card}
-                            className="text-[10px] px-2 py-1 bg-background/10 rounded text-background/80 truncate"
-                          >
-                            {card}
-                          </span>
-                        ),
-                      )}
-                    </div>
-                  </Card>
-                  */}
-
-                  <Card
-                    className={cn(
-                      "p-4 cursor-pointer transition-all duration-200 border-2 bg-background/5 backdrop-blur-sm w-full relative",
-                      selectedPaymentMethod === "bancard"
-                        ? "border-blue-500 bg-blue-500/10"
-                        : "border-background/30 hover:border-blue-500",
-                    )}
-                    onClick={() => handlePaymentMethodSelect("bancard")}
-                  >
-                    {selectedPaymentMethod === "bancard" && (
-                      <CheckCircle2 className="h-5 w-5 text-blue-500 absolute top-4 right-4" />
-                    )}
-                    <div className="pr-8">
-                      <div className="h-7 mb-2 flex items-center">
-                        <Image
-                          src="/logos/logo-bancard-blanco.png"
-                          alt="Bancard"
-                          width={110}
-                          height={30}
-                          className="h-full w-auto object-contain"
-                        />
-                      </div>
-                      <p className="text-xs text-background/60 leading-relaxed">
-                        Pago con tarjeta de crédito/débito y billeteras vía
-                        Bancard
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap gap-1 mt-4">
-                      {["Tarjetas", "Infonet"].map((option) => (
-                        <span
-                          key={option}
-                          className="text-[10px] px-2 py-1 bg-background/10 rounded text-background/80 truncate"
-                        >
-                          {option}
-                        </span>
-                      ))}
-                    </div>
-                  </Card>
-                </div>
-
-                {/* Payment Method Details */}
-                <div className="bg-background/10 rounded-xl p-4 mb-6 border border-background/20 w-full">
-                  {selectedPaymentMethod === "tarjeta" && (
-                    <div className="space-y-3">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <Shield className="h-5 w-5 text-purple-500 shrink-0" />
-                          <span className="text-sm font-medium text-background truncate">
-                            Pago con Tarjeta (Simulación)
-                          </span>
-                        </div>
-                        <Badge
-                          variant="outline"
-                          className="bg-background/10 border-background/30 text-background/80 shrink-0 self-start sm:self-auto"
-                        >
-                          Pago Inmediato
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-background/60 break-words">
-                        Esta es una simulación de pago exitoso. Tu reserva se
-                        confirmará inmediatamente sin necesidad de redirección.
-                      </p>
-                    </div>
-                  )}
-
-                  {selectedPaymentMethod === "bancard" && (
-                    <div className="space-y-3">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <Shield className="h-5 w-5 text-blue-500 shrink-0" />
-                          <span className="text-sm font-medium text-background truncate">
-                            Pago Seguro con Bancard
-                          </span>
-                        </div>
-                        <Badge
-                          variant="outline"
-                          className="bg-background/10 border-background/30 text-background/80 shrink-0 self-start sm:self-auto"
-                        >
-                          Pago en línea
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-background/60 break-words">
-                        Se abrirá el portal seguro de Bancard aquí mismo para
-                        completar tu pago con tarjeta o billetera.
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                <div className="mt-6 flex items-start gap-3 p-4 bg-primary/10 rounded-xl border border-primary/20 w-full">
-                  <Lock className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                  <div className="text-sm min-w-0 flex-1">
-                    <p className="font-medium text-background truncate">
-                      Transacción Segura
-                    </p>
-                    <p className="text-background/60 break-words">
-                      Tu información está protegida con encriptación SSL.
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            </div>
-
-            {/* Order Summary sidebar */}
-            <div className="lg:col-span-1 w-full lg:sticky lg:top-24 self-start z-20">
-              <Card className="p-4 sm:p-6 sticky top-24 animate-slide-in-right bg-background/5 backdrop-blur-sm border-background/20 w-full">
-                <div className="flex flex-col items-start gap-4 mb-6">
-                  <h3 className="text-lg sm:text-xl font-bold text-background truncate w-full">
+                  <h3 className="text-xl sm:text-2xl font-bold text-background truncate w-full">
                     Resumen de Compra
                   </h3>
-                  <CheckoutTimer onExpire={handleExpire} />
                 </div>
+                <CheckoutTimer onExpire={handleExpire} />
+              </div>
 
-                {/* Outbound Trip */}
-                <div className="mb-6 pb-6 border-b border-background/20">
-                  <p className="text-sm font-medium text-primary mb-3">
-                    Viaje de Ida
-                  </p>
-                  <div className="flex items-center gap-3 mb-3">
-                    <Bus className="h-5 w-5 text-background/60 shrink-0" />
-                    <div className="min-w-0 flex-1">
-                      <p className="font-medium text-background truncate">
-                        {selectedOutboundTrip.company}
-                      </p>
-                      <p className="text-sm text-background/60 truncate">
-                        {selectedOutboundTrip.busType}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="space-y-2 text-sm">
-                    <p className="flex justify-between gap-2">
-                      <span className="text-background/60 shrink-0">Fecha</span>
-                      <span className="text-background truncate text-right">
-                        {format(
-                          parse(departureDate || "", "yyyy-MM-dd", new Date()),
-                          "dd MMM yyyy",
-                          {
-                            locale: es,
-                          },
-                        )}
-                      </span>
+              <div className="flex flex-col gap-6">
+                {/* Trips Summary */}
+                <div className="space-y-6 bg-background/5 p-4 rounded-xl border border-background/10">
+                  {/* Outbound Trip */}
+                  <div className="pb-6 border-b border-background/20">
+                    <p className="text-sm font-medium text-primary mb-4 text-center">
+                      Viaje de Ida
                     </p>
-                    <p className="flex justify-between gap-2">
-                      <span className="text-background/60 shrink-0">Ruta</span>
-                      <span className="text-background truncate text-right">
-                        {originTitle} - {destinationTitle}
-                      </span>
-                    </p>
-                    <p className="flex justify-between gap-2">
-                      <span className="text-background/60 shrink-0">
-                        Horario
-                      </span>
-                      <span className="text-background truncate text-right">
-                        {selectedOutboundTrip.departureTime} -{" "}
-                        {selectedOutboundTrip.arrivalTime}
-                      </span>
-                    </p>
-                    <p className="flex justify-between gap-2">
-                      <span className="text-background/60 shrink-0">
-                        Asientos
-                      </span>
-                      <span className="text-background truncate text-right">
-                        {selectedSeats.map((s) => s.number).join(", ")}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-
-                {/* Return Trip */}
-                {tripType === "round-trip" && selectedReturnTrip && (
-                  <div className="mb-6 pb-6 border-b border-background/20">
-                    <p className="text-sm font-medium text-secondary mb-3">
-                      Viaje de Regreso
-                    </p>
-                    <div className="flex items-center gap-3 mb-3">
-                      <Bus className="h-5 w-5 text-background/60 shrink-0" />
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium text-background truncate">
-                          {selectedReturnTrip.company}
-                        </p>
-                        <p className="text-sm text-background/60 truncate">
-                          {selectedReturnTrip.busType}
-                        </p>
-                      </div>
+                    <div className="flex flex-col items-center justify-center gap-2 mb-4">
+                      {(() => {
+                        const { name, logo, isObjectFitContain } = resolveCompanyInfo(selectedOutboundTrip?.company);
+                        return (
+                          <>
+                            {logo ? (
+                              <div className="w-16 h-16 rounded-xl bg-white border border-background/20 flex items-center justify-center overflow-hidden mb-1 shadow-sm">
+                                <Image
+                                  src={logo}
+                                  alt={name}
+                                  width={64}
+                                  height={64}
+                                  className={cn("w-full h-full", isObjectFitContain ? "object-contain p-2" : "object-cover")}
+                                />
+                              </div>
+                            ) : (
+                              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-1">
+                                <Bus className="h-6 w-6 text-primary" />
+                              </div>
+                            )}
+                            <div className="text-center">
+                              <p className="font-bold text-background">
+                                {name || "Empresa de Transporte"}
+                              </p>
+                              <p className="text-xs text-background/60">
+                                {selectedOutboundTrip?.busType}
+                              </p>
+                            </div>
+                          </>
+                        );
+                      })()}
                     </div>
                     <div className="space-y-2 text-sm">
                       <p className="flex justify-between gap-2">
-                        <span className="text-background/60 shrink-0">
-                          Fecha
-                        </span>
+                        <span className="text-background/60 shrink-0">Fecha</span>
                         <span className="text-background truncate text-right">
-                          {format(
-                            parse(returnDate || "", "yyyy-MM-dd", new Date()),
+                          {departureDate ? format(
+                            parse(departureDate, "yyyy-MM-dd", new Date()),
                             "dd MMM yyyy",
-                            {
-                              locale: es,
-                            },
-                          )}
+                            { locale: es }
+                          ) : ""}
                         </span>
                       </p>
                       <p className="flex justify-between gap-2">
-                        <span className="text-background/60 shrink-0">
-                          Ruta
-                        </span>
+                        <span className="text-background/60 shrink-0">Ruta</span>
                         <span className="text-background truncate text-right">
-                          {destinationTitle} - {originTitle}
+                          {originTitle} - {destinationTitle}
                         </span>
                       </p>
                       <p className="flex justify-between gap-2">
-                        <span className="text-background/60 shrink-0">
-                          Horario
-                        </span>
+                        <span className="text-background/60 shrink-0">Horario</span>
                         <span className="text-background truncate text-right">
-                          {selectedReturnTrip.departureTime} -{" "}
-                          {selectedReturnTrip.arrivalTime}
+                          {selectedOutboundTrip?.departureTime} - {selectedOutboundTrip?.arrivalTime}
                         </span>
                       </p>
                       <p className="flex justify-between gap-2">
-                        <span className="text-background/60 shrink-0">
-                          Asientos
-                        </span>
+                        <span className="text-background/60 shrink-0">Asientos</span>
                         <span className="text-background truncate text-right">
-                          {selectedReturnSeats.map((s) => s.number).join(", ")}
+                          {selectedSeats.map((s) => s.number).join(", ")}
                         </span>
                       </p>
                     </div>
                   </div>
-                )}
 
-                {/* Price Breakdown */}
-                <div className="space-y-3 mb-6 pb-6 border-b border-background/20">
-                  <p className="flex justify-between text-sm gap-2">
-                    <span className="text-background/60 shrink-0">
-                      Asientos ({totalPassengers})
-                    </span>
-                    <span className="text-background truncate text-right">
-                      Gs. {totalPrice.toLocaleString("es-PY")}
-                    </span>
-                  </p>
-                </div>
+                  {/* Return Trip */}
+                  {tripType === "round-trip" && selectedReturnTrip && (
+                    <div className="pb-6 border-b border-background/20">
+                      <p className="text-sm font-medium text-secondary mb-4 text-center">
+                        Viaje de Regreso
+                      </p>
+                      <div className="flex flex-col items-center justify-center gap-2 mb-4">
+                        {(() => {
+                          const { name, logo, isObjectFitContain } = resolveCompanyInfo(selectedReturnTrip?.company);
+                          return (
+                            <>
+                              {logo ? (
+                                <div className="w-16 h-16 rounded-xl bg-white border border-background/20 flex items-center justify-center overflow-hidden mb-1 shadow-sm">
+                                  <Image
+                                    src={logo}
+                                    alt={name}
+                                    width={64}
+                                    height={64}
+                                    className={cn("w-full h-full", isObjectFitContain ? "object-contain p-2" : "object-cover")}
+                                  />
+                                </div>
+                              ) : (
+                                <div className="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center mb-1">
+                                  <Bus className="h-6 w-6 text-secondary" />
+                                </div>
+                              )}
+                              <div className="text-center">
+                                <p className="font-bold text-background">
+                                  {name || "Empresa de Transporte"}
+                                </p>
+                                <p className="text-xs text-background/60">
+                                  {selectedReturnTrip?.busType}
+                                </p>
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </div>
+                      <div className="space-y-2 text-sm">
+                        <p className="flex justify-between gap-2">
+                          <span className="text-background/60 shrink-0">Fecha</span>
+                          <span className="text-background truncate text-right">
+                            {returnDate ? format(
+                              parse(returnDate, "yyyy-MM-dd", new Date()),
+                              "dd MMM yyyy",
+                              { locale: es }
+                            ) : ""}
+                          </span>
+                        </p>
+                        <p className="flex justify-between gap-2">
+                          <span className="text-background/60 shrink-0">Ruta</span>
+                          <span className="text-background truncate text-right">
+                            {destinationTitle} - {originTitle}
+                          </span>
+                        </p>
+                        <p className="flex justify-between gap-2">
+                          <span className="text-background/60 shrink-0">Horario</span>
+                          <span className="text-background truncate text-right">
+                            {selectedReturnTrip.departureTime} - {selectedReturnTrip.arrivalTime}
+                          </span>
+                        </p>
+                        <p className="flex justify-between gap-2">
+                          <span className="text-background/60 shrink-0">Asientos</span>
+                          <span className="text-background truncate text-right">
+                            {selectedReturnSeats.map((s) => s.number).join(", ")}
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                  )}
 
-                {/* Total */}
-                <div className="mb-6">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                    <span className="text-base sm:text-lg font-medium text-background">
-                      Total a Pagar
-                    </span>
-                    <span className="text-xl sm:text-2xl lg:text-3xl font-bold text-secondary break-words">
-                      Gs. {totalPrice.toLocaleString("es-PY")}
-                    </span>
+                  {/* Price Breakdown */}
+                  <div className="space-y-3 pb-6 border-b border-background/20">
+                    <p className="flex justify-between text-sm gap-2">
+                      <span className="text-background/60 shrink-0">
+                        Asientos ({totalPassengers})
+                      </span>
+                      <span className="text-background truncate text-right">
+                        Gs. {totalPrice.toLocaleString("es-PY")}
+                      </span>
+                    </p>
+                  </div>
+
+                  {/* Total */}
+                  <div className="pt-2">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                      <span className="text-base sm:text-lg font-medium text-background">
+                        Total a Pagar
+                      </span>
+                      <span className="text-xl sm:text-2xl font-bold text-secondary break-words">
+                        Gs. {totalPrice.toLocaleString("es-PY")}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Pay Button */}
-                <Button
-                  onClick={handlePayment}
-                  disabled={
-                    !isFormValid ||
-                    passengerDetails.length === 0 ||
-                    !selectedPaymentMethod ||
-                    isProcessing ||
-                    isExpired
-                  }
-                  className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground h-12 sm:h-14 text-base sm:text-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
-                >
-                  {isExpired ? (
-                    "Reserva caducada"
-                  ) : isProcessing ? (
-                    <>
-                      <Loader2 className="h-5 w-5 mr-2 animate-spin shrink-0" />
-                      <span className="truncate">
-                        {selectedPaymentMethod === "tarjeta"
-                          ? "Procesando pago..."
-                          : "Conectando con Bancard..."}
-                      </span>
-                    </>
-                  ) : passengerDetails.length === 0 ? (
-                    "Cargando..."
-                  ) : isFormValid && selectedPaymentMethod ? (
-                    `Pagar con ${selectedPaymentMethod === "tarjeta" ? "Tarjeta" : "Bancard"}`
-                  ) : (
-                    "Completa los datos"
-                  )}
-                </Button>
-              </Card>
-            </div>
-          </div>
+                {/* Payment Method (Bancard) */}
+                <div className="pt-6 border-t border-background/20 mt-2">
+                  <p className="text-sm font-medium text-background mb-4">
+                    Método de Pago
+                  </p>
+                  
+                  <div className="flex flex-col md:flex-row gap-4 items-center">
+                    {/* Bancard Selection Card - more compact */}
+                    <Card
+                      className="p-3 cursor-pointer transition-all duration-200 border-2 bg-blue-500/10 border-blue-500 flex-1 w-full flex items-center justify-between relative"
+                      onClick={() => handlePaymentMethodSelect("bancard")}
+                    >
+                      <div className="flex items-center gap-4">
+                        <Image
+                          src="/logos/logo-bancard-blanco.png"
+                          alt="Bancard"
+                          width={90}
+                          height={24}
+                          className="object-contain"
+                        />
+                        <div className="hidden sm:block text-left">
+                          <p className="text-xs text-background/80 font-medium">Pago Seguro en línea</p>
+                          <p className="text-[10px] text-background/50">Tarjetas de crédito, débito y billeteras</p>
+                        </div>
+                      </div>
+                      <CheckCircle2 className="h-5 w-5 text-blue-500 shrink-0" />
+                    </Card>
+
+                    {/* Small discreet secure badges */}
+                    <div className="flex items-center gap-4 text-[10px] text-background/50 shrink-0 px-2">
+                      <div className="flex items-center gap-1.5">
+                        <Shield className="h-3.5 w-3.5 text-blue-400" />
+                        <span>Portal encriptado</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Lock className="h-3.5 w-3.5 text-primary" />
+                        <span>SSL Seguro</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Button
+                    onClick={handlePayment}
+                    disabled={
+                      !isFormValid ||
+                      passengerDetails.length === 0 ||
+                      !selectedPaymentMethod ||
+                      isProcessing ||
+                      isExpired
+                    }
+                    className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground h-12 sm:h-14 text-base sm:text-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed mt-6"
+                  >
+                    {isExpired ? (
+                      "Reserva caducada"
+                    ) : isProcessing ? (
+                      <>
+                        <Loader2 className="h-5 w-5 mr-2 animate-spin shrink-0" />
+                        <span className="truncate">Conectando con Bancard...</span>
+                      </>
+                    ) : passengerDetails.length === 0 ? (
+                      "Cargando..."
+                    ) : isFormValid && selectedPaymentMethod ? (
+                      "Pagar con Bancard"
+                    ) : (
+                      "Completa los datos"
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </Card>
+
+      </div>
         </div>
       </div>
 
