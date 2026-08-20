@@ -297,6 +297,20 @@ export default function SeatsPage() {
     ? originTitle
     : destinationTitle;
 
+  const companyCode = (currentTrip?.company || "").toUpperCase();
+  let companyName = currentTrip?.company || "";
+  let companyLogo = null;
+  let isObjectFitContain = false;
+
+  if (companyCode === "LSN" || companyCode === "LSA" || companyCode.includes("SANTANIANA")) {
+    companyName = companyCode === "LSA" ? "La Santaniana Argentina" : "La Santaniana";
+    companyLogo = "/logos/santaniana-color.jpeg";
+  } else if (companyCode === "LSP" || companyCode.includes("SAMPEDRANA")) {
+    companyName = "La Sampedrana";
+    companyLogo = "/logos/logo-la-sampedrana.original.png";
+    isObjectFitContain = true;
+  }
+
   if (!mounted) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#1a2332] to-[#0f1419]">
@@ -374,9 +388,21 @@ export default function SeatsPage() {
                   <Card className="hidden sm:block p-4 md:p-6 mb-6 bg-background/5 backdrop-blur-sm border-background/20 overflow-hidden w-full">
                     <div className="flex flex-row items-center justify-between w-full mb-3 pb-2 border-b border-background/10">
                       <div className="flex items-center gap-2 min-w-0 flex-1">
-                        <Bus className="h-5 w-5 md:h-6 md:w-6 text-primary flex-shrink-0" />
+                        {companyLogo ? (
+                          <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 bg-white/10 flex items-center justify-center border border-background/20">
+                            <Image 
+                              src={companyLogo} 
+                              alt={companyName} 
+                              width={32} 
+                              height={32} 
+                              className={cn("w-full h-full", isObjectFitContain ? "object-contain scale-125" : "object-cover")} 
+                            />
+                          </div>
+                        ) : (
+                          <Bus className="h-5 w-5 md:h-6 md:w-6 text-primary flex-shrink-0" />
+                        )}
                         <span className="font-bold text-sm md:text-base lg:text-lg text-background truncate">
-                          {currentTrip?.company}
+                          {companyName}
                         </span>
                         <span className="text-xs md:text-sm text-background/60 truncate">
                           {currentTrip?.busType}
@@ -451,12 +477,22 @@ export default function SeatsPage() {
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
                     <div className="flex items-center justify-between gap-4 mb-6 relative z-10">
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0">
-                          <Bus className="h-5 w-5 text-primary" />
+                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0 overflow-hidden">
+                          {companyLogo ? (
+                            <Image 
+                              src={companyLogo} 
+                              alt={companyName} 
+                              width={40} 
+                              height={40} 
+                              className={cn("w-full h-full", isObjectFitContain ? "object-contain scale-125" : "object-cover")} 
+                            />
+                          ) : (
+                            <Bus className="h-5 w-5 text-primary" />
+                          )}
                         </div>
                         <div className="min-w-0">
                           <h3 className="font-bold text-sm text-background truncate">
-                            {currentTrip?.company}
+                            {companyName}
                           </h3>
                           <p className="text-[10px] text-background/50 truncate">
                             {currentTrip?.busType}

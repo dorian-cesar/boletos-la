@@ -281,7 +281,7 @@ export function ParaguaySearchForm() {
         className="w-full flex justify-center px-4 animate-scale-in"
         style={{ animationDelay: "0.6s" }}
       >
-        <div className="bg-white/50 backdrop-blur-md rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-8 border border-white/60 relative overflow-hidden w-full max-w-7xl">
+        <div className="bg-white/75 backdrop-blur-md rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-8 border border-white/60 relative overflow-hidden w-full max-w-7xl">
           {/* Efecto de vidrio con gradiente sutil */}
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl pointer-events-none" />
 

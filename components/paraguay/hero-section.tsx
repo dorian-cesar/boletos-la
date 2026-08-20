@@ -55,7 +55,7 @@ export function ParaguayHeroSection() {
             <span className="text-balance">Viaja por todo </span>
             <span className="text-primary">Paraguay</span>
             <br className="hidden sm:block" />
-            <span className="text-secondary sm:ml-2">con nosotros</span>
+            <span className="text-secondary sm:ml-2"> con nosotros</span>
           </h1>
         </div>
 
