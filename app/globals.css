@@ -217,4 +217,26 @@ input:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 50px #1a1a1a inset !important;
     -webkit-text-fill-color: white !important;
     transition: background-color 5000s ease-in-out 0s !important;
-}
+}
+/* Dynamic Marquee Animation for Overflowing Text */
+@keyframes dynamicMarquee {
+  0%, 20% {
+    transform: translateX(0);
+  }
+  50%, 70% {
+    transform: translateX(var(--scroll-dist, -40px));
+  }
+  90%, 100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-dynamic-marquee {
+  display: inline-block;
+  white-space: nowrap;
+  animation: dynamicMarquee 5s ease-in-out infinite;
+}
+
+.animate-dynamic-marquee:hover {
+  animation-play-state: paused;
+}

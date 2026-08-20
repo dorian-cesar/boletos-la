@@ -94,6 +94,72 @@ function ComingSoonModal({
   );
 }
 
+function CityMarqueeText({
+  text,
+  placeholder,
+}: {
+  text?: string;
+  placeholder: string;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
+  const [shouldAnimate, setShouldAnimate] = useState(false);
+  const [scrollDistance, setScrollDistance] = useState(0);
+
+  const displayText = text || placeholder;
+  const isPlaceholder = !text;
+
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (containerRef.current && textRef.current) {
+        const containerWidth = containerRef.current.clientWidth;
+        const textWidth = textRef.current.scrollWidth;
+        if (textWidth > containerWidth + 2) {
+          setShouldAnimate(true);
+          setScrollDistance(textWidth - containerWidth + 14);
+        } else {
+          setShouldAnimate(false);
+          setScrollDistance(0);
+        }
+      }
+    };
+
+    // Timeout allows DOM layout calculation after render
+    const timeout = setTimeout(checkOverflow, 50);
+    window.addEventListener("resize", checkOverflow);
+    return () => {
+      clearTimeout(timeout);
+      window.removeEventListener("resize", checkOverflow);
+    };
+  }, [displayText]);
+
+  return (
+    <div
+      ref={containerRef}
+      className="overflow-hidden min-w-0 flex-1 relative flex items-center"
+    >
+      <span
+        ref={textRef}
+        title={displayText}
+        style={
+          shouldAnimate
+            ? ({
+                "--scroll-dist": `-${scrollDistance}px`,
+              } as React.CSSProperties)
+            : undefined
+        }
+        className={cn(
+          "text-gray-900 text-lg lg:text-base font-semibold whitespace-nowrap inline-block transition-transform",
+          isPlaceholder && "text-gray-400 font-normal",
+          shouldAnimate && "animate-dynamic-marquee"
+        )}
+      >
+        {displayText}
+      </span>
+    </div>
+  );
+}
+
 export function ParaguaySearchForm() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -281,7 +347,7 @@ export function ParaguaySearchForm() {
         className="w-full flex justify-center px-4 animate-scale-in"
         style={{ animationDelay: "0.6s" }}
       >
-        <div className="bg-white/75 lg:bg-white dark:lg:bg-card backdrop-blur-md lg:backdrop-blur-none rounded-3xl lg:rounded-[1.5rem] shadow-2xl lg:shadow-xl p-6 sm:p-8 lg:px-6 lg:py-6 border border-white/60 lg:border-none relative overflow-hidden lg:overflow-visible w-full max-w-7xl mx-auto">
+        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-3xl lg:rounded-[1.5rem] shadow-2xl p-6 sm:p-8 lg:px-6 lg:py-6 border border-white/60 dark:border-white/10 relative overflow-hidden lg:overflow-visible w-full max-w-7xl mx-auto">
           {/* Efecto de vidrio con gradiente sutil */}
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl pointer-events-none" />
 
@@ -369,16 +435,16 @@ export function ParaguaySearchForm() {
                       stopsLoading ? "cursor-not-allowed opacity-60" : "",
                     )}
                   >
-                    <div className="flex items-center gap-3 min-w-0">
+                    <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
                       <MapPin className="h-5 w-5 text-primary flex-shrink-0" />
-                      <span className={cn("text-gray-900 text-lg lg:text-base font-semibold truncate")}>
-                        {stopsLoading
-                          ? "Cargando ciudades..."
-                          : origin
-                            ? stops.find((c) => String(c.id) === String(origin))
-                              ?.name
-                            : "Selecciona origen"}
-                      </span>
+                      <CityMarqueeText
+                        text={
+                          origin
+                            ? stops.find((c) => String(c.id) === String(origin))?.name
+                            : undefined
+                        }
+                        placeholder={stopsLoading ? "Cargando ciudades..." : "Selecciona origen"}
+                      />
                     </div>
                     <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" />
                   </Button>
@@ -416,11 +482,11 @@ export function ParaguaySearchForm() {
                               setDestinationTitle("");
                               setOriginOpen(false);
                             }}
-                            className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-primary data-[selected=true]:text-white hover:bg-primary hover:text-white transition-colors duration-150 rounded-lg px-2"
+                            className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-secondary data-[selected=true]:text-black hover:bg-secondary hover:text-black transition-colors duration-150 rounded-lg px-2"
                           >
-                            <MapPin className="h-4 w-4 mr-2 text-chart-4 shrink-0 group-hover:text-white group-data-[selected=true]:text-white transition-colors" strokeWidth={2.2} />
+                            <MapPin className="h-4 w-4 mr-2 text-chart-4 shrink-0 group-hover:text-black group-data-[selected=true]:text-black transition-colors" strokeWidth={2.2} />
                             <div className="min-w-0">
-                              <p className="font-bold truncate tracking-wide text-slate-900 group-hover:text-white group-data-[selected=true]:text-white [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
+                              <p className="font-bold truncate tracking-wide text-slate-900 group-hover:text-black group-data-[selected=true]:text-black [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
                                 {city.name}
                               </p>
                             </div>
@@ -490,17 +556,18 @@ export function ParaguaySearchForm() {
                       stopsLoading ? "cursor-not-allowed opacity-60" : "",
                     )}
                   >
-                    <div className="flex items-center gap-3 min-w-0">
+                    <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
                       <MapPin className="h-5 w-5 text-primary flex-shrink-0" />
-                      <span className={cn("text-gray-900 text-lg lg:text-base font-semibold truncate")}>
-                        {stopsLoading
-                          ? "Cargando ciudades..."
-                          : destination
+                      <CityMarqueeText
+                        text={
+                          destination
                             ? stops.find(
                               (c) => String(c.id) === String(destination),
                             )?.name
-                            : "Selecciona destino"}
-                      </span>
+                            : undefined
+                        }
+                        placeholder={stopsLoading ? "Cargando ciudades..." : "Selecciona destino"}
+                      />
                     </div>
                     <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" />
                   </Button>
@@ -540,11 +607,11 @@ export function ParaguaySearchForm() {
                                 setDestinationTitle(city.name);
                                 setDestinationOpen(false);
                               }}
-                              className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-primary data-[selected=true]:text-white hover:bg-primary hover:text-white transition-colors duration-150 rounded-lg px-2"
+                              className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-secondary data-[selected=true]:text-black hover:bg-secondary hover:text-black transition-colors duration-150 rounded-lg px-2"
                             >
-                              <MapPin className="h-4 w-4 mr-2 text-chart-4 shrink-0 group-hover:text-white group-data-[selected=true]:text-white transition-colors" strokeWidth={2.2} />
+                              <MapPin className="h-4 w-4 mr-2 text-chart-4 shrink-0 group-hover:text-black group-data-[selected=true]:text-black transition-colors" strokeWidth={2.2} />
                               <div className="min-w-0">
-                                <p className="font-bold truncate tracking-wide text-slate-900 group-hover:text-white group-data-[selected=true]:text-white [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
+                                <p className="font-bold truncate tracking-wide text-slate-900 group-hover:text-black group-data-[selected=true]:text-black [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
                                   {city.name}
                                 </p>
                                 {(() => {
@@ -558,13 +625,13 @@ export function ParaguaySearchForm() {
                                   if (isObject) {
                                     if (dynamicCount > 0) {
                                       return (
-                                        <p className="text-xs text-slate-700 font-medium mt-0.5 group-hover:text-white group-data-[selected=true]:text-white [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
+                                        <p className="text-xs text-slate-700 font-medium mt-0.5 group-hover:text-black group-data-[selected=true]:text-black [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
                                           {dynamicCount} {dynamicCount === 1 ? 'servicio' : 'servicios'}
                                         </p>
                                       );
                                     } else if ((destData as any).times?.length > 0) {
                                       return (
-                                        <p className="text-xs text-red-600 font-semibold mt-0.5 group-hover:text-red-100 group-data-[selected=true]:text-red-100 [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
+                                        <p className="text-xs text-red-600 font-semibold mt-0.5 group-hover:text-red-900 group-data-[selected=true]:text-red-900 [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
                                           Salidas finalizadas por hoy
                                         </p>
                                       );
@@ -701,7 +768,7 @@ export function ParaguaySearchForm() {
                   !departureDate ||
                   (tripType === "round-trip" && !returnDate)
                 }
-                className="bg-primary hover:bg-primary/90 text-white h-14 px-8 text-lg font-bold rounded-full shadow-lg transition-all duration-300 hover:scale-105 disabled:opacity-50"
+                className="bg-accent hover:bg-accent/90 text-white h-14 px-8 text-lg font-bold rounded-full shadow-lg transition-all duration-300 hover:scale-105 disabled:opacity-50"
               >
                 Buscar Boletos
                 <ArrowRight className="h-5 w-5 shrink-0 text-white ml-2" />
@@ -720,7 +787,7 @@ export function ParaguaySearchForm() {
                 !departureDate ||
                 (tripType === "round-trip" && !returnDate)
               }
-              className="bg-primary hover:bg-primary/90 text-white h-14 px-12 text-lg sm:text-xl lg:text-lg font-bold rounded-full shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:transform-none disabled:hover:bg-primary"
+              className="bg-accent hover:bg-accent/90 text-white h-14 px-12 text-lg sm:text-xl lg:text-lg font-bold rounded-full shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:transform-none disabled:hover:bg-accent"
             >
               Buscar Boletos
               <ArrowRight className="h-5 w-5 shrink-0 text-white" />
