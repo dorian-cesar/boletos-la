@@ -494,13 +494,13 @@ export default function CheckoutPage() {
                     <p className="text-sm font-medium text-primary mb-4 text-center">
                       Viaje de Ida
                     </p>
-                    <div className="flex flex-col items-center justify-center gap-2 mb-4">
+                    <div className="flex items-center justify-start gap-4 mb-4">
                       {(() => {
                         const { name, logo, isObjectFitContain } = resolveCompanyInfo(selectedOutboundTrip?.company);
                         return (
                           <>
                             {logo ? (
-                              <div className="w-16 h-16 rounded-xl bg-white border border-background/20 flex items-center justify-center overflow-hidden mb-1 shadow-sm">
+                              <div className="w-16 h-16 rounded-xl bg-white border border-background/20 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
                                 <Image
                                   src={logo}
                                   alt={name}
@@ -510,15 +510,15 @@ export default function CheckoutPage() {
                                 />
                               </div>
                             ) : (
-                              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-1">
+                              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                                 <Bus className="h-6 w-6 text-primary" />
                               </div>
                             )}
-                            <div className="text-center">
-                              <p className="font-bold text-background">
+                            <div className="text-left min-w-0 flex-1">
+                              <p className="font-bold text-background truncate">
                                 {name || "Empresa de Transporte"}
                               </p>
-                              <p className="text-xs text-background/60">
+                              <p className="text-xs text-background/60 truncate">
                                 {selectedOutboundTrip?.busType}
                               </p>
                             </div>
@@ -564,13 +564,13 @@ export default function CheckoutPage() {
                       <p className="text-sm font-medium text-secondary mb-4 text-center">
                         Viaje de Regreso
                       </p>
-                      <div className="flex flex-col items-center justify-center gap-2 mb-4">
+                      <div className="flex items-center justify-start gap-4 mb-4">
                         {(() => {
                           const { name, logo, isObjectFitContain } = resolveCompanyInfo(selectedReturnTrip?.company);
                           return (
                             <>
                               {logo ? (
-                                <div className="w-16 h-16 rounded-xl bg-white border border-background/20 flex items-center justify-center overflow-hidden mb-1 shadow-sm">
+                                <div className="w-16 h-16 rounded-xl bg-white border border-background/20 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
                                   <Image
                                     src={logo}
                                     alt={name}
@@ -580,15 +580,15 @@ export default function CheckoutPage() {
                                   />
                                 </div>
                               ) : (
-                                <div className="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center mb-1">
+                                <div className="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center shrink-0">
                                   <Bus className="h-6 w-6 text-secondary" />
                                 </div>
                               )}
-                              <div className="text-center">
-                                <p className="font-bold text-background">
+                              <div className="text-left min-w-0 flex-1">
+                                <p className="font-bold text-background truncate">
                                   {name || "Empresa de Transporte"}
                                 </p>
-                                <p className="text-xs text-background/60">
+                                <p className="text-xs text-background/60 truncate">
                                   {selectedReturnTrip?.busType}
                                 </p>
                               </div>
