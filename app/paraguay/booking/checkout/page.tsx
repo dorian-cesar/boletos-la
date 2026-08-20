@@ -337,138 +337,6 @@ export default function CheckoutPage() {
 
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="max-w-4xl mx-auto flex flex-col gap-6 lg:gap-8">
-            {/* Passenger Summary (read-only) */}
-            <div className="space-y-6 w-full">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <h2 className="text-xl sm:text-2xl font-bold animate-fade-in text-background">
-                  Resumen de Pasajeros
-                </h2>
-                {!isFormValid && (
-                  <Badge
-                    variant="outline"
-                    className="animate-fade-in border-destructive/50 text-destructive shrink-0"
-                  >
-                    Completa los datos en la página de asientos
-                  </Badge>
-                )}
-              </div>
-
-              {/* Passengers Grouped View */}
-              {selectedSeats.length > 0 && (
-                <div className="space-y-3">
-                  {selectedSeats.map((outboundSeat, i) => {
-                    const p = passengerDetails[i];
-                    const returnSeat = selectedReturnSeats[i];
-                    const hasData = p?.firstName && p?.lastName;
-
-                    return (
-                      <Card
-                        key={`passenger-${i}`}
-                        className="p-4 bg-background/5 backdrop-blur-sm border-background/20 animate-fade-in"
-                        style={{ animationDelay: `${i * 80}ms` }}
-                      >
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                          <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/30 shrink-0">
-                              <User className="h-5 w-5 text-primary" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2">
-                                <p className="font-bold text-background text-base truncate">
-                                  {hasData ? (
-                                    `${p.firstName} ${p.lastName}`
-                                  ) : (
-                                    <span className="text-background/40 italic font-normal">
-                                      Sin datos
-                                    </span>
-                                  )}
-                                </p>
-                                {hasData && (
-                                  <Badge
-                                    variant="secondary"
-                                    className="bg-green-500/10 text-green-500 border-green-500/30 shrink-0 text-[10px] px-1.5 py-0"
-                                  >
-                                    <Check className="h-3 w-3 mr-1" />
-                                    OK
-                                  </Badge>
-                                )}
-                              </div>
-                              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-background/60 mt-1">
-                                {p?.documentNumber && (
-                                  <span className="flex items-center gap-1.5">
-                                    <span>C.I. {p.documentNumber}</span>
-                                  </span>
-                                )}
-                                {p?.email && (
-                                  <span className="flex items-center gap-1.5 truncate max-w-[160px] sm:max-w-[200px]">
-                                    <span className="w-1 h-1 rounded-full bg-background/30" />
-                                    <span className="truncate">{p.email}</span>
-                                  </span>
-                                )}
-                                {p?.phone && (
-                                  <span className="flex items-center gap-1.5">
-                                    <span className="w-1 h-1 rounded-full bg-background/30" />
-                                    <span>{p.phone}</span>
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Asientos */}
-                          <div className="flex flex-col gap-2 shrink-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-background/10">
-                            <div className="flex items-center gap-2">
-                              <span className="bg-primary/20 text-primary text-[10px] px-2 py-0.5 rounded uppercase font-bold w-16 text-center border border-primary/20">
-                                Ida
-                              </span>
-                              <span className="text-sm font-medium text-background">
-                                Asiento {outboundSeat.number}
-                              </span>
-                            </div>
-                            {returnSeat && (
-                              <div className="flex items-center gap-2">
-                                <span className="bg-secondary/20 text-secondary text-[10px] px-2 py-0.5 rounded uppercase font-bold w-16 text-center border border-secondary/20">
-                                  Regreso
-                                </span>
-                                <span className="text-sm font-medium text-background">
-                                  Asiento {returnSeat.number}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </Card>
-                    );
-                  })}
-                </div>
-              )}
-
-              {!isFormValid && passengerDetails.length > 0 && (
-                <Card className="p-4 bg-destructive/10 border-destructive/30 animate-fade-in">
-                  <div className="flex items-start gap-3">
-                    <ArrowRight className="h-5 w-5 text-destructive mt-0.5 shrink-0 rotate-180" />
-                    <div>
-                      <p className="text-sm font-medium text-destructive">
-                        Datos incompletos
-                      </p>
-                      <p className="text-xs text-destructive/80 mt-0.5">
-                        Vuelve a la selección de asientos para completar los
-                        datos de los pasajeros.
-                      </p>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="mt-2 h-7 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 px-2"
-                        onClick={() => router.push("/booking/seats")}
-                      >
-                        ← Volver a asientos
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              )}
-              </div>
-
             {/* Unified Resumen de Compra & Payment Section */}
             <Card
               className="p-4 sm:p-6 animate-fade-in bg-background/5 backdrop-blur-sm border-background/20 w-full"
@@ -665,7 +533,7 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-background/20 mt-2">
+                <div className="mt-4">
                   <Button
                     onClick={handlePayment}
                     disabled={
@@ -675,7 +543,7 @@ export default function CheckoutPage() {
                       isProcessing ||
                       isExpired
                     }
-                    className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground h-12 sm:h-14 text-base sm:text-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed mt-6"
+                    className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground h-12 sm:h-14 text-base sm:text-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
                   >
                     {isExpired ? (
                       "Reserva caducada"
@@ -695,6 +563,139 @@ export default function CheckoutPage() {
                 </div>
               </div>
             </Card>
+
+
+            {/* Passenger Summary (read-only) */}
+            <div className="space-y-6 w-full">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <h2 className="text-xl sm:text-2xl font-bold animate-fade-in text-background">
+                  Resumen de Pasajeros
+                </h2>
+                {!isFormValid && (
+                  <Badge
+                    variant="outline"
+                    className="animate-fade-in border-destructive/50 text-destructive shrink-0"
+                  >
+                    Completa los datos en la página de asientos
+                  </Badge>
+                )}
+              </div>
+
+              {/* Passengers Grouped View */}
+              {selectedSeats.length > 0 && (
+                <div className="space-y-3">
+                  {selectedSeats.map((outboundSeat, i) => {
+                    const p = passengerDetails[i];
+                    const returnSeat = selectedReturnSeats[i];
+                    const hasData = p?.firstName && p?.lastName;
+
+                    return (
+                      <Card
+                        key={`passenger-${i}`}
+                        className="p-4 bg-background/5 backdrop-blur-sm border-background/20 animate-fade-in"
+                        style={{ animationDelay: `${i * 80}ms` }}
+                      >
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/30 shrink-0">
+                              <User className="h-5 w-5 text-primary" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className="font-bold text-background text-base truncate">
+                                  {hasData ? (
+                                    `${p.firstName} ${p.lastName}`
+                                  ) : (
+                                    <span className="text-background/40 italic font-normal">
+                                      Sin datos
+                                    </span>
+                                  )}
+                                </p>
+                                {hasData && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="bg-green-500/10 text-green-500 border-green-500/30 shrink-0 text-[10px] px-1.5 py-0"
+                                  >
+                                    <Check className="h-3 w-3 mr-1" />
+                                    OK
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-background/60 mt-1">
+                                {p?.documentNumber && (
+                                  <span className="flex items-center gap-1.5">
+                                    <span>C.I. {p.documentNumber}</span>
+                                  </span>
+                                )}
+                                {p?.email && (
+                                  <span className="flex items-center gap-1.5 truncate max-w-[160px] sm:max-w-[200px]">
+                                    <span className="w-1 h-1 rounded-full bg-background/30" />
+                                    <span className="truncate">{p.email}</span>
+                                  </span>
+                                )}
+                                {p?.phone && (
+                                  <span className="flex items-center gap-1.5">
+                                    <span className="w-1 h-1 rounded-full bg-background/30" />
+                                    <span>{p.phone}</span>
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Asientos */}
+                          <div className="flex flex-col gap-2 shrink-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-background/10">
+                            <div className="flex items-center gap-2">
+                              <span className="bg-primary/20 text-primary text-[10px] px-2 py-0.5 rounded uppercase font-bold w-16 text-center border border-primary/20">
+                                Ida
+                              </span>
+                              <span className="text-sm font-medium text-background">
+                                Asiento {outboundSeat.number}
+                              </span>
+                            </div>
+                            {returnSeat && (
+                              <div className="flex items-center gap-2">
+                                <span className="bg-secondary/20 text-secondary text-[10px] px-2 py-0.5 rounded uppercase font-bold w-16 text-center border border-secondary/20">
+                                  Regreso
+                                </span>
+                                <span className="text-sm font-medium text-background">
+                                  Asiento {returnSeat.number}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
+
+              {!isFormValid && passengerDetails.length > 0 && (
+                <Card className="p-4 bg-destructive/10 border-destructive/30 animate-fade-in">
+                  <div className="flex items-start gap-3">
+                    <ArrowRight className="h-5 w-5 text-destructive mt-0.5 shrink-0 rotate-180" />
+                    <div>
+                      <p className="text-sm font-medium text-destructive">
+                        Datos incompletos
+                      </p>
+                      <p className="text-xs text-destructive/80 mt-0.5">
+                        Vuelve a la selección de asientos para completar los
+                        datos de los pasajeros.
+                      </p>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="mt-2 h-7 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 px-2"
+                        onClick={() => router.push("/booking/seats")}
+                      >
+                        ← Volver a asientos
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              )}
+              </div>
 
       </div>
         </div>
@@ -841,13 +842,13 @@ function CheckoutTimer({ onExpire }: { onExpire: () => void }) {
   const s = seconds % 60;
 
   return (
-    <div className="flex items-center gap-3 bg-emerald-500/15 border-2 border-emerald-500/40 px-4 py-2 rounded-2xl shadow-[0_0_25px_rgba(16,185,129,0.2)] transition-all animate-fade-in hover:scale-[1.02]">
+    <div className="flex items-center gap-2 bg-emerald-500/15 border border-emerald-500/40 px-3 py-1.5 rounded-xl shadow-[0_0_15px_rgba(16,185,129,0.15)] transition-all animate-fade-in hover:scale-[1.02]">
       <div className="relative shrink-0">
-        <Timer className="w-5 h-5 text-emerald-400" />
-        <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,1)] border-2 border-[#1a2332]" />
+        <Timer className="w-4 h-4 text-emerald-400" />
+        <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,1)] border-2 border-[#1a2332]" />
       </div>
-      <div className="flex flex-col min-w-[65px]">
-        <span className="text-xl font-black font-mono text-center text-emerald-400 tabular-nums leading-none drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]">
+      <div className="flex flex-col min-w-[52px]">
+        <span className="text-base font-bold font-mono text-center text-emerald-400 tabular-nums leading-none drop-shadow-[0_0_6px_rgba(16,185,129,0.3)]">
           {m}:{s.toString().padStart(2, "0")}
         </span>
       </div>

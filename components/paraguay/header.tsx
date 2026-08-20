@@ -56,16 +56,16 @@ export function ParaguayHeader() {
                   Inicio
                 </Link>
                 <Link
-                href="/paraguay#destinos"
-                  className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
-                >
-                  Destinos
-                </Link>
-                <Link
                 href="/paraguay#servicios"
                   className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
                 >
                   Servicios
+                </Link>
+                <Link
+                href="/paraguay#destinos"
+                  className="text-white hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
+                >
+                  Destinos
                 </Link>
 
                 <Link
@@ -122,16 +122,16 @@ export function ParaguayHeader() {
                   Inicio
                 </Link>
             <Link
-              href="/paraguay#destinos"
-                  className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
-                >
-                  Destinos
-                </Link>
-            <Link
               href="/paraguay#servicios"
                   className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
                 >
                   Servicios
+                </Link>
+            <Link
+              href="/paraguay#destinos"
+                  className="text-white hover:text-[#00c7cc] transition-colors font-medium py-2"
+                >
+                  Destinos
                 </Link>
 
             <Link

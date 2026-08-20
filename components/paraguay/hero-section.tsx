@@ -47,7 +47,7 @@ export function ParaguayHeroSection() {
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-2 sm:px-4 py-8 sm:py-20 lg:py-24 flex flex-col items-center justify-center mt-12 sm:mt-0">
-        <div className="text-center mb-6 animate-fade-in">
+        <div className="text-center mb-6 animate-fade-in hidden md:block">
           <h1
             className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2 animate-fade-in-up"
             style={{ animationDelay: "0.2s" }}
