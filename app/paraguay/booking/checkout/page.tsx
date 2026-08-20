@@ -666,13 +666,6 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="pt-6 border-t border-background/20 mt-2">
-                  <div className="flex items-center justify-center gap-4 text-xs text-background/50 mb-4">
-                    <div className="flex items-center gap-1.5">
-                      <Shield className="h-4 w-4 text-blue-400" />
-                      <span>Pago Seguro y Encriptado por Bancard</span>
-                    </div>
-                  </div>
-
                   <Button
                     onClick={handlePayment}
                     disabled={
