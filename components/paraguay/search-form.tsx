@@ -317,7 +317,7 @@ export function ParaguaySearchForm() {
           <div className="flex flex-col lg:flex-row gap-4 lg:gap-3 relative z-10 items-stretch lg:items-end">
             {/* Origin */}
             <div className="flex-1 min-w-0">
-              <Label className="text-base sm:text-lg lg:text-sm font-bold text-slate-800 mb-2 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]">
+              <Label className="text-lg sm:text-xl lg:text-base font-extrabold text-slate-900 mb-2 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]">
                 Origen
               </Label>
               <Popover
@@ -440,7 +440,7 @@ export function ParaguaySearchForm() {
 
             {/* Destination */}
             <div className="flex-1 min-w-0">
-              <Label className="text-base sm:text-lg lg:text-sm font-bold text-slate-800 mb-2 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]">
+              <Label className="text-lg sm:text-xl lg:text-base font-extrabold text-slate-900 mb-2 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]">
                 Destino
               </Label>
               <Popover
@@ -553,7 +553,7 @@ export function ParaguaySearchForm() {
 
             {/* Fecha de Ida */}
             <div className="flex-1 min-w-0">
-              <Label className="text-base sm:text-lg lg:text-sm font-bold text-slate-800 mb-2 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]">
+              <Label className="text-lg sm:text-xl lg:text-base font-extrabold text-slate-900 mb-2 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]">
                 Fecha de Ida
               </Label>
               <Popover
@@ -608,7 +608,7 @@ export function ParaguaySearchForm() {
             {/* Fecha de Vuelta */}
             {tripType === "round-trip" && (
               <div className="flex-1 min-w-0 animate-in fade-in slide-in-from-right-5 duration-500">
-                <Label className="text-base sm:text-lg lg:text-sm font-bold text-slate-800 mb-2 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]">
+                <Label className="text-lg sm:text-xl lg:text-base font-extrabold text-slate-900 mb-2 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]">
                   Fecha de Vuelta
                 </Label>
                 <Popover open={returnDateOpen} onOpenChange={setReturnDateOpen}>
