@@ -494,37 +494,48 @@ export default function CheckoutPage() {
                     <p className="text-sm font-medium text-primary mb-4 text-center">
                       Viaje de Ida
                     </p>
-                    <div className="flex items-center justify-start gap-4 mb-4">
-                      {(() => {
-                        const { name, logo, isObjectFitContain } = resolveCompanyInfo(selectedOutboundTrip?.company);
-                        return (
-                          <>
-                            {logo ? (
-                              <div className="w-16 h-16 rounded-xl bg-white border border-background/20 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
-                                <Image
-                                  src={logo}
-                                  alt={name}
-                                  width={64}
-                                  height={64}
-                                  className={cn("w-full h-full", isObjectFitContain ? "object-contain scale-125" : "object-cover")}
-                                />
+                    <div className="flex items-center justify-between gap-4 mb-4">
+                      <div className="flex items-center gap-4 min-w-0">
+                        {(() => {
+                          const { name, logo, isObjectFitContain } = resolveCompanyInfo(selectedOutboundTrip?.company);
+                          return (
+                            <>
+                              {logo ? (
+                                <div className="w-16 h-16 rounded-xl bg-white border border-background/20 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                                  <Image
+                                    src={logo}
+                                    alt={name}
+                                    width={64}
+                                    height={64}
+                                    className={cn("w-full h-full", isObjectFitContain ? "object-contain scale-125" : "object-cover")}
+                                  />
+                                </div>
+                              ) : (
+                                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                                  <Bus className="h-6 w-6 text-primary" />
+                                </div>
+                              )}
+                              <div className="text-left min-w-0 flex-1">
+                                <p className="font-bold text-background truncate">
+                                  {name || "Empresa de Transporte"}
+                                </p>
+                                <p className="text-xs text-background/60 truncate">
+                                  {selectedOutboundTrip?.busType}
+                                </p>
                               </div>
-                            ) : (
-                              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                                <Bus className="h-6 w-6 text-primary" />
-                              </div>
-                            )}
-                            <div className="text-left min-w-0 flex-1">
-                              <p className="font-bold text-background truncate">
-                                {name || "Empresa de Transporte"}
-                              </p>
-                              <p className="text-xs text-background/60 truncate">
-                                {selectedOutboundTrip?.busType}
-                              </p>
-                            </div>
-                          </>
-                        );
-                      })()}
+                            </>
+                          );
+                        })()}
+                      </div>
+                      <div className="shrink-0 w-28 h-16 bg-background/5 border border-background/20 rounded-xl shadow-sm flex items-center justify-center px-3 py-2">
+                        <Image
+                          src="/logos/logo-bancard-blanco.png"
+                          alt="Bancard"
+                          width={100}
+                          height={40}
+                          className="w-full h-full object-contain opacity-90 hover:opacity-100 transition-opacity"
+                        />
+                      </div>
                     </div>
                     <div className="space-y-2 text-sm">
                       <p className="flex justify-between gap-2">
@@ -654,44 +665,11 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                {/* Payment Method (Bancard) */}
                 <div className="pt-6 border-t border-background/20 mt-2">
-                  <p className="text-sm font-medium text-background mb-4">
-                    Método de Pago
-                  </p>
-                  
-                  <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
-                    {/* Bancard Selection Card - more compact */}
-                    <Card
-                      className="p-3 cursor-pointer transition-all duration-200 border-2 bg-blue-500/10 border-blue-500 w-fit flex items-center justify-between relative gap-6"
-                      onClick={() => handlePaymentMethodSelect("bancard")}
-                    >
-                      <div className="flex items-center gap-4">
-                        <Image
-                          src="/logos/logo-bancard-blanco.png"
-                          alt="Bancard"
-                          width={90}
-                          height={24}
-                          className="object-contain"
-                        />
-                        <div className="hidden sm:block text-left">
-                          <p className="text-xs text-background/80 font-medium">Pago Seguro en línea</p>
-                          <p className="text-[10px] text-background/50">Tarjetas de crédito, débito y billeteras</p>
-                        </div>
-                      </div>
-                      <CheckCircle2 className="h-5 w-5 text-blue-500 shrink-0" />
-                    </Card>
-
-                    {/* Small discreet secure badges */}
-                    <div className="flex items-center gap-4 text-[10px] text-background/50 shrink-0 px-2">
-                      <div className="flex items-center gap-1.5">
-                        <Shield className="h-3.5 w-3.5 text-blue-400" />
-                        <span>Portal encriptado</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <Lock className="h-3.5 w-3.5 text-primary" />
-                        <span>SSL Seguro</span>
-                      </div>
+                  <div className="flex items-center justify-center gap-4 text-xs text-background/50 mb-4">
+                    <div className="flex items-center gap-1.5">
+                      <Shield className="h-4 w-4 text-blue-400" />
+                      <span>Pago Seguro y Encriptado por Bancard</span>
                     </div>
                   </div>
 

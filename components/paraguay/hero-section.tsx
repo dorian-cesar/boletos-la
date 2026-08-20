@@ -12,8 +12,6 @@ export function ParaguayHeroSection() {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
-
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background optimizado */}
@@ -29,16 +27,18 @@ export function ParaguayHeroSection() {
           className="object-cover opacity-60"
         />
 
-        {/* 2. Video de fondo de carga nativa asíncrona */}
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-80"
-        >
-          <source src="/videos/banner-boletos.mp4" type="video/mp4" />
-        </video>
+        {/* 2. Video de fondo de carga diferida (solo cliente) */}
+        {mounted && (
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover opacity-80 animate-in fade-in duration-1000"
+          >
+            <source src="/videos/banner-boletos.mp4" type="video/mp4" />
+          </video>
+        )}
 
         {/* Overlay oscuro para mejor legibilidad de los textos */}
         <div className="absolute inset-0 bg-black/40" />
