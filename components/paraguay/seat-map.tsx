@@ -328,7 +328,7 @@ function SeatButton({
       className={cn(
         "relative w-10 h-10 md:w-12 md:h-12 rounded-lg font-medium text-sm transition-all duration-300 flex items-center justify-center group",
         isOccupied &&
-          "bg-background/20 cursor-not-allowed border border-background/40",
+          "bg-orange-500/80 cursor-not-allowed border border-orange-600",
         isBlocked &&
           "bg-background/5 cursor-not-allowed border border-background/20 opacity-50",
         isDisabled &&
@@ -353,7 +353,7 @@ function SeatButton({
       }
     >
       {isOccupied ? (
-        <User className="h-5 w-5 text-background/60" />
+        <User className="h-5 w-5 text-white" />
       ) : (
         <>
           <span
