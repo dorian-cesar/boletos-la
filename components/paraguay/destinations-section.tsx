@@ -291,10 +291,6 @@ export function DestinationsSection() {
               <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
                 <div className="flex items-start justify-between">
                   <div>
-                    <div className="flex items-center gap-2 text-white/90 text-sm mb-2">
-                      <MapPin className="h-4 w-4" />
-                      {destination.region}
-                    </div>
                     <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-[#00c7cc] transition-colors duration-300">
                       {destination.name}
                     </h3>
