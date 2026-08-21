@@ -220,7 +220,7 @@ export default function MiBoletoPage() {
                       onChange={(e) =>
                         setTicketNumber(e.target.value.toUpperCase())
                       }
-                      className="h-14 pl-12 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-white/20 focus:ring-white/20 focus:border-black/15 dark:border-white/30 text-lg uppercase tracking-wider"
+                      className="h-14 pl-12 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/40 focus:ring-white/20 focus:border-black/15 dark:focus:border-white/30 text-lg uppercase tracking-wider"
                       required
                     />
                   </div>
@@ -258,7 +258,7 @@ export default function MiBoletoPage() {
               <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-[2rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
 
-                <div className="relative bg-[#1a1f26] rounded-[1.5rem] overflow-hidden border border-black/10 dark:border-white/10 shadow-2xl flex flex-col md:flex-row min-h-[400px]">
+                <div className="relative bg-white dark:bg-[#1a1f26] rounded-[1.5rem] overflow-hidden border border-black/10 dark:border-white/10 shadow-2xl flex flex-col md:flex-row min-h-[400px]">
                   {/* Lado Izquierdo - Detalles Principales */}
                   <div className="flex-1 p-8 md:p-10 flex flex-col">
                     <div className="flex justify-between items-start mb-8">
@@ -266,7 +266,7 @@ export default function MiBoletoPage() {
                         <p className="text-primary text-xs font-bold tracking-[0.2em] uppercase">
                           Boleto Electrónico
                         </p>
-                        <h2 className="text-2xl font-bold">
+                        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
                           {ticketData.company}
                         </h2>
                       </div>
@@ -285,7 +285,7 @@ export default function MiBoletoPage() {
                         <p className="text-slate-900 dark:text-white/40 text-xs uppercase tracking-widest mb-2">
                           Origen
                         </p>
-                        <h3 className="text-3xl font-bold mb-1">
+                        <h3 className="text-3xl font-bold mb-1 text-slate-900 dark:text-white">
                           {ticketData.origin_title}
                         </h3>
                       </div>
@@ -298,7 +298,7 @@ export default function MiBoletoPage() {
                         <p className="text-slate-900 dark:text-white/40 text-xs uppercase tracking-widest mb-2">
                           Destino
                         </p>
-                        <h3 className="text-3xl font-bold mb-1">
+                        <h3 className="text-3xl font-bold mb-1 text-slate-900 dark:text-white">
                           {ticketData.destination_title}
                         </h3>
                       </div>
@@ -309,7 +309,7 @@ export default function MiBoletoPage() {
                         <p className="text-slate-900 dark:text-white/40 text-[10px] uppercase tracking-widest mb-2 flex items-center gap-1">
                           <Calendar className="h-3 w-3" /> Fecha
                         </p>
-                        <p className="font-bold">
+                        <p className="font-bold text-slate-900 dark:text-white">
                           {format(
                             parse(
                               ticketData.departure_date,
@@ -325,7 +325,7 @@ export default function MiBoletoPage() {
                         <p className="text-slate-900 dark:text-white/40 text-[10px] uppercase tracking-widest mb-2 flex items-center gap-1">
                           <Clock className="h-3 w-3" /> Salida
                         </p>
-                        <p className="font-bold">
+                        <p className="font-bold text-slate-900 dark:text-white">
                           {ticketData.departure_time.substring(0, 5)} hs
                         </p>
                       </div>
@@ -484,7 +484,7 @@ export default function MiBoletoPage() {
               alt="Boletos.la"
               width={120}
               height={40}
-              className="opacity-20 grayscale brightness-200"
+              className="opacity-20 grayscale dark:brightness-200"
             />
           </div>
         </div>

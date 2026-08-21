@@ -313,15 +313,15 @@ export function RefundForm() {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-6 md:p-8 bg-[#1a1a1a] rounded-2xl border border-black/10 dark:border-white/10 shadow-2xl">
+    <div className="w-full max-w-3xl mx-auto p-6 md:p-8 bg-white dark:bg-[#1a1a1a] rounded-2xl border border-black/10 dark:border-white/10 shadow-2xl">
       <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Anulación o Reembolso</h2>
-      <p className="text-gray-400 mb-8">
+      <p className="text-slate-600 dark:text-gray-400 mb-8">
         Ingresá tu número de pasaje o boleto para buscar los detalles de tu viaje y procesar la solicitud de anulación o reembolso.
       </p>
 
       <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4 mb-8">
         <div className="flex-1">
-          <Label htmlFor="ticketNumber" className="text-gray-300">Nro. de Pasaje / Boleto</Label>
+          <Label htmlFor="ticketNumber" className="text-slate-700 dark:text-gray-300">Nro. de Pasaje / Boleto</Label>
           <Input
             id="ticketNumber"
             value={ticketNumber}
@@ -373,23 +373,23 @@ export function RefundForm() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               <div>
-                <Label className="text-gray-400 text-xs uppercase tracking-wider">Nombres</Label>
+                <Label className="text-slate-600 dark:text-gray-400 text-xs uppercase tracking-wider">Nombres</Label>
                 <Input value={ticketData.firstName} readOnly className="mt-1 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white opacity-70" />
               </div>
               <div>
-                <Label className="text-gray-400 text-xs uppercase tracking-wider">Apellidos</Label>
+                <Label className="text-slate-600 dark:text-gray-400 text-xs uppercase tracking-wider">Apellidos</Label>
                 <Input value={ticketData.lastName} readOnly className="mt-1 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white opacity-70" />
               </div>
               <div className="sm:col-span-2 md:col-span-1">
-                <Label className="text-gray-400 text-xs uppercase tracking-wider">Tipo Documento</Label>
+                <Label className="text-slate-600 dark:text-gray-400 text-xs uppercase tracking-wider">Tipo Documento</Label>
                 <Input value={ticketData.documentType} readOnly className="mt-1 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white opacity-70" />
               </div>
               <div>
-                <Label className="text-gray-400 text-xs uppercase tracking-wider">Nro. de Cédula / Doc.</Label>
+                <Label className="text-slate-600 dark:text-gray-400 text-xs uppercase tracking-wider">Nro. de Cédula / Doc.</Label>
                 <Input value={ticketData.documentNumber} readOnly className="mt-1 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white opacity-70" />
               </div>
               <div>
-                <Label className="text-gray-400 text-xs uppercase tracking-wider">Ruta</Label>
+                <Label className="text-slate-600 dark:text-gray-400 text-xs uppercase tracking-wider">Ruta</Label>
                 <div 
                   className="mt-1 h-10 bg-white/5 border border-black/10 dark:border-white/10 rounded-md px-3 flex items-center overflow-hidden relative text-slate-900 dark:text-white opacity-70 text-sm font-medium cursor-default"
                   title={ticketData.route}
@@ -402,7 +402,7 @@ export function RefundForm() {
                 </div>
               </div>
               <div>
-                <Label className="text-gray-400 text-xs uppercase tracking-wider">Empresa</Label>
+                <Label className="text-slate-600 dark:text-gray-400 text-xs uppercase tracking-wider">Empresa</Label>
                 <Input 
                   value={
                     ticketData.company 
@@ -417,25 +417,25 @@ export function RefundForm() {
                 />
               </div>
               <div>
-                <Label className="text-gray-400 text-xs uppercase tracking-wider">Fecha de Viaje</Label>
+                <Label className="text-slate-600 dark:text-gray-400 text-xs uppercase tracking-wider">Fecha de Viaje</Label>
                 <Input value={ticketData.date} readOnly className="mt-1 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white opacity-70" />
               </div>
               <div>
-                <Label className="text-gray-400 text-xs uppercase tracking-wider">Fecha de Compra</Label>
+                <Label className="text-slate-600 dark:text-gray-400 text-xs uppercase tracking-wider">Fecha de Compra</Label>
                 <Input value={ticketData.purchaseDate} readOnly className="mt-1 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white opacity-70" />
               </div>
               <div>
-                <Label className="text-gray-400 text-xs uppercase tracking-wider">Asiento</Label>
+                <Label className="text-slate-600 dark:text-gray-400 text-xs uppercase tracking-wider">Asiento</Label>
                 <Input value={ticketData.seatNumber || "N/A"} readOnly className="mt-1 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white opacity-70" />
               </div>
               <div>
-                <Label className="text-gray-400 text-xs uppercase tracking-wider">Monto Pagado</Label>
+                <Label className="text-slate-600 dark:text-gray-400 text-xs uppercase tracking-wider">Monto Pagado</Label>
                 <Input value={ticketData.amount ? `Gs. ${Number(ticketData.amount).toLocaleString('es-PY')}` : 'Gs. 0'} readOnly className="mt-1 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white opacity-70" />
               </div>
             </div>
 
             {gdsStatus === "loading" && (
-              <div className="flex items-center space-x-3 text-gray-400 text-sm mt-4 p-4 bg-black/20 rounded-lg">
+              <div className="flex items-center space-x-3 text-slate-600 dark:text-gray-400 text-sm mt-4 p-4 bg-black/20 rounded-lg">
                 <div className="w-4 h-4 rounded-full border-2 border-t-transparent border-gray-400 animate-spin" />
                 <span>Verificando los datos del pasajero con la empresa de transporte...</span>
               </div>
@@ -453,7 +453,7 @@ export function RefundForm() {
               </div>
             )}
             {gdsStatus === "error" && (
-              <div className="flex items-center space-x-3 text-gray-400 text-sm mt-4 p-4 bg-white/5 border border-black/10 dark:border-white/10 rounded-lg">
+              <div className="flex items-center space-x-3 text-slate-600 dark:text-gray-400 text-sm mt-4 p-4 bg-white/5 border border-black/10 dark:border-white/10 rounded-lg">
                 <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 <span>No se pudo consultar a la empresa de transporte en este momento.</span>
               </div>
@@ -463,12 +463,12 @@ export function RefundForm() {
           <form onSubmit={handleSubmitRefund} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="transactionCountry" className="text-gray-300 font-semibold text-sm">País de la Transacción</Label>
+                <Label htmlFor="transactionCountry" className="text-slate-700 dark:text-gray-300 font-semibold text-sm">País de la Transacción</Label>
                 <Select value={transactionCountry} onValueChange={setTransactionCountry}>
-                  <SelectTrigger id="transactionCountry" className="w-full bg-[#1a1a1a] border-black/10 dark:border-white/10 text-slate-900 dark:text-white h-12 focus:ring-[#00c7cc]">
+                  <SelectTrigger id="transactionCountry" className="w-full bg-white dark:bg-[#1a1a1a] border-black/10 dark:border-white/10 text-slate-900 dark:text-white h-12 focus:ring-[#00c7cc]">
                     <SelectValue placeholder="Seleccionar país..." />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#1a1a1a] text-slate-900 dark:text-white border-black/10 dark:border-white/10 max-h-60">
+                  <SelectContent className="bg-white dark:bg-[#1a1a1a] text-slate-900 dark:text-white border-black/10 dark:border-white/10 max-h-60">
                     <SelectItem value="PY">Paraguay</SelectItem>
                     <SelectItem value="AR">Argentina</SelectItem>
                     <SelectItem value="BO">Bolivia</SelectItem>
@@ -510,7 +510,7 @@ export function RefundForm() {
             </div>
 
             <div className="space-y-4">
-              <Label className="text-gray-300 font-semibold text-lg">Tipo de Solicitud</Label>
+              <Label className="text-slate-700 dark:text-gray-300 font-semibold text-lg">Tipo de Solicitud</Label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div
                   onClick={() => setRequestType("anulacion")}
@@ -524,7 +524,7 @@ export function RefundForm() {
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${requestType === "anulacion" ? "border-[#00c7cc]" : "border-gray-500"}`}>
                       {requestType === "anulacion" && <div className="w-2.5 h-2.5 rounded-full bg-[#00c7cc]" />}
                     </div>
-                    <span className={`font-semibold ${requestType === "anulacion" ? "text-slate-900 dark:text-white" : "text-gray-300"}`}>Anulación / Cancelación</span>
+                    <span className={`font-semibold ${requestType === "anulacion" ? "text-slate-900 dark:text-white" : "text-slate-700 dark:text-gray-300"}`}>Anulación / Cancelación</span>
                   </div>
                 </div>
 
@@ -540,7 +540,7 @@ export function RefundForm() {
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${requestType === "reembolso" ? "border-[#00c7cc]" : "border-gray-500"}`}>
                       {requestType === "reembolso" && <div className="w-2.5 h-2.5 rounded-full bg-[#00c7cc]" />}
                     </div>
-                    <span className={`font-semibold ${requestType === "reembolso" ? "text-slate-900 dark:text-white" : "text-gray-300"}`}>Reembolso (Transferencia)</span>
+                    <span className={`font-semibold ${requestType === "reembolso" ? "text-slate-900 dark:text-white" : "text-slate-700 dark:text-gray-300"}`}>Reembolso (Transferencia)</span>
                   </div>
                 </div>
               </div>
@@ -548,15 +548,15 @@ export function RefundForm() {
 
             {requestType === "reembolso" && (
               <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
-                <h4 className="text-gray-300 font-semibold">Datos Bancarios para el Reembolso</h4>
+                <h4 className="text-slate-700 dark:text-gray-300 font-semibold">Datos Bancarios para el Reembolso</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-xl border border-black/10 dark:border-white/10 bg-white/5">
                   <div>
-                    <Label htmlFor="bankName" className="text-gray-400 text-sm">Banco / Entidad</Label>
+                    <Label htmlFor="bankName" className="text-slate-600 dark:text-gray-400 text-sm">Banco / Entidad</Label>
                     <Select value={bankName} onValueChange={setBankName} required={requestType === "reembolso"}>
                       <SelectTrigger id="bankName" className="mt-1 w-full bg-black/20 border border-black/10 dark:border-white/10 text-slate-900 dark:text-white rounded-md h-10 px-3 focus:border-[#00c7cc] focus:ring-1 focus:ring-[#00c7cc] outline-none">
                         <SelectValue placeholder="Seleccionar banco..." />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#1a1a1a] text-slate-900 dark:text-white border-black/10 dark:border-white/10 max-h-60">
+                      <SelectContent className="bg-white dark:bg-[#1a1a1a] text-slate-900 dark:text-white border-black/10 dark:border-white/10 max-h-60">
                         <SelectItem value="Banco Itaú Paraguay">Banco Itaú Paraguay</SelectItem>
                         <SelectItem value="Banco Continental">Banco Continental</SelectItem>
                         <SelectItem value="Sudameris Bank">Sudameris Bank</SelectItem>
@@ -576,27 +576,27 @@ export function RefundForm() {
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="accountType" className="text-gray-400 text-sm">Tipo de Cuenta</Label>
+                    <Label htmlFor="accountType" className="text-slate-600 dark:text-gray-400 text-sm">Tipo de Cuenta</Label>
                     <Select value={accountType} onValueChange={setAccountType} required={requestType === "reembolso"}>
                       <SelectTrigger id="accountType" className="mt-1 w-full bg-black/20 border border-black/10 dark:border-white/10 text-slate-900 dark:text-white rounded-md h-10 px-3 focus:border-[#00c7cc] focus:ring-1 focus:ring-[#00c7cc] outline-none">
                         <SelectValue placeholder="Seleccionar tipo..." />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#1a1a1a] text-slate-900 dark:text-white border-black/10 dark:border-white/10">
+                      <SelectContent className="bg-white dark:bg-[#1a1a1a] text-slate-900 dark:text-white border-black/10 dark:border-white/10">
                         <SelectItem value="Ahorro">Caja de Ahorro</SelectItem>
                         <SelectItem value="Corriente">Cuenta Corriente</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="accountNumber" className="text-gray-400 text-sm">Nro. de Cuenta</Label>
+                    <Label htmlFor="accountNumber" className="text-slate-600 dark:text-gray-400 text-sm">Nro. de Cuenta</Label>
                     <Input id="accountNumber" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value)} required={requestType === "reembolso"} placeholder="Ej: 123456789" className="mt-1 bg-black/20 border-black/10 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-gray-600 focus:border-[#00c7cc]" />
                   </div>
                   <div>
-                    <Label htmlFor="accountHolder" className="text-gray-400 text-sm">Nombre del Titular</Label>
+                    <Label htmlFor="accountHolder" className="text-slate-600 dark:text-gray-400 text-sm">Nombre del Titular</Label>
                     <Input id="accountHolder" value={accountHolder} onChange={(e) => setAccountHolder(e.target.value)} required={requestType === "reembolso"} placeholder="Ej: Juan Pérez" className="mt-1 bg-black/20 border-black/10 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-gray-600 focus:border-[#00c7cc]" />
                   </div>
                   <div>
-                    <Label htmlFor="holderDocument" className="text-gray-400 text-sm">Cédula / RUC del Titular</Label>
+                    <Label htmlFor="holderDocument" className="text-slate-600 dark:text-gray-400 text-sm">Cédula / RUC del Titular</Label>
                     <Input id="holderDocument" value={holderDocument} onChange={(e) => setHolderDocument(e.target.value)} required={requestType === "reembolso"} placeholder="Ej: 1234567-8" className="mt-1 bg-black/20 border-black/10 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-gray-600 focus:border-[#00c7cc]" />
                   </div>
                 </div>
@@ -604,14 +604,14 @@ export function RefundForm() {
             )}
 
             <div className="space-y-4">
-              <h4 className="text-gray-300 font-semibold">Datos de Contacto</h4>
+              <h4 className="text-slate-700 dark:text-gray-300 font-semibold">Datos de Contacto</h4>
               <p className="text-xs text-[#00c7cc] font-medium bg-[#00c7cc]/10 p-3 rounded-lg border border-[#00c7cc]/20">
                 💡 Puedes modificar el correo o teléfono de contacto si deseas recibir las notificaciones de tu solicitud en un medio distinto al del registro.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="email" className="text-gray-300">Correo Electrónico de Contacto</Label>
+                  <Label htmlFor="email" className="text-slate-700 dark:text-gray-300">Correo Electrónico de Contacto</Label>
                   <Input
                     id="email"
                     type="email"
@@ -629,13 +629,13 @@ export function RefundForm() {
                   )}
                 </div>
                 <div>
-                  <Label htmlFor="phone" className="text-gray-300">Nro. de Celular / Teléfono</Label>
+                  <Label htmlFor="phone" className="text-slate-700 dark:text-gray-300">Nro. de Celular / Teléfono</Label>
                   <div className="flex mt-1 gap-2">
                     <Select value={phonePrefix} onValueChange={setPhonePrefix}>
-                      <SelectTrigger className="w-[100px] bg-[#1a1a1a] border-black/10 dark:border-white/10 text-slate-900 dark:text-white h-12 focus:ring-[#00c7cc]">
+                      <SelectTrigger className="w-[100px] bg-white dark:bg-[#1a1a1a] border-black/10 dark:border-white/10 text-slate-900 dark:text-white h-12 focus:ring-[#00c7cc]">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#1a1a1a] text-slate-900 dark:text-white border-black/10 dark:border-white/10">
+                      <SelectContent className="bg-white dark:bg-[#1a1a1a] text-slate-900 dark:text-white border-black/10 dark:border-white/10">
                         <SelectItem value="+595">+595</SelectItem>
                         <SelectItem value="+54">+54</SelectItem>
                         <SelectItem value="+55">+55</SelectItem>
@@ -667,7 +667,7 @@ export function RefundForm() {
 
             <div>
               <div className="flex justify-between items-center mb-1">
-                <Label htmlFor="reason" className="text-gray-300">Motivo de la Solicitud</Label>
+                <Label htmlFor="reason" className="text-slate-700 dark:text-gray-300">Motivo de la Solicitud</Label>
                 <span className="text-xs text-gray-500">{reason.length}/500</span>
               </div>
               <Textarea
