@@ -22,6 +22,7 @@ export function ParaguayHeroSection() {
           alt="Fondo de bus viajando"
           fill
           priority
+          fetchPriority="high"
           quality={85}
           sizes="100vw"
           className="object-cover opacity-60"

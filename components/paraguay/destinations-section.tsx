@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, MapPin, Clock } from "lucide-react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
@@ -238,10 +239,12 @@ export function DestinationsSection() {
               >
                 {/* Image with enhanced effects */}
                 <div className="absolute inset-0">
-                  <img
+                  <Image
                     src={destination.image}
                     alt={`Imagen de ${destination.name}`}
-                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
                   />
                   {/* Multi-layer gradient overlay - Mejorado para fondo oscuro */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent" />

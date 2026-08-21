@@ -146,6 +146,8 @@ export function HeroSection({ country }: HeroSectionProps) {
               src={src}
               alt={`Vista aérea - Hero ${country || ""} ${index + 1}`}
               fill
+              priority={index === 0}
+              fetchPriority={index === 0 ? "high" : "auto"}
               sizes="100vw"
               className={cn(
                 "object-cover object-center transition-transform duration-[10000ms] ease-linear",
