@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { useBookingStore, cities } from "@/lib/booking-store";
+import { useStops } from "@/lib/hooks/use-stops";
 
 const destinations = [
   {
@@ -80,6 +81,9 @@ export function DestinationsSection() {
     setReturnDate,
   } = useBookingStore();
 
+  // Obtener las paradas reales de la API para no hardcodear IDs
+  const { stops } = useStops();
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -114,39 +118,50 @@ export function DestinationsSection() {
     setSelectedReturnTrip(null);
     setReturnDate("");
 
-    // Establecer los valores en el store
-    if (asuncion) {
-      setOrigin(asuncion.id);
-    } else {
-      // Si no encuentra Asunción, usar "asu" que es el ID en tu store
-      setOrigin("asu");
+    // Buscar Asunción en las paradas reales (API) para el origen por defecto
+    const asuncionReal = stops.find((s) => s.name.toLowerCase().includes("asunci"));
+    const asuncionId = asuncionReal ? String(asuncionReal.id) : "184"; // Fallback a 184 si aún no cargó
+
+    // Por defecto, asumir que salen desde Asunción, 
+    // a menos que el destino sea la propia Asunción.
+    let finalOriginId = asuncionId; 
+    if (destinationName.toLowerCase().includes("asunción") || destinationName.toLowerCase().includes("asuncion")) {
+      finalOriginId = "";
     }
+    
+    setOrigin(finalOriginId);
 
-    // Establecer el destino
-    if (destino) {
-      setDestination(destino.id);
+    // Establecer el destino buscando en las paradas reales (API)
+    let finalDestinationId = "";
+    const destinoReal = stops.find(
+      (s) =>
+        s.name.toLowerCase().includes(destinationName.toLowerCase()) ||
+        destinationName.toLowerCase().includes(s.name.toLowerCase())
+    );
+
+    if (destinoReal) {
+      finalDestinationId = String(destinoReal.id);
+      setDestination(finalDestinationId);
     } else {
-      // Si no encuentra la ciudad por nombre exacto, buscar por coincidencia
-      const foundCity = cities.find(
-        (c) =>
-          c.name.toLowerCase().includes(destinationName.toLowerCase()) ||
-          destinationName.toLowerCase().includes(c.name.toLowerCase()),
-      );
-      if (foundCity) {
-        setDestination(foundCity.id);
-      } else {
-        // Si aún no encuentra, usar un valor por defecto basado en el nombre
-        const cityIdMap: Record<string, string> = {
-          "Ciudad del Este": "cde",
-          Encarnación: "enc",
-          "Pedro Juan Caballero": "pjc",
-          "Coronel Oviedo": "cor",
-          "Salto del Guairá": "sal",
-        };
+      // Si por alguna razón no encuentra en stops, hace fallback a los IDs quemados / store
+      const cityIdMap: Record<string, string> = {
+        "Asunción": "184",
+        "Ciudad del Este": "218",
+        "Encarnación": "200",
+        "Pedro Juan Caballero": "244",
+        "Coronel Oviedo": "173",
+        "Salto del Guairá": "251",
+      };
 
-        const cityId =
-          cityIdMap[destinationName] ||
-          destinationName.toLowerCase().replace(/\s+/g, "-");
+      if (cityIdMap[destinationName]) {
+        finalDestinationId = cityIdMap[destinationName];
+        setDestination(finalDestinationId);
+      } else if (destino) {
+        finalDestinationId = String(destino.id);
+        setDestination(String(destino.id));
+      } else {
+        const cityId = destinationName.toLowerCase().replace(/\s+/g, "-");
+        finalDestinationId = cityId;
         setDestination(cityId);
       }
     }
@@ -154,8 +169,16 @@ export function DestinationsSection() {
     setDepartureDate(formattedDate);
     setTripType("one-way"); // Solo ida
 
-    // Redirigir a la página de servicios
-    router.push("/booking/services");
+    // Redirigir a la página de servicios con query params
+    const queryParams = new URLSearchParams({
+      destinationId: finalDestinationId
+    });
+    
+    if (finalOriginId) {
+      queryParams.set("originId", finalOriginId);
+    }
+
+    router.push(`/paraguay/booking/services?${queryParams.toString()}`);
   };
 
   return (
@@ -226,15 +249,15 @@ export function DestinationsSection() {
               {/* Contenedor clickeable para toda la tarjeta */}
               <div
                 className="absolute inset-0 cursor-pointer"
-                // onClick={() => handleSearchServices(destination.name)}
+                onClick={() => handleSearchServices(destination.name)}
                 role="button"
                 tabIndex={0}
-                // onKeyDown={(e) => {
-                //   if (e.key === "Enter" || e.key === " ") {
-                //     e.preventDefault();
-                //     handleSearchServices(destination.name);
-                //   }
-                // }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleSearchServices(destination.name);
+                  }
+                }}
                 aria-label={`Buscar servicios de Asunción a ${destination.name} para hoy`}
               >
                 {/* Image with enhanced effects */}
@@ -291,10 +314,10 @@ export function DestinationsSection() {
                 <div className="mt-4 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                   <Button
                     className="w-full bg-[#00c7cc] hover:bg-[#00c7cc]/90 text-slate-900"
-                    // onClick={(e) => {
-                    //   e.stopPropagation();
-                    //   handleSearchServices(destination.name);
-                    // }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSearchServices(destination.name);
+                    }}
                   >
                     Ver Servicios
                     <ArrowRight className="h-4 w-4 ml-2" />
