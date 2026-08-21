@@ -331,7 +331,10 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  if (!mounted) {
  return (
  <div className="w-full flex justify-center px-4">
- <div className="bg-white/20 backdrop-blur-md rounded-3xl shadow-2xl p-6 lg:p-8 border border-black/15 dark:border-white/30 w-full max-w-7xl h-[400px] flex items-center justify-center">
+ <div className={cn(
+   "backdrop-blur-md rounded-3xl shadow-2xl p-6 lg:p-8 border w-full max-w-7xl h-[400px] flex items-center justify-center",
+   orientation === "vertical" ? "bg-white dark:bg-[#1e293b] border-slate-200 dark:border-slate-700/50" : "bg-white/20 border-black/15 dark:border-white/30"
+ )}>
  <div className="animate-pulse flex flex-col items-center gap-4 text-gray-400">
  <Bus className="h-12 w-12 text-gray-400" />
  <p>Preparando buscador...</p>
@@ -347,7 +350,10 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  className="w-full flex justify-center px-4 animate-scale-in"
  style={{ animationDelay: "0.6s" }}
  >
-<div className="bg-white/80 backdrop-blur-md rounded-3xl lg:rounded-[1.5rem] shadow-2xl p-6 sm:p-8 lg:px-6 lg:py-6 border border-white/60 relative overflow-hidden lg:overflow-visible w-full max-w-7xl mx-auto">
+ <div className={cn(
+   "backdrop-blur-md rounded-3xl lg:rounded-[1.5rem] shadow-2xl p-6 sm:p-8 lg:px-6 lg:py-6 border relative overflow-hidden lg:overflow-visible w-full max-w-7xl mx-auto",
+   orientation === "vertical" ? "bg-white dark:bg-[#1e293b] border-slate-200 dark:border-slate-700/50" : "bg-white/80 border-white/60"
+ )}>
  {/* Efecto de vidrio con gradiente sutil */}
  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl pointer-events-none" />
 
@@ -360,7 +366,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  "px-6 py-2 text-sm sm:text-base rounded-full font-semibold transition-all duration-300 relative",
  tripType === "one-way"
 ? "bg-secondary text-black shadow-md font-bold"
- : "text-slate-600 hover:text-slate-900 hover:bg-white/50 ",
+ : orientation === "vertical" ? "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800" : "text-slate-600 hover:text-slate-900 hover:bg-white/50 ",
  )}
  >
  Solo Ida
@@ -371,7 +377,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  "px-6 py-2 text-sm sm:text-base rounded-full font-semibold transition-all duration-300 relative",
  tripType === "round-trip"
 ? "bg-secondary text-black shadow-md font-bold"
- : "text-slate-600 hover:text-slate-900 hover:bg-white/50 ",
+ : orientation === "vertical" ? "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800" : "text-slate-600 hover:text-slate-900 hover:bg-white/50 ",
  )}
  >
  Ida y Vuelta
@@ -386,7 +392,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  <Label className="text-[13px] font-bold text-slate-900 mb-1 block">
  Tipo de viaje
  </Label>
- <div className="inline-flex h-14 items-center bg-slate-50 rounded-xl p-1 border border-slate-300 dark:border-white/40 shadow-sm">
+ <div className={cn("inline-flex h-14 items-center rounded-xl p-1 border shadow-sm", orientation === "vertical" ? "bg-slate-50 dark:bg-slate-800 border-slate-300 dark:border-slate-700" : "bg-slate-50 border-slate-300 dark:border-white/40")}>
  <button
  type="button"
  onClick={() => setTripType("one-way")}
@@ -394,7 +400,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  "px-3.5 h-full text-sm rounded-lg font-semibold transition-all duration-200 whitespace-nowrap flex items-center justify-center",
  tripType === "one-way"
  ? "bg-secondary text-black shadow-sm font-bold"
- : "text-slate-600 hover:text-slate-900 "
+ : orientation === "vertical" ? "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white" : "text-slate-600 hover:text-slate-900 "
  )}
  >
  Solo Ida
@@ -406,7 +412,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  "px-3.5 h-full text-sm rounded-lg font-semibold transition-all duration-200 whitespace-nowrap flex items-center justify-center",
  tripType === "round-trip"
  ? "bg-secondary text-black shadow-sm font-bold"
- : "text-slate-600 hover:text-slate-900 "
+ : orientation === "vertical" ? "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white" : "text-slate-600 hover:text-slate-900 "
  )}
  >
  Ida y Vuelta
@@ -431,7 +437,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  role="combobox"
  disabled={stopsLoading}
  className={cn(
- "w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white border-slate-300 dark:border-white/40 shadow-sm hover:border-primary/50 hover:bg-slate-50 ",
+ cn("w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-primary/50", orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white border-slate-300 dark:border-white/40 hover:bg-slate-50 "),
  stopsLoading ? "cursor-not-allowed opacity-60" : "",
  )}
  >
@@ -450,7 +456,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  </Button>
  </PopoverTrigger>
  <PopoverContent
- className="w-full p-0 backdrop-blur-md bg-white/60 border-black/20 min-w-[var(--radix-popover-trigger-width)]"
+ className={cn("w-full p-0 backdrop-blur-md min-w-[var(--radix-popover-trigger-width)]", orientation === "vertical" ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" : "bg-white/60 border-black/20")}
  align="start"
  >
  <Command className="bg-transparent">
@@ -505,7 +511,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  onClick={swapCities}
  disabled={stopsLoading}
  className={cn(
- "w-10 h-10 flex items-center justify-center text-slate-600 rounded-full shadow-sm transition-all duration-300 bg-white border border-slate-300",
+ cn("w-10 h-10 flex items-center justify-center rounded-full shadow-sm transition-all duration-300 border", orientation === "vertical" ? "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700" : "bg-white text-slate-600 border-slate-300"),
  stopsLoading
  ? "cursor-not-allowed opacity-50"
  : "hover:scale-110 hover:text-secondary hover:border-secondary/40 hover:bg-slate-50",
@@ -523,7 +529,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  onClick={swapCities}
  disabled={stopsLoading}
  className={cn(
- "w-10 h-10 flex items-center justify-center text-slate-600 rounded-full shadow-sm transition-all duration-300 bg-white border border-slate-300",
+ cn("w-10 h-10 flex items-center justify-center rounded-full shadow-sm transition-all duration-300 border", orientation === "vertical" ? "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700" : "bg-white text-slate-600 border-slate-300"),
  stopsLoading
  ? "cursor-not-allowed opacity-50"
  : "hover:scale-110 hover:text-secondary hover:border-secondary/40 hover:bg-slate-50",
@@ -552,7 +558,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  role="combobox"
  disabled={stopsLoading}
  className={cn(
- "w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white border-slate-300 dark:border-white/40 shadow-sm hover:border-secondary/50 hover:bg-slate-50 ",
+ cn("w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-secondary/50", orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white border-slate-300 dark:border-white/40 hover:bg-slate-50 "),
  stopsLoading ? "cursor-not-allowed opacity-60" : "",
  )}
  >
@@ -573,7 +579,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  </Button>
  </PopoverTrigger>
  <PopoverContent
- className="w-full p-0 backdrop-blur-md bg-white/60 border-black/20 min-w-[var(--radix-popover-trigger-width)]"
+ className={cn("w-full p-0 backdrop-blur-md min-w-[var(--radix-popover-trigger-width)]", orientation === "vertical" ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" : "bg-white/60 border-black/20")}
  align="start"
  >
  <Command className="bg-transparent">
@@ -591,7 +597,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  </CommandEmpty>
  <CommandGroup className="bg-transparent">
  {originTitle && (
-<div className="px-2 py-2 text-xs font-semibold text-gray-700 bg-white/40 backdrop-blur-sm rounded-lg mb-2 flex items-center gap-2 border border-white/50 shadow-sm">
+<div className={cn("px-2 py-2 text-xs font-semibold backdrop-blur-sm rounded-lg mb-2 flex items-center gap-2 border shadow-sm", orientation === "vertical" ? "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700" : "text-gray-700 bg-white/40 border-white/50")}>
  <MapPin className="h-3.5 w-3.5 text-secondary" />
  Rutas disponibles desde {originTitle}
  </div>
@@ -661,7 +667,7 @@ className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-seco
  <PopoverTrigger asChild>
  <Button
  variant="outline"
- className="w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white border-slate-300 dark:border-white/40 shadow-sm hover:border-secondary/50 hover:bg-slate-50 "
+ className={cn("w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-secondary/50", orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white border-slate-300 dark:border-white/40 hover:bg-slate-50 ")}
  >
  <div className="flex items-center gap-3 min-w-0">
  <Calendar className="h-5 w-5 text-secondary flex-shrink-0" />
@@ -681,7 +687,7 @@ className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-seco
  </Button>
  </PopoverTrigger>
  <PopoverContent
- className="w-auto p-0 backdrop-blur-md bg-white/60 border-black/20 "
+ className={cn("w-auto p-0 backdrop-blur-md", orientation === "vertical" ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" : "bg-white/60 border-black/20")}
  align="start"
  >
  <CalendarComponent
@@ -713,7 +719,7 @@ className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-seco
  <PopoverTrigger asChild>
  <Button
  variant="outline"
- className="w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white border-slate-300 dark:border-white/40 shadow-sm hover:border-secondary/50 hover:bg-slate-50 "
+ className={cn("w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-secondary/50", orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white border-slate-300 dark:border-white/40 hover:bg-slate-50 ")}
  >
  <div className="flex items-center gap-3 min-w-0">
  <Calendar className="h-5 w-5 text-secondary flex-shrink-0" />
@@ -733,7 +739,7 @@ className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-seco
  </Button>
  </PopoverTrigger>
  <PopoverContent
- className="w-auto p-0 backdrop-blur-md bg-white/60 border-black/20 "
+ className={cn("w-auto p-0 backdrop-blur-md", orientation === "vertical" ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" : "bg-white/60 border-black/20")}
  align="start"
  >
  <CalendarComponent

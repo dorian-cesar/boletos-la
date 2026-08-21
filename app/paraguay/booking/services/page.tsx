@@ -148,15 +148,15 @@ export default function ServicesPage() {
         {/* Trips List */}
         <div className="w-full px-4 py-8 relative z-10">
           <div className="container mx-auto max-w-[1400px]">
-            <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 lg:gap-8 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 lg:gap-8 items-start">
               
               {/* Sidebar Search Form */}
-              <div className="hidden lg:block sticky top-8">
+              <div className="hidden lg:block sticky top-8 order-2">
                 <ParaguaySearchForm orientation="vertical" />
               </div>
 
               {/* Main Content Area */}
-              <div className="flex flex-col min-w-0 w-full">
+              <div className="flex flex-col min-w-0 w-full order-1">
                 {/* Mobile Search Form Toggle */}
                 <div className="lg:hidden mb-6">
                   <Button
