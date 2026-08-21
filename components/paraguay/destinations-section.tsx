@@ -13,11 +13,11 @@ import { useStops } from "@/lib/hooks/use-stops";
 const destinations = [
   {
     id: 1,
-    name: "Asunción",
+    name: "Azotey",
     region: "Capital",
-    image: "/images/asuncion.png",
+    image: "/images/azotey.jpg",
     price: 25000,
-    duration: "0h base",
+    duration: "3h 45m",
     popular: true,
   },
   {
