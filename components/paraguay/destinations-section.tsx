@@ -57,7 +57,7 @@ const destinations = [
   },
   {
     id: 6,
-    name: "Concepción",
+    name: "Ypacaraí",
     region: "Canindeyú",
     image: "/images/salto-del-guaira.png",
     price: 45000,
@@ -182,7 +182,7 @@ export function DestinationsSection() {
                   : "opacity-0 translate-y-10",
               )}
             >
-              Destinos Populares
+              Destinos Populares desde Asunción
             </span>
             <h2
               className={cn(
