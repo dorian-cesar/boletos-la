@@ -664,7 +664,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
 
   if (status === "checking") {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] text-slate-900 dark:text-slate-900 dark:text-white relative overflow-x-hidden">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] text-slate-900 dark:text-white relative overflow-x-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
           <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-secondary/10 rounded-full blur-[100px]" />
@@ -681,10 +681,10 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 priority
               />
             </div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-900 dark:text-white mb-3">
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
               Verificando tu pago...
             </h1>
-            <p className="text-slate-900 dark:text-slate-900 dark:text-white/60 mb-6">
+            <p className="text-slate-900 dark:text-white/60 mb-6">
               Estamos confirmando tu reserva, no cierres esta ventana.
             </p>
             <Loader2 className="h-8 w-8 text-primary animate-spin mx-auto" />
@@ -696,7 +696,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
 
   // Estados de error / pendiente
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] text-slate-900 dark:text-slate-900 dark:text-white relative overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] text-slate-900 dark:text-white relative overflow-x-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-secondary/10 rounded-full blur-[100px]" />

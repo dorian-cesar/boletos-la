@@ -360,7 +360,7 @@ export function ParaguaySearchForm() {
                   "px-6 py-2 text-sm sm:text-base rounded-full font-semibold transition-all duration-300 relative",
                   tripType === "one-way"
 ? "bg-secondary text-black shadow-md font-bold"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-white/50",
+                    : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/10",
                 )}
               >
                 Solo Ida
@@ -371,7 +371,7 @@ export function ParaguaySearchForm() {
                   "px-6 py-2 text-sm sm:text-base rounded-full font-semibold transition-all duration-300 relative",
                   tripType === "round-trip"
 ? "bg-secondary text-black shadow-md font-bold"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-white/50",
+                    : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/10",
                 )}
               >
                 Ida y Vuelta
@@ -482,11 +482,11 @@ export function ParaguaySearchForm() {
                               setDestinationTitle("");
                               setOriginOpen(false);
                             }}
-                            className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-primary data-[selected=true]:text-slate-900 dark:text-white hover:bg-primary hover:text-slate-900 dark:text-white transition-colors duration-150 rounded-lg px-2"
+                            className="cursor-pointer py-3 group text-slate-900 dark:text-white data-[selected=true]:bg-primary data-[selected=true]:text-slate-900 dark:text-white hover:bg-primary hover:text-slate-900 dark:text-white transition-colors duration-150 rounded-lg px-2"
                           >
                             <MapPin className="h-4 w-4 mr-2 text-chart-4 shrink-0 group-hover:text-slate-900 dark:text-white group-data-[selected=true]:text-slate-900 dark:text-white transition-colors" strokeWidth={2.2} />
                             <div className="min-w-0">
-                              <p className="font-bold truncate tracking-wide text-slate-900 group-hover:text-slate-900 dark:text-white group-data-[selected=true]:text-slate-900 dark:text-white [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
+                              <p className="font-bold truncate tracking-wide text-slate-900 dark:text-white group-hover:text-slate-900 dark:text-white group-data-[selected=true]:text-slate-900 dark:text-white [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
                                 {city.name}
                               </p>
                             </div>
@@ -607,11 +607,11 @@ export function ParaguaySearchForm() {
                                 setDestinationTitle(city.name);
                                 setDestinationOpen(false);
                               }}
-className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-secondary data-[selected=true]:text-black hover:bg-secondary hover:text-black transition-colors duration-150 rounded-lg px-2"
+className="cursor-pointer py-3 group text-slate-900 dark:text-white data-[selected=true]:bg-secondary data-[selected=true]:text-black hover:bg-secondary hover:text-black transition-colors duration-150 rounded-lg px-2"
                             >
                               <MapPin className="h-4 w-4 mr-2 text-secondary shrink-0 group-hover:text-black group-data-[selected=true]:text-black transition-colors" strokeWidth={2.2} />
                               <div className="min-w-0">
-                                <p className="font-bold truncate tracking-wide text-slate-900 group-hover:text-black group-data-[selected=true]:text-black [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
+                                <p className="font-bold truncate tracking-wide text-slate-900 dark:text-white group-hover:text-black group-data-[selected=true]:text-black [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
                                   {city.name}
                                 </p>
                                 {(() => {

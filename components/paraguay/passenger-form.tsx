@@ -441,7 +441,7 @@ export function PassengerForm({
 
   return (
     <Card
-      className="p-3 sm:p-5 animate-fade-in bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-black/10 dark:border-white/20 w-full"
+      className="p-3 sm:p-5 animate-fade-in bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-white/20 w-full"
       style={{ animationDelay: `${animationDelay}ms` }}
     >
       {/* Header */}
@@ -454,10 +454,10 @@ export function PassengerForm({
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="font-semibold text-slate-900 dark:text-slate-900 dark:text-white text-sm">
+          <h3 className="font-semibold text-slate-900 dark:text-white text-sm">
             Pasajero {passengerNumber}
           </h3>
-          <div className="flex flex-wrap gap-2 text-xs text-slate-900 dark:text-slate-900 dark:text-white/60 mt-0.5">
+          <div className="flex flex-wrap gap-2 text-xs text-slate-900 dark:text-white/60 mt-0.5">
             <span className="flex items-center gap-1">
               <span className="bg-primary/20 text-primary text-[10px] px-1.5 py-0.5 rounded uppercase font-medium">
                 Ida
@@ -504,7 +504,7 @@ export function PassengerForm({
                 handleUpdate("phone", "");
               }}
               disabled={loadingDocTypes}
-              className="h-11 pl-3 pr-8 rounded-md bg-black/10 dark:bg-white/10 border border-black/15 dark:border-black/15 dark:border-white/30 text-slate-900 dark:text-slate-900 dark:text-white text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 w-full"
+              className="h-11 pl-3 pr-8 rounded-md bg-black/10 dark:bg-white/10 border border-black/15 dark:border-white/30 text-slate-900 dark:text-white text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 w-full"
             >
               {loadingDocTypes ? (
                 <option value="">Cargando...</option>
@@ -520,7 +520,7 @@ export function PassengerForm({
                 ))
               )}
             </select>
-            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-900 dark:text-slate-900 dark:text-white/60 pointer-events-none" />
+            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-900 dark:text-white/60 pointer-events-none" />
           </div>
 
           {/* DocNumber input */}
@@ -535,7 +535,7 @@ export function PassengerForm({
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleSearch();
               }}
-              className="h-11 pr-10 bg-black/10 dark:bg-white/10 border-black/15 dark:border-black/15 dark:border-white/30 text-slate-900 dark:text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-slate-900 dark:text-white/40 w-full"
+              className="h-11 pr-10 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-white/40 w-full"
               disabled={isSearching}
             />
             {docNumber && (
@@ -549,7 +549,7 @@ export function PassengerForm({
                   handleUpdate("lastName", "");
                   handleUpdate("phone", "");
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-900 dark:text-slate-900 dark:text-white/40 hover:text-slate-900 dark:text-slate-900 dark:text-white"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-900 dark:text-white/40 hover:text-slate-900 dark:text-white"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -646,7 +646,7 @@ export function PassengerForm({
                   }
                   onBlur={(e) => handleLocalBlur("firstName", e.target.value)}
                   className={cn(
-                    "h-11 bg-black/10 dark:bg-white/10 border-black/15 dark:border-black/15 dark:border-white/30 text-slate-900 dark:text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-slate-900 dark:text-white/40 w-full",
+                    "h-11 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-white/40 w-full",
                     firstNameError && "border-destructive",
                     !firstNameError &&
                       localData.firstName &&
@@ -675,7 +675,7 @@ export function PassengerForm({
                   }
                   onBlur={(e) => handleLocalBlur("lastName", e.target.value)}
                   className={cn(
-                    "h-11 bg-black/10 dark:bg-white/10 border-black/15 dark:border-black/15 dark:border-white/30 text-slate-900 dark:text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-slate-900 dark:text-white/40 w-full",
+                    "h-11 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-white/40 w-full",
                     lastNameError && "border-destructive",
                     !lastNameError && localData.lastName && "border-green-500",
                   )}
@@ -693,7 +693,7 @@ export function PassengerForm({
                 error={phoneError}
                 hasValue={!!passenger.phone}
               >
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-900 dark:text-slate-900 dark:text-white/60 shrink-0" />
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-900 dark:text-white/60 shrink-0" />
                 <Input
                   id={`phone-${passengerNumber}`}
                   placeholder="0981 123 456"
@@ -701,7 +701,7 @@ export function PassengerForm({
                   onChange={(e) => handleLocalChange("phone", e.target.value)}
                   onBlur={(e) => handleLocalBlur("phone", e.target.value)}
                   className={cn(
-                    "h-11 pl-10 pr-10 bg-black/10 dark:bg-white/10 border-black/15 dark:border-black/15 dark:border-white/30 text-slate-900 dark:text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-slate-900 dark:text-white/40 w-full",
+                    "h-11 pl-10 pr-10 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-white/40 w-full",
                     phoneError && "border-destructive",
                     !phoneError && localData.phone && "border-green-500",
                   )}
@@ -725,7 +725,7 @@ export function PassengerForm({
                 }
                 className="sm:col-span-2"
               >
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-900 dark:text-slate-900 dark:text-white/60 shrink-0" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-900 dark:text-white/60 shrink-0" />
                 <Input
                   id={`email-${passengerNumber}`}
                   type="email"
@@ -734,7 +734,7 @@ export function PassengerForm({
                   onChange={(e) => handleLocalChange("email", e.target.value)}
                   onBlur={(e) => handleLocalBlur("email", e.target.value)}
                   className={cn(
-                    "h-11 pl-10 pr-10 bg-black/10 dark:bg-white/10 border-black/15 dark:border-black/15 dark:border-white/30 text-slate-900 dark:text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-slate-900 dark:text-white/40 w-full",
+                    "h-11 pl-10 pr-10 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-white/40 w-full",
                     emailError && "border-destructive",
                     !emailError && localData.email && "border-green-500",
                   )}
@@ -760,7 +760,7 @@ export function PassengerForm({
                     handleLocalChange("occupation", e.target.value)
                   }
                   onBlur={(e) => handleLocalBlur("occupation", e.target.value)}
-                  className="h-11 bg-black/10 dark:bg-white/10 border-black/15 dark:border-black/15 dark:border-white/30 text-slate-900 dark:text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-slate-900 dark:text-white/40 w-full"
+                  className="h-11 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-white/40 w-full"
                 />
               </FieldWrapper>
 
@@ -779,7 +779,7 @@ export function PassengerForm({
                     handleLocalChange("birthDate", e.target.value)
                   }
                   onBlur={(e) => handleLocalBlur("birthDate", e.target.value)}
-                  className="h-11 bg-black/10 dark:bg-white/10 border-black/15 dark:border-black/15 dark:border-white/30 text-slate-900 dark:text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-slate-900 dark:text-white/40 w-full max-w-full overflow-hidden [color-scheme:dark]"
+                  className="h-11 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-white/40 w-full max-w-full overflow-hidden [color-scheme:dark]"
                 />
               </FieldWrapper>
 
@@ -794,7 +794,7 @@ export function PassengerForm({
                   <select
                     value={passenger.gender}
                     onChange={(e) => handleUpdate("gender", e.target.value)}
-                    className="h-11 pl-3 pr-8 rounded-md bg-black/10 dark:bg-white/10 border border-black/15 dark:border-black/15 dark:border-white/30 text-slate-900 dark:text-slate-900 dark:text-white text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 w-full"
+                    className="h-11 pl-3 pr-8 rounded-md bg-black/10 dark:bg-white/10 border border-black/15 dark:border-white/30 text-slate-900 dark:text-white text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 w-full"
                   >
                     <option
                       value=""
@@ -813,7 +813,7 @@ export function PassengerForm({
                       Prefiero no decir
                     </option>
                   </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-900 dark:text-slate-900 dark:text-white/60 pointer-events-none" />
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-900 dark:text-white/60 pointer-events-none" />
                 </div>
               </FieldWrapper>
 
@@ -833,7 +833,7 @@ export function PassengerForm({
                       variant="outline"
                       role="combobox"
                       aria-expanded={nationalityOpen}
-                      className="w-full justify-between h-11 bg-black/10 dark:bg-white/10 border border-black/15 dark:border-black/15 dark:border-white/30 text-slate-900 dark:text-slate-900 dark:text-white hover:bg-black/20 dark:bg-white/20 font-normal"
+                      className="w-full justify-between h-11 bg-black/10 dark:bg-white/10 border border-black/15 dark:border-white/30 text-slate-900 dark:text-white hover:bg-black/20 dark:bg-white/20 font-normal"
                     >
                       <span className="truncate">
                         {passenger.nationality
@@ -900,7 +900,7 @@ export function PassengerForm({
                       variant="outline"
                       role="combobox"
                       aria-expanded={countryOpen}
-                      className="w-full justify-between h-11 bg-black/10 dark:bg-white/10 border border-black/15 dark:border-black/15 dark:border-white/30 text-slate-900 dark:text-slate-900 dark:text-white hover:bg-black/20 dark:bg-white/20 font-normal"
+                      className="w-full justify-between h-11 bg-black/10 dark:bg-white/10 border border-black/15 dark:border-white/30 text-slate-900 dark:text-white hover:bg-black/20 dark:bg-white/20 font-normal"
                     >
                       <span className="truncate">
                         {passenger.country
@@ -1038,7 +1038,7 @@ function FieldWrapper({
 }) {
   return (
     <div className={cn("space-y-1.5 w-full", className)}>
-      <Label htmlFor={id} className="text-slate-900 dark:text-slate-900 dark:text-white text-sm">
+      <Label htmlFor={id} className="text-slate-900 dark:text-white text-sm">
         {label}
         {!readOnly && <span className="text-destructive ml-1">*</span>}
       </Label>
@@ -1050,7 +1050,7 @@ function FieldWrapper({
         </p>
       )}
       {!error && hint && (
-        <p className="text-xs text-slate-900 dark:text-slate-900 dark:text-white/60 truncate">{hint}</p>
+        <p className="text-xs text-slate-900 dark:text-white/60 truncate">{hint}</p>
       )}
     </div>
   );

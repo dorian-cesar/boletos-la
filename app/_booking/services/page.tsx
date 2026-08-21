@@ -110,7 +110,7 @@ export default function ServicesPage() {
   if (!mounted) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419]">
-        <div className="text-center text-slate-900 dark:text-slate-900 dark:text-white">
+        <div className="text-center text-slate-900 dark:text-white">
           <Image
             src="/logos/logo-boletos.png"
             alt="Logo Boletos.la"
@@ -129,7 +129,7 @@ export default function ServicesPage() {
   if (!origin || !destination || !departureDate) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419]">
-        <div className="text-center text-slate-900 dark:text-slate-900 dark:text-white">
+        <div className="text-center text-slate-900 dark:text-white">
           <Bus className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
           <p className="text-xl font-semibold mb-2">No hay datos de búsqueda</p>
           <p className="text-muted-foreground mb-4">
@@ -147,7 +147,7 @@ export default function ServicesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] text-slate-900 dark:text-slate-900 dark:text-white w-full overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] text-slate-900 dark:text-white w-full overflow-x-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
@@ -158,12 +158,12 @@ export default function ServicesPage() {
         <BookingProgress />
 
         {/* Search Summary - versión original corregida */}
-        <div className="bg-black/10 dark:bg-white/10 py-8 backdrop-blur-sm border-b border-black/10 dark:border-black/10 dark:border-white/10 w-full">
+        <div className="bg-black/10 dark:bg-white/10 py-8 backdrop-blur-sm border-b border-black/10 dark:border-white/10 w-full">
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-4 text-center lg:text-left">
                 <div>
-                  <p className="text-sm text-slate-900 dark:text-slate-900 dark:text-white/60">
+                  <p className="text-sm text-slate-900 dark:text-white/60">
                     {showingReturn ? "Viaje de Regreso" : "Viaje de Ida"}
                   </p>
                   <div className="flex items-center gap-3 text-2xl font-bold">
@@ -175,7 +175,7 @@ export default function ServicesPage() {
                       {showingReturn ? originCity?.name : destinationCity?.name}
                     </span>
                   </div>
-                  <p className="text-slate-900 dark:text-slate-900 dark:text-white/60 mt-1">
+                  <p className="text-slate-900 dark:text-white/60 mt-1">
                     {format(
                       parse(
                         showingReturn
@@ -194,7 +194,7 @@ export default function ServicesPage() {
               {selectedOutboundTrip && tripType === "round-trip" && (
                 <div className="flex items-center gap-4">
                   <div className="text-right">
-                    <p className="text-sm text-slate-900 dark:text-slate-900 dark:text-white/60">
+                    <p className="text-sm text-slate-900 dark:text-white/60">
                       Ida seleccionada
                     </p>
                     <p className="font-semibold">
@@ -222,7 +222,7 @@ export default function ServicesPage() {
         <div className="w-full px-4 py-8 relative z-10">
           <div className="container mx-auto max-w-7xl">
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-900 dark:text-white">
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
                 {trips.length} servicios disponibles
               </h2>
               <div className="flex items-center gap-2">
@@ -240,7 +240,7 @@ export default function ServicesPage() {
                 <Card
                   key={trip.id}
                   className={cn(
-                    "overflow-hidden transition-all duration-500 animate-fade-in hover:shadow-lg bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-black/10 dark:border-white/20",
+                    "overflow-hidden transition-all duration-500 animate-fade-in hover:shadow-lg bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-white/20",
                     selectedOutboundTrip?.id === trip.id ||
                       selectedReturnTrip?.id === trip.id
                       ? "ring-2 ring-primary"
@@ -256,15 +256,15 @@ export default function ServicesPage() {
                           <Bus className="h-8 w-8 text-primary" />
                         </div>
                         <div>
-                          <p className="font-bold text-slate-900 dark:text-slate-900 dark:text-white">
+                          <p className="font-bold text-slate-900 dark:text-white">
                             {trip.company}
                           </p>
-                          <p className="text-sm text-slate-900 dark:text-slate-900 dark:text-white/60">
+                          <p className="text-sm text-slate-900 dark:text-white/60">
                             {trip.busType}
                           </p>
                           <div className="flex items-center gap-1 mt-1">
                             <Star className="h-3 w-3 text-secondary fill-secondary" />
-                            <span className="text-xs text-slate-900 dark:text-slate-900 dark:text-white/60">
+                            <span className="text-xs text-slate-900 dark:text-white/60">
                               4.5
                             </span>
                           </div>
@@ -275,10 +275,10 @@ export default function ServicesPage() {
                       <div className="flex-1 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6">
                         <div className="flex w-full md:w-auto justify-between md:justify-start md:flex-1">
                           <div className="text-center flex-1 md:flex-none">
-                            <p className="text-2xl font-bold text-slate-900 dark:text-slate-900 dark:text-white">
+                            <p className="text-2xl font-bold text-slate-900 dark:text-white">
                               {trip.departureTime}
                             </p>
-                            <p className="text-sm text-slate-900 dark:text-slate-900 dark:text-white/60">
+                            <p className="text-sm text-slate-900 dark:text-white/60">
                               {showingReturn
                                 ? destinationCity?.name
                                 : originCity?.name}
@@ -286,7 +286,7 @@ export default function ServicesPage() {
                           </div>
 
                           <div className="flex flex-col items-center px-4">
-                            <p className="text-xs text-slate-900 dark:text-slate-900 dark:text-white/60 mb-1">
+                            <p className="text-xs text-slate-900 dark:text-white/60 mb-1">
                               {trip.duration}
                             </p>
                             <div className="relative w-24 lg:w-32">
@@ -299,10 +299,10 @@ export default function ServicesPage() {
                           </div>
 
                           <div className="text-center flex-1 md:flex-none">
-                            <p className="text-2xl font-bold text-slate-900 dark:text-slate-900 dark:text-white">
+                            <p className="text-2xl font-bold text-slate-900 dark:text-white">
                               {trip.arrivalTime}
                             </p>
-                            <p className="text-sm text-slate-900 dark:text-slate-900 dark:text-white/60">
+                            <p className="text-sm text-slate-900 dark:text-white/60">
                               {showingReturn
                                 ? originCity?.name
                                 : destinationCity?.name}
@@ -312,7 +312,7 @@ export default function ServicesPage() {
 
                         {/* Seats Available */}
                         <div className="flex items-center gap-2 lg:w-32">
-                          <Users className="h-5 w-5 text-slate-900 dark:text-slate-900 dark:text-white/60" />
+                          <Users className="h-5 w-5 text-slate-900 dark:text-white/60" />
                           <span
                             className={cn(
                               "text-sm font-medium whitespace-nowrap",
@@ -328,13 +328,13 @@ export default function ServicesPage() {
                         {/* Price & Action */}
                         <div className="flex items-center justify-between lg:flex-col lg:items-end gap-4 lg:w-40 w-full">
                           <div className="text-left lg:text-right">
-                            <p className="text-sm text-slate-900 dark:text-slate-900 dark:text-white/60 line-through">
+                            <p className="text-sm text-slate-900 dark:text-white/60 line-through">
                               Gs. {(trip.price * 1.2).toLocaleString("es-PY")}
                             </p>
                             <p className="text-2xl font-bold text-secondary">
                               Gs. {trip.price.toLocaleString("es-PY")}
                             </p>
-                            <p className="text-xs text-slate-900 dark:text-slate-900 dark:text-white/60">
+                            <p className="text-xs text-slate-900 dark:text-white/60">
                               por asiento
                             </p>
                           </div>
@@ -350,7 +350,7 @@ export default function ServicesPage() {
                     </div>
 
                     {/* Expandable Details */}
-                    <div className="mt-4 pt-4 border-t border-black/10 dark:border-black/10 dark:border-white/20">
+                    <div className="mt-4 pt-4 border-t border-black/10 dark:border-white/20">
                       <button
                         onClick={() =>
                           setExpandedTrip(
@@ -382,7 +382,7 @@ export default function ServicesPage() {
                               <Badge
                                 key={amenity}
                                 variant="secondary"
-                                className="flex items-center gap-1.5 bg-black/10 dark:bg-white/10 text-slate-900 dark:text-slate-900 dark:text-white"
+                                className="flex items-center gap-1.5 bg-black/10 dark:bg-white/10 text-slate-900 dark:text-white"
                               >
                                 {Icon && <Icon className="h-3.5 w-3.5" />}
                                 {amenity}
@@ -406,7 +406,7 @@ export default function ServicesPage() {
                     setShowingReturn(false);
                     setSelectedOutboundTrip(null);
                   }}
-                  className="border-black/10 dark:border-black/10 dark:border-white/20 text-slate-900 dark:text-slate-900 dark:text-white hover:bg-black/10 dark:bg-white/10"
+                  className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white hover:bg-black/10 dark:bg-white/10"
                 >
                   Volver a seleccionar ida
                 </Button>

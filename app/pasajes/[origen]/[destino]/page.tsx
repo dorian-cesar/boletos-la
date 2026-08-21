@@ -172,7 +172,7 @@ export default async function PasajesRoutePage({ params }: PageProps) {
                   <Clock className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 dark:text-slate-900 dark:text-white mb-1">Frecuencia Diaria</h3>
+                  <h3 className="font-bold text-slate-900 dark:text-white mb-1">Frecuencia Diaria</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400">Salidas diarias en diferentes horarios de la mañana, tarde y noche.</p>
                 </div>
               </div>
@@ -182,7 +182,7 @@ export default async function PasajesRoutePage({ params }: PageProps) {
                   <ShieldCheck className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 dark:text-slate-900 dark:text-white mb-1">Compra 100% Segura</h3>
+                  <h3 className="font-bold text-slate-900 dark:text-white mb-1">Compra 100% Segura</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400">Emisión digital inmediata de boletos válidos para abordar directamente.</p>
                 </div>
               </div>
@@ -192,7 +192,7 @@ export default async function PasajesRoutePage({ params }: PageProps) {
                   <MapPin className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 dark:text-slate-900 dark:text-white mb-1">Terminales Principales</h3>
+                  <h3 className="font-bold text-slate-900 dark:text-white mb-1">Terminales Principales</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400">Salida desde {origenTitle} con llegada a la Terminal de {destinoTitle}.</p>
                 </div>
               </div>
@@ -203,7 +203,7 @@ export default async function PasajesRoutePage({ params }: PageProps) {
         {/* Sección Informativa para SEO */}
         <section className="py-16 bg-slate-50 dark:bg-slate-950">
           <div className="container mx-auto px-4 max-w-4xl">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-slate-900 dark:text-slate-900 dark:text-white">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-slate-900 dark:text-white">
               Información sobre el trayecto {origenTitle} a {destinoTitle}
             </h2>
             <div className="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 space-y-4">
@@ -221,7 +221,7 @@ export default async function PasajesRoutePage({ params }: PageProps) {
         {(relatedFromOrigen.length > 0 || relatedToDestino.length > 0) && (
           <section className="py-16 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
             <div className="container mx-auto px-4">
-              <h2 className="text-2xl font-bold mb-8 text-slate-900 dark:text-slate-900 dark:text-white text-center">
+              <h2 className="text-2xl font-bold mb-8 text-slate-900 dark:text-white text-center">
                 Otras rutas populares en Paraguay
               </h2>
 
