@@ -424,7 +424,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
 
  {/* Origin */}
  <div className="flex-1 min-w-0">
- <Label className={cn("text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-slate-900")}>
+ <Label className={cn("text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold mb-2 lg:mb-1 block lg:[text-shadow:none]", orientation === "horizontal" && "[text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-slate-900")}>
  Origen
  </Label>
  <Popover
@@ -495,7 +495,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  >
  <MapPin className="h-4 w-4 mr-2 text-chart-4 shrink-0 group-hover:text-slate-900 group-data-[selected=true]:text-slate-900 transition-colors" strokeWidth={2.2} />
  <div className="min-w-0">
- <p className={cn("font-bold truncate tracking-wide [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 group-hover:text-slate-900 group-data-[selected=true]:text-slate-900" : "text-slate-900 group-hover:text-slate-900 group-data-[selected=true]:text-slate-900")}>
+ <p className={cn("font-bold truncate tracking-wide transition-all", orientation === "horizontal" && "[text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none]", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 group-hover:text-slate-900 group-data-[selected=true]:text-slate-900" : "text-slate-900 group-hover:text-slate-900 group-data-[selected=true]:text-slate-900")}>
  {city.name}
  </p>
  </div>
@@ -546,7 +546,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
 
  {/* Destination */}
  <div className="flex-1 min-w-0">
- <Label className={cn("text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-slate-900")}>
+ <Label className={cn("text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold mb-2 lg:mb-1 block lg:[text-shadow:none]", orientation === "horizontal" && "[text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-slate-900")}>
  Destino
  </Label>
  <Popover
@@ -621,7 +621,7 @@ className={cn("cursor-pointer py-3 group transition-colors duration-150 rounded-
  >
  <MapPin className="h-4 w-4 mr-2 text-secondary shrink-0 group-hover:text-black group-data-[selected=true]:text-black transition-colors" strokeWidth={2.2} />
  <div className="min-w-0">
- <p className={cn("font-bold truncate tracking-wide [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 group-hover:text-black group-data-[selected=true]:text-black" : "text-slate-900 group-hover:text-black group-data-[selected=true]:text-black")}>
+ <p className={cn("font-bold truncate tracking-wide transition-all", orientation === "horizontal" && "[text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none]", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 group-hover:text-black group-data-[selected=true]:text-black" : "text-slate-900 group-hover:text-black group-data-[selected=true]:text-black")}>
  {city.name}
  </p>
  {(() => {
@@ -635,13 +635,13 @@ className={cn("cursor-pointer py-3 group transition-colors duration-150 rounded-
  if (isObject) {
  if (dynamicCount > 0) {
  return (
-<p className="text-xs text-slate-700 font-medium mt-0.5 group-hover:text-black group-data-[selected=true]:text-black [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
+<p className={cn("text-xs font-medium mt-0.5 transition-all", orientation === "horizontal" ? "text-slate-700 group-hover:text-black group-data-[selected=true]:text-black [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none]" : "text-slate-700 dark:text-slate-400 group-hover:text-black group-data-[selected=true]:text-black")}>
  {dynamicCount} {dynamicCount === 1 ? 'servicio' : 'servicios'}
  </p>
  );
  } else if ((destData as any).times?.length > 0) {
  return (
- <p className="text-xs text-red-600 font-semibold mt-0.5 group-hover:text-red-900 group-data-[selected=true]:text-red-900 [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
+ <p className={cn("text-xs font-semibold mt-0.5 transition-all", orientation === "horizontal" ? "text-red-600 group-hover:text-red-900 group-data-[selected=true]:text-red-900 [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none]" : "text-red-600 dark:text-red-400 group-hover:text-red-900 group-data-[selected=true]:text-red-900")}>
  Salidas finalizadas por hoy
  </p>
  );
@@ -661,7 +661,7 @@ className={cn("cursor-pointer py-3 group transition-colors duration-150 rounded-
 
  {/* Fecha de Ida */}
  <div className="flex-1 min-w-0">
- <Label className={cn("text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-slate-900")}>
+ <Label className={cn("text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold mb-2 lg:mb-1 block lg:[text-shadow:none]", orientation === "horizontal" && "[text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-slate-900")}>
  Fecha de Ida
  </Label>
  <Popover
@@ -716,7 +716,7 @@ className={cn("cursor-pointer py-3 group transition-colors duration-150 rounded-
  {/* Fecha de Vuelta */}
  {tripType === "round-trip" && (
  <div className="flex-1 min-w-0 animate-in fade-in slide-in-from-right-5 duration-500">
- <Label className={cn("text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-slate-900")}>
+ <Label className={cn("text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold mb-2 lg:mb-1 block lg:[text-shadow:none]", orientation === "horizontal" && "[text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-slate-900")}>
  Fecha de Vuelta
  </Label>
  <Popover open={returnDateOpen} onOpenChange={setReturnDateOpen}>
