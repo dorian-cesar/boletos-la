@@ -24,6 +24,8 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookingProgress } from "@/components/paraguay/booking-progress";
 import { AlternateDatesInline } from "@/components/paraguay/alternate-dates-inline";
+import { ParaguaySearchForm } from "@/components/paraguay/search-form";
+import { DateNavbar } from "@/components/paraguay/date-navbar";
 import { useBookingStore, Trip } from "@/lib/booking-store";
 import { useSearch } from "@/lib/hooks/use-search";
 import { cn } from "@/lib/utils";
@@ -158,78 +160,44 @@ export default function ServicesPage() {
       <div className="relative z-10 w-full">
         <BookingProgress />
 
-        {/* Search Summary - versión original corregida */}
-        <div className="bg-black/10 dark:bg-white/10 py-8 backdrop-blur-sm border-b border-black/10 dark:border-white/10 w-full">
-          <div className="container mx-auto px-4 max-w-7xl">
-            <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-              <div className="flex items-center gap-4 text-center lg:text-left">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-2 border-black/10 dark:border-white/20 bg-black/5 dark:bg-white/5 text-slate-900 dark:text-white hover:bg-black/20 dark:bg-white/20 hover:text-slate-900 dark:text-white flex-shrink-0"
-                  onClick={() => router.push("/paraguay")}
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  <span>Volver</span>
-                </Button>
-                <div className="h-8 w-px bg-black/20 dark:bg-white/20 hidden sm:block" />
-                <div>
-                  <p className="text-sm text-slate-900 dark:text-white/60">
-                    {showingReturn ? "Viaje de Regreso" : "Viaje de Ida"}
-                  </p>
-                  <div className="flex items-center gap-3 text-2xl font-bold">
-                    <span>{originCityName}</span>
-                    <ArrowRight className="h-6 w-6 text-primary" />
-                    <span>{destinationCityName}</span>
-                  </div>
-                  <p className="text-slate-900 dark:text-white/60 mt-1">
-                    {format(
-                      parse(
-                        showingReturn
-                          ? returnDate || departureDate
-                          : departureDate,
-                        "yyyy-MM-dd",
-                        new Date(),
-                      ),
-                      "EEEE d 'de' MMMM, yyyy",
-                      { locale: es },
-                    )}
-                  </p>
-                </div>
-              </div>
 
-              {selectedOutboundTrip && tripType === "round-trip" && (
-                <div className="flex items-center gap-4">
-                  <div className="text-right">
-                    <p className="text-sm text-slate-900 dark:text-white/60">
-                      Ida seleccionada
-                    </p>
-                    <p className="font-semibold">
-                      {selectedOutboundTrip.departureTime} -{" "}
-                      {selectedOutboundTrip.company}
-                    </p>
-                  </div>
-                  {!showingReturn && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
-                      onClick={() => setShowingReturn(true)}
-                    >
-                      Continuar al Regreso
-                    </Button>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
 
         {/* Trips List */}
         <div className="w-full px-4 py-8 relative z-10">
-          <div className="container mx-auto max-w-7xl">
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+          <div className="container mx-auto max-w-[1400px]">
+            <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 lg:gap-8 items-start">
+              
+              {/* Sidebar Search Form */}
+              <div className="hidden lg:block sticky top-8">
+                <ParaguaySearchForm orientation="vertical" />
+              </div>
+
+              {/* Main Content Area */}
+              <div className="flex flex-col min-w-0 w-full">
+                {/* Mobile Search Form (Optional) */}
+                <div className="lg:hidden mb-6">
+                  <ParaguaySearchForm orientation="vertical" />
+                </div>
+
+                <div className="mb-6">
+                  <DateNavbar 
+                    currentDate={
+                      showingReturn
+                        ? returnDate || departureDate || ""
+                        : departureDate || ""
+                    }
+                    onSelectDate={(newDate) => {
+                      if (showingReturn) {
+                        setReturnDate(newDate);
+                      } else {
+                        setDepartureDate(newDate);
+                      }
+                    }} 
+                  />
+                </div>
+
+                <div className="mb-6 flex items-center justify-between">
+                  <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
                 {searchLoading
                   ? "Buscando servicios..."
                   : `${trips.length} servicios disponibles`}
@@ -489,6 +457,8 @@ export default function ServicesPage() {
                 </Button>
               </div>
             )}
+              </div>
+            </div>
           </div>
         </div>
       </div>

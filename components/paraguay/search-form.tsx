@@ -149,7 +149,7 @@ function CityMarqueeText({
             : undefined
         }
         className={cn(
-          "text-gray-900 text-lg lg:text-base font-semibold whitespace-nowrap inline-block transition-transform",
+          "text-gray-900 dark:text-white text-lg lg:text-base font-semibold whitespace-nowrap inline-block transition-transform",
           isPlaceholder && "text-gray-400 font-normal",
           shouldAnimate && "animate-dynamic-marquee"
         )}
@@ -160,7 +160,7 @@ function CityMarqueeText({
   );
 }
 
-export function ParaguaySearchForm() {
+export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation?: 'horizontal' | 'vertical' }) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [originOpen, setOriginOpen] = useState(false);
@@ -347,7 +347,7 @@ export function ParaguaySearchForm() {
         className="w-full flex justify-center px-4 animate-scale-in"
         style={{ animationDelay: "0.6s" }}
       >
-<div className="bg-white/80  backdrop-blur-md rounded-3xl lg:rounded-[1.5rem] shadow-2xl p-6 sm:p-8 lg:px-6 lg:py-6 border border-white/60  relative overflow-hidden lg:overflow-visible w-full max-w-7xl mx-auto">
+<div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-3xl lg:rounded-[1.5rem] shadow-2xl p-6 sm:p-8 lg:px-6 lg:py-6 border border-white/60 dark:border-slate-800 relative overflow-hidden lg:overflow-visible w-full max-w-7xl mx-auto">
           {/* Efecto de vidrio con gradiente sutil */}
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl pointer-events-none" />
 
@@ -380,13 +380,13 @@ export function ParaguaySearchForm() {
           </div>
 
           {/* Search Fields - Responsive con mismo ancho */}
-          <div className="flex flex-col lg:flex-row gap-4 lg:gap-3 relative z-10 items-stretch lg:items-end w-full">
+          <div className={cn("flex flex-col gap-4 relative z-10 items-stretch w-full", orientation === 'horizontal' ? "lg:flex-row lg:gap-3 lg:items-end" : "")}>
             {/* Trip Type Selector - Desktop inline */}
-            <div className="hidden lg:flex flex-col flex-shrink-0">
-              <Label className="text-[13px] font-bold text-slate-900  mb-1 block">
+            <div className={cn("hidden flex-col flex-shrink-0", orientation === 'horizontal' ? "lg:flex" : "")}>
+              <Label className="text-[13px] font-bold text-slate-900 dark:text-white mb-1 block">
                 Tipo de viaje
               </Label>
-              <div className="inline-flex h-14 items-center bg-slate-50  rounded-xl p-1 border border-slate-300 dark:border-white/40 shadow-sm">
+              <div className="inline-flex h-14 items-center bg-slate-50 dark:bg-slate-800 rounded-xl p-1 border border-slate-300 dark:border-slate-700 shadow-sm">
                 <button
                   type="button"
                   onClick={() => setTripType("one-way")}
@@ -416,7 +416,7 @@ export function ParaguaySearchForm() {
 
             {/* Origin */}
             <div className="flex-1 min-w-0">
-              <Label className="text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold text-slate-900  mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]">
+              <Label className="text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold text-slate-900 dark:text-white mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]">
                 Origen
               </Label>
               <Popover
@@ -431,7 +431,7 @@ export function ParaguaySearchForm() {
                     role="combobox"
                     disabled={stopsLoading}
                     className={cn(
-                      "w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white border-slate-300 shadow-sm hover:border-primary/50 hover:bg-slate-50",
+                      "w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-700 shadow-sm hover:border-primary/50 hover:bg-slate-50 dark:hover:bg-slate-900",
                       stopsLoading ? "cursor-not-allowed opacity-60" : "",
                     )}
                   >
@@ -450,7 +450,7 @@ export function ParaguaySearchForm() {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
-                  className="w-full p-0 backdrop-blur-md bg-white/60 border-black/20  min-w-[var(--radix-popover-trigger-width)]"
+                  className="w-full p-0 backdrop-blur-md bg-white/60 dark:bg-slate-900/90 border-black/20 dark:border-slate-700 min-w-[var(--radix-popover-trigger-width)]"
                   align="start"
                 >
                   <Command className="bg-transparent">
@@ -500,7 +500,7 @@ export function ParaguaySearchForm() {
             </div>
 
             {/* Swap Button - Mobile (debajo de origen) */}
-            <div className="lg:hidden flex items-center justify-center mt-3">
+            <div className={cn("flex items-center justify-center mt-3", orientation === 'horizontal' ? "lg:hidden" : "")}>
               <button
                 onClick={swapCities}
                 disabled={stopsLoading}
@@ -517,7 +517,7 @@ export function ParaguaySearchForm() {
             </div>
 
             {/* Swap Button - Desktop */}
-            <div className="hidden lg:flex items-center justify-center w-[52px] flex-shrink-0">
+            <div className={cn("hidden items-center justify-center w-[52px] flex-shrink-0", orientation === 'horizontal' ? "lg:flex" : "")}>
               <div className="h-14 flex items-center">
                 <button
                   onClick={swapCities}
@@ -537,7 +537,7 @@ export function ParaguaySearchForm() {
 
             {/* Destination */}
             <div className="flex-1 min-w-0">
-              <Label className="text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold text-slate-900  mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]">
+              <Label className="text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold text-slate-900 dark:text-white mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]">
                 Destino
               </Label>
               <Popover
@@ -552,7 +552,7 @@ export function ParaguaySearchForm() {
                     role="combobox"
                     disabled={stopsLoading}
                     className={cn(
-                      "w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white border-slate-300 shadow-sm hover:border-secondary/50 hover:bg-slate-50",
+                      "w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-700 shadow-sm hover:border-secondary/50 hover:bg-slate-50 dark:hover:bg-slate-900",
                       stopsLoading ? "cursor-not-allowed opacity-60" : "",
                     )}
                   >
@@ -651,7 +651,7 @@ className="cursor-pointer py-3 group text-slate-900  data-[selected=true]:bg-sec
 
             {/* Fecha de Ida */}
             <div className="flex-1 min-w-0">
-              <Label className="text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold text-slate-900  mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]">
+              <Label className="text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold text-slate-900 dark:text-white mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]">
                 Fecha de Ida
               </Label>
               <Popover
@@ -661,7 +661,7 @@ className="cursor-pointer py-3 group text-slate-900  data-[selected=true]:bg-sec
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className="w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white border-slate-300 shadow-sm hover:border-secondary/50 hover:bg-slate-50"
+                    className="w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-700 shadow-sm hover:border-secondary/50 hover:bg-slate-50 dark:hover:bg-slate-900"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <Calendar className="h-5 w-5 text-secondary flex-shrink-0" />
@@ -681,7 +681,7 @@ className="cursor-pointer py-3 group text-slate-900  data-[selected=true]:bg-sec
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
-                  className="w-auto p-0 backdrop-blur-md bg-white/60 border-black/20 "
+                  className="w-auto p-0 backdrop-blur-md bg-white/60 dark:bg-slate-900/90 border-black/20 dark:border-slate-700"
                   align="start"
                 >
                   <CalendarComponent
@@ -706,14 +706,14 @@ className="cursor-pointer py-3 group text-slate-900  data-[selected=true]:bg-sec
             {/* Fecha de Vuelta */}
             {tripType === "round-trip" && (
               <div className="flex-1 min-w-0 animate-in fade-in slide-in-from-right-5 duration-500">
-                <Label className="text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold text-slate-900  mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]">
+                <Label className="text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold text-slate-900 dark:text-white mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]">
                   Fecha de Vuelta
                 </Label>
                 <Popover open={returnDateOpen} onOpenChange={setReturnDateOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      className="w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white border-slate-300 shadow-sm hover:border-secondary/50 hover:bg-slate-50"
+                      className="w-full justify-between h-14 text-left font-normal transition-all duration-300 bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-700 shadow-sm hover:border-secondary/50 hover:bg-slate-50 dark:hover:bg-slate-900"
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <Calendar className="h-5 w-5 text-secondary flex-shrink-0" />
@@ -733,7 +733,7 @@ className="cursor-pointer py-3 group text-slate-900  data-[selected=true]:bg-sec
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent
-                    className="w-auto p-0 backdrop-blur-md bg-white/60 border-black/20 "
+                    className="w-auto p-0 backdrop-blur-md bg-white/60 dark:bg-slate-900/90 border-black/20 dark:border-slate-700"
                     align="start"
                   >
                     <CalendarComponent
@@ -758,7 +758,7 @@ className="cursor-pointer py-3 group text-slate-900  data-[selected=true]:bg-sec
             )}
 
             {/* Desktop Search Button inline */}
-            <div className="hidden lg:flex flex-shrink-0 items-end ml-auto">
+            <div className={cn("hidden flex-shrink-0 items-end ml-auto", orientation === 'horizontal' ? "lg:flex" : "")}>
               <Button
                 onClick={handleSearch}
                 disabled={
@@ -777,7 +777,7 @@ className="cursor-pointer py-3 group text-slate-900  data-[selected=true]:bg-sec
           </div>
 
           {/* Search Button */}
-          <div className="mt-8 flex lg:hidden justify-center relative z-10">
+          <div className={cn("mt-8 flex justify-center relative z-10", orientation === 'horizontal' ? "lg:hidden" : "")}>
             <Button
               onClick={handleSearch}
               disabled={
