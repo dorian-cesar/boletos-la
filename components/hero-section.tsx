@@ -153,7 +153,6 @@ export function HeroSection({ country }: HeroSectionProps) {
                 "object-cover object-center transition-transform duration-[10000ms] ease-linear",
                 index === currentImageIndex ? "scale-110" : "scale-100"
               )}
-              priority={index === 0}
             />
           </div>
         ))}
