@@ -30,11 +30,11 @@ const destinations = [
   },
   {
     id: 3,
-    name: "Encarnación",
+    name: "Caacupé",
     region: "Itapúa",
     image: "/images/encarnacion.png",
     price: 40000,
-    duration: "5h",
+    duration: "2h 10m",
     popular: true,
   },
   {
@@ -57,7 +57,7 @@ const destinations = [
   },
   {
     id: 6,
-    name: "Salto del Guairá",
+    name: "Concepción",
     region: "Canindeyú",
     image: "/images/salto-del-guaira.png",
     price: 45000,
