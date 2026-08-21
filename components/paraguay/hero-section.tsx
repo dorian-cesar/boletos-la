@@ -16,34 +16,20 @@ export function ParaguayHeroSection() {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background optimizado */}
       <div className="absolute inset-0 bg-black">
-        {/* 1. Imagen de carga rápida (LCP optimizado) usando next/image */}
+        {/* LCP optimizado usando next/image */}
         <Image
-          src="/placeholder-video.png"
-          alt="Fondo de bus viajando"
+          src="/images/banner.avif"
+          alt="Fondo de viajes boletos.la"
           fill
           priority
           fetchPriority="high"
-          quality={85}
+          quality={100}
           sizes="100vw"
-          className="object-cover opacity-60"
+          className="object-cover opacity-100"
         />
 
-        {/* 2. Video de fondo de carga diferida (solo cliente) */}
-        {mounted && (
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover opacity-80 animate-in fade-in duration-1000"
-          >
-            <source src="/videos/banner-boletos.mp4" type="video/mp4" />
-          </video>
-        )}
-
         {/* Overlay oscuro para mejor legibilidad de los textos */}
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
       </div>
 
       {/* Content */}
