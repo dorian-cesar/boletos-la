@@ -386,7 +386,7 @@ export function ParaguaySearchForm() {
               <Label className="text-[13px] font-bold text-slate-900  mb-1 block">
                 Tipo de viaje
               </Label>
-              <div className="inline-flex h-14 items-center bg-slate-50  rounded-xl p-1 border border-slate-300 dark:border-slate-700 shadow-sm">
+              <div className="inline-flex h-14 items-center bg-slate-50  rounded-xl p-1 border border-slate-300 dark:border-white/40 shadow-sm">
                 <button
                   type="button"
                   onClick={() => setTripType("one-way")}

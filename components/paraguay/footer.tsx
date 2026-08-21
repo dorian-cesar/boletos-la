@@ -84,7 +84,7 @@ export function ParaguayFooter() {
                 alt="Boletos.la Logo"
                 width={140}
                 height={80}
-                className="h-auto transition-transform duration-300 group-hover:scale-105 mb-1 brightness-0 dark:brightness-100"
+                className="h-auto transition-transform duration-300 group-hover:scale-105 mb-1"
                 loading="eager"
               />
             </Link>

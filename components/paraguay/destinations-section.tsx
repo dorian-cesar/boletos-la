@@ -262,14 +262,14 @@ export function DestinationsSection() {
               <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
                 <div className="flex items-start justify-between">
                   <div>
-                    <div className="flex items-center gap-2 text-slate-900 dark:text-white/70 text-sm mb-2">
+                    <div className="flex items-center gap-2 text-white/90 text-sm mb-2">
                       <MapPin className="h-4 w-4" />
                       {destination.region}
                     </div>
-                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-[#00c7cc] transition-colors duration-300">
+                    <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-[#00c7cc] transition-colors duration-300">
                       {destination.name}
                     </h3>
-                    <div className="flex items-center gap-4 text-slate-900 dark:text-white/70 text-sm">
+                    <div className="flex items-center gap-4 text-white/90 text-sm">
                       <span className="flex items-center gap-1">
                         <Clock className="h-4 w-4" />
                         {destination.duration}
@@ -277,7 +277,7 @@ export function DestinationsSection() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-slate-900 dark:text-white/70">Desde</p>
+                    <p className="text-xs text-white/90">Desde</p>
                     <p className="text-2xl font-bold text-[#ffaa00]">
                       ₲{destination.price.toLocaleString("es-PY")}
                     </p>
@@ -287,7 +287,7 @@ export function DestinationsSection() {
                 {/* Hover Button */}
                 <div className="mt-4 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                   <Button
-                    className="w-full bg-[#00c7cc] hover:bg-[#00c7cc]/90 text-slate-900 dark:text-white"
+                    className="w-full bg-[#00c7cc] hover:bg-[#00c7cc]/90 text-slate-900"
                     // onClick={(e) => {
                     //   e.stopPropagation();
                     //   handleSearchServices(destination.name);
