@@ -7,7 +7,7 @@ export default function AyudaPage() {
   const country = "paraguay";
   
   return (
-    <main className="min-h-screen bg-[#0f1419] flex flex-col">
+    <main className="min-h-screen bg-slate-50 dark:bg-[#0f1419] flex flex-col">
       <style dangerouslySetInnerHTML={{ __html: `body { background-color: #0f1419; }` }} />
       <ParaguayHeader />
       

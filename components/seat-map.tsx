@@ -58,7 +58,7 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
   const rows = [...new Set(floorSeats.map((s) => s.row))].sort((a, b) => a - b);
 
   return (
-    <div className="bg-background/5 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg border border-background/20">
+    <div className="bg-black/5 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg border border-black/10 dark:border-white/20">
       {/* Alert para límite máximo */}
       {showMaxAlert && (
         <Alert variant="destructive" className="mb-4 animate-fade-in">
@@ -79,7 +79,7 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
               "px-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 border",
               activeFloor === floor
                 ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30 border-primary"
-                : "bg-background/10 text-background/80 hover:bg-background/20 border-background/30",
+                : "bg-black/10 dark:bg-white/10 text-slate-900 dark:text-white/80 hover:bg-black/20 dark:bg-white/20 border-black/15 dark:border-white/30",
             )}
           >
             {floor === 1 ? "Piso Superior" : "Piso Inferior"}
@@ -90,32 +90,32 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
       {/* Legend */}
       <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 mb-8">
         <div className="flex items-center gap-1.5 md:gap-2">
-          <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-background/10 border border-background/30" />
-          <span className="text-xs md:text-sm text-background/60">
+          <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-black/10 dark:bg-white/10 border border-black/15 dark:border-white/30" />
+          <span className="text-xs md:text-sm text-slate-900 dark:text-white/60">
             Disponible
           </span>
         </div>
         <div className="flex items-center gap-1.5 md:gap-2">
           <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-primary border border-primary/50" />
-          <span className="text-xs md:text-sm text-background/60">
+          <span className="text-xs md:text-sm text-slate-900 dark:text-white/60">
             Seleccionado
           </span>
         </div>
         <div className="flex items-center gap-1.5 md:gap-2">
-          <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-background/20 border border-background/40" />
-          <span className="text-xs md:text-sm text-background/60">Ocupado</span>
+          <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-black/20 dark:bg-white/20 border border-background/40" />
+          <span className="text-xs md:text-sm text-slate-900 dark:text-white/60">Ocupado</span>
         </div>
         <div className="flex items-center gap-1.5 md:gap-2">
           <Crown className="h-3.5 w-3.5 md:h-5 md:w-5 text-secondary" />
-          <span className="text-xs md:text-sm text-background/60">VIP</span>
+          <span className="text-xs md:text-sm text-slate-900 dark:text-white/60">VIP</span>
         </div>
         <div className="flex items-center gap-1.5 md:gap-2">
           <Star className="h-3.5 w-3.5 md:h-5 md:w-5 text-primary" />
-          <span className="text-xs md:text-sm text-background/60">Cama</span>
+          <span className="text-xs md:text-sm text-slate-900 dark:text-white/60">Cama</span>
         </div>
         <div className="flex items-center gap-1.5 md:gap-2">
-          <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-background/20 border border-background/40" />
-          <span className="text-xs md:text-sm text-background/60">Semi</span>
+          <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-black/20 dark:bg-white/20 border border-background/40" />
+          <span className="text-xs md:text-sm text-slate-900 dark:text-white/60">Semi</span>
         </div>
       </div>
 
@@ -123,15 +123,15 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
       <div className="relative max-w-md mx-auto">
         {/* Bus Front */}
         <div className="flex justify-center mb-4">
-          <div className="w-32 h-12 bg-background/20 rounded-t-3xl flex items-center justify-center border border-background/30">
-            <span className="text-background text-sm font-medium">
+          <div className="w-32 h-12 bg-black/20 dark:bg-white/20 rounded-t-3xl flex items-center justify-center border border-black/15 dark:border-white/30">
+            <span className="text-slate-900 dark:text-white text-sm font-medium">
               Conductor
             </span>
           </div>
         </div>
 
         {/* Seats Grid */}
-        <div className="bg-background/10 rounded-3xl p-6 border-4 border-background/30 relative">
+        <div className="bg-black/10 dark:bg-white/10 rounded-3xl p-6 border-4 border-black/15 dark:border-white/30 relative">
           {/* Row Numbers */}
           <div className="absolute left-0 top-0 h-full flex flex-col pt-6 pb-6 pl-2">
             {rows.map((row, index) => (
@@ -143,7 +143,7 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
                   marginBottom: index === rows.length - 1 ? "0" : "12px",
                 }}
               >
-                <span className="text-xs font-medium text-background/60 w-4 text-center">
+                <span className="text-xs font-medium text-slate-900 dark:text-white/60 w-4 text-center">
                   {row}
                 </span>
               </div>
@@ -209,34 +209,34 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
 
         {/* Bus Back */}
         <div className="flex justify-center mt-4">
-          <div className="w-48 h-8 bg-background/20 rounded-b-xl flex items-center justify-center border border-background/30">
-            <span className="text-background/60 text-xs">Parte trasera</span>
+          <div className="w-48 h-8 bg-black/20 dark:bg-white/20 rounded-b-xl flex items-center justify-center border border-black/15 dark:border-white/30">
+            <span className="text-slate-900 dark:text-white/60 text-xs">Parte trasera</span>
           </div>
         </div>
       </div>
 
       {/* Selection Counter - AHORA ABAJO */}
-      <div className="mt-8 p-4 bg-background/10 rounded-xl border border-background/20">
+      <div className="mt-8 p-4 bg-black/10 dark:bg-white/10 rounded-xl border border-black/10 dark:border-white/20">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-background/60">Asientos seleccionados</p>
+            <p className="text-sm text-slate-900 dark:text-white/60">Asientos seleccionados</p>
             <p
               className={cn(
-                "font-bold text-2xl text-background transition-colors duration-300",
+                "font-bold text-2xl text-slate-900 dark:text-white transition-colors duration-300",
                 currentSelectedSeats.length > 4
                   ? "text-destructive animate-pulse"
                   : "text-primary",
               )}
             >
               {currentSelectedSeats.length}
-              <span className="text-base font-normal text-background/60 ml-1">
+              <span className="text-base font-normal text-slate-900 dark:text-white/60 ml-1">
                 /4
               </span>
             </p>
           </div>
           {currentSelectedSeats.length > 0 && (
             <div className="text-right">
-              <p className="text-sm text-background/60">Total seleccionado</p>
+              <p className="text-sm text-slate-900 dark:text-white/60">Total seleccionado</p>
               <p className="font-bold text-lg text-secondary">
                 Gs.{" "}
                 {currentSelectedSeats
@@ -249,7 +249,7 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
 
         {/* Selected seats badges */}
         {currentSelectedSeats.length > 0 && (
-          <div className="mt-3 pt-3 border-t border-background/20">
+          <div className="mt-3 pt-3 border-t border-black/10 dark:border-white/20">
             <div className="flex flex-wrap gap-2">
               {currentSelectedSeats.map((seat) => (
                 <button
@@ -292,11 +292,11 @@ function SeatButton({
       className={cn(
         "relative w-12 h-12 rounded-lg font-medium text-sm transition-all duration-300 flex items-center justify-center group",
         isOccupied &&
-          "bg-background/20 cursor-not-allowed border border-background/40",
+          "bg-black/20 dark:bg-white/20 cursor-not-allowed border border-background/40",
         isDisabled &&
           !isOccupied &&
           !isSelected &&
-          "bg-background/5 cursor-not-allowed border border-background/20 opacity-50",
+          "bg-black/5 dark:bg-white/5 cursor-not-allowed border border-black/10 dark:border-white/20 opacity-50",
         !isOccupied &&
           !isSelected &&
           !isDisabled &&
@@ -311,7 +311,7 @@ function SeatButton({
           !isSelected &&
           !isDisabled &&
           seat.type === "standard" &&
-          "bg-background/10 border-2 border-background/30 hover:border-primary hover:bg-primary/10",
+          "bg-black/10 dark:bg-white/10 border-2 border-black/15 dark:border-white/30 hover:border-primary hover:bg-primary/10",
         isSelected &&
           seat.type === "vip" &&
           "bg-gradient-to-br from-secondary to-secondary/80 text-secondary-foreground shadow-lg shadow-secondary/30 transform scale-110 border border-secondary",
@@ -329,13 +329,13 @@ function SeatButton({
       }
     >
       {isOccupied ? (
-        <User className="h-5 w-5 text-background/60" />
+        <User className="h-5 w-5 text-slate-900 dark:text-white/60" />
       ) : (
         <>
           <span
             className={cn(
               "font-medium",
-              isSelected ? "text-primary-foreground" : "text-background",
+              isSelected ? "text-primary-foreground" : "text-slate-900 dark:text-white",
             )}
           >
             {seat.number}
@@ -352,7 +352,7 @@ function SeatButton({
           )}
 
           <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50">
-            <div className="bg-accent text-background-foreground text-xs px-2 py-1 rounded whitespace-nowrap shadow-lg border border-background/20">
+            <div className="bg-accent text-slate-900 dark:text-white-foreground text-xs px-2 py-1 rounded whitespace-nowrap shadow-lg border border-black/10 dark:border-white/20">
               {isDisabled && !isOccupied && !isSelected
                 ? "Límite máximo"
                 : `Gs. ${seat.price.toLocaleString("es-PY")}`}

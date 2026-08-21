@@ -122,17 +122,17 @@ export default async function PasajesRoutePage({ params }: PageProps) {
         <ParaguayHeader />
 
         {/* Hero Section para la Ruta */}
-        <section className="relative pt-32 pb-20 bg-gradient-to-b from-blue-900 via-indigo-900 to-slate-900 text-white overflow-hidden">
+        <section className="relative pt-32 pb-20 bg-gradient-to-b from-blue-900 via-indigo-900 to-slate-900 text-slate-900 dark:text-white overflow-hidden">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-30" />
           
           <div className="container mx-auto px-4 relative z-10">
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm text-blue-200 mb-6" aria-label="Breadcrumb">
-              <Link href="/paraguay" className="hover:underline hover:text-white transition">Inicio</Link>
+              <Link href="/paraguay" className="hover:underline hover:text-slate-900 dark:text-white transition">Inicio</Link>
               <span>/</span>
               <span className="text-blue-300">Pasajes</span>
               <span>/</span>
-              <span className="text-white font-medium">{origenTitle} a {destinoTitle}</span>
+              <span className="text-slate-900 dark:text-white font-medium">{origenTitle} a {destinoTitle}</span>
             </nav>
 
             <div className="max-w-4xl">
@@ -140,7 +140,7 @@ export default async function PasajesRoutePage({ params }: PageProps) {
                 <Bus className="w-4 h-4 text-amber-400" /> Ruta Directa de Colectivos
               </div>
 
-              <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white">
+              <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-slate-900 dark:text-white">
                 Pasajes de Bus de <span className="text-amber-400">{origenTitle}</span> a <span className="text-amber-400">{destinoTitle}</span>
               </h1>
 

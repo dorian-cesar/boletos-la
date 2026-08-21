@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export default function ConfirmationLoading() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1a2332] to-[#0f1419] text-background">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] text-slate-900 dark:text-white">
       {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
@@ -26,10 +26,10 @@ export default function ConfirmationLoading() {
                 priority
               />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-background mb-3">
+            <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-3">
               Cargando confirmación...
             </h1>
-            <p className="text-lg text-background/60 mb-6">
+            <p className="text-lg text-slate-900 dark:text-white/60 mb-6">
               Estamos procesando los detalles de tu reserva
             </p>
           </div>
@@ -40,12 +40,12 @@ export default function ConfirmationLoading() {
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="p-6 border border-background/20 rounded-xl animate-pulse bg-background/5 backdrop-blur-sm"
+                  className="p-6 border border-black/10 dark:border-white/20 rounded-xl animate-pulse bg-black/5 dark:bg-white/5 backdrop-blur-sm"
                 >
-                  <div className="h-6 bg-background/10 rounded w-1/4 mb-4"></div>
+                  <div className="h-6 bg-black/10 dark:bg-white/10 rounded w-1/4 mb-4"></div>
                   <div className="space-y-4">
-                    <div className="h-8 bg-background/10 rounded w-3/4"></div>
-                    <div className="h-4 bg-background/10 rounded w-1/2"></div>
+                    <div className="h-8 bg-black/10 dark:bg-white/10 rounded w-3/4"></div>
+                    <div className="h-4 bg-black/10 dark:bg-white/10 rounded w-1/2"></div>
                   </div>
                 </div>
               ))}
@@ -53,14 +53,14 @@ export default function ConfirmationLoading() {
 
             {/* Actions Sidebar Skeleton */}
             <div className="lg:col-span-1">
-              <div className="p-6 border border-background/20 rounded-xl animate-pulse bg-background/5 backdrop-blur-sm">
-                <div className="h-8 bg-background/10 rounded w-1/2 mb-6"></div>
+              <div className="p-6 border border-black/10 dark:border-white/20 rounded-xl animate-pulse bg-black/5 dark:bg-white/5 backdrop-blur-sm">
+                <div className="h-8 bg-black/10 dark:bg-white/10 rounded w-1/2 mb-6"></div>
                 <div className="space-y-4">
-                  <div className="h-14 bg-background/10 rounded"></div>
-                  <div className="h-14 bg-background/10 rounded"></div>
+                  <div className="h-14 bg-black/10 dark:bg-white/10 rounded"></div>
+                  <div className="h-14 bg-black/10 dark:bg-white/10 rounded"></div>
                   <div className="flex gap-2">
-                    <div className="h-10 bg-background/10 rounded flex-1"></div>
-                    <div className="h-10 bg-background/10 rounded flex-1"></div>
+                    <div className="h-10 bg-black/10 dark:bg-white/10 rounded flex-1"></div>
+                    <div className="h-10 bg-black/10 dark:bg-white/10 rounded flex-1"></div>
                   </div>
                 </div>
               </div>

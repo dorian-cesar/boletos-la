@@ -176,7 +176,7 @@ export default function MiBoletoPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f1419] flex flex-col text-white">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0f1419] flex flex-col text-slate-900 dark:text-white">
       <Header />
 
       <main
@@ -191,27 +191,27 @@ export default function MiBoletoPage() {
 
         <div className="relative z-10 w-full max-w-4xl animate-fade-in">
           <div className="text-center mb-10">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 text-balance">
+            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4 text-balance">
               Mi <span className="text-primary">Boleto</span>
             </h1>
-            <p className="text-white/60 text-lg max-w-md mx-auto">
+            <p className="text-slate-900 dark:text-white/60 text-lg max-w-md mx-auto">
               Consultá tu viaje y descargá tu boleto electrónico de forma rápida
               y segura.
             </p>
           </div>
 
           {!ticketData ? (
-            <Card className="p-6 md:p-8 bg-white/5 backdrop-blur-xl border-white/10 shadow-2xl overflow-hidden relative max-w-2xl mx-auto">
+            <Card className="p-6 md:p-8 bg-white/5 backdrop-blur-xl border-black/10 dark:border-white/10 shadow-2xl overflow-hidden relative max-w-2xl mx-auto">
               <form onSubmit={handleSearch} className="relative space-y-6">
                 <div className="relative">
                   <label
                     htmlFor="ticketNumber"
-                    className="block text-sm font-medium text-white/70 mb-2 ml-1"
+                    className="block text-sm font-medium text-slate-900 dark:text-white/70 mb-2 ml-1"
                   >
                     Número de Boleto
                   </label>
                   <div className="relative">
-                    <Ticket className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40 transition-colors" />
+                    <Ticket className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-900 dark:text-white/40 transition-colors" />
                     <Input
                       id="ticketNumber"
                       type="text"
@@ -220,7 +220,7 @@ export default function MiBoletoPage() {
                       onChange={(e) =>
                         setTicketNumber(e.target.value.toUpperCase())
                       }
-                      className="h-14 pl-12 bg-white/5 border-white/10 text-white placeholder:text-white/20 focus:ring-white/20 focus:border-white/30 text-lg uppercase tracking-wider"
+                      className="h-14 pl-12 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-white/20 focus:ring-white/20 focus:border-black/15 dark:border-white/30 text-lg uppercase tracking-wider"
                       required
                     />
                   </div>
@@ -258,7 +258,7 @@ export default function MiBoletoPage() {
               <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-[2rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
 
-                <div className="relative bg-[#1a1f26] rounded-[1.5rem] overflow-hidden border border-white/10 shadow-2xl flex flex-col md:flex-row min-h-[400px]">
+                <div className="relative bg-[#1a1f26] rounded-[1.5rem] overflow-hidden border border-black/10 dark:border-white/10 shadow-2xl flex flex-col md:flex-row min-h-[400px]">
                   {/* Lado Izquierdo - Detalles Principales */}
                   <div className="flex-1 p-8 md:p-10 flex flex-col">
                     <div className="flex justify-between items-start mb-8">
@@ -271,7 +271,7 @@ export default function MiBoletoPage() {
                         </h2>
                       </div>
                       <div className="text-right">
-                        <p className="text-white/40 text-[10px] uppercase tracking-widest mb-1">
+                        <p className="text-slate-900 dark:text-white/40 text-[10px] uppercase tracking-widest mb-1">
                           N° Ticket
                         </p>
                         <p className="font-mono font-bold text-lg text-secondary">
@@ -282,7 +282,7 @@ export default function MiBoletoPage() {
 
                     <div className="flex flex-col md:flex-row items-center gap-6 mb-5">
                       <div className="flex-1 text-center md:text-left">
-                        <p className="text-white/40 text-xs uppercase tracking-widest mb-2">
+                        <p className="text-slate-900 dark:text-white/40 text-xs uppercase tracking-widest mb-2">
                           Origen
                         </p>
                         <h3 className="text-3xl font-bold mb-1">
@@ -295,7 +295,7 @@ export default function MiBoletoPage() {
                       </div>
 
                       <div className="flex-1 text-center md:text-right">
-                        <p className="text-white/40 text-xs uppercase tracking-widest mb-2">
+                        <p className="text-slate-900 dark:text-white/40 text-xs uppercase tracking-widest mb-2">
                           Destino
                         </p>
                         <h3 className="text-3xl font-bold mb-1">
@@ -306,7 +306,7 @@ export default function MiBoletoPage() {
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-auto">
                       <div>
-                        <p className="text-white/40 text-[10px] uppercase tracking-widest mb-2 flex items-center gap-1">
+                        <p className="text-slate-900 dark:text-white/40 text-[10px] uppercase tracking-widest mb-2 flex items-center gap-1">
                           <Calendar className="h-3 w-3" /> Fecha
                         </p>
                         <p className="font-bold">
@@ -322,7 +322,7 @@ export default function MiBoletoPage() {
                         </p>
                       </div>
                       <div>
-                        <p className="text-white/40 text-[10px] uppercase tracking-widest mb-2 flex items-center gap-1">
+                        <p className="text-slate-900 dark:text-white/40 text-[10px] uppercase tracking-widest mb-2 flex items-center gap-1">
                           <Clock className="h-3 w-3" /> Salida
                         </p>
                         <p className="font-bold">
@@ -330,7 +330,7 @@ export default function MiBoletoPage() {
                         </p>
                       </div>
                       <div>
-                        <p className="text-white/40 text-[10px] uppercase tracking-widest mb-2 flex items-center gap-1">
+                        <p className="text-slate-900 dark:text-white/40 text-[10px] uppercase tracking-widest mb-2 flex items-center gap-1">
                           <User className="h-3 w-3" /> Asiento
                         </p>
                         <p className="font-bold text-primary">
@@ -338,7 +338,7 @@ export default function MiBoletoPage() {
                         </p>
                       </div>
                       <div>
-                        <p className="text-white/40 text-[10px] uppercase tracking-widest mb-2 flex items-center gap-1">
+                        <p className="text-slate-900 dark:text-white/40 text-[10px] uppercase tracking-widest mb-2 flex items-center gap-1">
                           <ShieldCheck className="h-3 w-3" /> Estado
                         </p>
                         <p className="font-bold text-green-400 capitalize">
@@ -350,13 +350,13 @@ export default function MiBoletoPage() {
 
                   {/* Línea Divisoria Decorativa (Vertical en Desktop, Horizontal en Mobile) */}
                   <div className="relative flex flex-row md:flex-col items-center justify-center">
-                    <div className="hidden md:block absolute -top-4 w-8 h-8 bg-[#0f1419] rounded-full border border-white/10"></div>
-                    <div className="hidden md:block h-full border-l-2 border-dashed border-white/10 mx-4"></div>
-                    <div className="hidden md:block absolute -bottom-4 w-8 h-8 bg-[#0f1419] rounded-full border border-white/10"></div>
+                    <div className="hidden md:block absolute -top-4 w-8 h-8 bg-slate-50 dark:bg-[#0f1419] rounded-full border border-black/10 dark:border-white/10"></div>
+                    <div className="hidden md:block h-full border-l-2 border-dashed border-black/10 dark:border-white/10 mx-4"></div>
+                    <div className="hidden md:block absolute -bottom-4 w-8 h-8 bg-slate-50 dark:bg-[#0f1419] rounded-full border border-black/10 dark:border-white/10"></div>
 
-                    <div className="md:hidden absolute -left-4 w-8 h-8 bg-[#0f1419] rounded-full border border-white/10"></div>
-                    <div className="md:hidden w-full border-t-2 border-dashed border-white/10 my-4"></div>
-                    <div className="md:hidden absolute -right-4 w-8 h-8 bg-[#0f1419] rounded-full border border-white/10"></div>
+                    <div className="md:hidden absolute -left-4 w-8 h-8 bg-slate-50 dark:bg-[#0f1419] rounded-full border border-black/10 dark:border-white/10"></div>
+                    <div className="md:hidden w-full border-t-2 border-dashed border-black/10 dark:border-white/10 my-4"></div>
+                    <div className="md:hidden absolute -right-4 w-8 h-8 bg-slate-50 dark:bg-[#0f1419] rounded-full border border-black/10 dark:border-white/10"></div>
                   </div>
 
                   {/* Lado Derecho - QR y Acciones */}
@@ -375,7 +375,7 @@ export default function MiBoletoPage() {
                       )}
                     </div>
 
-                    <p className="text-[10px] text-white/40 uppercase tracking-widest mb-6">
+                    <p className="text-[10px] text-slate-900 dark:text-white/40 uppercase tracking-widest mb-6">
                       Escaneá al abordar
                     </p>
 
@@ -399,7 +399,7 @@ export default function MiBoletoPage() {
                           setTicketData(null);
                           setTicketNumber("");
                         }}
-                        className="w-full border-white/20 bg-white/5 hover:bg-white/10 text-white/80 hover:text-white rounded-xl h-12 flex items-center justify-center gap-2 transition-all"
+                        className="w-full border-black/10 dark:border-white/20 bg-white/5 hover:bg-white/10 text-slate-900 dark:text-white/80 hover:text-slate-900 dark:text-white rounded-xl h-12 flex items-center justify-center gap-2 transition-all"
                       >
                         <ArrowLeft className="h-4 w-4" />
                         Volver a buscar boleto
@@ -411,56 +411,56 @@ export default function MiBoletoPage() {
 
               {/* Información de Pasajero */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="bg-white/5 border-white/10 p-6 rounded-2xl backdrop-blur-sm">
-                  <h4 className="text-sm font-bold text-white/40 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <Card className="bg-white/5 border-black/10 dark:border-white/10 p-6 rounded-2xl backdrop-blur-sm">
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white/40 uppercase tracking-widest mb-4 flex items-center gap-2">
                     <User className="h-4 w-4 text-primary" /> Información del
                     Pasajero
                   </h4>
                   <div className="space-y-4">
                     <div className="flex justify-between border-b border-white/5 pb-2">
-                      <span className="text-white/60">Nombre completo</span>
-                      <span className="font-bold text-white/90">
+                      <span className="text-slate-900 dark:text-white/60">Nombre completo</span>
+                      <span className="font-bold text-slate-900 dark:text-white/90">
                         {ticketData.first_name} {ticketData.last_name}
                       </span>
                     </div>
                     <div className="flex justify-between border-b border-white/5 pb-2">
-                      <span className="text-white/60">
+                      <span className="text-slate-900 dark:text-white/60">
                         {ticketData.document_type_name}
                       </span>
-                      <span className="font-bold text-white/90">
+                      <span className="font-bold text-slate-900 dark:text-white/90">
                         {ticketData.document_number}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-white/60">Nacionalidad</span>
-                      <span className="font-bold text-white/90">
+                      <span className="text-slate-900 dark:text-white/60">Nacionalidad</span>
+                      <span className="font-bold text-slate-900 dark:text-white/90">
                         {ticketData.nationality}
                       </span>
                     </div>
                   </div>
                 </Card>
 
-                <Card className="bg-white/5 border-white/10 p-6 rounded-2xl backdrop-blur-sm">
-                  <h4 className="text-sm font-bold text-white/40 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <Card className="bg-white/5 border-black/10 dark:border-white/10 p-6 rounded-2xl backdrop-blur-sm">
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white/40 uppercase tracking-widest mb-4 flex items-center gap-2">
                     <Info className="h-4 w-4 text-secondary" /> Detalles del
                     Pago
                   </h4>
                   <div className="space-y-4">
                     <div className="flex justify-between border-b border-white/5 pb-2">
-                      <span className="text-white/60">Monto pagado</span>
+                      <span className="text-slate-900 dark:text-white/60">Monto pagado</span>
                       <span className="font-bold text-secondary">
                         Gs. {ticketData.seat_price.toLocaleString("es-PY")}
                       </span>
                     </div>
                     <div className="flex justify-between border-b border-white/5 pb-2">
-                      <span className="text-white/60">Método</span>
-                      <span className="font-bold capitalize text-white/90">
+                      <span className="text-slate-900 dark:text-white/60">Método</span>
+                      <span className="font-bold capitalize text-slate-900 dark:text-white/90">
                         {ticketData.payment_status}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-white/60">Fecha de compra</span>
-                      <span className="font-bold text-white/90">
+                      <span className="text-slate-900 dark:text-white/60">Fecha de compra</span>
+                      <span className="font-bold text-slate-900 dark:text-white/90">
                         {format(
                           new Date(ticketData.created_at),
                           "dd/MM/yyyy HH:mm",
@@ -471,7 +471,7 @@ export default function MiBoletoPage() {
                 </Card>
               </div>
 
-              <div className="flex items-center gap-3 justify-center text-white/40 text-sm pt-4">
+              <div className="flex items-center gap-3 justify-center text-slate-900 dark:text-white/40 text-sm pt-4">
                 <Smartphone className="h-5 w-5" />
                 Podés presentar este boleto desde tu celular
               </div>

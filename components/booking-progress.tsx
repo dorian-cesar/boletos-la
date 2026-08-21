@@ -15,7 +15,7 @@ export function BookingProgress() {
   const { step } = useBookingStore();
 
   return (
-    <div className="bg-gradient-to-b from-[#1a2332] to-[#0f1419] border-b border-background/10 sticky top-0 z-40 w-full overflow-hidden">
+    <div className="bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] border-b border-black/10 dark:border-white/10 sticky top-0 z-40 w-full overflow-hidden">
       {/* Background glow */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/4 w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-primary/10 rounded-full blur-[80px] md:blur-[120px]" />
@@ -32,13 +32,13 @@ export function BookingProgress() {
                 <div className="flex items-center justify-center">
                   <div
                     className={cn(
-                      "flex items-center justify-center rounded-full transition-all duration-500 border-2 border-background/20",
+                      "flex items-center justify-center rounded-full transition-all duration-500 border-2 border-black/10 dark:border-white/20",
                       "w-7 h-7 sm:w-9 sm:h-9 md:w-11 md:h-11 lg:w-12 lg:h-12",
                       step > s.id
                         ? "bg-primary text-primary-foreground"
                         : step === s.id
                           ? "bg-secondary text-secondary-foreground animate-pulse-glow shadow-lg shadow-secondary/30"
-                          : "bg-background/10 text-background/60",
+                          : "bg-black/10 dark:bg-white/10 text-slate-900 dark:text-white/60",
                     )}
                   >
                     {step > s.id ? (
@@ -54,7 +54,7 @@ export function BookingProgress() {
                   className={cn(
                     "text-[10px] sm:text-xs md:text-sm font-medium text-center transition-colors duration-300 mt-1 sm:mt-2",
                     "hidden sm:block truncate max-w-[60px] xs:max-w-[80px] md:max-w-[100px] lg:max-w-none",
-                    step >= s.id ? "text-background" : "text-background/60",
+                    step >= s.id ? "text-slate-900 dark:text-white" : "text-slate-900 dark:text-white/60",
                   )}
                 >
                   {s.name}
@@ -64,7 +64,7 @@ export function BookingProgress() {
               {/* Connector - Responsive */}
               {index < steps.length - 1 && (
                 <div className="flex-1 mx-0.5 sm:mx-1 md:mx-2 min-w-[8px]">
-                  <div className="h-0.5 sm:h-1 rounded-full overflow-hidden bg-background/10 w-full">
+                  <div className="h-0.5 sm:h-1 rounded-full overflow-hidden bg-black/10 dark:bg-white/10 w-full">
                     <div
                       className={cn(
                         "h-full bg-primary transition-all duration-700 ease-out",
@@ -80,7 +80,7 @@ export function BookingProgress() {
 
         {/* Indicador de paso actual - Solo visible en mobile */}
         <div className="block sm:hidden text-center mt-2">
-          <span className="text-xs text-background/80">
+          <span className="text-xs text-slate-900 dark:text-white/80">
             Paso {step} de 4:{" "}
             <span className="text-secondary font-medium">
               {steps[step - 1]?.name}

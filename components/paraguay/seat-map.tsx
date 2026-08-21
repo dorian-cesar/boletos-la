@@ -70,16 +70,16 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
 
   if (loading) {
     return (
-      <div className="bg-background/5 backdrop-blur-sm rounded-2xl p-12 flex flex-col items-center justify-center border border-background/20">
+      <div className="bg-black/5 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-12 flex flex-col items-center justify-center border border-black/10 dark:border-white/20">
         <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
-        <p className="text-background/60">Cargando mapa de asientos...</p>
+        <p className="text-slate-900 dark:text-white/60">Cargando mapa de asientos...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-background/5 backdrop-blur-sm rounded-2xl p-8 border border-background/20">
+      <div className="bg-black/5 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-black/10 dark:border-white/20">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
@@ -106,7 +106,7 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
     floorSeats.length > 0 ? Math.max(...floorSeats.map((s) => s.column)) : 4;
 
   return (
-    <div className="bg-background/5 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg border border-background/20">
+    <div className="bg-black/5 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg border border-black/10 dark:border-white/20">
       {/* Alert para límite máximo */}
       {showMaxAlert && (
         <Alert variant="destructive" className="mb-4 animate-fade-in">
@@ -130,7 +130,7 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
                 "px-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 border",
                 activeFloor === floor
                   ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30 border-primary"
-                  : "bg-background/10 text-background/80 hover:bg-background/20 border-background/30",
+                  : "bg-black/10 dark:bg-white/10 text-slate-900 dark:text-white/80 hover:bg-black/20 dark:bg-white/20 border-black/15 dark:border-white/30",
               )}
             >
               {floor === 1 ? "Piso Superior" : "Piso Inferior"}
@@ -142,24 +142,24 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
       {/* Legend */}
       <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 mb-8">
         <div className="flex items-center gap-1.5 md:gap-2">
-          <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-background/10 border border-background/30" />
-          <span className="text-xs md:text-sm text-background/60">
+          <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-black/10 dark:bg-white/10 border border-black/15 dark:border-white/30" />
+          <span className="text-xs md:text-sm text-slate-900 dark:text-white/60">
             Disponible
           </span>
         </div>
         <div className="flex items-center gap-1.5 md:gap-2">
           <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-primary border border-primary/50" />
-          <span className="text-xs md:text-sm text-background/60">
+          <span className="text-xs md:text-sm text-slate-900 dark:text-white/60">
             Seleccionado
           </span>
         </div>
         <div className="flex items-center gap-1.5 md:gap-2">
-          <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-background/20 border border-background/40" />
-          <span className="text-xs md:text-sm text-background/60">Ocupado</span>
+          <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-black/20 dark:bg-white/20 border border-background/40" />
+          <span className="text-xs md:text-sm text-slate-900 dark:text-white/60">Ocupado</span>
         </div>
         <div className="flex items-center gap-1.5 md:gap-2">
-          <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-background/5 border border-background/20 opacity-50" />
-          <span className="text-xs md:text-sm text-background/60">
+          <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/20 opacity-50" />
+          <span className="text-xs md:text-sm text-slate-900 dark:text-white/60">
             No disponible
           </span>
         </div>
@@ -169,15 +169,15 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
       <div className="relative max-w-md mx-auto">
         {/* Bus Front */}
         <div className="flex justify-center mb-4">
-          <div className="w-32 h-12 bg-background/20 rounded-t-3xl flex items-center justify-center border border-background/30">
-            <span className="text-background text-sm font-medium">
+          <div className="w-32 h-12 bg-black/20 dark:bg-white/20 rounded-t-3xl flex items-center justify-center border border-black/15 dark:border-white/30">
+            <span className="text-slate-900 dark:text-white text-sm font-medium">
               Conductor
             </span>
           </div>
         </div>
 
         {/* Seats Grid */}
-        <div className="bg-background/10 rounded-3xl p-6 border-4 border-background/30 relative">
+        <div className="bg-black/10 dark:bg-white/10 rounded-3xl p-6 border-4 border-black/15 dark:border-white/30 relative">
           {/* Row Numbers */}
           <div className="absolute left-0 top-0 h-full flex flex-col pt-6 pb-6 pl-2">
             {rows.map((row, index) => (
@@ -189,7 +189,7 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
                   marginBottom: index === rows.length - 1 ? "0" : "12px",
                 }}
               >
-                <span className="text-xs font-medium text-background/60 w-4 text-center">
+                <span className="text-xs font-medium text-slate-900 dark:text-white/60 w-4 text-center">
                   {row}
                 </span>
               </div>
@@ -233,17 +233,17 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
 
         {/* Bus Back */}
         <div className="flex justify-center mt-4">
-          <div className="w-48 h-8 bg-background/20 rounded-b-xl flex items-center justify-center border border-background/30">
-            <span className="text-background/60 text-xs">Parte trasera</span>
+          <div className="w-48 h-8 bg-black/20 dark:bg-white/20 rounded-b-xl flex items-center justify-center border border-black/15 dark:border-white/30">
+            <span className="text-slate-900 dark:text-white/60 text-xs">Parte trasera</span>
           </div>
         </div>
       </div>
 
       {/* Selection Counter */}
-      <div className="mt-8 p-4 bg-background/10 rounded-xl border border-background/20">
+      <div className="mt-8 p-4 bg-black/10 dark:bg-white/10 rounded-xl border border-black/10 dark:border-white/20">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-background/60">Asientos seleccionados</p>
+            <p className="text-sm text-slate-900 dark:text-white/60">Asientos seleccionados</p>
             <p
               className={cn(
                 "font-bold text-2xl text-primary transition-colors duration-300",
@@ -252,14 +252,14 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
               )}
             >
               {currentSelectedSeats.length}
-              <span className="text-base font-normal text-background/60 ml-1">
+              <span className="text-base font-normal text-slate-900 dark:text-white/60 ml-1">
                 /{isReturn ? selectedSeats.length : 4}
               </span>
             </p>
           </div>
           {currentSelectedSeats.length > 0 && (
             <div className="text-right">
-              <p className="text-sm text-background/60">Total seleccionado</p>
+              <p className="text-sm text-slate-900 dark:text-white/60">Total seleccionado</p>
               <p className="font-bold text-lg text-secondary">
                 Gs.{" "}
                 {currentSelectedSeats
@@ -276,7 +276,7 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
 
         {/* Selected seats badges */}
         {currentSelectedSeats.length > 0 && (
-          <div className="mt-3 pt-3 border-t border-background/20">
+          <div className="mt-3 pt-3 border-t border-black/10 dark:border-white/20">
             <div className="flex flex-wrap gap-2">
               {currentSelectedSeats.map((seat) => (
                 <button
@@ -330,17 +330,17 @@ function SeatButton({
         isOccupied &&
           "bg-orange-500/80 cursor-not-allowed border border-orange-600",
         isBlocked &&
-          "bg-background/5 cursor-not-allowed border border-background/20 opacity-50",
+          "bg-black/5 dark:bg-white/5 cursor-not-allowed border border-black/10 dark:border-white/20 opacity-50",
         isDisabled &&
           !isOccupied &&
           !isBlocked &&
           !isSelected &&
-          "bg-background/5 cursor-not-allowed border border-background/20 opacity-50",
+          "bg-black/5 dark:bg-white/5 cursor-not-allowed border border-black/10 dark:border-white/20 opacity-50",
         !isOccupied &&
           !isBlocked &&
           !isSelected &&
           !isDisabled &&
-          "bg-background/10 border-2 border-background/30 hover:border-primary hover:bg-primary/10",
+          "bg-black/10 dark:bg-white/10 border-2 border-black/15 dark:border-white/30 hover:border-primary hover:bg-primary/10",
         isSelected &&
           "bg-primary text-primary-foreground shadow-lg transform scale-110 border border-primary",
       )}
@@ -353,20 +353,20 @@ function SeatButton({
       }
     >
       {isOccupied ? (
-        <User className="h-5 w-5 text-white" />
+        <User className="h-5 w-5 text-slate-900 dark:text-white" />
       ) : (
         <>
           <span
             className={cn(
               "font-medium",
-              isSelected ? "text-primary-foreground" : "text-background",
+              isSelected ? "text-primary-foreground" : "text-slate-900 dark:text-white",
             )}
           >
             {seat.number}
           </span>
 
           <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50">
-            <div className="bg-accent text-background-foreground text-xs px-2 py-1 rounded whitespace-nowrap shadow-lg border border-background/20">
+            <div className="bg-accent text-slate-900 dark:text-white-foreground text-xs px-2 py-1 rounded whitespace-nowrap shadow-lg border border-black/10 dark:border-white/20">
               {isBlocked
                 ? "No disponible"
                 : isDisabled && !isOccupied && !isSelected
