@@ -18,6 +18,7 @@ import {
   ChevronUp,
   Users,
   ArrowLeft,
+  Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -47,6 +48,7 @@ export default function ServicesPage() {
   const router = useRouter();
   const [expandedTrip, setExpandedTrip] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
 
   const {
     origin,
@@ -174,9 +176,31 @@ export default function ServicesPage() {
 
               {/* Main Content Area */}
               <div className="flex flex-col min-w-0 w-full">
-                {/* Mobile Search Form (Optional) */}
+                {/* Mobile Search Form Toggle */}
                 <div className="lg:hidden mb-6">
-                  <ParaguaySearchForm orientation="vertical" />
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowMobileSearch(!showMobileSearch)}
+                    className="w-full flex items-center justify-between h-14 bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl"
+                  >
+                    <span className="font-semibold text-lg flex items-center gap-2">
+                      <Search className="h-5 w-5 text-secondary" />
+                      Buscador
+                    </span>
+                    {showMobileSearch ? (
+                      <ChevronUp className="h-5 w-5 text-slate-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-slate-500" />
+                    )}
+                  </Button>
+                  
+                  {/* Collapsible Search Form */}
+                  <div className={cn(
+                    "mt-4 transition-all duration-300 ease-in-out origin-top",
+                    showMobileSearch ? "max-h-[2000px] opacity-100 scale-y-100" : "max-h-0 opacity-0 scale-y-95 overflow-hidden"
+                  )}>
+                    <ParaguaySearchForm orientation="vertical" />
+                  </div>
                 </div>
 
                 <div className="mb-6">
