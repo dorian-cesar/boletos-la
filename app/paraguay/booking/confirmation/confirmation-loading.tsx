@@ -78,24 +78,24 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
       const tasks = seats.map(async (seat, index) => {
         const passenger = passengerDetails[index + offset] || primaryPassenger;
         if (!passenger) return;
-        
+
         const reservaCodigo = getTicketNumber(label, seat.number);
         const cdcValue = paymentDetails?.cdc || "";
         const qrContent = cdcValue ? `https://ekuatia.set.gov.py/consultas/${cdcValue}` : reservaCodigo;
         const qrBase64 = await QRCode.toDataURL(qrContent);
 
-        
-    const resolveCompany = (code: string | null | undefined) => {
-      if (!code) return null;
-      const upper = String(code).toUpperCase();
-      if (upper === 'LSN') return 'La Santaniana';
-      if (upper === 'LSA') return 'La Santaniana Argentina';
-      if (upper === 'LSP') return 'La Sampedrana';
-      if (upper === 'RYSA') return 'RYSA';
-      if (upper === 'NSA') return 'Nuestra Señora de la Asunción';
-      if (upper === 'SLT') return 'San Luis S.A.';
-      return code;
-    };
+
+        const resolveCompany = (code: string | null | undefined) => {
+          if (!code) return null;
+          const upper = String(code).toUpperCase();
+          if (upper === 'LSN') return 'La Santaniana';
+          if (upper === 'LSA') return 'La Santaniana Argentina';
+          if (upper === 'LSP') return 'La Sampedrana';
+          if (upper === 'RYSA') return 'RYSA';
+          if (upper === 'NSA') return 'Nuestra Señora de la Asunción';
+          if (upper === 'SLT') return 'San Luis S.A.';
+          return code;
+        };
 
         const payload = {
           ticket_number: String(seat.ticketNumber || tickets[`${label}-${seat.number}`] || ""),
@@ -139,7 +139,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           cdc: paymentDetails.cdc || null,
           timbrado: paymentDetails.timbrado || null,
           origen_transaccion: "web",
-          agencia_delta: "B02",
+          agencia_delta: "BO2",
           tipo_pago: "BANCARD",
         };
 
