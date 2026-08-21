@@ -119,13 +119,17 @@ export function DestinationsSection() {
     setReturnDate("");
 
     // Buscar Asunción en las paradas reales (API) para el origen por defecto
-    const asuncionReal = stops.find((s) => s.name.toLowerCase().includes("asunci"));
+    const normalizeStr = (str: string) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    
+    const asuncionReal = stops.find((s) => normalizeStr(s.name).includes("asunci"));
     const asuncionId = asuncionReal ? String(asuncionReal.id) : "184"; // Fallback a 184 si aún no cargó
 
     // Por defecto, asumir que salen desde Asunción, 
     // a menos que el destino sea la propia Asunción.
     let finalOriginId = asuncionId; 
-    if (destinationName.toLowerCase().includes("asunción") || destinationName.toLowerCase().includes("asuncion")) {
+    const normalizedDestName = normalizeStr(destinationName);
+
+    if (normalizedDestName.includes("asuncion")) {
       finalOriginId = "";
     }
     
@@ -133,11 +137,10 @@ export function DestinationsSection() {
 
     // Establecer el destino buscando en las paradas reales (API)
     let finalDestinationId = "";
-    const destinoReal = stops.find(
-      (s) =>
-        s.name.toLowerCase().includes(destinationName.toLowerCase()) ||
-        destinationName.toLowerCase().includes(s.name.toLowerCase())
-    );
+    const destinoReal = stops.find((s) => {
+      const normalizedStopName = normalizeStr(s.name);
+      return normalizedStopName.includes(normalizedDestName) || normalizedDestName.includes(normalizedStopName);
+    });
 
     if (destinoReal) {
       finalDestinationId = String(destinoReal.id);
