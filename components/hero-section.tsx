@@ -182,7 +182,7 @@ export function HeroSection({ country }: HeroSectionProps) {
 
           {/* Right Column: White Card Container for the Search Widget */}
           <div className="lg:col-span-6 flex justify-end w-full">
-            <div className="bg-white/20 backdrop-blur-md rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.15)] overflow-visible p-5 w-full max-w-2xl border border-white/20">
+            <div className="bg-white rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.15)] overflow-visible p-5 w-full max-w-2xl border border-gray-100/50">
               <DistributionWidget
                 partnerNumber="830754"
                 locale={normalizedCountry === "brasil" ? "pt" : "es"}

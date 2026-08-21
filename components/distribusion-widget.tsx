@@ -461,47 +461,6 @@ export function DistributionWidget({
               color: #ffffff !important;
               -webkit-text-fill-color: #ffffff !important;
             }
-            
-            #distribusion-search .ui-input,
-            #distribusion-search input {
-              color: #ffffff !important;
-              background-color: rgba(255, 255, 255, 0.1) !important;
-              outline-color: rgba(255, 255, 255, 0.3) !important;
-              -webkit-text-fill-color: #ffffff !important;
-            }
-            
-            #distribusion-search .ui-input::placeholder,
-            #distribusion-search input::placeholder {
-              color: rgba(255, 255, 255, 0.7) !important;
-            }
-            
-            #distribusion-search label,
-            #distribusion-search span,
-            #distribusion-search p,
-            #distribusion-search div {
-              color: #ffffff !important;
-            }
-            
-            /* Overrides for specific popup/dropdown containers that might need solid background */
-            body > div[class*="mantine-Portal"] *,
-            body > div.mantine-Portal-root *,
-            body > div[class*="Portal"] * {
-              color: #ffffff !important;
-            }
-            body > div[class*="mantine-Portal"] [class*="Paper"],
-            body > div.mantine-Portal-root [class*="Paper"],
-            body > div[class*="Portal"] [class*="Paper"],
-            body > div[class*="mantine-Portal"] [class*="dropdown"],
-            body > div.mantine-Portal-root [class*="dropdown"],
-            body > div[class*="Portal"] [class*="dropdown"] {
-              background-color: #1a2332 !important;
-              border: 1px solid rgba(255,255,255,0.1) !important;
-            }
-            body > div[class*="mantine-Portal"] [class*="item"]:hover,
-            body > div.mantine-Portal-root [class*="item"]:hover,
-            body > div[class*="Portal"] [class*="item"]:hover {
-              background-color: rgba(255,255,255,0.1) !important;
-            }
           `}} />
         </div>
       </div>
