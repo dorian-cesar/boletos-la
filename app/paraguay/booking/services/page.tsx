@@ -131,25 +131,6 @@ export default function ServicesPage() {
     );
   }
 
-  if (!origin || !destination || !departureDate) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419]">
-        <div className="text-center text-slate-900 dark:text-white">
-          <Bus className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-          <p className="text-xl font-semibold mb-2">No hay datos de búsqueda</p>
-          <p className="text-muted-foreground mb-4">
-            Por favor, realiza una búsqueda desde la página principal
-          </p>
-          <Button
-            onClick={() => router.push("/paraguay")}
-            className="bg-primary hover:bg-primary/90"
-          >
-            Volver al inicio
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] text-slate-900 dark:text-white w-full overflow-x-hidden">
@@ -251,6 +232,12 @@ export default function ServicesPage() {
                 <Button variant="outline" onClick={() => router.refresh()}>
                   Reintentar
                 </Button>
+              </div>
+            ) : !origin || !destination || !departureDate ? (
+              <div className="text-center py-12 bg-black/5 dark:bg-white/5 rounded-3xl border border-black/10 dark:border-white/10">
+                <Bus className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-lg font-semibold text-slate-900 dark:text-white mb-2">Completa tu búsqueda</p>
+                <p className="text-muted-foreground">Por favor, selecciona origen y destino para ver los servicios disponibles.</p>
               </div>
             ) : trips.length === 0 ? (
               <AlternateDatesInline
