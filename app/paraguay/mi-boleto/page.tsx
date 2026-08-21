@@ -201,7 +201,7 @@ export default function MiBoletoPage() {
           </div>
 
           {!ticketData ? (
-            <Card className="p-6 md:p-8 bg-white/5 backdrop-blur-xl border-black/10 dark:border-white/10 shadow-2xl overflow-hidden relative max-w-2xl mx-auto">
+            <Card className="p-6 md:p-8 bg-white dark:bg-white/5 backdrop-blur-xl border-black/10 dark:border-white/10 shadow-2xl overflow-hidden relative max-w-2xl mx-auto">
               <form onSubmit={handleSearch} className="relative space-y-6">
                 <div className="relative">
                   <label
@@ -220,7 +220,7 @@ export default function MiBoletoPage() {
                       onChange={(e) =>
                         setTicketNumber(e.target.value.toUpperCase())
                       }
-                      className="h-14 pl-12 bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/40 focus:ring-white/20 focus:border-black/15 dark:focus:border-white/30 text-lg uppercase tracking-wider"
+                      className="h-14 pl-12 bg-slate-50 dark:bg-white/5 border-black/10 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/40 focus:ring-white/20 focus:border-black/15 dark:focus:border-white/30 text-lg uppercase tracking-wider"
                       required
                     />
                   </div>
@@ -484,7 +484,7 @@ export default function MiBoletoPage() {
               alt="Boletos.la"
               width={120}
               height={40}
-              className="opacity-20 grayscale dark:brightness-200"
+              className="opacity-40 grayscale dark:opacity-20 dark:brightness-200"
             />
           </div>
         </div>
