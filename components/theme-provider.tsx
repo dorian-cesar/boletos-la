@@ -10,7 +10,7 @@ export function ThemeProvider({
 }: React.ComponentProps<typeof NextThemesProvider>) {
   const pathname = usePathname();
   const isParaguay = pathname?.startsWith("/paraguay");
-  const forcedTheme = isParaguay ? undefined : "dark";
+  const forcedTheme = isParaguay ? undefined : "light";
 
   return (
     <NextThemesProvider {...props} forcedTheme={forcedTheme}>

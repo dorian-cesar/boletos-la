@@ -133,7 +133,7 @@ export function HeroSection({ country }: HeroSectionProps) {
   return (
     <section className="relative min-h-[calc(125vh-72px)] flex items-center justify-center overflow-hidden py-12 lg:py-20">
       {/* Background Image(s) with fading effect */}
-      <div className="absolute inset-0 bg-slate-50 dark:bg-[#0f1419]">
+      <div className="absolute inset-0 bg-[#0f1419]">
         {backgroundImages.map((src, index) => (
           <div 
             key={index}
@@ -164,17 +164,17 @@ export function HeroSection({ country }: HeroSectionProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Left Column: Text & Subtitles */}
           <div
-            className="lg:col-span-6 text-left text-slate-900 dark:text-white max-w-2xl"
+            className="lg:col-span-6 text-left text-white max-w-2xl"
             style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.6)" }}
           >
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white mb-6 leading-tight tracking-tight drop-shadow-sm">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-tight tracking-tight drop-shadow-sm">
               {currentHero.title}
             </h1>
             <div className="space-y-2 mt-6">
-              <p className="text-base md:text-lg font-bold tracking-widest text-slate-900 dark:text-white/95 uppercase">
+              <p className="text-base md:text-lg font-bold tracking-widest text-white/95 uppercase">
                 {currentHero.subtitle1}
               </p>
-              <p className="text-base md:text-lg font-bold tracking-widest text-slate-900 dark:text-white/95 uppercase">
+              <p className="text-base md:text-lg font-bold tracking-widest text-white/95 uppercase">
                 {currentHero.subtitle2}
               </p>
             </div>
