@@ -1,0 +1,117 @@
+"use client";
+
+import React, { useRef, useEffect } from "react";
+import { format, addDays, subDays, parse, startOfDay } from "date-fns";
+import { es } from "date-fns/locale";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+
+interface DateNavbarProps {
+  currentDate: string; // 'yyyy-MM-dd'
+  onSelectDate: (date: string) => void;
+  className?: string;
+}
+
+export function DateNavbar({
+  currentDate,
+  onSelectDate,
+  className,
+}: DateNavbarProps) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Parse current date to ensure valid Date object
+  let parsedCurrentDate = new Date();
+  try {
+    if (currentDate) {
+      parsedCurrentDate = parse(currentDate, "yyyy-MM-dd", new Date());
+    }
+  } catch (e) {
+    console.error("Invalid date string", currentDate);
+  }
+
+  // Generate 7 days around the current date (-2 days, current, +4 days) or today onwards
+  const today = startOfDay(new Date());
+  
+  // We don't want to show dates before today
+  let startDate = subDays(parsedCurrentDate, 2);
+  if (startDate < today) {
+    startDate = today;
+  }
+
+  // Generate dates centered around the selected date, or starting from today
+  const dates = Array.from({ length: 30 }, (_, i) => {
+    return addDays(startDate, i);
+  });
+
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -150, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 150, behavior: "smooth" });
+    }
+  };
+
+  return (
+    <div className={cn("flex items-center w-full gap-2 relative", className)}>
+      <Button
+        variant="outline"
+        size="icon"
+        className="h-14 w-10 shrink-0 bg-white dark:bg-slate-800 rounded-l-xl rounded-r-none border-r-0 hover:bg-slate-50 dark:hover:bg-slate-700 hidden sm:flex border-slate-300 dark:border-slate-700"
+        onClick={scrollLeft}
+      >
+        <ChevronLeft className="h-5 w-5" />
+      </Button>
+
+      <div
+        ref={scrollRef}
+        className="flex-1 flex overflow-x-auto no-scrollbar gap-2 scroll-smooth py-1 px-1 sm:px-0"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        {dates.map((date) => {
+          const dateStr = format(date, "yyyy-MM-dd");
+          const isSelected = dateStr === currentDate;
+          
+          // Capitalize first letter of day
+          const dayName = format(date, "EEE. d", { locale: es });
+          const displayDay = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+
+          return (
+            <button
+              key={dateStr}
+              onClick={() => onSelectDate(dateStr)}
+              className={cn(
+                "flex-shrink-0 flex flex-col items-center justify-center min-w-[100px] sm:min-w-[120px] h-14 rounded-xl transition-all border duration-200",
+                isSelected
+                  ? "bg-secondary text-secondary-foreground border-secondary shadow-md font-bold transform scale-[1.02]"
+                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-secondary hover:bg-slate-50 dark:hover:bg-slate-700"
+              )}
+            >
+              <span className="text-sm sm:text-base font-semibold">{displayDay}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <Button
+        variant="outline"
+        size="icon"
+        className="h-14 w-10 shrink-0 bg-white dark:bg-slate-800 rounded-r-xl rounded-l-none border-l-0 hover:bg-slate-50 dark:hover:bg-slate-700 hidden sm:flex border-slate-300 dark:border-slate-700"
+        onClick={scrollRight}
+      >
+        <ChevronRight className="h-5 w-5" />
+      </Button>
+      
+      {/* Hide scrollbar for Chrome/Safari */}
+      <style dangerouslySetInnerHTML={{__html: `
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+      `}} />
+    </div>
+  );
+}
