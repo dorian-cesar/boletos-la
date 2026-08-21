@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { trackViewContent, trackInitiateCheckout } from "@/lib/meta-pixel";
 import { format, parse } from "date-fns";
 import { es } from "date-fns/locale";
@@ -44,7 +44,7 @@ const amenityIcons: Record<
   "Aire Acondicionado": Coffee,
 };
 
-export default function ServicesPage() {
+function ServicesPageContent() {
   const router = useRouter();
   const [expandedTrip, setExpandedTrip] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -56,6 +56,7 @@ export default function ServicesPage() {
     departureDate,
     returnDate,
     tripType,
+    pax,
     selectedOutboundTrip,
     setSelectedOutboundTrip,
     selectedReturnTrip,
@@ -65,6 +66,10 @@ export default function ServicesPage() {
     destinationTitle,
     setDepartureDate,
     setReturnDate,
+    setOrigin,
+    setDestination,
+    setTripType,
+    setPax,
   } = useBookingStore();
 
   const [showingReturn, setShowingReturn] = useState(false);
@@ -83,6 +88,73 @@ export default function ServicesPage() {
     setMounted(true);
     setStep(1);
   }, [setStep]);
+
+  const searchParams = useSearchParams();
+  const originParam = searchParams.get('originId');
+  const destinationParam = searchParams.get('destinationId');
+  const dateParam = searchParams.get('date');
+  const returnParam = searchParams.get('returnDate');
+  const paxParam = searchParams.get('pax');
+
+  useEffect(() => {
+    if (originParam || destinationParam || dateParam) {
+      if (originParam) {
+        if (origin !== originParam) setOrigin(originParam);
+      } else {
+        if (origin !== "") setOrigin("");
+      }
+
+      if (destinationParam && destination !== destinationParam) setDestination(destinationParam);
+      
+      const targetDate = dateParam || format(new Date(), "yyyy-MM-dd");
+      if (departureDate !== targetDate) setDepartureDate(targetDate);
+      
+      if (returnParam) {
+        if (returnDate !== returnParam) setReturnDate(returnParam);
+        if (tripType !== "round-trip") setTripType("round-trip");
+      } else {
+        if (tripType !== "one-way") setTripType("one-way");
+      }
+      
+      if (paxParam && !isNaN(Number(paxParam))) setPax(Number(paxParam));
+    }
+  }, [
+    originParam, destinationParam, dateParam, returnParam, paxParam,
+    origin, destination, departureDate, returnDate, tripType,
+    setOrigin, setDestination, setDepartureDate, setReturnDate, setTripType, setPax
+  ]);
+
+  // Sincronizar store a URL cuando cambian desde el widget
+  useEffect(() => {
+    if (mounted && origin && destination && departureDate) {
+      const currentParams = new URLSearchParams(window.location.search);
+      let changed = false;
+
+      if (currentParams.get('originId') !== origin) { currentParams.set('originId', origin); changed = true; }
+      if (currentParams.get('destinationId') !== destination) { currentParams.set('destinationId', destination); changed = true; }
+      
+      const todayStr = format(new Date(), "yyyy-MM-dd");
+      if (departureDate === todayStr) {
+        if (currentParams.has('date')) { currentParams.delete('date'); changed = true; }
+      } else {
+        if (currentParams.get('date') !== departureDate) { currentParams.set('date', departureDate); changed = true; }
+      }
+      
+      if (tripType === 'round-trip' && returnDate) {
+        if (currentParams.get('returnDate') !== returnDate) { currentParams.set('returnDate', returnDate); changed = true; }
+      } else if (currentParams.has('returnDate')) {
+        currentParams.delete('returnDate');
+        changed = true;
+      }
+
+      const paxStr = String(pax);
+      if (currentParams.get('pax') !== paxStr) { currentParams.set('pax', paxStr); changed = true; }
+
+      if (changed) {
+        router.replace(`${window.location.pathname}?${currentParams.toString()}`, { scroll: false });
+      }
+    }
+  }, [origin, destination, departureDate, returnDate, pax, tripType, mounted, router]);
 
   useEffect(() => {
     if (!searchLoading && currentTrips && currentTrips.length > 0) {
@@ -474,5 +546,19 @@ export default function ServicesPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ServicesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419]">
+        <div className="text-center text-slate-900 dark:text-white animate-pulse">
+          Cargando búsqueda...
+        </div>
+      </div>
+    }>
+      <ServicesPageContent />
+    </Suspense>
   );
 }
