@@ -97,9 +97,11 @@ function ComingSoonModal({
 function CityMarqueeText({
  text,
  placeholder,
+ orientation,
 }: {
  text?: string;
  placeholder: string;
+ orientation?: "horizontal" | "vertical";
 }) {
  const containerRef = useRef<HTMLDivElement>(null);
  const textRef = useRef<HTMLSpanElement>(null);
@@ -149,7 +151,7 @@ function CityMarqueeText({
  : undefined
  }
  className={cn(
- "text-gray-900 text-lg lg:text-base font-semibold whitespace-nowrap inline-block transition-transform",
+ cn("text-lg lg:text-base font-semibold whitespace-nowrap inline-block transition-transform", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-gray-900"),
  isPlaceholder && "text-gray-400 font-normal",
  shouldAnimate && "animate-dynamic-marquee"
  )}
@@ -422,7 +424,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
 
  {/* Origin */}
  <div className="flex-1 min-w-0">
- <Label className="text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold text-slate-900 mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]">
+ <Label className={cn("text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-slate-900")}>
  Origen
  </Label>
  <Popover
@@ -437,20 +439,21 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  role="combobox"
  disabled={stopsLoading}
  className={cn(
- cn("w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-primary/50", orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white border-slate-300 dark:border-white/40 hover:bg-slate-50 "),
+ cn("w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-primary/50", orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white text-slate-900 border-slate-300 dark:border-white/40 hover:bg-slate-50 "),
  stopsLoading ? "cursor-not-allowed opacity-60" : "",
  )}
  >
  <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
  <MapPin className="h-5 w-5 text-primary flex-shrink-0" />
  <CityMarqueeText
- text={
- origin
- ? stops.find((c) => String(c.id) === String(origin))?.name
- : undefined
- }
- placeholder={stopsLoading ? "Cargando ciudades..." : "Selecciona origen"}
- />
+  text={
+  origin
+  ? stops.find((c) => String(c.id) === String(origin))?.name
+  : undefined
+  }
+  placeholder={stopsLoading ? "Cargando ciudades..." : "Selecciona origen"}
+  orientation={orientation}
+  />
  </div>
  <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" />
  </Button>
@@ -488,11 +491,11 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  setDestinationTitle("");
  setOriginOpen(false);
  }}
- className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-primary data-[selected=true]:text-slate-900 hover:bg-primary hover:text-slate-900 transition-colors duration-150 rounded-lg px-2"
+ className={cn("cursor-pointer py-3 group transition-colors duration-150 rounded-lg px-2", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 data-[selected=true]:bg-primary data-[selected=true]:text-slate-900 hover:bg-primary hover:text-slate-900" : "text-slate-900 data-[selected=true]:bg-primary data-[selected=true]:text-slate-900 hover:bg-primary hover:text-slate-900")}
  >
  <MapPin className="h-4 w-4 mr-2 text-chart-4 shrink-0 group-hover:text-slate-900 group-data-[selected=true]:text-slate-900 transition-colors" strokeWidth={2.2} />
  <div className="min-w-0">
- <p className="font-bold truncate tracking-wide text-slate-900 group-hover:text-slate-900 group-data-[selected=true]:text-slate-900 [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
+ <p className={cn("font-bold truncate tracking-wide [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 group-hover:text-slate-900 group-data-[selected=true]:text-slate-900" : "text-slate-900 group-hover:text-slate-900 group-data-[selected=true]:text-slate-900")}>
  {city.name}
  </p>
  </div>
@@ -543,7 +546,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
 
  {/* Destination */}
  <div className="flex-1 min-w-0">
- <Label className="text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold text-slate-900 mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]">
+ <Label className={cn("text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-slate-900")}>
  Destino
  </Label>
  <Popover
@@ -558,22 +561,23 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  role="combobox"
  disabled={stopsLoading}
  className={cn(
- cn("w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-secondary/50", orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white border-slate-300 dark:border-white/40 hover:bg-slate-50 "),
+ cn("w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-secondary/50", orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white text-slate-900 border-slate-300 dark:border-white/40 hover:bg-slate-50 "),
  stopsLoading ? "cursor-not-allowed opacity-60" : "",
  )}
  >
  <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
  <MapPin className="h-5 w-5 text-secondary flex-shrink-0" />
- <CityMarqueeText
- text={
- destination
- ? stops.find(
- (c) => String(c.id) === String(destination),
- )?.name
- : undefined
- }
- placeholder={stopsLoading ? "Cargando ciudades..." : "Selecciona destino"}
- />
+  <CityMarqueeText
+  text={
+  destination
+  ? stops.find((c) => String(c.id) === String(destination))?.name
+  : undefined
+  }
+  placeholder={
+  stopsLoading ? "Cargando ciudades..." : "Selecciona destino"
+  }
+  orientation={orientation}
+  />
  </div>
  <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" />
  </Button>
@@ -613,11 +617,11 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  setDestinationTitle(city.name);
  setDestinationOpen(false);
  }}
-className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-secondary data-[selected=true]:text-black hover:bg-secondary hover:text-black transition-colors duration-150 rounded-lg px-2"
+className={cn("cursor-pointer py-3 group transition-colors duration-150 rounded-lg px-2", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 data-[selected=true]:bg-secondary data-[selected=true]:text-black hover:bg-secondary hover:text-black" : "text-slate-900 data-[selected=true]:bg-secondary data-[selected=true]:text-black hover:bg-secondary hover:text-black")}
  >
  <MapPin className="h-4 w-4 mr-2 text-secondary shrink-0 group-hover:text-black group-data-[selected=true]:text-black transition-colors" strokeWidth={2.2} />
  <div className="min-w-0">
- <p className="font-bold truncate tracking-wide text-slate-900 group-hover:text-black group-data-[selected=true]:text-black [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all">
+ <p className={cn("font-bold truncate tracking-wide [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none] transition-all", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 group-hover:text-black group-data-[selected=true]:text-black" : "text-slate-900 group-hover:text-black group-data-[selected=true]:text-black")}>
  {city.name}
  </p>
  {(() => {
@@ -657,7 +661,7 @@ className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-seco
 
  {/* Fecha de Ida */}
  <div className="flex-1 min-w-0">
- <Label className="text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold text-slate-900 mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]">
+ <Label className={cn("text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-slate-900")}>
  Fecha de Ida
  </Label>
  <Popover
@@ -667,14 +671,14 @@ className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-seco
  <PopoverTrigger asChild>
  <Button
  variant="outline"
- className={cn("w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-secondary/50", orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white border-slate-300 dark:border-white/40 hover:bg-slate-50 ")}
+ className={cn("w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-secondary/50", orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white text-slate-900 border-slate-300 dark:border-white/40 hover:bg-slate-50 ")}
  >
  <div className="flex items-center gap-3 min-w-0">
  <Calendar className="h-5 w-5 text-secondary flex-shrink-0" />
  <span
  className={cn(
  !departureDate && "text-gray-400",
- "text-gray-900 text-lg lg:text-base font-semibold truncate",
+ cn("text-lg lg:text-base font-semibold truncate", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-gray-900"),
  )}
  >
  {departureDate
@@ -712,21 +716,21 @@ className="cursor-pointer py-3 group text-slate-900 data-[selected=true]:bg-seco
  {/* Fecha de Vuelta */}
  {tripType === "round-trip" && (
  <div className="flex-1 min-w-0 animate-in fade-in slide-in-from-right-5 duration-500">
- <Label className="text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold text-slate-900 mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]">
+ <Label className={cn("text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold mb-2 lg:mb-1 block [text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] lg:[text-shadow:none]", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-slate-900")}>
  Fecha de Vuelta
  </Label>
  <Popover open={returnDateOpen} onOpenChange={setReturnDateOpen}>
  <PopoverTrigger asChild>
  <Button
  variant="outline"
- className={cn("w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-secondary/50", orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white border-slate-300 dark:border-white/40 hover:bg-slate-50 ")}
+ className={cn("w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-secondary/50", orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white text-slate-900 border-slate-300 dark:border-white/40 hover:bg-slate-50 ")}
  >
  <div className="flex items-center gap-3 min-w-0">
  <Calendar className="h-5 w-5 text-secondary flex-shrink-0" />
  <span
  className={cn(
  !returnDate && "text-gray-400",
- "text-gray-900 text-lg lg:text-base font-semibold truncate",
+ cn("text-lg lg:text-base font-semibold truncate", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-gray-900"),
  )}
  >
  {returnDate
