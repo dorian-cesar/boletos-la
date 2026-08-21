@@ -62,7 +62,7 @@ export function ParaguayFooter() {
                 name="newsletter-subscribe-email"
                 autoComplete="newsletter-email"
                 placeholder="Tu correo electrónico"
-                className="bg-black/10 dark:bg-white/10 border-black/10 dark:border-white/20 text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-white/50 h-12 w-full lg:w-80"
+                className="bg-black/10 dark:bg-white/10 border-black/10 dark:border-white/20 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/50 h-12 w-full lg:w-80"
               />
               <Button className="bg-secondary hover:bg-secondary/90 text-secondary-foreground h-12 px-6">
                 Suscribirse
@@ -84,7 +84,7 @@ export function ParaguayFooter() {
                 alt="Boletos.la Logo"
                 width={140}
                 height={80}
-                className="h-auto transition-transform duration-300 group-hover:scale-105 mb-1"
+                className="h-auto transition-transform duration-300 group-hover:scale-105 mb-1 brightness-0 dark:brightness-100"
                 loading="eager"
               />
             </Link>
@@ -211,7 +211,7 @@ export function ParaguayFooter() {
                   alt="Bancard"
                   width={110}
                   height={30}
-                  className="h-8 w-auto opacity-80 hover:opacity-100 transition-opacity object-contain"
+                  className="h-8 w-auto opacity-80 hover:opacity-100 transition-opacity object-contain brightness-0 dark:brightness-100"
                 />
               </div>
             </div>
@@ -230,7 +230,7 @@ export function ParaguayFooter() {
                 alt="Boletos.la"
                 width={90}
                 height={24}
-                className="opacity-70 mb-1 brightness-0 invert"
+                className="opacity-70 mb-1 brightness-0 dark:brightness-100 dark:invert-0"
               />
               {/* <span>{new Date().getFullYear()}</span> */}
               <span>|</span>

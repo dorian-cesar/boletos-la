@@ -535,7 +535,7 @@ export function PassengerForm({
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleSearch();
               }}
-              className="h-11 pr-10 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-white/40 w-full"
+              className="h-11 pr-10 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/40 w-full"
               disabled={isSearching}
             />
             {docNumber && (
@@ -646,7 +646,7 @@ export function PassengerForm({
                   }
                   onBlur={(e) => handleLocalBlur("firstName", e.target.value)}
                   className={cn(
-                    "h-11 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-white/40 w-full",
+                    "h-11 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/40 w-full",
                     firstNameError && "border-destructive",
                     !firstNameError &&
                       localData.firstName &&
@@ -675,7 +675,7 @@ export function PassengerForm({
                   }
                   onBlur={(e) => handleLocalBlur("lastName", e.target.value)}
                   className={cn(
-                    "h-11 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-white/40 w-full",
+                    "h-11 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/40 w-full",
                     lastNameError && "border-destructive",
                     !lastNameError && localData.lastName && "border-green-500",
                   )}
@@ -701,7 +701,7 @@ export function PassengerForm({
                   onChange={(e) => handleLocalChange("phone", e.target.value)}
                   onBlur={(e) => handleLocalBlur("phone", e.target.value)}
                   className={cn(
-                    "h-11 pl-10 pr-10 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-white/40 w-full",
+                    "h-11 pl-10 pr-10 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/40 w-full",
                     phoneError && "border-destructive",
                     !phoneError && localData.phone && "border-green-500",
                   )}
@@ -734,7 +734,7 @@ export function PassengerForm({
                   onChange={(e) => handleLocalChange("email", e.target.value)}
                   onBlur={(e) => handleLocalBlur("email", e.target.value)}
                   className={cn(
-                    "h-11 pl-10 pr-10 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-white/40 w-full",
+                    "h-11 pl-10 pr-10 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/40 w-full",
                     emailError && "border-destructive",
                     !emailError && localData.email && "border-green-500",
                   )}
@@ -760,7 +760,7 @@ export function PassengerForm({
                     handleLocalChange("occupation", e.target.value)
                   }
                   onBlur={(e) => handleLocalBlur("occupation", e.target.value)}
-                  className="h-11 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-white/40 w-full"
+                  className="h-11 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/40 w-full"
                 />
               </FieldWrapper>
 
@@ -779,7 +779,7 @@ export function PassengerForm({
                     handleLocalChange("birthDate", e.target.value)
                   }
                   onBlur={(e) => handleLocalBlur("birthDate", e.target.value)}
-                  className="h-11 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-900 dark:text-white/40 w-full max-w-full overflow-hidden [color-scheme:dark]"
+                  className="h-11 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/40 w-full max-w-full overflow-hidden [color-scheme:dark]"
                 />
               </FieldWrapper>
 

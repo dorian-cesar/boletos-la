@@ -568,7 +568,7 @@ export default function CheckoutPage() {
             {/* Passenger Summary (read-only) */}
             <div className="space-y-6 w-full">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <h2 className="text-xl sm:text-2xl font-bold animate-fade-in text-background">
+                <h2 className="text-xl sm:text-2xl font-bold animate-fade-in text-slate-900 dark:text-white">
                   Resumen de Pasajeros
                 </h2>
                 {!isFormValid && (
@@ -592,7 +592,7 @@ export default function CheckoutPage() {
                     return (
                       <Card
                         key={`passenger-${i}`}
-                        className="p-4 bg-background/5 backdrop-blur-sm border-background/20 animate-fade-in"
+                        className="p-4 bg-white dark:bg-white/5 backdrop-blur-sm border-slate-200 dark:border-white/20 animate-fade-in"
                         style={{ animationDelay: `${i * 80}ms` }}
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
@@ -602,11 +602,11 @@ export default function CheckoutPage() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
-                                <p className="font-bold text-background text-base truncate">
+                                <p className="font-bold text-slate-900 dark:text-white text-base truncate">
                                   {hasData ? (
                                     `${p.firstName} ${p.lastName}`
                                   ) : (
-                                    <span className="text-background/40 italic font-normal">
+                                    <span className="text-slate-500 dark:text-white/40 italic font-normal">
                                       Sin datos
                                     </span>
                                   )}
@@ -621,7 +621,7 @@ export default function CheckoutPage() {
                                   </Badge>
                                 )}
                               </div>
-                              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-background/60 mt-1">
+                              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-600 dark:text-white/60 mt-1">
                                 {p?.documentNumber && (
                                   <span className="flex items-center gap-1.5">
                                     <span>C.I. {p.documentNumber}</span>
@@ -629,13 +629,13 @@ export default function CheckoutPage() {
                                 )}
                                 {p?.email && (
                                   <span className="flex items-center gap-1.5 truncate max-w-[160px] sm:max-w-[200px]">
-                                    <span className="w-1 h-1 rounded-full bg-background/30" />
+                                    <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-white/30" />
                                     <span className="truncate">{p.email}</span>
                                   </span>
                                 )}
                                 {p?.phone && (
                                   <span className="flex items-center gap-1.5">
-                                    <span className="w-1 h-1 rounded-full bg-background/30" />
+                                    <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-white/30" />
                                     <span>{p.phone}</span>
                                   </span>
                                 )}
@@ -644,12 +644,12 @@ export default function CheckoutPage() {
                           </div>
 
                           {/* Asientos */}
-                          <div className="flex flex-col gap-2 shrink-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-background/10">
+                          <div className="flex flex-col gap-2 shrink-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-200 dark:border-white/10">
                             <div className="flex items-center gap-2">
                               <span className="bg-primary/20 text-primary text-[10px] px-2 py-0.5 rounded uppercase font-bold w-16 text-center border border-primary/20">
                                 Ida
                               </span>
-                              <span className="text-sm font-medium text-background">
+                              <span className="text-sm font-medium text-slate-900 dark:text-white">
                                 Asiento {outboundSeat.number}
                               </span>
                             </div>
@@ -658,7 +658,7 @@ export default function CheckoutPage() {
                                 <span className="bg-secondary/20 text-secondary text-[10px] px-2 py-0.5 rounded uppercase font-bold w-16 text-center border border-secondary/20">
                                   Regreso
                                 </span>
-                                <span className="text-sm font-medium text-background">
+                                <span className="text-sm font-medium text-slate-900 dark:text-white">
                                   Asiento {returnSeat.number}
                                 </span>
                               </div>
