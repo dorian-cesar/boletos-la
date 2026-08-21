@@ -227,37 +227,40 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  };
 
  const filteredStops = useMemo(() => {
- if (!origin || !departureDate) return stops;
- if (destLoading) return [];
+  if (orientation === "vertical") return stops;
+  if (!origin || !departureDate) return stops;
+  if (destLoading) return [];
 
- // Si llega vacío (0), no filtramos agresivamente
- if (availableDestinations.length === 0) return stops;
+  // Si llega vacío (0), no filtramos agresivamente
+  if (availableDestinations.length === 0) return stops;
 
- // Filtramos comparando los IDs
- return stops
- .filter(stop => {
- return availableDestinations.some(d => {
- if (typeof d === 'string') return d === String(stop.id);
- return String((d as any).destinationId) === String(stop.id);
- });
- })
- .sort((a, b) => {
- const countA = getStopDynamicCount(a.id);
- const countB = getStopDynamicCount(b.id);
+  // Filtramos comparando los IDs
+  return stops
+  .filter(stop => {
+  return availableDestinations.some(d => {
+  if (typeof d === 'string') return d === String(stop.id);
+  return String((d as any).destinationId) === String(stop.id);
+  });
+  })
+  .sort((a, b) => {
+  const countA = getStopDynamicCount(a.id);
+  const countB = getStopDynamicCount(b.id);
 
- // 1. Destinos con servicios disponibles primero
- if (countA > 0 && countB === 0) return -1;
- if (countA === 0 && countB > 0) return 1;
+  // 1. Destinos con servicios disponibles primero
+  if (countA > 0 && countB === 0) return -1;
+  if (countA === 0 && countB > 0) return 1;
 
- // 2. Mayor cantidad de servicios primero
- if (countA > 0 && countB > 0 && countB !== countA) {
- return countB - countA;
- }
+  // 2. Destinos con "salidas finalizadas" luego
+  const hasFinishedA = (availableDestinations.find(d => String((d as any).destinationId) === String(a.id)) as any)?.times?.length > 0;
+  const hasFinishedB = (availableDestinations.find(d => String((d as any).destinationId) === String(b.id)) as any)?.times?.length > 0;
+  
+  if (hasFinishedA && !hasFinishedB) return -1;
+  if (!hasFinishedA && hasFinishedB) return 1;
 
- // 3. Alfabético por nombre
- return a.name.localeCompare(b.name);
- });
- }, [stops, origin, departureDate, destLoading, availableDestinations]);
+  // 3. Alfabético por nombre
+  return a.name.localeCompare(b.name);
+  });
+  }, [stops, origin, departureDate, destLoading, availableDestinations, orientation]);
 
 
 
@@ -465,10 +468,10 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  <Command className="bg-transparent">
  <CommandInput
  placeholder="Buscá ciudad..."
- className="h-12 bg-transparent border-b border-black/20 text-gray-700 placeholder:text-gray-500"
+ className={cn("h-12 bg-transparent border-b transition-colors", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 border-slate-200 dark:border-slate-700 placeholder:text-slate-500 dark:placeholder:text-slate-400" : "text-gray-700 border-black/20 placeholder:text-gray-500")}
  />
  <CommandList>
- <CommandEmpty className="text-gray-500">
+ <CommandEmpty className={cn("text-gray-500", orientation === "vertical" && "dark:text-slate-400")}>
  {stopsLoading || destLoading
  ? "Cargando ciudades..."
  : stopsError
@@ -589,10 +592,10 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  <Command className="bg-transparent">
  <CommandInput
  placeholder="Buscá ciudad..."
- className="h-12 bg-transparent border-b border-black/20 text-gray-700 placeholder:text-gray-500"
+ className={cn("h-12 bg-transparent border-b transition-colors", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 border-slate-200 dark:border-slate-700 placeholder:text-slate-500 dark:placeholder:text-slate-400" : "text-gray-700 border-black/20 placeholder:text-gray-500")}
  />
  <CommandList>
- <CommandEmpty className="text-gray-500">
+ <CommandEmpty className={cn("text-gray-500", orientation === "vertical" && "dark:text-slate-400")}>
  {stopsLoading
  ? "Cargando ciudades..."
  : stopsError
@@ -625,30 +628,31 @@ className={cn("cursor-pointer py-3 group transition-colors duration-150 rounded-
  {city.name}
  </p>
  {(() => {
- const destData = availableDestinations.find(d => {
- if (typeof d === 'string') return d === String(city.id);
- return String((d as any).destinationId) === String(city.id);
- });
- const isObject = destData && typeof destData === 'object';
- const dynamicCount = getStopDynamicCount(city.id);
+  if (orientation === "vertical") return null;
+  const destData = availableDestinations.find(d => {
+  if (typeof d === 'string') return d === String(city.id);
+  return String((d as any).destinationId) === String(city.id);
+  });
+  const isObject = destData && typeof destData === 'object';
+  const dynamicCount = getStopDynamicCount(city.id);
 
- if (isObject) {
- if (dynamicCount > 0) {
- return (
-<p className={cn("text-xs font-medium mt-0.5 transition-all", orientation === "horizontal" ? "text-slate-700 group-hover:text-black group-data-[selected=true]:text-black [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none]" : "text-slate-700 dark:text-slate-400 group-hover:text-black group-data-[selected=true]:text-black")}>
- {dynamicCount} {dynamicCount === 1 ? 'servicio' : 'servicios'}
- </p>
- );
- } else if ((destData as any).times?.length > 0) {
- return (
- <p className={cn("text-xs font-semibold mt-0.5 transition-all", orientation === "horizontal" ? "text-red-600 group-hover:text-red-900 group-data-[selected=true]:text-red-900 [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none]" : "text-red-600 dark:text-red-400 group-hover:text-red-900 group-data-[selected=true]:text-red-900")}>
- Salidas finalizadas por hoy
- </p>
- );
- }
- }
- return null;
- })()}
+  if (isObject) {
+  if (dynamicCount > 0) {
+  return (
+  <p className={cn("text-xs font-medium mt-0.5 transition-all", orientation === "horizontal" ? "text-slate-700 group-hover:text-black group-data-[selected=true]:text-black [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none]" : "text-slate-700 dark:text-slate-400 group-hover:text-black group-data-[selected=true]:text-black")}>
+  {dynamicCount} {dynamicCount === 1 ? 'servicio' : 'servicios'}
+  </p>
+  );
+  } else if ((destData as any).times?.length > 0) {
+  return (
+  <p className={cn("text-xs font-semibold mt-0.5 transition-all", orientation === "horizontal" ? "text-red-600 group-hover:text-red-900 group-data-[selected=true]:text-red-900 [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none]" : "text-red-600 dark:text-red-400 group-hover:text-red-900 group-data-[selected=true]:text-red-900")}>
+  Salidas finalizadas por hoy
+  </p>
+  );
+  }
+  }
+  return null;
+  })()}
  </div>
  </CommandItem>
  ))}
