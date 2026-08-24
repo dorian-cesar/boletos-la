@@ -854,15 +854,28 @@ export default function SeatsPage() {
                   )}
 
                   {!canContinue && (
-                    <p className="text-xs md:text-sm text-slate-900 dark:text-white/70 mt-3 text-center">
-                      {hasExceededLimit
-                        ? `Máximo ${maxAllowed} asientos permitidos`
-                        : currentSelectedSeats.length === 0
-                          ? "Elegí al menos 1 asiento para continuar"
-                          : !selectingReturn && !arePassengersComplete
-                            ? "Completá los datos de todos los pasajeros"
-                            : "Elegí los asientos de regreso"}
-                    </p>
+                    <div className="mt-3">
+                      {hasExceededLimit ? (
+                        <p className="text-xs md:text-sm text-destructive text-center font-medium animate-pulse">
+                          Máximo {maxAllowed} asientos permitidos
+                        </p>
+                      ) : currentSelectedSeats.length === 0 ? (
+                        <p className="text-xs md:text-sm text-slate-900 dark:text-white/70 text-center">
+                          Elegí al menos 1 asiento para continuar
+                        </p>
+                      ) : !selectingReturn && !arePassengersComplete ? (
+                        <div className="flex items-center gap-2 bg-orange-500/15 text-orange-600 dark:text-orange-400 p-3 rounded-lg border border-orange-500/30 animate-pulse mt-2">
+                          <AlertCircle className="h-5 w-5 shrink-0" />
+                          <p className="text-sm font-bold">
+                            Completá los datos de todos los pasajeros
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="text-xs md:text-sm text-slate-900 dark:text-white/70 text-center">
+                          Elegí los asientos de regreso
+                        </p>
+                      )}
+                    </div>
                   )}
                 </Card>
 
@@ -871,12 +884,16 @@ export default function SeatsPage() {
                   <Button
                     variant="ghost"
                     onClick={() => {
-                      router.push("/paraguay/booking/services");
+                      if (selectingReturn) {
+                        setSelectingReturn(false);
+                      } else {
+                        router.push("/paraguay/booking/services");
+                      }
                     }}
                     className="text-slate-900 dark:text-white/60 hover:text-slate-900 dark:text-white hover:bg-black/5 dark:bg-white/5 w-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 h-12"
                   >
                     <ArrowLeft className="h-4 w-4 mr-2" />
-                    Volver a seleccionar servicio
+                    {selectingReturn ? "Volver a asientos de ida" : "Volver a seleccionar servicio"}
                   </Button>
                 </div>
               </div>
