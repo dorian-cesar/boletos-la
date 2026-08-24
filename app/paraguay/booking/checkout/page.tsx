@@ -335,7 +335,6 @@ export default function CheckoutPage() {
 
       <div className="relative z-10 w-full">
         <BookingProgress />
-
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="max-w-4xl mx-auto flex flex-col gap-6 lg:gap-8">
             {/* Unified Resumen de Compra & Payment Section */}
@@ -534,7 +533,7 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-<div className="mt-4">
+                <div className="mt-4">
                   <Button
                     onClick={handlePayment}
                     disabled={
@@ -564,7 +563,6 @@ export default function CheckoutPage() {
                 </div>
               </div>
             </Card>
-
 
             {/* Passenger Summary (read-only) */}
             <div className="space-y-6 w-full">
@@ -688,7 +686,7 @@ export default function CheckoutPage() {
                         variant="ghost"
                         size="sm"
                         className="mt-2 h-7 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 px-2"
-                        onClick={() => router.push("/booking/seats")}
+                        onClick={() => router.push("/paraguay/booking/seats")}
                       >
                         ← Volver a asientos
                       </Button>
@@ -698,7 +696,17 @@ export default function CheckoutPage() {
               )}
               </div>
 
-      </div>
+              <div className="flex justify-start mt-2">
+                <Button
+                  variant="outline"
+                  onClick={() => router.push("/paraguay/booking/seats")}
+                  className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:bg-white/20 h-12 px-6"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Volver a Asientos
+                </Button>
+              </div>
+          </div>
         </div>
       </div>
 
