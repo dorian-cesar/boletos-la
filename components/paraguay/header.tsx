@@ -24,6 +24,21 @@ export function ParaguayHeader() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.includes("#")) {
+      const [, hash] = href.split("#");
+      if (pathname === "/paraguay" || pathname === "/") {
+        e.preventDefault();
+        setIsMobileMenuOpen(false);
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+          window.history.pushState(null, "", `/paraguay#${hash}`);
+        }
+      }
+    }
+  };
+
   return (
     <>
 
@@ -58,12 +73,14 @@ export function ParaguayHeader() {
               </Link>
               <Link
                 href="/paraguay#servicios"
+                onClick={(e) => handleLinkClick(e, "/paraguay#servicios")}
                 className="text-foreground hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
               >
                 Servicios
               </Link>
               <Link
                 href="/paraguay#destinos"
+                onClick={(e) => handleLinkClick(e, "/paraguay#destinos")}
                 className="text-foreground hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
               >
                 Destinos
@@ -71,6 +88,7 @@ export function ParaguayHeader() {
 
                 <Link
                 href="/paraguay#contacto"
+                onClick={(e) => handleLinkClick(e, "/paraguay#contacto")}
                   className="text-foreground hover:text-[#00c7cc] transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#00c7cc] after:transition-all after:duration-300 hover:after:w-full"
                 >
                   Contacto
@@ -125,12 +143,14 @@ export function ParaguayHeader() {
             </Link>
             <Link
               href="/paraguay#servicios"
+              onClick={(e) => handleLinkClick(e, "/paraguay#servicios")}
               className="text-foreground hover:text-[#00c7cc] transition-colors font-medium py-2"
             >
               Servicios
             </Link>
             <Link
               href="/paraguay#destinos"
+              onClick={(e) => handleLinkClick(e, "/paraguay#destinos")}
               className="text-foreground hover:text-[#00c7cc] transition-colors font-medium py-2"
             >
               Destinos
@@ -138,10 +158,11 @@ export function ParaguayHeader() {
 
             <Link
               href="/paraguay#contacto"
-                  className="text-foreground hover:text-[#00c7cc] transition-colors font-medium py-2"
-                >
-                  Contacto
-                </Link>
+              onClick={(e) => handleLinkClick(e, "/paraguay#contacto")}
+              className="text-foreground hover:text-[#00c7cc] transition-colors font-medium py-2"
+            >
+              Contacto
+            </Link>
             <Link
               href="/paraguay/ayuda"
               className="text-foreground hover:text-[#00c7cc] transition-colors font-medium py-2"

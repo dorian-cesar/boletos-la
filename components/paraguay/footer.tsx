@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Facebook,
   Linkedin,
@@ -33,6 +34,22 @@ const socialLinks = [
 ];
 
 export function ParaguayFooter() {
+  const pathname = usePathname();
+
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.includes("#")) {
+      const [, hash] = href.split("#");
+      if (pathname === "/paraguay" || pathname === "/") {
+        e.preventDefault();
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+          window.history.pushState(null, "", `/paraguay#${hash}`);
+        }
+      }
+    }
+  };
+
   return (
     <footer
       id="contacto"
@@ -127,6 +144,7 @@ export function ParaguayFooter() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
+                    onClick={(e) => handleLinkClick(e, link.href)}
                     className="text-slate-900 dark:text-white/60 hover:text-primary transition-colors duration-300 flex items-center gap-2 group"
                   >
                     <ArrowRight className="h-4 w-4 opacity-0 -ml-6 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />
@@ -154,6 +172,7 @@ export function ParaguayFooter() {
                 <li key={city}>
                   <Link
                     href="/paraguay#destinos"
+                    onClick={(e) => handleLinkClick(e, "/paraguay#destinos")}
                     className="text-slate-900 dark:text-white/60 hover:text-primary transition-colors duration-300 flex items-center gap-2 group"
                   >
                     <MapPin className="h-4 w-4 text-primary/50 group-hover:text-primary transition-colors" />
