@@ -10,8 +10,8 @@ export default function PoliticaDePrivacidadPage() {
       <ParaguayHeader />
       
       {/* Background decorations matching the app's style */}
-      <div className="absolute top-[120px] inset-x-0 h-[500px] bg-gradient-to-b from-primary/20 to-transparent pointer-events-none" />
-      <div className="absolute top-[120px] left-0 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full pointer-events-none opacity-50" />
+      <div className="absolute top-0 inset-x-0 h-[500px] bg-gradient-to-b from-primary/20 to-transparent pointer-events-none" />
+      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full pointer-events-none opacity-50" />
       
       {/* Bottom decorations */}
       <div className="absolute bottom-0 inset-x-0 h-[500px] bg-gradient-to-t from-primary/20 to-transparent pointer-events-none" />
@@ -186,6 +186,7 @@ export default function PoliticaDePrivacidadPage() {
           </section>
         </div>
       </div>
+      <div className="w-full border-t border-slate-200 dark:border-white/10" />
       <ParaguayFooter />
       <ScrollToTop />
     </main>
