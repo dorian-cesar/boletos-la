@@ -356,80 +356,80 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  style={{ animationDelay: "0.6s" }}
  >
  <div className={cn(
-   "backdrop-blur-md rounded-3xl lg:rounded-[1.5rem] shadow-2xl p-6 sm:p-8 lg:px-6 lg:py-6 border relative overflow-hidden lg:overflow-visible w-full max-w-7xl mx-auto",
-   orientation === "vertical" ? "bg-white dark:bg-[#1e293b] border-slate-200 dark:border-slate-700/50" : "bg-white/80 border-white/60"
- )}>
- {/* Efecto de vidrio con gradiente sutil */}
- <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl pointer-events-none" />
+    "backdrop-blur-md rounded-3xl lg:rounded-[1.5rem] shadow-2xl p-6 sm:p-8 lg:px-6 lg:py-6 border relative overflow-hidden lg:overflow-visible w-full max-w-7xl mx-auto",
+    orientation === "vertical" ? "bg-white dark:bg-[#1e293b] border-slate-200 dark:border-slate-700/50" : "bg-white/90 border-white/60"
+  )}>
+  {/* Efecto de vidrio con gradiente sutil */}
+  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl pointer-events-none" />
 
- {/* Trip Type Toggle */}
- <div className="flex lg:hidden justify-center mb-8 relative z-10">
- <div className="inline-flex bg-slate-200/50 backdrop-blur-sm rounded-full p-1 border border-slate-300/50">
- <button
- onClick={() => setTripType("one-way")}
- className={cn(
- "px-6 py-2 text-sm sm:text-base rounded-full font-semibold transition-all duration-300 relative",
- tripType === "one-way"
-? "bg-secondary text-black shadow-md font-bold"
- : orientation === "vertical" ? "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800" : "text-slate-600 hover:text-slate-900 hover:bg-white/50 ",
- )}
- >
- Solo Ida
- </button>
- <button
- onClick={() => setTripType("round-trip")}
- className={cn(
- "px-6 py-2 text-sm sm:text-base rounded-full font-semibold transition-all duration-300 relative",
- tripType === "round-trip"
-? "bg-secondary text-black shadow-md font-bold"
- : orientation === "vertical" ? "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800" : "text-slate-600 hover:text-slate-900 hover:bg-white/50 ",
- )}
- >
- Ida y Vuelta
- </button>
- </div>
- </div>
+  {/* Trip Type Toggle */}
+  <div className="flex lg:hidden justify-center mb-8 relative z-10">
+  <div className="inline-flex bg-slate-200/50 dark:bg-slate-800/80 backdrop-blur-sm rounded-full p-1 border border-slate-300/50 dark:border-slate-700/50">
+  <button
+  onClick={() => setTripType("one-way")}
+  className={cn(
+  "px-6 py-2 text-sm sm:text-base rounded-full font-semibold transition-all duration-300 relative",
+  tripType === "one-way"
+ ? "bg-secondary text-black shadow-md font-bold"
+  : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-700/50",
+  )}
+  >
+  Solo Ida
+  </button>
+  <button
+  onClick={() => setTripType("round-trip")}
+  className={cn(
+  "px-6 py-2 text-sm sm:text-base rounded-full font-semibold transition-all duration-300 relative",
+  tripType === "round-trip"
+ ? "bg-secondary text-black shadow-md font-bold"
+  : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-700/50",
+  )}
+  >
+  Ida y Vuelta
+  </button>
+  </div>
+  </div>
 
- {/* Search Fields - Responsive con mismo ancho */}
- <div className={cn("flex flex-col gap-4 relative z-10 items-stretch w-full", orientation === 'horizontal' ? "lg:flex-row lg:gap-3 lg:items-end" : "")}>
- {/* Trip Type Selector - Desktop inline */}
- <div className={cn("hidden flex-col flex-shrink-0", orientation === 'horizontal' ? "lg:flex" : "")}>
- <Label className="text-[13px] font-bold text-slate-900 mb-1 block">
- Tipo de viaje
- </Label>
- <div className={cn("inline-flex h-14 items-center rounded-xl p-1 border shadow-sm", orientation === "vertical" ? "bg-slate-50 dark:bg-slate-800 border-slate-300 dark:border-slate-700" : "bg-slate-50 border-slate-300 dark:border-white/40")}>
- <button
- type="button"
- onClick={() => setTripType("one-way")}
- className={cn(
- "px-3.5 h-full text-sm rounded-lg font-semibold transition-all duration-200 whitespace-nowrap flex items-center justify-center",
- tripType === "one-way"
- ? "bg-secondary text-black shadow-sm font-bold"
- : orientation === "vertical" ? "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white" : "text-slate-600 hover:text-slate-900 "
- )}
- >
- Solo Ida
- </button>
- <button
- type="button"
- onClick={() => setTripType("round-trip")}
- className={cn(
- "px-3.5 h-full text-sm rounded-lg font-semibold transition-all duration-200 whitespace-nowrap flex items-center justify-center",
- tripType === "round-trip"
- ? "bg-secondary text-black shadow-sm font-bold"
- : orientation === "vertical" ? "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white" : "text-slate-600 hover:text-slate-900 "
- )}
- >
- Ida y Vuelta
- </button>
- </div>
- </div>
+  {/* Search Fields - Responsive con mismo ancho */}
+  <div className={cn("flex flex-col gap-4 relative z-10 items-stretch w-full", orientation === 'horizontal' ? "lg:flex-row lg:gap-3 lg:items-end" : "")}>
+  {/* Trip Type Selector - Desktop inline */}
+  <div className={cn("hidden flex-col flex-shrink-0", orientation === 'horizontal' ? "lg:flex" : "")}>
+  <Label className={cn("text-[13px] font-bold mb-1 block", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-slate-900")}>
+  Tipo de viaje
+  </Label>
+  <div className={cn("inline-flex h-14 items-center rounded-xl p-1 border shadow-sm", orientation === "vertical" ? "bg-slate-50 dark:bg-slate-800 border-slate-300 dark:border-slate-700" : "bg-white/80 border-slate-300")}>
+  <button
+  type="button"
+  onClick={() => setTripType("one-way")}
+  className={cn(
+  "px-3.5 h-full text-sm rounded-lg font-semibold transition-all duration-200 whitespace-nowrap flex items-center justify-center",
+  tripType === "one-way"
+  ? "bg-secondary text-black shadow-sm font-bold"
+  : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+  )}
+  >
+  Solo Ida
+  </button>
+  <button
+  type="button"
+  onClick={() => setTripType("round-trip")}
+  className={cn(
+  "px-3.5 h-full text-sm rounded-lg font-semibold transition-all duration-200 whitespace-nowrap flex items-center justify-center",
+  tripType === "round-trip"
+  ? "bg-secondary text-black shadow-sm font-bold"
+  : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+  )}
+  >
+  Ida y Vuelta
+  </button>
+  </div>
+  </div>
 
- {/* Origin */}
- <div className="flex-1 min-w-0">
- <Label className={cn("text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold mb-2 lg:mb-1 block lg:[text-shadow:none]", orientation === "horizontal" && "[text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-slate-900")}>
- Origen
- </Label>
+  {/* Origin */}
+  <div className="flex-1 min-w-0">
+  <Label className={cn("text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold mb-2 lg:mb-1 block lg:[text-shadow:none]", orientation === "horizontal" && "[text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-slate-900")}>
+  Origen
+  </Label>
  <Popover
  open={originOpen && !stopsLoading}
  onOpenChange={(open) => {
@@ -437,33 +437,34 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  }}
  >
  <PopoverTrigger asChild>
- <Button
- variant="outline"
- role="combobox"
- disabled={stopsLoading}
- className={cn(
- cn("w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-primary/50", orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white text-slate-900 border-slate-300 dark:border-white/40 hover:bg-slate-50 "),
- stopsLoading ? "cursor-not-allowed opacity-60" : "",
- )}
- >
- <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
- <MapPin className="h-5 w-5 text-primary flex-shrink-0" />
- <CityMarqueeText
-  text={
-  origin
-  ? stops.find((c) => String(c.id) === String(origin))?.name
-  : undefined
-  }
-  placeholder={stopsLoading ? "Cargando ciudades..." : "Selecciona origen"}
-  orientation={orientation}
-  />
- </div>
- <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" />
- </Button>
- </PopoverTrigger>
- <PopoverContent
- className={cn("w-full p-0 backdrop-blur-md min-w-[var(--radix-popover-trigger-width)]", orientation === "vertical" ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" : "bg-white/60 border-black/20")}
- align="start"
+  <Button
+  variant="outline"
+  role="combobox"
+  disabled={stopsLoading}
+  className={cn(
+  "w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-primary/50",
+  orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white text-slate-900 border-slate-300 dark:border-white/40 hover:bg-slate-50",
+  stopsLoading ? "cursor-not-allowed opacity-60" : "",
+  )}
+  >
+  <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
+  <MapPin className="h-5 w-5 text-primary flex-shrink-0" />
+  <CityMarqueeText
+   text={
+   origin
+   ? stops.find((c) => String(c.id) === String(origin))?.name
+   : undefined
+   }
+   placeholder={stopsLoading ? "Cargando ciudades..." : "Selecciona origen"}
+   orientation={orientation}
+   />
+  </div>
+  <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" />
+  </Button>
+  </PopoverTrigger>
+  <PopoverContent
+  className={cn("w-full p-0 min-w-[var(--radix-popover-trigger-width)] shadow-2xl", orientation === "vertical" ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" : "bg-white/95 border-black/20")}
+  align="start"
  >
  <Command className="bg-transparent">
  <CommandInput
@@ -559,217 +560,224 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  }}
  >
  <PopoverTrigger asChild>
- <Button
- variant="outline"
- role="combobox"
- disabled={stopsLoading}
- className={cn(
- cn("w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-secondary/50", orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white text-slate-900 border-slate-300 dark:border-white/40 hover:bg-slate-50 "),
- stopsLoading ? "cursor-not-allowed opacity-60" : "",
- )}
- >
- <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
- <MapPin className="h-5 w-5 text-secondary flex-shrink-0" />
-  <CityMarqueeText
-  text={
-  destination
-  ? stops.find((c) => String(c.id) === String(destination))?.name
-  : undefined
-  }
-  placeholder={
-  stopsLoading ? "Cargando ciudades..." : "Selecciona destino"
-  }
-  orientation={orientation}
+  <Button
+  variant="outline"
+  role="combobox"
+  disabled={stopsLoading}
+  className={cn(
+  "w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-secondary/50",
+  orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white text-slate-900 border-slate-300 dark:border-white/40 hover:bg-slate-50",
+  stopsLoading ? "cursor-not-allowed opacity-60" : "",
+  )}
+  >
+  <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
+  <MapPin className="h-5 w-5 text-secondary flex-shrink-0" />
+   <CityMarqueeText
+   text={
+   destination
+   ? stops.find((c) => String(c.id) === String(destination))?.name
+   : undefined
+   }
+   placeholder={
+   stopsLoading ? "Cargando ciudades..." : "Selecciona destino"
+   }
+   orientation={orientation}
+   />
+  </div>
+  <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" />
+  </Button>
+  </PopoverTrigger>
+  <PopoverContent
+  className={cn("w-full p-0 min-w-[var(--radix-popover-trigger-width)] shadow-2xl", orientation === "vertical" ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" : "bg-white/95 border-black/20")}
+  align="start"
+  >
+  <Command className="bg-transparent">
+  <CommandInput
+  placeholder="Buscá ciudad..."
+  className="h-12 bg-transparent border-b transition-colors text-slate-900 dark:text-slate-200 border-slate-200 dark:border-slate-700 placeholder:text-slate-500 dark:placeholder:text-slate-400"
   />
- </div>
- <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" />
- </Button>
- </PopoverTrigger>
- <PopoverContent
- className={cn("w-full p-0 backdrop-blur-md min-w-[var(--radix-popover-trigger-width)]", orientation === "vertical" ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" : "bg-white/60 border-black/20")}
- align="start"
- >
- <Command className="bg-transparent">
- <CommandInput
- placeholder="Buscá ciudad..."
- className={cn("h-12 bg-transparent border-b transition-colors", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 border-slate-200 dark:border-slate-700 placeholder:text-slate-500 dark:placeholder:text-slate-400" : "text-gray-700 border-black/20 placeholder:text-gray-500")}
- />
- <CommandList>
- <CommandEmpty className={cn("text-gray-500", orientation === "vertical" && "dark:text-slate-400")}>
- {stopsLoading
- ? "Cargando ciudades..."
- : stopsError
- ? "Error al cargar ciudades"
- : "No se encontró la ciudad."}
- </CommandEmpty>
- <CommandGroup className="bg-transparent">
- {originTitle && (
-<div className={cn("px-2 py-2 text-xs font-semibold backdrop-blur-sm rounded-lg mb-2 flex items-center gap-2 border shadow-sm", orientation === "vertical" ? "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700" : "text-gray-700 bg-white/40 border-white/50")}>
- <MapPin className="h-3.5 w-3.5 text-secondary" />
- Rutas disponibles desde {originTitle}
- </div>
- )}
- {filteredStops
- .filter((c) => String(c.id) !== String(origin))
- .map((city) => (
- <CommandItem
- key={city.id}
- value={city.name}
- onSelect={() => {
- setDestination(city.id);
- setDestinationTitle(city.name);
- setDestinationOpen(false);
- }}
-className={cn("cursor-pointer py-3 group transition-colors duration-150 rounded-lg px-2", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 data-[selected=true]:bg-secondary data-[selected=true]:text-black hover:bg-secondary hover:text-black" : "text-slate-900 data-[selected=true]:bg-secondary data-[selected=true]:text-black hover:bg-secondary hover:text-black")}
- >
- <MapPin className="h-4 w-4 mr-2 text-secondary shrink-0 group-hover:text-black group-data-[selected=true]:text-black transition-colors" strokeWidth={2.2} />
- <div className="min-w-0">
- <p className={cn("font-bold truncate tracking-wide transition-all", orientation === "horizontal" && "[text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none]", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 group-hover:text-black group-data-[selected=true]:text-black" : "text-slate-900 group-hover:text-black group-data-[selected=true]:text-black")}>
- {city.name}
- </p>
- {(() => {
-  if (orientation === "vertical") return null;
-  const destData = availableDestinations.find(d => {
-  if (typeof d === 'string') return d === String(city.id);
-  return String((d as any).destinationId) === String(city.id);
-  });
-  const isObject = destData && typeof destData === 'object';
-  const dynamicCount = getStopDynamicCount(city.id);
-
-  if (isObject) {
-  if (dynamicCount > 0) {
-  return (
-  <p className={cn("text-xs font-medium mt-0.5 transition-all", orientation === "horizontal" ? "text-slate-700 group-hover:text-black group-data-[selected=true]:text-black [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none]" : "text-slate-700 dark:text-slate-400 group-hover:text-black group-data-[selected=true]:text-black")}>
-  {dynamicCount} {dynamicCount === 1 ? 'servicio' : 'servicios'}
+  <CommandList>
+  <CommandEmpty className={cn("text-gray-500", orientation === "vertical" && "dark:text-slate-400")}>
+  {stopsLoading
+  ? "Cargando ciudades..."
+  : stopsError
+  ? "Error al cargar ciudades"
+  : "No se encontró la ciudad."}
+  </CommandEmpty>
+  <CommandGroup className="bg-transparent">
+  {originTitle && (
+ <div className={cn("px-2 py-2 text-xs font-semibold backdrop-blur-sm rounded-lg mb-2 flex items-center gap-2 border shadow-sm", orientation === "vertical" ? "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700" : "text-gray-700 bg-white/40 border-white/50")}>
+  <MapPin className="h-3.5 w-3.5 text-secondary" />
+  Rutas disponibles desde {originTitle}
+  </div>
+  )}
+  {filteredStops
+  .filter((c) => String(c.id) !== String(origin))
+  .map((city) => (
+  <CommandItem
+  key={city.id}
+  value={city.name}
+  onSelect={() => {
+  setDestination(city.id);
+  setDestinationTitle(city.name);
+  setDestinationOpen(false);
+  }}
+ className={cn("cursor-pointer py-3 group transition-colors duration-150 rounded-lg px-2", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 data-[selected=true]:bg-secondary data-[selected=true]:text-black hover:bg-secondary hover:text-black" : "text-slate-900 data-[selected=true]:bg-secondary data-[selected=true]:text-black hover:bg-secondary hover:text-black")}
+  >
+  <MapPin className="h-4 w-4 mr-2 text-secondary shrink-0 group-hover:text-black group-data-[selected=true]:text-black transition-colors" strokeWidth={2.2} />
+  <div className="min-w-0">
+  <p className={cn("font-bold truncate tracking-wide transition-all", orientation === "horizontal" && "[text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none]", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 group-hover:text-black group-data-[selected=true]:text-black" : "text-slate-900 group-hover:text-black group-data-[selected=true]:text-black")}>
+  {city.name}
   </p>
-  );
-  } else if ((destData as any).times?.length > 0) {
-  return (
-  <p className={cn("text-xs font-semibold mt-0.5 transition-all", orientation === "horizontal" ? "text-red-600 group-hover:text-red-900 group-data-[selected=true]:text-red-900 [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none]" : "text-red-600 dark:text-red-400 group-hover:text-red-900 group-data-[selected=true]:text-red-900")}>
-  Salidas finalizadas por hoy
-  </p>
-  );
-  }
-  }
-  return null;
-  })()}
- </div>
- </CommandItem>
- ))}
- </CommandGroup>
- </CommandList>
- </Command>
- </PopoverContent>
- </Popover>
- </div>
+  {(() => {
+   if (orientation === "vertical") return null;
+   const destData = availableDestinations.find(d => {
+   if (typeof d === 'string') return d === String(city.id);
+   return String((d as any).destinationId) === String(city.id);
+   });
+   const isObject = destData && typeof destData === 'object';
+   const dynamicCount = getStopDynamicCount(city.id);
 
- {/* Fecha de Ida */}
- <div className="flex-1 min-w-0">
- <Label className={cn("text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold mb-2 lg:mb-1 block lg:[text-shadow:none]", orientation === "horizontal" && "[text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-slate-900")}>
- Fecha de Ida
- </Label>
- <Popover
- open={departureDateOpen}
- onOpenChange={setDepartureDateOpen}
- >
- <PopoverTrigger asChild>
- <Button
- variant="outline"
- className={cn("w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-secondary/50", orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white text-slate-900 border-slate-300 dark:border-white/40 hover:bg-slate-50 ")}
- >
- <div className="flex items-center gap-3 min-w-0">
- <Calendar className="h-5 w-5 text-secondary flex-shrink-0" />
- <span
- className={cn(
- !departureDate && "text-gray-400",
- cn("text-lg lg:text-base font-semibold truncate", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-gray-900"),
- )}
- >
- {departureDate
- ? format(parseDate(departureDate), "dd MMM yyyy", {
- locale: es,
- })
- : "Selecciona fecha"}
- </span>
- </div>
- </Button>
- </PopoverTrigger>
- <PopoverContent
- className={cn("w-auto p-0 backdrop-blur-md", orientation === "vertical" ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" : "bg-white/60 border-black/20")}
- align="start"
- >
- <CalendarComponent
- mode="single"
- selected={
- departureDate ? parseDate(departureDate) : undefined
- }
- onSelect={(date) => {
- if (date) {
- setDepartureDate(format(date, "yyyy-MM-dd"));
- setDepartureDateOpen(false);
- }
- }}
- disabled={(date) => date < today()}
- initialFocus
- className="bg-transparent"
- />
- </PopoverContent>
- </Popover>
- </div>
+   if (isObject) {
+   if (dynamicCount > 0) {
+   return (
+   <p className={cn("text-xs font-medium mt-0.5 transition-all", orientation === "horizontal" ? "text-slate-700 group-hover:text-black group-data-[selected=true]:text-black [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none]" : "text-slate-700 dark:text-slate-400 group-hover:text-black group-data-[selected=true]:text-black")}>
+   {dynamicCount} {dynamicCount === 1 ? 'servicio' : 'servicios'}
+   </p>
+   );
+   } else if ((destData as any).times?.length > 0) {
+   return (
+   <p className={cn("text-xs font-semibold mt-0.5 transition-all", orientation === "horizontal" ? "text-red-600 group-hover:text-red-900 group-data-[selected=true]:text-red-900 [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none]" : "text-red-600 dark:text-red-400 group-hover:text-red-900 group-data-[selected=true]:text-red-900")}>
+   Salidas finalizadas por hoy
+   </p>
+   );
+   }
+   }
+   return null;
+   })()}
+  </div>
+  </CommandItem>
+  ))}
+  </CommandGroup>
+  </CommandList>
+  </Command>
+  </PopoverContent>
+  </Popover>
+  </div>
 
- {/* Fecha de Vuelta */}
- {tripType === "round-trip" && (
- <div className="flex-1 min-w-0 animate-in fade-in slide-in-from-right-5 duration-500">
- <Label className={cn("text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold mb-2 lg:mb-1 block lg:[text-shadow:none]", orientation === "horizontal" && "[text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-slate-900")}>
- Fecha de Vuelta
- </Label>
- <Popover open={returnDateOpen} onOpenChange={setReturnDateOpen}>
- <PopoverTrigger asChild>
- <Button
- variant="outline"
- className={cn("w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-secondary/50", orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white text-slate-900 border-slate-300 dark:border-white/40 hover:bg-slate-50 ")}
- >
- <div className="flex items-center gap-3 min-w-0">
- <Calendar className="h-5 w-5 text-secondary flex-shrink-0" />
- <span
- className={cn(
- !returnDate && "text-gray-400",
- cn("text-lg lg:text-base font-semibold truncate", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-gray-900"),
- )}
- >
- {returnDate
- ? format(parseDate(returnDate), "dd MMM yyyy", {
- locale: es,
- })
- : "Selecciona fecha"}
- </span>
- </div>
- </Button>
- </PopoverTrigger>
- <PopoverContent
- className={cn("w-auto p-0 backdrop-blur-md", orientation === "vertical" ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" : "bg-white/60 border-black/20")}
- align="start"
- >
- <CalendarComponent
- mode="single"
- selected={returnDate ? parseDate(returnDate) : undefined}
- onSelect={(date) => {
- if (date) {
- setReturnDate(format(date, "yyyy-MM-dd"));
- setReturnDateOpen(false);
- }
- }}
- disabled={(date) =>
- date <
- (departureDate ? parseDate(departureDate) : today())
- }
- initialFocus
- className="bg-transparent"
- />
- </PopoverContent>
- </Popover>
- </div>
- )}
+  {/* Fecha de Ida */}
+  <div className="flex-1 min-w-0">
+  <Label className={cn("text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold mb-2 lg:mb-1 block lg:[text-shadow:none]", orientation === "horizontal" && "[text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-slate-900")}>
+  Fecha de Ida
+  </Label>
+  <Popover
+  open={departureDateOpen}
+  onOpenChange={setDepartureDateOpen}
+  >
+  <PopoverTrigger asChild>
+  <Button
+  variant="outline"
+  className={cn(
+  "w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-secondary/50",
+  orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white text-slate-900 border-slate-300 dark:border-white/40 hover:bg-slate-50"
+  )}
+  >
+  <div className="flex items-center gap-3 min-w-0">
+  <Calendar className="h-5 w-5 text-secondary flex-shrink-0" />
+  <span
+  className={cn(
+  !departureDate && "text-gray-400 dark:text-slate-400",
+  cn("text-lg lg:text-base font-semibold truncate", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-gray-900")
+  )}
+  >
+  {departureDate
+  ? format(parseDate(departureDate), "dd MMM yyyy", {
+  locale: es,
+  })
+  : "Selecciona fecha"}
+  </span>
+  </div>
+  </Button>
+  </PopoverTrigger>
+  <PopoverContent
+  className={cn("w-auto p-0 shadow-2xl", orientation === "vertical" ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" : "bg-white/95 border-black/20 text-slate-900 dark:text-slate-900")}
+  align="start"
+  >
+  <CalendarComponent
+  mode="single"
+  selected={
+  departureDate ? parseDate(departureDate) : undefined
+  }
+  onSelect={(date) => {
+  if (date) {
+  setDepartureDate(format(date, "yyyy-MM-dd"));
+  setDepartureDateOpen(false);
+  }
+  }}
+  disabled={(date) => date < today()}
+  initialFocus
+  className="bg-transparent"
+  />
+  </PopoverContent>
+  </Popover>
+  </div>
+
+  {/* Fecha de Vuelta */}
+  {tripType === "round-trip" && (
+  <div className="flex-1 min-w-0 animate-in fade-in slide-in-from-right-5 duration-500">
+  <Label className={cn("text-lg sm:text-xl lg:text-[13px] font-extrabold lg:font-bold mb-2 lg:mb-1 block lg:[text-shadow:none]", orientation === "horizontal" && "[text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)]", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-slate-900")}>
+  Fecha de Vuelta
+  </Label>
+  <Popover open={returnDateOpen} onOpenChange={setReturnDateOpen}>
+  <PopoverTrigger asChild>
+  <Button
+  variant="outline"
+  className={cn(
+  "w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-secondary/50",
+  orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white text-slate-900 border-slate-300 dark:border-white/40 hover:bg-slate-50"
+  )}
+  >
+  <div className="flex items-center gap-3 min-w-0">
+  <Calendar className="h-5 w-5 text-secondary flex-shrink-0" />
+  <span
+  className={cn(
+  !returnDate && "text-gray-400 dark:text-slate-400",
+  cn("text-lg lg:text-base font-semibold truncate", orientation === "vertical" ? "text-slate-900 dark:text-white" : "text-gray-900")
+  )}
+  >
+  {returnDate
+  ? format(parseDate(returnDate), "dd MMM yyyy", {
+  locale: es,
+  })
+  : "Selecciona fecha"}
+  </span>
+  </div>
+  </Button>
+  </PopoverTrigger>
+  <PopoverContent
+  className={cn("w-auto p-0 shadow-2xl", orientation === "vertical" ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" : "bg-white/95 border-black/20 text-slate-900 dark:text-slate-900")}
+  align="start"
+  >
+  <CalendarComponent
+  mode="single"
+  selected={returnDate ? parseDate(returnDate) : undefined}
+  onSelect={(date) => {
+  if (date) {
+  setReturnDate(format(date, "yyyy-MM-dd"));
+  setReturnDateOpen(false);
+  }
+  }}
+  disabled={(date) =>
+  date <
+  (departureDate ? parseDate(departureDate) : today())
+  }
+  initialFocus
+  className="bg-transparent"
+  />
+  </PopoverContent>
+  </Popover>
+  </div>
+  )}
 
  {/* Desktop Search Button inline */}
  <div className={cn("hidden flex-shrink-0 items-end ml-auto", orientation === 'horizontal' ? "lg:flex" : "")}>
