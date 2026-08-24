@@ -605,7 +605,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
   : "No se encontró la ciudad."}
   </CommandEmpty>
   <CommandGroup className="bg-transparent">
-  {originTitle && (
+  {originTitle && orientation === "horizontal" && (
  <div className={cn("px-2 py-2 text-xs font-semibold backdrop-blur-sm rounded-lg mb-2 flex items-center gap-2 border shadow-sm", orientation === "vertical" ? "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700" : "text-gray-700 bg-white/40 border-white/50")}>
   <MapPin className="h-3.5 w-3.5 text-secondary" />
   Rutas disponibles desde {originTitle}
