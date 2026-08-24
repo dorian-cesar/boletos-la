@@ -171,7 +171,7 @@ export function ParaguayHeader() {
             </Link>
             
             <div className="flex flex-col gap-2 pt-4 border-t border-black/10 dark:border-white/20">
-              <div className="flex justify-end mb-2">
+              <div className="flex justify-start mb-2">
                 <ThemeToggle />
               </div>
               <Button
