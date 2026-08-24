@@ -78,9 +78,9 @@ export function AlternateDatesInline({
     : "";
 
   return (
-    <div className="w-full bg-black/5 dark:bg-white/5 rounded-3xl border border-black/10 dark:border-white/10 overflow-hidden animate-in fade-in duration-500 max-w-3xl mx-auto mt-4 mb-10">
+    <div className="w-full bg-slate-50 dark:bg-white/5 rounded-3xl border border-slate-200 dark:border-white/10 overflow-hidden animate-in fade-in duration-500 max-w-3xl mx-auto mt-4 mb-10 shadow-sm">
       {/* Header Inline */}
-      <div className="bg-gradient-to-r from-primary/10 via-transparent to-transparent p-6 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6 border-b border-black/10 dark:border-white/10 text-center sm:text-left">
+      <div className="p-6 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6 border-b border-slate-200 dark:border-white/10 text-center sm:text-left">
         <div className="w-16 h-16 rounded-2xl bg-primary/20 text-primary flex items-center justify-center flex-shrink-0">
           <CalendarSearch className="w-8 h-8 stroke-[2.5]" />
         </div>
@@ -110,7 +110,7 @@ export function AlternateDatesInline({
               <h3 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white text-center sm:text-left">
                 Fechas cercanas disponibles:
               </h3>
-              <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-primary bg-primary/10 px-3 py-1 rounded-full inline-block self-center sm:self-auto">
+              <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-cyan-800 bg-cyan-100 dark:text-cyan-300 dark:bg-cyan-900/40 px-3 py-1 rounded-full inline-block self-center sm:self-auto border border-cyan-200 dark:border-cyan-800">
                 {options.length} {options.length === 1 ? 'Opción' : 'Opciones'}
               </span>
             </div>
@@ -121,28 +121,28 @@ export function AlternateDatesInline({
                   key={i}
                   variant="outline"
                   onClick={() => onSelectDate(opt.date)}
-                  className="h-auto p-4 sm:p-5 flex items-center justify-between bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/20 hover:border-primary hover:bg-primary/5 transition-all duration-300 group rounded-2xl"
+                  className="h-auto p-4 sm:p-5 flex items-center justify-between bg-white dark:bg-white/5 border-slate-200 dark:border-white/20 hover:border-primary hover:bg-primary/5 transition-all duration-300 group rounded-2xl shadow-sm"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-black/10 dark:bg-white/10 border border-black/10 dark:border-white/20 group-hover:bg-primary/20 group-hover:border-primary/40 flex items-center justify-center text-slate-900 dark:text-white group-hover:text-primary transition-all duration-300">
-                      <Calendar className="w-5 h-5 stroke-[2]" />
+                    <div className="w-12 h-12 rounded-xl bg-cyan-100/60 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800/50 group-hover:bg-primary group-hover:border-primary flex items-center justify-center text-cyan-700 dark:text-cyan-400 group-hover:text-black transition-all duration-300 shadow-sm">
+                      <Calendar className="w-5 h-5 stroke-[2.5]" />
                     </div>
                     <div className="text-left">
                       <div className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white capitalize mb-1 group-hover:text-primary transition-colors">
                         {format(opt.date, "EEEE d 'de' MMMM", { locale: es })}
                       </div>
-                      <div className="text-xs sm:text-sm text-emerald-400 font-medium">
+                      <div className="text-xs sm:text-sm text-cyan-700 dark:text-cyan-400 font-bold tracking-wide">
                         {opt.count} {opt.count === 1 ? 'servicio disponible' : 'servicios disponibles'}
                       </div>
                     </div>
                   </div>
 
                   {/* Botón Acción Destacado */}
-                  <div className="hidden sm:flex items-center gap-2 bg-primary/10 text-primary font-semibold text-sm px-4 py-2 rounded-lg group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                  <div className="hidden sm:flex items-center gap-2 bg-secondary text-secondary-foreground font-semibold text-sm px-4 py-2 rounded-lg group-hover:brightness-95 transition-all duration-300 shadow-sm">
                     <span>Seleccionar</span>
                     <ArrowRight className="w-4 h-4" />
                   </div>
-                  <div className="sm:hidden flex items-center justify-center text-primary group-hover:translate-x-1 transition-transform">
+                  <div className="sm:hidden flex items-center justify-center text-slate-700 dark:text-slate-300 group-hover:translate-x-1 group-hover:text-secondary transition-all">
                     <ArrowRight className="w-5 h-5" />
                   </div>
                 </Button>
