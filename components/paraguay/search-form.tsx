@@ -371,7 +371,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
   "px-6 py-2 text-sm sm:text-base rounded-full font-semibold transition-all duration-300 relative",
   tripType === "one-way"
  ? "bg-secondary text-black shadow-md font-bold"
-  : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-700/50",
+  : orientation === "vertical" ? "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-700/50" : "text-slate-600 hover:text-slate-900 hover:bg-white/50",
   )}
   >
   Solo Ida
@@ -382,7 +382,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
   "px-6 py-2 text-sm sm:text-base rounded-full font-semibold transition-all duration-300 relative",
   tripType === "round-trip"
  ? "bg-secondary text-black shadow-md font-bold"
-  : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-700/50",
+  : orientation === "vertical" ? "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-700/50" : "text-slate-600 hover:text-slate-900 hover:bg-white/50",
   )}
   >
   Ida y Vuelta
@@ -405,7 +405,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
   "px-3.5 h-full text-sm rounded-lg font-semibold transition-all duration-200 whitespace-nowrap flex items-center justify-center",
   tripType === "one-way"
   ? "bg-secondary text-black shadow-sm font-bold"
-  : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+  : orientation === "vertical" ? "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white" : "text-slate-600 hover:text-slate-900"
   )}
   >
   Solo Ida
@@ -417,7 +417,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
   "px-3.5 h-full text-sm rounded-lg font-semibold transition-all duration-200 whitespace-nowrap flex items-center justify-center",
   tripType === "round-trip"
   ? "bg-secondary text-black shadow-sm font-bold"
-  : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+  : orientation === "vertical" ? "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white" : "text-slate-600 hover:text-slate-900"
   )}
   >
   Ida y Vuelta
@@ -443,7 +443,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
   disabled={stopsLoading}
   className={cn(
   "w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-primary/50",
-  orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white text-slate-900 border-slate-300 dark:border-white/40 hover:bg-slate-50",
+  orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white text-slate-900 border-slate-300 hover:bg-slate-50",
   stopsLoading ? "cursor-not-allowed opacity-60" : "",
   )}
   >
@@ -566,7 +566,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
   disabled={stopsLoading}
   className={cn(
   "w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-secondary/50",
-  orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white text-slate-900 border-slate-300 dark:border-white/40 hover:bg-slate-50",
+  orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white text-slate-900 border-slate-300 hover:bg-slate-50",
   stopsLoading ? "cursor-not-allowed opacity-60" : "",
   )}
   >
@@ -679,7 +679,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
   variant="outline"
   className={cn(
   "w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-secondary/50",
-  orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white text-slate-900 border-slate-300 dark:border-white/40 hover:bg-slate-50"
+  orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white text-slate-900 border-slate-300 hover:bg-slate-50"
   )}
   >
   <div className="flex items-center gap-3 min-w-0">
@@ -704,6 +704,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
   align="start"
   >
   <CalendarComponent
+  locale={es}
   mode="single"
   selected={
   departureDate ? parseDate(departureDate) : undefined
@@ -734,7 +735,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
   variant="outline"
   className={cn(
   "w-full justify-between h-14 text-left font-normal transition-all duration-300 shadow-sm hover:border-secondary/50",
-  orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white text-slate-900 border-slate-300 dark:border-white/40 hover:bg-slate-50"
+  orientation === "vertical" ? "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white" : "bg-white text-slate-900 border-slate-300 hover:bg-slate-50"
   )}
   >
   <div className="flex items-center gap-3 min-w-0">
@@ -759,6 +760,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
   align="start"
   >
   <CalendarComponent
+  locale={es}
   mode="single"
   selected={returnDate ? parseDate(returnDate) : undefined}
   onSelect={(date) => {
