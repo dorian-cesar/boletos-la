@@ -15,6 +15,7 @@ import {
   Check,
   Wallet,
   ArrowRight,
+  ArrowLeft,
   MapPin,
   Timer,
   X,
