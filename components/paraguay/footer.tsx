@@ -39,7 +39,7 @@ export function ParaguayFooter() {
       className="bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] text-slate-900 dark:text-white relative overflow-hidden"
     >
       {/* Background Effects */}
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none hidden dark:block">
         <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-secondary/10 rounded-full blur-[100px]" />
       </div>
@@ -144,12 +144,12 @@ export function ParaguayFooter() {
             </h4>
             <ul className="space-y-4">
               {[
-                "Asunción",
+                "Azotey",
                 "Ciudad del Este",
-                "Encarnación",
+                "Caacupé",
                 "Pedro Juan Caballero",
                 "Coronel Oviedo",
-                "Salto del Guairá",
+                "Ypacaraí",
               ].map((city) => (
                 <li key={city}>
                   <Link
