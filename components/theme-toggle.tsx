@@ -44,21 +44,21 @@ export function ThemeToggle() {
         "absolute right-2 sm:right-2.5 transition-all duration-500",
         isDark ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-50"
       )}>
-        <Moon className="h-4 w-4 sm:h-5 sm:w-5 text-indigo-300" />
+        <Moon className="h-4 w-4 sm:h-5 sm:w-5 text-slate-800 dark:text-slate-200" />
       </span>
 
       {/* The sliding toggle thumb */}
       <span
         className={cn(
-          "pointer-events-none inline-block h-6 w-6 sm:h-8 sm:w-8 transform rounded-full bg-white shadow-lg ring-0 transition duration-500 ease-in-out",
-          isDark ? "translate-x-8 sm:translate-x-10" : "translate-x-1"
+          "pointer-events-none inline-block h-6 w-6 sm:h-8 sm:w-8 transform rounded-full shadow-md ring-0 transition-all duration-500 ease-in-out",
+          isDark ? "translate-x-8 sm:translate-x-10 bg-slate-900 border border-slate-700/80" : "translate-x-1 bg-white"
         )}
       >
         <span className={cn(
           "absolute inset-0 flex items-center justify-center transition-all duration-500",
           isDark ? "opacity-100 rotate-0" : "opacity-0 -rotate-90"
         )}>
-          <Moon className="h-3 w-3 sm:h-4 sm:w-4 text-slate-700" />
+          <Moon className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
         </span>
         <span className={cn(
           "absolute inset-0 flex items-center justify-center transition-all duration-500",

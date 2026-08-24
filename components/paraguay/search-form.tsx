@@ -363,7 +363,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  style={{ animationDelay: "0.6s" }}
  >
  <div className={cn(
-    "backdrop-blur-md rounded-3xl lg:rounded-[1.5rem] shadow-2xl p-6 sm:p-8 lg:px-6 lg:py-6 border relative overflow-hidden lg:overflow-visible w-full max-w-7xl mx-auto",
+    "backdrop-blur-md rounded-3xl lg:rounded-[1.5rem] shadow-2xl p-6 sm:p-8 lg:px-6 lg:py-6 border relative overflow-hidden lg:overflow-visible w-full max-w-[85rem] mx-auto",
     orientation === "vertical" ? "bg-white dark:bg-[#1e293b] border-slate-200 dark:border-slate-700/50" : "bg-white/90 border-white/60"
   )}>
   {/* Efecto de vidrio con gradiente sutil */}

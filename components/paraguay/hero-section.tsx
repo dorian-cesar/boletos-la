@@ -48,7 +48,7 @@ export function ParaguayHeroSection() {
         </div>
 
         {/* Search Form Component - Prominent */}
-        <div className="w-full max-w-[1200px] animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
+        <div className="w-full max-w-[1400px] xl:px-4 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
           <ParaguaySearchForm />
         </div>
       </div>
