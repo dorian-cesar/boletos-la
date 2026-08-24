@@ -273,13 +273,25 @@ function ServicesPageContent() {
                   />
                 </div>
 
-                <div className="mb-6 flex items-center justify-between">
-                  <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
-                {searchLoading
-                  ? "Buscando servicios..."
-                  : `${trips.length} servicios disponibles`}
-              </h2>
-            </div>
+                <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-2">
+                  <div className="flex flex-col">
+                    {tripType === "round-trip" && (
+                      <span className={cn(
+                        "text-[11px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1",
+                        showingReturn ? "text-secondary" : "text-primary"
+                      )}>
+                        {showingReturn ? "Selecciona tu viaje de Vuelta" : "Selecciona tu viaje de Ida"}
+                      </span>
+                    )}
+                    <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+                      {searchLoading
+                        ? "Buscando servicios..."
+                        : trips.length === 1
+                          ? "1 servicio disponible"
+                          : `${trips.length} servicios disponibles`}
+                    </h2>
+                  </div>
+                </div>
 
             {searchLoading ? (
               <div className="space-y-4">
