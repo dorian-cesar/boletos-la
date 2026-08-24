@@ -56,15 +56,25 @@ export function DateNavbar({
     }
   };
 
+  useEffect(() => {
+    if (scrollRef.current) {
+      const selectedBtn = scrollRef.current.querySelector('[data-selected="true"]') as HTMLElement;
+      if (selectedBtn) {
+        selectedBtn.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      }
+    }
+  }, [currentDate]);
+
   return (
-    <div className={cn("flex items-center w-full gap-2 relative", className)}>
+    <div className={cn("flex items-center w-full gap-1.5 sm:gap-2 relative", className)}>
       <Button
         variant="outline"
         size="icon"
-        className="h-14 w-10 shrink-0 bg-white dark:bg-slate-800 rounded-l-xl rounded-r-none border-r-0 hover:bg-slate-50 dark:hover:bg-slate-700 hidden sm:flex border-slate-300 dark:border-slate-700"
+        className="h-14 w-8 sm:w-10 shrink-0 bg-white dark:bg-slate-800 rounded-l-xl rounded-r-none border-r-0 hover:bg-slate-50 dark:hover:bg-slate-700 flex border-slate-300 dark:border-slate-700 shadow-sm"
         onClick={scrollLeft}
+        aria-label="Fecha anterior"
       >
-        <ChevronLeft className="h-5 w-5" />
+        <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 text-slate-600 dark:text-slate-300" />
       </Button>
 
       <div
@@ -83,9 +93,10 @@ export function DateNavbar({
           return (
             <button
               key={dateStr}
+              data-selected={isSelected}
               onClick={() => onSelectDate(dateStr)}
               className={cn(
-                "flex-shrink-0 flex flex-col items-center justify-center min-w-[100px] sm:min-w-[120px] h-14 rounded-xl transition-all border duration-200",
+                "flex-shrink-0 flex flex-col items-center justify-center min-w-[95px] sm:min-w-[120px] h-14 rounded-xl transition-all border duration-200",
                 isSelected
                   ? "bg-secondary text-secondary-foreground border-secondary shadow-md font-bold transform scale-[1.02]"
                   : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-secondary hover:bg-slate-50 dark:hover:bg-slate-700"
@@ -100,10 +111,11 @@ export function DateNavbar({
       <Button
         variant="outline"
         size="icon"
-        className="h-14 w-10 shrink-0 bg-white dark:bg-slate-800 rounded-r-xl rounded-l-none border-l-0 hover:bg-slate-50 dark:hover:bg-slate-700 hidden sm:flex border-slate-300 dark:border-slate-700"
+        className="h-14 w-8 sm:w-10 shrink-0 bg-white dark:bg-slate-800 rounded-r-xl rounded-l-none border-l-0 hover:bg-slate-50 dark:hover:bg-slate-700 flex border-slate-300 dark:border-slate-700 shadow-sm"
         onClick={scrollRight}
+        aria-label="Fecha siguiente"
       >
-        <ChevronRight className="h-5 w-5" />
+        <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 text-slate-600 dark:text-slate-300" />
       </Button>
       
       {/* Hide scrollbar for Chrome/Safari */}
