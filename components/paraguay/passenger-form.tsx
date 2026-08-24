@@ -423,10 +423,10 @@ export function PassengerForm({
 
   // ── Validez global ────────────────────────────────────────────────────────
 
-  const firstNameError = getError("firstName", passenger.firstName);
-  const lastNameError = getError("lastName", passenger.lastName);
-  const emailError = getError("email", passenger.email);
-  const phoneError = getError("phone", passenger.phone);
+  const firstNameError = getError("firstName", localData.firstName);
+  const lastNameError = getError("lastName", localData.lastName);
+  const emailError = getError("email", localData.email);
+  const phoneError = getError("phone", localData.phone);
 
   const isPassengerReady =
     (searchStatus === "found" || searchStatus === "created") &&
