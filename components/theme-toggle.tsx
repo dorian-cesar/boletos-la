@@ -51,7 +51,7 @@ export function ThemeToggle() {
       <span
         className={cn(
           "pointer-events-none inline-block h-6 w-6 sm:h-8 sm:w-8 transform rounded-full bg-white shadow-lg ring-0 transition duration-500 ease-in-out",
-          isDark ? "translate-x-9 sm:translate-x-11" : "translate-x-1"
+          isDark ? "translate-x-8 sm:translate-x-10" : "translate-x-1"
         )}
       >
         <span className={cn(
