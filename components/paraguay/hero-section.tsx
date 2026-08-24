@@ -30,7 +30,7 @@ export function ParaguayHeroSection() {
 
         {/* Overlay oscuro para mejor legibilidad de los textos */}
         <div className="absolute inset-0 bg-black/60" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-black/20 to-transparent" />
       </div>
 
       {/* Content */}
