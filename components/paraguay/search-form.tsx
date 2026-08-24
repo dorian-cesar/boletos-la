@@ -162,6 +162,13 @@ function CityMarqueeText({
  );
 }
 
+
+// Función helper para obtener la fecha/hora actual en Paraguay
+const getParaguayDate = () => {
+  const asuncionTimeStr = new Date().toLocaleString("en-US", { timeZone: "America/Asuncion" });
+  return new Date(asuncionTimeStr);
+};
+
 export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation?: 'horizontal' | 'vertical' }) {
  const router = useRouter();
  const [mounted, setMounted] = useState(false);
