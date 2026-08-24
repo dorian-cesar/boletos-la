@@ -46,13 +46,15 @@ export function DateNavbar({
 
   const scrollLeft = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -150, behavior: "smooth" });
+      const container = scrollRef.current;
+      container.scrollBy({ left: -(container.clientWidth + 8), behavior: "smooth" });
     }
   };
 
   const scrollRight = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 150, behavior: "smooth" });
+      const container = scrollRef.current;
+      container.scrollBy({ left: container.clientWidth + 8, behavior: "smooth" });
     }
   };
 
@@ -79,7 +81,7 @@ export function DateNavbar({
 
       <div
         ref={scrollRef}
-        className="flex-1 flex overflow-x-auto no-scrollbar gap-2 scroll-smooth py-1 px-1 sm:px-0"
+        className="flex-1 flex overflow-x-auto no-scrollbar gap-2 scroll-smooth snap-x snap-mandatory py-1 px-1 sm:px-0"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {dates.map((date) => {
@@ -96,13 +98,13 @@ export function DateNavbar({
               data-selected={isSelected}
               onClick={() => onSelectDate(dateStr)}
               className={cn(
-                "flex-shrink-0 flex flex-col items-center justify-center min-w-[95px] sm:min-w-[120px] h-14 rounded-xl transition-all border duration-200",
+                "flex-shrink-0 flex flex-col items-center justify-center w-[calc((100%-16px)/3)] sm:w-[calc((100%-24px)/4)] md:w-[calc((100%-32px)/5)] lg:w-[calc((100%-40px)/6)] xl:w-[calc((100%-48px)/7)] px-2 h-14 rounded-xl transition-all border duration-200 snap-start",
                 isSelected
                   ? "bg-secondary text-secondary-foreground border-secondary shadow-md font-bold transform scale-[1.02]"
                   : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-secondary hover:bg-slate-50 dark:hover:bg-slate-700"
               )}
             >
-              <span className="text-sm sm:text-base font-semibold">{displayDay}</span>
+              <span className="text-xs sm:text-sm md:text-base font-semibold truncate max-w-full">{displayDay}</span>
             </button>
           );
         })}
