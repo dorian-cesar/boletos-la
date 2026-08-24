@@ -129,9 +129,19 @@ function CityMarqueeText({
  // Timeout allows DOM layout calculation after render
  const timeout = setTimeout(checkOverflow, 50);
  window.addEventListener("resize", checkOverflow);
+ 
+ let observer: ResizeObserver | null = null;
+ if (containerRef.current) {
+   observer = new ResizeObserver(() => checkOverflow());
+   observer.observe(containerRef.current);
+ }
+
  return () => {
- clearTimeout(timeout);
- window.removeEventListener("resize", checkOverflow);
+   clearTimeout(timeout);
+   window.removeEventListener("resize", checkOverflow);
+   if (observer) {
+     observer.disconnect();
+   }
  };
  }, [displayText]);
 
