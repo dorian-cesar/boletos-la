@@ -131,7 +131,7 @@ export function ParaguayHeader() {
         <div
           className={cn(
             "lg:hidden overflow-hidden transition-all duration-500 ease-in-out bg-background",
-            isMobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0",
+            isMobileMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0",
           )}
         >
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-4">

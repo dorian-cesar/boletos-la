@@ -371,7 +371,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
 
   {/* Trip Type Toggle */}
   <div className="flex lg:hidden justify-center mb-8 relative z-10">
-  <div className="inline-flex bg-slate-200/50 dark:bg-slate-800/80 backdrop-blur-sm rounded-full p-1 border border-slate-300/50 dark:border-slate-700/50">
+  <div className={cn("inline-flex backdrop-blur-sm rounded-full p-1 border", orientation === "vertical" ? "bg-slate-200/50 dark:bg-slate-800/80 border-slate-300/50 dark:border-slate-700/50" : "bg-white/80 border-slate-300/50")}>
   <button
   onClick={() => setTripType("one-way")}
   className={cn(
