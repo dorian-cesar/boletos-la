@@ -245,7 +245,7 @@ export function DestinationsSection() {
                 isVisible
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-10",
-                index < 3 ? "lg:h-96" : "h-80",
+                index < 3 ? "h-80 lg:h-96" : "h-80",
               )}
               style={{ transitionDelay: `${(index + 3) * 100}ms` }}
             >
@@ -309,10 +309,10 @@ export function DestinationsSection() {
                   </div>
                 </div>
 
-                {/* Hover Button */}
-                <div className="mt-4 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                {/* Action Button (Always visible on mobile, hover on desktop) */}
+                <div className="mt-4 opacity-100 translate-y-0 lg:opacity-0 lg:translate-y-4 lg:group-hover:opacity-100 lg:group-hover:translate-y-0 transition-all duration-300">
                   <Button
-                    className="w-full bg-[#00c7cc] hover:bg-[#00c7cc]/90 text-slate-900"
+                    className="w-full bg-[#00c7cc] hover:bg-[#00c7cc]/90 text-slate-900 font-bold shadow-md"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleSearchServices(destination.name);
