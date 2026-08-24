@@ -6,7 +6,7 @@ import { ScrollToTop } from "@/components/scroll-to-top";
 
 export default function PoliticaDePrivacidadPage() {
   return (
-    <main className="min-h-screen bg-[#0a0a0a] flex flex-col relative overflow-x-clip">
+    <main className="min-h-screen bg-slate-50 dark:bg-[#0a0a0a] flex flex-col relative overflow-x-clip">
       <ParaguayHeader />
       
       {/* Background decorations matching the app's style */}
@@ -25,7 +25,7 @@ export default function PoliticaDePrivacidadPage() {
           Última actualización: 11 de agosto de 2026
         </p>
 
-        <div className="space-y-10 text-neutral-300 leading-relaxed text-[17px]">
+        <div className="space-y-10 text-slate-700 dark:text-neutral-300 leading-relaxed text-[17px]">
           <div className="space-y-4">
             <p>
               En www.boletos.la (en adelante, "la Empresa"), valoramos la privacidad de nuestros usuarios y nos comprometemos a proteger la información personal que compartes con nosotros. Esta Política de Privacidad describe cómo recopilamos, utilizamos, almacenamos y protegemos tus datos personales cuando interactúas con nuestro sitio web y servicios.
