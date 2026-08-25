@@ -90,7 +90,7 @@ export default function CheckoutPage() {
     calculateTotal,
   } = useBookingStore();
 
-  const appliedServiceCharge = discountCargoPorServicio === false ? 0 : (discountCargoPorServicio === true && discountValorCargoServicio !== null && discountValorCargoServicio !== undefined ? discountValorCargoServicio : (serviceCharge || 2500));
+  const appliedServiceCharge = 2500;
 
   const [isExpired, setIsExpired] = useState(false);
   const [showVisaModal, setShowVisaModal] = useState(false);

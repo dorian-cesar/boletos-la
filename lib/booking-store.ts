@@ -347,12 +347,7 @@ export const useBookingStore = create<BookingState>()(
 
         const totalPassengers = selectedSeats.length + selectedReturnSeats.length;
         if (totalPassengers > 0) {
-          let appliedServiceCharge = serviceCharge; // default 2500
-          if (discountCargoPorServicio === false) {
-            appliedServiceCharge = 0;
-          } else if (discountCargoPorServicio === true && discountValorCargoServicio !== null && discountValorCargoServicio !== undefined) {
-            appliedServiceCharge = discountValorCargoServicio;
-          }
+          const appliedServiceCharge = 2500;
           total += totalPassengers * appliedServiceCharge;
         }
 

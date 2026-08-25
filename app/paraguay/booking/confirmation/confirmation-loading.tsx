@@ -67,7 +67,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
     serviceCharge,
   } = useBookingStore();
 
-  const appliedServiceCharge = discountCargoPorServicio === false ? 0 : (discountCargoPorServicio === true && discountValorCargoServicio !== null && discountValorCargoServicio !== undefined ? discountValorCargoServicio : (serviceCharge || 2500));
+  const appliedServiceCharge = 2500;
 
   const primaryPassenger = passengerDetails[0];
 
