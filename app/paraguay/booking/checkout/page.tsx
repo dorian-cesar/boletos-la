@@ -75,6 +75,7 @@ export default function CheckoutPage() {
     setBancardShopProcessId,
     setBancardIsVisa,
     discountPercentage,
+    calculateTotal,
   } = useBookingStore();
 
   const [isExpired, setIsExpired] = useState(false);
@@ -177,7 +178,8 @@ export default function CheckoutPage() {
   useEffect(() => {
     setMounted(true);
     setStep(4);
-  }, [setStep]);
+    calculateTotal();
+  }, [setStep, calculateTotal]);
 
   // Efecto para inyectar dinámicamente el SDK de Bancard e inicializar el formulario de pago
   useEffect(() => {

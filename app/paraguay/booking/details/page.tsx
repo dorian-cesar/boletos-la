@@ -267,7 +267,9 @@ export default function DetailsPage() {
                         <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
                           <Check className="h-5 w-5" />
                           <div>
-                            <p className="font-medium text-sm">{discountSuccess}</p>
+                            <p className="font-medium text-sm">
+                              {discountSuccess || `¡Descuento de ${discountPercentage}% aplicado!`}
+                            </p>
                             <p className="text-xs opacity-80">Código: {discountCode}</p>
                           </div>
                         </div>

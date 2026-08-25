@@ -319,7 +319,7 @@ export const useBookingStore = create<BookingState>()(
 
         const { discountPercentage } = get();
         if (discountPercentage && discountPercentage > 0) {
-          total = total - (total * (discountPercentage / 100));
+          total = Math.round(total - (total * (discountPercentage / 100)));
         }
 
         set({ totalPrice: total });
@@ -411,6 +411,8 @@ export const useBookingStore = create<BookingState>()(
         bancardProcessId: state.bancardProcessId,
         bancardShopProcessId: state.bancardShopProcessId,
         bancardIsVisa: state.bancardIsVisa,
+        discountCode: state.discountCode,
+        discountPercentage: state.discountPercentage,
       }),
       // Versión para migraciones futuras
       version: 1,
