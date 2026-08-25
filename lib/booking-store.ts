@@ -88,6 +88,8 @@ export interface BookingState {
   discountEmpresa: string | null;
   discountConvenio: string | null;
   serviceCharge: number;
+  bookingExpiresAt: number | null;
+  checkoutData: any;
 
   setStep: (step: number) => void;
   setTripType: (type: "one-way" | "round-trip") => void;
