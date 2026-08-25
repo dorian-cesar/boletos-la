@@ -21,6 +21,12 @@ import { PassengerForm } from "@/components/paraguay/passenger-form";
 import { useBookingStore } from "@/lib/booking-store";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function DetailsPage() {
   const router = useRouter();
@@ -393,11 +399,33 @@ export default function DetailsPage() {
                     </>
                   ) : null}
                   <div className="flex items-center justify-between text-sm mb-3 text-slate-600 dark:text-white/70">
-                    <span className="flex items-center gap-1">
-                      Cargo por servicio
-                      <span title="texto de ejemplo" className="flex">
-                        <HelpCircle className="h-3.5 w-3.5 text-slate-400 cursor-help" />
-                      </span>
+                    <span className="flex items-center gap-2">
+                      <span>Cargo por servicio</span>
+                      <TooltipProvider delayDuration={0}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="relative inline-flex items-center justify-center">
+                              <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-secondary opacity-50"></span>
+                              <button
+                                type="button"
+                                className="relative inline-flex items-center justify-center w-5 h-5 rounded-full bg-secondary/20 hover:bg-secondary/30 text-amber-700 dark:text-secondary border border-secondary/50 transition-all duration-200 hover:scale-125 shadow-xs cursor-pointer focus:outline-none"
+                                aria-label="Información sobre el cargo por servicio"
+                              >
+                                <HelpCircle className="h-3.5 w-3.5 stroke-[2.5]" />
+                              </button>
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent 
+                            side="top" 
+                            sideOffset={6}
+                            className="z-50 max-w-xs sm:max-w-sm bg-slate-900 text-white dark:bg-slate-950 dark:text-white border border-slate-700/80 px-4 py-2.5 rounded-xl shadow-2xl"
+                          >
+                            <p className="text-sm sm:text-base font-normal text-slate-100 leading-relaxed">
+                              texto de ejemplo
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </span>
                     <span className="font-medium text-slate-900 dark:text-white">
                       Gs. {((selectedSeats.length + selectedReturnSeats.length) * serviceCharge).toLocaleString("es-PY")}
