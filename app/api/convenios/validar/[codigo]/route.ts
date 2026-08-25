@@ -49,9 +49,13 @@ export async function GET(
       nombre: data.nombre,
       tipo_descuento: data.tipo_descuento,
       empresa_convenio: data.empresa_nombre,
-      convenio: data.nombre,
-      cargo_por_servicio: data.cargo_por_servicio,
-      valor_cargo_servicio: data.valor_cargo_servicio
+      convenio: data.convenio?.nombre || data.nombre,
+      cargo_por_servicio: (data.convenio?.cargo_por_servicio ?? data.cargo_por_servicio) !== undefined && (data.convenio?.cargo_por_servicio ?? data.cargo_por_servicio) !== null
+        ? ((data.convenio?.cargo_por_servicio ?? data.cargo_por_servicio) === true || (data.convenio?.cargo_por_servicio ?? data.cargo_por_servicio) === "true" || (data.convenio?.cargo_por_servicio ?? data.cargo_por_servicio) === 1)
+        : null,
+      valor_cargo_servicio: (data.convenio?.valor_cargo_servicio ?? data.valor_cargo_servicio) !== undefined && (data.convenio?.valor_cargo_servicio ?? data.valor_cargo_servicio) !== null
+        ? Number((data.convenio?.valor_cargo_servicio ?? data.valor_cargo_servicio))
+        : null
     });
   } catch (error: any) {
     console.error("Error validando código de descuento:", error);
