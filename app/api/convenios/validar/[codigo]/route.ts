@@ -47,7 +47,9 @@ export async function GET(
       valido: true,
       descuento: parseFloat(data.valor_descuento || "0"),
       nombre: data.nombre,
-      tipo_descuento: data.tipo_descuento
+      tipo_descuento: data.tipo_descuento,
+      empresa_convenio: data.empresa_nombre,
+      convenio: data.nombre
     });
   } catch (error: any) {
     console.error("Error validando código de descuento:", error);

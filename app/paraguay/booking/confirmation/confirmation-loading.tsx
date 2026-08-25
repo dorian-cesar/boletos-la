@@ -59,6 +59,10 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
     bancardShopProcessId,
     setBancardShopProcessId,
     bancardIsVisa,
+    discountPercentage,
+    discountEmpresa,
+    discountConvenio,
+    serviceCharge,
   } = useBookingStore();
 
   const primaryPassenger = passengerDetails[0];
@@ -141,6 +145,11 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           origen_transaccion: "web",
           agencia_delta: "BO2",
           tipo_pago: "BANCARD",
+          descuento: discountPercentage ? Math.round(Number(seat.price || trip.price || 0) * (discountPercentage / 100)) : 0,
+          cargo_por_servicio: serviceCharge || 2500,
+          monto_final: Number(seat.price || trip.price || 0) - (discountPercentage ? Math.round(Number(seat.price || trip.price || 0) * (discountPercentage / 100)) : 0) + (serviceCharge || 2500),
+          empresa_convenio: discountEmpresa || null,
+          convenio: discountConvenio || null,
         };
 
         try {

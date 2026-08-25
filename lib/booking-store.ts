@@ -85,6 +85,9 @@ export interface BookingState {
   bancardIsVisa: boolean | null;
   discountCode: string | null;
   discountPercentage: number | null;
+  discountEmpresa: string | null;
+  discountConvenio: string | null;
+  serviceCharge: number;
 
   setStep: (step: number) => void;
   setTripType: (type: "one-way" | "round-trip") => void;
@@ -120,7 +123,12 @@ export interface BookingState {
   assignTicketNumbers: (ticketMap: Record<string, string>) => void;
   swapTitles: () => void;
   resetBooking: () => void;
-  setDiscount: (code: string | null, percentage: number | null) => void;
+  setDiscount: (
+    code: string | null,
+    percentage: number | null,
+    empresa?: string | null,
+    convenio?: string | null
+  ) => void;
 }
 
 const initialState = {
@@ -150,6 +158,9 @@ const initialState = {
   bancardIsVisa: null,
   discountCode: null,
   discountPercentage: null,
+  discountEmpresa: null,
+  discountConvenio: null,
+  serviceCharge: 2500,
 };
 
 export const useBookingStore = create<BookingState>()(
@@ -317,16 +328,26 @@ export const useBookingStore = create<BookingState>()(
           );
         }
 
-        const { discountPercentage } = get();
+        const { discountPercentage, serviceCharge } = get();
         if (discountPercentage && discountPercentage > 0) {
           total = Math.round(total - (total * (discountPercentage / 100)));
+        }
+
+        const totalPassengers = selectedSeats.length + selectedReturnSeats.length;
+        if (totalPassengers > 0) {
+          total += totalPassengers * serviceCharge;
         }
 
         set({ totalPrice: total });
       },
 
-      setDiscount: (code, percentage) => {
-        set({ discountCode: code, discountPercentage: percentage });
+      setDiscount: (code, percentage, empresa = null, convenio = null) => {
+        set({
+          discountCode: code,
+          discountPercentage: percentage,
+          discountEmpresa: empresa,
+          discountConvenio: convenio,
+        });
         get().calculateTotal();
       },
 
@@ -413,6 +434,9 @@ export const useBookingStore = create<BookingState>()(
         bancardIsVisa: state.bancardIsVisa,
         discountCode: state.discountCode,
         discountPercentage: state.discountPercentage,
+        discountEmpresa: state.discountEmpresa,
+        discountConvenio: state.discountConvenio,
+        serviceCharge: state.serviceCharge,
       }),
       // Versión para migraciones futuras
       version: 1,

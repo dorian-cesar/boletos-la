@@ -19,6 +19,7 @@ import {
   MapPin,
   Timer,
   X,
+  HelpCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -75,6 +76,7 @@ export default function CheckoutPage() {
     setBancardShopProcessId,
     setBancardIsVisa,
     discountPercentage,
+    serviceCharge,
     calculateTotal,
   } = useBookingStore();
 
@@ -537,6 +539,17 @@ export default function CheckoutPage() {
                         </span>
                       </p>
                     ) : null}
+                    <p className="flex justify-between text-sm gap-2 mt-3">
+                      <span className="flex items-center gap-1 text-slate-900 dark:text-white/60 shrink-0">
+                        Cargo por servicio
+                        <span title="texto de ejemplo" className="flex">
+                          <HelpCircle className="h-3.5 w-3.5 text-slate-400 cursor-help" />
+                        </span>
+                      </span>
+                      <span className="text-slate-900 dark:text-white truncate text-right">
+                        Gs. {(totalPassengers * serviceCharge).toLocaleString("es-PY")}
+                      </span>
+                    </p>
                   </div>
 
                   {/* Total */}

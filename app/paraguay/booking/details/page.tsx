@@ -12,6 +12,7 @@ import {
   AlertCircle,
   Tag,
   Check,
+  HelpCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -49,6 +50,7 @@ export default function DetailsPage() {
     destinationTitle,
     discountCode,
     discountPercentage,
+    serviceCharge,
     setDiscount,
   } = useBookingStore();
 
@@ -94,7 +96,7 @@ export default function DetailsPage() {
       
       const percentage = data.descuento;
       if (percentage && percentage > 0 && percentage <= 100) {
-        setDiscount(discountInput.trim(), percentage);
+        setDiscount(discountInput.trim(), percentage, data.empresa_convenio, data.convenio);
         setDiscountSuccess(`¡Descuento de ${percentage}% aplicado! ${data.nombre ? `(${data.nombre})` : ''}`);
       } else {
         throw new Error("El código no tiene un porcentaje válido asociado");
@@ -108,7 +110,7 @@ export default function DetailsPage() {
   };
 
   const handleRemoveDiscount = () => {
-    setDiscount(null, null);
+    setDiscount(null, null, null, null);
     setDiscountInput("");
     setDiscountSuccess(null);
     setHasDiscount(false);
@@ -390,6 +392,17 @@ export default function DetailsPage() {
                       </div>
                     </>
                   ) : null}
+                  <div className="flex items-center justify-between text-sm mb-3 text-slate-600 dark:text-white/70">
+                    <span className="flex items-center gap-1">
+                      Cargo por servicio
+                      <span title="texto de ejemplo" className="flex">
+                        <HelpCircle className="h-3.5 w-3.5 text-slate-400 cursor-help" />
+                      </span>
+                    </span>
+                    <span className="font-medium text-slate-900 dark:text-white">
+                      Gs. {((selectedSeats.length + selectedReturnSeats.length) * serviceCharge).toLocaleString("es-PY")}
+                    </span>
+                  </div>
                   <div className="flex items-center justify-between">
                     <span className="text-base md:text-lg font-medium text-slate-900 dark:text-white">
                       Total a Pagar
