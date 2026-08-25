@@ -2,13 +2,14 @@
 
 import { useBookingStore } from "@/lib/booking-store";
 import { cn } from "@/lib/utils";
-import { Check, Bus, Users, CreditCard, Ticket } from "lucide-react";
+import { Check, Bus, Users, CreditCard, Ticket, FileText } from "lucide-react";
 
 const steps = [
   { id: 1, name: "Servicio", icon: Bus },
   { id: 2, name: "Asientos", icon: Users },
-  { id: 3, name: "Datos y Pago", icon: CreditCard },
-  { id: 4, name: "Confirmación", icon: Ticket },
+  { id: 3, name: "Datos", icon: FileText },
+  { id: 4, name: "Pago", icon: CreditCard },
+  { id: 5, name: "Confirmación", icon: Ticket },
 ];
 
 export function BookingProgress() {

@@ -74,6 +74,7 @@ export default function CheckoutPage() {
     bancardShopProcessId,
     setBancardShopProcessId,
     setBancardIsVisa,
+    discountPercentage,
   } = useBookingStore();
 
   const [isExpired, setIsExpired] = useState(false);
@@ -175,7 +176,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     setMounted(true);
-    setStep(3);
+    setStep(4);
   }, [setStep]);
 
   // Efecto para inyectar dinámicamente el SDK de Bancard e inicializar el formulario de pago
@@ -515,9 +516,25 @@ export default function CheckoutPage() {
                         Asientos ({totalPassengers})
                       </span>
                       <span className="text-slate-900 dark:text-white truncate text-right">
-                        Gs. {totalPrice.toLocaleString("es-PY")}
+                        Gs. {(
+                          selectedSeats.reduce((acc, s) => acc + s.price, 0) +
+                          selectedReturnSeats.reduce((acc, s) => acc + s.price, 0)
+                        ).toLocaleString("es-PY")}
                       </span>
                     </p>
+                    {discountPercentage ? (
+                      <p className="flex justify-between text-sm gap-2 text-green-600 dark:text-green-400 font-medium">
+                        <span className="shrink-0">
+                          Descuento ({discountPercentage}%)
+                        </span>
+                        <span className="truncate text-right">
+                          - Gs. {((
+                            selectedSeats.reduce((acc, s) => acc + s.price, 0) +
+                            selectedReturnSeats.reduce((acc, s) => acc + s.price, 0)
+                          ) * (discountPercentage / 100)).toLocaleString("es-PY")}
+                        </span>
+                      </p>
+                    ) : null}
                   </div>
 
                   {/* Total */}

@@ -83,6 +83,8 @@ export interface BookingState {
   bancardProcessId: string | null;
   bancardShopProcessId: string | null;
   bancardIsVisa: boolean | null;
+  discountCode: string | null;
+  discountPercentage: number | null;
 
   setStep: (step: number) => void;
   setTripType: (type: "one-way" | "round-trip") => void;
@@ -118,6 +120,7 @@ export interface BookingState {
   assignTicketNumbers: (ticketMap: Record<string, string>) => void;
   swapTitles: () => void;
   resetBooking: () => void;
+  setDiscount: (code: string | null, percentage: number | null) => void;
 }
 
 const initialState = {
@@ -145,6 +148,8 @@ const initialState = {
   bancardProcessId: null,
   bancardShopProcessId: null,
   bancardIsVisa: null,
+  discountCode: null,
+  discountPercentage: null,
 };
 
 export const useBookingStore = create<BookingState>()(
@@ -312,7 +317,17 @@ export const useBookingStore = create<BookingState>()(
           );
         }
 
+        const { discountPercentage } = get();
+        if (discountPercentage && discountPercentage > 0) {
+          total = total - (total * (discountPercentage / 100));
+        }
+
         set({ totalPrice: total });
+      },
+
+      setDiscount: (code, percentage) => {
+        set({ discountCode: code, discountPercentage: percentage });
+        get().calculateTotal();
       },
 
       setBookingReference: (bookingReference) => set({ bookingReference }),
