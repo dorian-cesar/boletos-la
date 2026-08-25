@@ -114,6 +114,8 @@ export interface BookingState {
   setDestinationTitle: (title: string) => void;
   setOutboundConnectionId: (id: string | null) => void;
   setReturnConnectionId: (id: string | null) => void;
+  setCheckoutData: (data: any) => void;
+  setBookingExpiresAt: (time: number | null) => void;
   setPaymentResult: (result: PaymentResult | null) => void;
   setBancardProcessId: (id: string | null) => void;
   setBancardShopProcessId: (id: string | null) => void;
@@ -151,6 +153,8 @@ const initialState = {
   destinationTitle: "",
   outboundConnectionId: null,
   returnConnectionId: null,
+  checkoutData: null,
+  bookingExpiresAt: null,
   paymentResult: null,
   failedSeats: {},
   bancardProcessId: null,
@@ -357,6 +361,8 @@ export const useBookingStore = create<BookingState>()(
       setDestinationTitle: (destinationTitle) => set({ destinationTitle }),
       setOutboundConnectionId: (outboundConnectionId) => set({ outboundConnectionId }),
       setReturnConnectionId: (returnConnectionId) => set({ returnConnectionId }),
+      setCheckoutData: (data) => set({ checkoutData: data }),
+      setBookingExpiresAt: (time) => set({ bookingExpiresAt: time }),
       setPaymentResult: (paymentResult) => set({ paymentResult }),
       setBancardProcessId: (bancardProcessId) => set({ bancardProcessId }),
       setBancardShopProcessId: (bancardShopProcessId) => set({ bancardShopProcessId }),

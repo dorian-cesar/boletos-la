@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookingProgress } from "@/components/paraguay/booking-progress";
+import { BookingTimer } from "@/components/paraguay/booking-timer";
 import { useBookingStore, cities } from "@/lib/booking-store";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -362,7 +363,7 @@ export default function CheckoutPage() {
                     Resumen de Compra
                   </h3>
                 </div>
-                <CheckoutTimer onExpire={handleExpire} />
+                <BookingTimer />
               </div>
 
               <div className="flex flex-col gap-6">

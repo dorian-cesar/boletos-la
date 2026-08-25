@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { BookingProgress } from "@/components/paraguay/booking-progress";
+import { BookingTimer } from "@/components/paraguay/booking-timer";
 import { SeatMap } from "@/components/paraguay/seat-map";
 import { useBookingStore } from "@/lib/booking-store";
 import { cn } from "@/lib/utils";
@@ -574,6 +575,8 @@ export default function SeatsPage() {
                   <h3 className="text-lg md:text-xl font-bold mb-4 md:mb-6 text-slate-900 dark:text-white">
                     Resumen de Reserva
                   </h3>
+
+                  <BookingTimer />
 
                   {/* Asientos seleccionados contador */}
                   <div className="mb-4 p-3 bg-black/10 dark:bg-white/10 rounded-lg">

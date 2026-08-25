@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { BookingProgress } from "@/components/paraguay/booking-progress";
+import { BookingTimer } from "@/components/paraguay/booking-timer";
 import { PassengerForm } from "@/components/paraguay/passenger-form";
 import { useBookingStore } from "@/lib/booking-store";
 import { cn } from "@/lib/utils";
@@ -344,6 +345,8 @@ export default function DetailsPage() {
                 <h3 className="text-lg md:text-xl font-bold mb-4 md:mb-6 text-slate-900 dark:text-white">
                   Resumen de Reserva
                 </h3>
+
+                <BookingTimer />
 
                 {/* Resumen Viajes - Simplificado */}
                 <div className="space-y-4 mb-6">

@@ -154,7 +154,7 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
           </span>
         </div>
         <div className="flex items-center gap-1.5 md:gap-2">
-          <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-black/20 dark:bg-white/20 border border-background/40" />
+          <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-orange-500/80 border border-orange-600" />
           <span className="text-xs md:text-sm text-slate-900 dark:text-white/60">Ocupado</span>
         </div>
         <div className="flex items-center gap-1.5 md:gap-2">
@@ -341,7 +341,7 @@ function SeatButton({
           !isSelected &&
           !isDisabled &&
           "bg-black/10 dark:bg-white/10 border-2 border-black/15 dark:border-white/30 hover:border-primary hover:bg-primary/10",
-        isSelected &&
+        isSelected && !isOccupied && !isBlocked &&
           "bg-primary text-primary-foreground shadow-lg transform scale-110 border border-primary",
       )}
       title={
