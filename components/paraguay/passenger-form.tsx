@@ -574,12 +574,12 @@ export function PassengerForm({
         {/* Status banner */}
         {(searchStatus === "found" || searchStatus === "created") && (
           <div className="flex items-center justify-between gap-2 text-xs px-3 py-2 rounded-lg border border-green-500/30 bg-green-500/10 animate-fade-in">
-            <span className="flex items-center gap-1.5 text-green-400">
+            <span className="flex items-center gap-1.5 text-green-700 dark:text-green-400">
               <Check className="h-3.5 w-3.5 shrink-0" />
               {searchStatus === "created"
                 ? "Pasajero registrado correctamente:"
                 : "Pasajero encontrado:"}{" "}
-              {passenger.firstName} {passenger.lastName}
+              <span className="font-semibold">{passenger.firstName} {passenger.lastName}</span>
             </span>
             {isEditing ? (
               <Button
@@ -591,7 +591,7 @@ export function PassengerForm({
                   setIsEditing(false);
                 }}
                 disabled={isCreating}
-                className="h-6 px-2 text-[11px] text-green-400 hover:text-green-300 hover:bg-green-500/10 shrink-0"
+                className="h-6 px-2 text-[11px] text-green-700 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 hover:bg-green-500/20 dark:hover:bg-green-500/10 shrink-0"
               >
                 {isCreating ? (
                   <Loader2 className="h-3 w-3 animate-spin" />
