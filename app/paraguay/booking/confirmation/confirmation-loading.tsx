@@ -62,8 +62,12 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
     discountPercentage,
     discountEmpresa,
     discountConvenio,
+    discountCargoPorServicio,
+    discountValorCargoServicio,
     serviceCharge,
   } = useBookingStore();
+
+  const appliedServiceCharge = discountCargoPorServicio === false ? 0 : (discountCargoPorServicio === true && discountValorCargoServicio !== null && discountValorCargoServicio !== undefined ? discountValorCargoServicio : (serviceCharge || 2500));
 
   const primaryPassenger = passengerDetails[0];
 
@@ -146,8 +150,8 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           agencia_delta: "BO2",
           tipo_pago: "BANCARD",
           descuento: discountPercentage ? Math.round(Number(seat.price || trip.price || 0) * (discountPercentage / 100)) : 0,
-          cargo_por_servicio: serviceCharge || 2500,
-          monto_final: Number(seat.price || trip.price || 0) - (discountPercentage ? Math.round(Number(seat.price || trip.price || 0) * (discountPercentage / 100)) : 0) + (serviceCharge || 2500),
+          cargo_por_servicio: appliedServiceCharge,
+          monto_final: Number(seat.price || trip.price || 0) - (discountPercentage ? Math.round(Number(seat.price || trip.price || 0) * (discountPercentage / 100)) : 0) + appliedServiceCharge,
           empresa_convenio: discountEmpresa || null,
           convenio: discountConvenio || null,
         };

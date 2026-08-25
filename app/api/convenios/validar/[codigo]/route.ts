@@ -49,7 +49,9 @@ export async function GET(
       nombre: data.nombre,
       tipo_descuento: data.tipo_descuento,
       empresa_convenio: data.empresa_nombre,
-      convenio: data.nombre
+      convenio: data.nombre,
+      cargo_por_servicio: data.cargo_por_servicio,
+      valor_cargo_servicio: data.valor_cargo_servicio
     });
   } catch (error: any) {
     console.error("Error validando código de descuento:", error);

@@ -103,7 +103,14 @@ export default function DetailsPage() {
       
       const percentage = data.descuento;
       if (percentage && percentage > 0 && percentage <= 100) {
-        setDiscount(discountInput.trim(), percentage, data.empresa_convenio, data.convenio);
+        setDiscount(
+          discountInput.trim(),
+          percentage,
+          data.empresa_convenio,
+          data.convenio,
+          data.cargo_por_servicio,
+          data.valor_cargo_servicio
+        );
         setDiscountSuccess(`¡Descuento de ${percentage}% aplicado! ${data.nombre ? `(${data.nombre})` : ''}`);
       } else {
         throw new Error("El código no tiene un porcentaje válido asociado");

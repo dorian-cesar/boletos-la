@@ -87,6 +87,8 @@ export interface BookingState {
   discountPercentage: number | null;
   discountEmpresa: string | null;
   discountConvenio: string | null;
+  discountCargoPorServicio: boolean | null;
+  discountValorCargoServicio: number | null;
   serviceCharge: number;
   bookingExpiresAt: number | null;
   checkoutData: any;
@@ -131,7 +133,9 @@ export interface BookingState {
     code: string | null,
     percentage: number | null,
     empresa?: string | null,
-    convenio?: string | null
+    convenio?: string | null,
+    cargoPorServicio?: boolean | null,
+    valorCargoServicio?: number | null
   ) => void;
 }
 
@@ -166,6 +170,8 @@ const initialState = {
   discountPercentage: null,
   discountEmpresa: null,
   discountConvenio: null,
+  discountCargoPorServicio: null,
+  discountValorCargoServicio: null,
   serviceCharge: 2500,
 };
 
@@ -334,25 +340,33 @@ export const useBookingStore = create<BookingState>()(
           );
         }
 
-        const { discountPercentage, serviceCharge } = get();
+        const { discountPercentage, serviceCharge, discountCargoPorServicio, discountValorCargoServicio } = get();
         if (discountPercentage && discountPercentage > 0) {
           total = Math.round(total - (total * (discountPercentage / 100)));
         }
 
         const totalPassengers = selectedSeats.length + selectedReturnSeats.length;
         if (totalPassengers > 0) {
-          total += totalPassengers * serviceCharge;
+          let appliedServiceCharge = serviceCharge; // default 2500
+          if (discountCargoPorServicio === false) {
+            appliedServiceCharge = 0;
+          } else if (discountCargoPorServicio === true && discountValorCargoServicio !== null && discountValorCargoServicio !== undefined) {
+            appliedServiceCharge = discountValorCargoServicio;
+          }
+          total += totalPassengers * appliedServiceCharge;
         }
 
         set({ totalPrice: total });
       },
 
-      setDiscount: (code, percentage, empresa = null, convenio = null) => {
+      setDiscount: (code, percentage, empresa = null, convenio = null, cargoPorServicio = null, valorCargoServicio = null) => {
         set({
           discountCode: code,
           discountPercentage: percentage,
           discountEmpresa: empresa,
           discountConvenio: convenio,
+          discountCargoPorServicio: cargoPorServicio,
+          discountValorCargoServicio: valorCargoServicio,
         });
         get().calculateTotal();
       },
@@ -444,6 +458,8 @@ export const useBookingStore = create<BookingState>()(
         discountPercentage: state.discountPercentage,
         discountEmpresa: state.discountEmpresa,
         discountConvenio: state.discountConvenio,
+        discountCargoPorServicio: state.discountCargoPorServicio,
+        discountValorCargoServicio: state.discountValorCargoServicio,
         serviceCharge: state.serviceCharge,
       }),
       // Versión para migraciones futuras

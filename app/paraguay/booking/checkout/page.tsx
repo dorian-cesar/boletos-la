@@ -82,10 +82,15 @@ export default function CheckoutPage() {
     bancardShopProcessId,
     setBancardShopProcessId,
     setBancardIsVisa,
+    bancardIsVisa,
     discountPercentage,
+    discountCargoPorServicio,
+    discountValorCargoServicio,
     serviceCharge,
     calculateTotal,
   } = useBookingStore();
+
+  const appliedServiceCharge = discountCargoPorServicio === false ? 0 : (discountCargoPorServicio === true && discountValorCargoServicio !== null && discountValorCargoServicio !== undefined ? discountValorCargoServicio : (serviceCharge || 2500));
 
   const [isExpired, setIsExpired] = useState(false);
   const [showVisaModal, setShowVisaModal] = useState(false);
@@ -576,7 +581,7 @@ export default function CheckoutPage() {
                         </TooltipProvider>
                       </span>
                       <span className="text-slate-900 dark:text-white truncate text-right">
-                        Gs. {(totalPassengers * serviceCharge).toLocaleString("es-PY")}
+                        Gs. {(totalPassengers * appliedServiceCharge).toLocaleString("es-PY")}
                       </span>
                     </div>
                   </div>
