@@ -459,14 +459,14 @@ export function PassengerForm({
           </h3>
           <div className="flex flex-wrap gap-2 text-xs text-slate-900 dark:text-white/60 mt-0.5">
             <span className="flex items-center gap-1">
-              <span className="bg-primary/20 text-primary text-[10px] px-1.5 py-0.5 rounded uppercase font-medium">
+              <span className="border border-primary/50 text-primary text-[10px] px-1.5 py-0.5 rounded uppercase font-bold">
                 Ida
               </span>
               Asiento {seatNumber}
             </span>
             {returnSeatNumber && (
               <span className="flex items-center gap-1">
-                <span className="bg-secondary/20 text-secondary text-[10px] px-1.5 py-0.5 rounded uppercase font-medium">
+                <span className="border border-secondary/50 text-secondary text-[10px] px-1.5 py-0.5 rounded uppercase font-bold">
                   Vuelta
                 </span>
                 Asiento {returnSeatNumber}
