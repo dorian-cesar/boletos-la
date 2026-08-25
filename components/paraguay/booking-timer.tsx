@@ -56,20 +56,17 @@ export function BookingTimer() {
   if (timeLeft === null) return null;
 
   return (
-    <div className={cn(
-      "flex items-center justify-between gap-4 p-3 rounded-lg border transition-colors duration-500 w-full sm:w-auto",
-      timeLeft < 180 
-        ? "bg-red-500/10 border-red-500/30 text-red-600 dark:text-red-400" 
-        : "bg-green-500/10 border-green-500/30 text-green-600 dark:text-green-400"
-    )}>
-      <div className="flex items-center gap-2 font-medium">
-        <Clock className={cn(
-          "w-4 h-4",
-          timeLeft < 180 && "animate-pulse"
-        )} />
-        <span className="text-xs md:text-sm">Tiempo restante</span>
-      </div>
-      <span className="font-bold tabular-nums">
+    <div
+      className={cn(
+        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-semibold transition-colors duration-300 shrink-0",
+        timeLeft < 180
+          ? "bg-red-500/10 border-red-500/30 text-red-600 dark:text-red-400 animate-pulse"
+          : "bg-green-500/10 border-green-500/30 text-green-600 dark:text-green-400"
+      )}
+      title="Tiempo restante para completar la reserva"
+    >
+      <Clock className="w-3.5 h-3.5 shrink-0" />
+      <span className="tabular-nums font-bold">
         {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, "0")}
       </span>
     </div>

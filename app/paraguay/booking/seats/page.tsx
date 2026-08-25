@@ -572,11 +572,12 @@ export default function SeatsPage() {
               {/* Summary Sidebar */}
               <div className="lg:col-span-1 lg:sticky lg:top-24 self-start z-20">
                 <Card className="p-4 md:p-6 sticky top-24 animate-slide-in-right bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-white/20">
-                  <h3 className="text-lg md:text-xl font-bold mb-4 md:mb-6 text-slate-900 dark:text-white">
-                    Resumen de Reserva
-                  </h3>
-
-                  <BookingTimer />
+                  <div className="flex items-center justify-between gap-2 mb-4 md:mb-6">
+                    <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">
+                      Resumen de Reserva
+                    </h3>
+                    <BookingTimer />
+                  </div>
 
                   {/* Asientos seleccionados contador */}
                   <div className="mb-4 p-3 bg-black/10 dark:bg-white/10 rounded-lg">
