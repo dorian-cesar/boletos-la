@@ -219,12 +219,12 @@ export default function ConfirmationPageContent({
           pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
           metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
           numeroFactura: paymentDetails?.numero_pedido || "",
-        timbrado: paymentDetails?.timbrado || "",
+          timbrado: paymentDetails?.timbrado || "1731316",
           fechaVenta: format(new Date(), "dd/MM/yyyy HH:mm"),
           asiento: passengerSeat,
           servicio: trip.busType,
           qrBase64: qrBase64,
-          cdc: "0180012667000100100012341202404221100000000",
+          cdc: paymentDetails?.cdc || "0180012667000100100012341202404221100000000",
         };
 
         console.log(
@@ -710,12 +710,12 @@ export default function ConfirmationPageContent({
         pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
         numeroFactura: paymentDetails?.numero_pedido || "",
-        timbrado: paymentDetails?.timbrado || "",
+        timbrado: paymentDetails?.timbrado || "1731316",
         fechaVenta: format(new Date(), "dd/MM/yyyy HH:mm"),
         asiento: passengerSeat,
         servicio: trip.busType,
         qrBase64: qrBase64,
-        cdc: "0180012667000100100012341202404221100000000",
+        cdc: paymentDetails?.cdc || "0180012667000100100012341202404221100000000",
       };
 
       console.log(`📧 Enviando boleto a ${passenger.email}...`);
