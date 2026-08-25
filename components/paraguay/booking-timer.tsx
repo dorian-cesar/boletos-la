@@ -60,7 +60,7 @@ export function BookingTimer() {
       className={cn(
         "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-semibold transition-colors duration-300 shrink-0",
         timeLeft < 180
-          ? "bg-red-500/10 border-red-500/30 text-red-600 dark:text-red-400 animate-pulse"
+          ? "bg-red-500/10 border-red-500/30 text-red-600 dark:text-red-400"
           : "bg-green-500/10 border-green-500/30 text-green-600 dark:text-green-400"
       )}
       title="Tiempo restante para completar la reserva"
