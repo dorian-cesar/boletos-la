@@ -432,7 +432,7 @@ export const useBookingStore = create<BookingState>()(
           const dataArray = Array.isArray(data) ? data : (data && data.value ? data.value : []);
           
           if (dataArray && dataArray.length > 0) {
-            const activeCharge = dataArray.find((c: any) => c.activo === true) || dataArray[0];
+            const activeCharge = dataArray.find((c: any) => c.activo === true && !c.deletedAt);
             if (activeCharge && activeCharge.valor != null) {
               set({ dynamicServiceCharge: parseFloat(activeCharge.valor) });
             } else {
