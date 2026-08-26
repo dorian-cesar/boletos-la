@@ -418,7 +418,7 @@ export default function DetailsPage() {
                   ) : null}
                   <div className="flex items-center justify-between text-sm mb-3 text-slate-600 dark:text-white/70">
                     <span className="flex items-center gap-2">
-                      <span>Cargo por servicio {dynamicServiceCharge !== null ? `(${dynamicServiceCharge}%)` : ""}</span>
+                      <span>Cargo por servicio</span>
                       <TooltipProvider delayDuration={0}>
                         <Tooltip>
                           <TooltipTrigger asChild>
