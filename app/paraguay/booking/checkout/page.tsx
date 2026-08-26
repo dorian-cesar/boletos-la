@@ -573,9 +573,9 @@ export default function CheckoutPage() {
                             <TooltipContent 
                               side="top" 
                               sideOffset={6}
-                              className="z-50 max-w-xs sm:max-w-sm bg-slate-900 text-white dark:bg-slate-950 dark:text-white border border-slate-700/80 px-4 py-2.5 rounded-xl shadow-2xl"
+                              className="z-50 max-w-xs sm:max-w-sm bg-white text-slate-800 dark:bg-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 px-4 py-2.5 rounded-xl shadow-xl backdrop-blur-md"
                             >
-                              <p className="text-sm sm:text-base font-normal text-slate-100 leading-relaxed">
+                              <p className="text-sm font-normal text-slate-700 dark:text-slate-200 leading-relaxed">
                                 Este cargo te da acceso a nuestro amplio catálogo, servicios de atención al cliente y devolución de los pasajes cuando sea posible.
                               </p>
                             </TooltipContent>
