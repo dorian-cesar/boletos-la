@@ -54,28 +54,28 @@ export function ParaguayHeroSection() {
         </div>
 
         {/* Banner Desktop - Travel Sale */}
-        <div className="hidden lg:flex w-full max-w-[1400px] xl:px-4 mt-8 animate-fade-in-up justify-center" style={{ animationDelay: "0.6s" }}>
+        <div className="hidden lg:flex w-full max-w-[1400px] xl:px-4 mt-4 animate-fade-in-up justify-center" style={{ animationDelay: "0.6s" }}>
           <Link href="/paraguay/bases-promocion" className="block w-full max-w-4xl hover:opacity-95 transition-opacity">
             <Image
               src="/images/travel-sale.jpg"
               alt="Travel Sale - Sorteo Tablet Doogee"
               width={1200}
               height={300}
-              className="w-full h-auto rounded-xl shadow-2xl object-cover"
+              className="w-full h-auto object-cover"
               priority
             />
           </Link>
         </div>
 
         {/* Banner Mobile - Travel Sale */}
-        <div className="flex lg:hidden w-full px-2 mt-6 animate-fade-in-up justify-center" style={{ animationDelay: "0.6s" }}>
+        <div className="flex lg:hidden w-full px-2 mt-3 animate-fade-in-up justify-center" style={{ animationDelay: "0.6s" }}>
           <Link href="/paraguay/bases-promocion" className="block w-full max-w-md hover:opacity-95 transition-opacity">
             <Image
               src="/images/travel-sale-mobile.jpg"
               alt="Travel Sale - Sorteo Tablet Doogee (Mobile)"
               width={800}
               height={266}
-              className="w-full h-auto rounded-xl shadow-lg object-cover"
+              className="w-full h-auto object-cover"
               priority
             />
           </Link>
