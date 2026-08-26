@@ -9,6 +9,7 @@ import { FeaturesSection } from "@/components/paraguay/features-section";
 import { DestinationsSection } from "@/components/paraguay/destinations-section";
 import { CompaniesSection } from "@/components/paraguay/companies-section";
 import { ParaguayFooter } from "@/components/paraguay/footer";
+import { PromoSection } from "@/components/paraguay/promo-section";
 
 export default function ParaguayPage() {
   useEffect(() => {
@@ -71,6 +72,7 @@ export default function ParaguayPage() {
       <ParaguayHeroSection />
       <FeaturesSection />
       <DestinationsSection />
+      <PromoSection />
       <ParaguayFooter />
     </main>
   );
