@@ -107,7 +107,7 @@ export default function DetailsPage() {
       if (!res.ok || !data.valido) {
         throw new Error(data.error || data.msj || "Código inválido");
       }
-      
+
       const percentage = data.descuento;
       if (percentage && percentage > 0 && percentage <= 100) {
         setDiscount(
@@ -178,7 +178,7 @@ export default function DetailsPage() {
       console.error("Save error:", err);
       setSaveError(
         err.message ||
-          "Hubo un error al guardar los pasajeros. Por favor intenta de nuevo.",
+        "Hubo un error al guardar los pasajeros. Por favor intenta de nuevo.",
       );
     } finally {
       setIsSaving(false);
@@ -190,7 +190,7 @@ export default function DetailsPage() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#0f1419] flex flex-col">
       <BookingProgress />
-      
+
       <main className="flex-1 container mx-auto px-2 sm:px-4 py-4 md:py-8">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
@@ -245,10 +245,10 @@ export default function DetailsPage() {
                     Código de Descuento
                   </h3>
                 </div>
-                
+
                 <label className="flex items-center gap-2 cursor-pointer mb-4">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     className="w-4 h-4 text-primary rounded border-slate-300 focus:ring-primary"
                     checked={hasDiscount || !!discountCode}
                     onChange={(e) => {
@@ -268,12 +268,12 @@ export default function DetailsPage() {
                     {!discountPercentage ? (
                       <div className="flex gap-2">
                         <Input
-                          placeholder="Ingresa tu código"
+                          placeholder="Ingresá tu código"
                           value={discountInput}
                           onChange={(e) => setDiscountInput(e.target.value.toUpperCase())}
                           className="uppercase bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/20"
                         />
-                        <Button 
+                        <Button
                           onClick={handleApplyDiscount}
                           disabled={!discountInput.trim() || isApplyingDiscount}
                           className="bg-secondary hover:bg-secondary/90 text-secondary-foreground min-w-[100px]"
@@ -296,9 +296,9 @@ export default function DetailsPage() {
                             <p className="text-xs opacity-80">Código: {discountCode}</p>
                           </div>
                         </div>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={handleRemoveDiscount}
                           className="text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
                         >
@@ -306,7 +306,7 @@ export default function DetailsPage() {
                         </Button>
                       </div>
                     )}
-                    
+
                     {discountError && (
                       <p className="text-sm text-destructive font-medium flex items-center gap-1.5">
                         <AlertCircle className="h-4 w-4" />
@@ -334,7 +334,7 @@ export default function DetailsPage() {
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Volver a asientos
                 </Button>
-                
+
                 <Button
                   onClick={handleContinue}
                   disabled={!arePassengersComplete || isSaving}
@@ -376,7 +376,7 @@ export default function DetailsPage() {
                       <span className="font-medium text-slate-900 dark:text-white">Gs. {selectedSeats.reduce((acc, s) => acc + s.price, 0).toLocaleString("es-PY")}</span>
                     </div>
                   </div>
-                  
+
                   {/* Regreso */}
                   {tripType === "round-trip" && selectedReturnTrip && (
                     <div className="pb-4 border-b border-black/10 dark:border-white/20">
@@ -400,7 +400,7 @@ export default function DetailsPage() {
                         <span>Subtotal</span>
                         <span>
                           Gs. {(
-                            selectedSeats.reduce((acc, s) => acc + s.price, 0) + 
+                            selectedSeats.reduce((acc, s) => acc + s.price, 0) +
                             selectedReturnSeats.reduce((acc, s) => acc + s.price, 0)
                           ).toLocaleString("es-PY")}
                         </span>
@@ -409,7 +409,7 @@ export default function DetailsPage() {
                         <span>Descuento ({discountPercentage}%)</span>
                         <span>
                           - Gs. {((
-                            selectedSeats.reduce((acc, s) => acc + s.price, 0) + 
+                            selectedSeats.reduce((acc, s) => acc + s.price, 0) +
                             selectedReturnSeats.reduce((acc, s) => acc + s.price, 0)
                           ) * (discountPercentage / 100)).toLocaleString("es-PY")}
                         </span>
@@ -433,8 +433,8 @@ export default function DetailsPage() {
                               </button>
                             </span>
                           </TooltipTrigger>
-                          <TooltipContent 
-                            side="top" 
+                          <TooltipContent
+                            side="top"
                             sideOffset={6}
                             className="z-50 max-w-xs sm:max-w-sm bg-white text-slate-800 dark:bg-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 px-4 py-2.5 rounded-xl shadow-xl backdrop-blur-md"
                           >
@@ -460,10 +460,10 @@ export default function DetailsPage() {
                 </div>
 
                 {!arePassengersComplete && (
-                   <div className="flex items-center gap-2 bg-orange-500/15 text-orange-600 dark:text-orange-400 p-3 rounded-lg border border-orange-500/30 mb-4 text-xs font-medium">
-                     <AlertCircle className="h-4 w-4 shrink-0" />
-                     Completá los datos de todos los pasajeros
-                   </div>
+                  <div className="flex items-center gap-2 bg-orange-500/15 text-orange-600 dark:text-orange-400 p-3 rounded-lg border border-orange-500/30 mb-4 text-xs font-medium">
+                    <AlertCircle className="h-4 w-4 shrink-0" />
+                    Completá los datos de todos los pasajeros
+                  </div>
                 )}
 
                 {/* Continue Button Mobile */}
