@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -87,6 +87,7 @@ export default function CheckoutPage() {
     discountCargoPorServicio,
     discountValorCargoServicio,
     serviceCharge,
+    dynamicServiceCharge,
     calculateTotal,
     appliedServiceChargeAmount,
   } = useBookingStore();
@@ -554,7 +555,7 @@ export default function CheckoutPage() {
                     ) : null}
                     <div className="flex justify-between text-sm gap-2 mt-3">
                       <span className="flex items-center gap-2 text-slate-900 dark:text-white/60 shrink-0">
-                        <span>Cargo por servicio</span>
+                        <span>Cargo por servicio {dynamicServiceCharge !== null ? `(${dynamicServiceCharge}%)` : ""}</span>
                         <TooltipProvider delayDuration={0}>
                           <Tooltip>
                             <TooltipTrigger asChild>

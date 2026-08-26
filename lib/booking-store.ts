@@ -331,18 +331,20 @@ export const useBookingStore = create<BookingState>()(
           selectedSeats,
           selectedReturnSeats,
         } = get();
-        let total = 0;
+        let baseTotal = 0;
 
         if (selectedOutboundTrip) {
-          total += selectedSeats.reduce((acc, seat) => acc + seat.price, 0);
+          baseTotal += selectedSeats.reduce((acc, seat) => acc + seat.price, 0);
         }
 
         if (selectedReturnTrip) {
-          total += selectedReturnSeats.reduce(
+          baseTotal += selectedReturnSeats.reduce(
             (acc, seat) => acc + seat.price,
             0,
           );
         }
+
+        let total = baseTotal;
 
         const { discountPercentage, serviceCharge, discountCargoPorServicio, discountValorCargoServicio } = get();
         if (discountPercentage && discountPercentage > 0) {
@@ -354,7 +356,7 @@ export const useBookingStore = create<BookingState>()(
         if (totalPassengers > 0) {
           const { dynamicServiceCharge } = get();
           if (dynamicServiceCharge !== null) {
-            calculatedServiceCharge = Math.round(total * (dynamicServiceCharge / 100));
+            calculatedServiceCharge = Math.round(baseTotal * (dynamicServiceCharge / 100));
           } else {
             calculatedServiceCharge = totalPassengers * 2500;
           }
