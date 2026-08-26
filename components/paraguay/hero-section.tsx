@@ -66,6 +66,20 @@ export function ParaguayHeroSection() {
             />
           </Link>
         </div>
+
+        {/* Banner Mobile - Travel Sale */}
+        <div className="flex lg:hidden w-full px-2 mt-6 animate-fade-in-up justify-center" style={{ animationDelay: "0.6s" }}>
+          <Link href="/paraguay/bases-promocion" className="block w-full max-w-md hover:opacity-95 transition-opacity">
+            <Image
+              src="/images/travel-sale-mobile.jpg"
+              alt="Travel Sale - Sorteo Tablet Doogee (Mobile)"
+              width={800}
+              height={266}
+              className="w-full h-auto rounded-xl shadow-lg object-cover"
+              priority
+            />
+          </Link>
+        </div>
       </div>
 
       {/* Scroll Indicator */}
