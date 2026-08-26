@@ -582,3 +582,4 @@ export const generateSeats = (tripId: string, floor: number = 1): Seat[] => {
   return seats;
 };
 
+

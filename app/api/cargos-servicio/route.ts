@@ -4,10 +4,11 @@ export async function GET() {
   try {
     const backendUrl = "https://backend-convenios-py.dev-wit.com";
 
-    const res = await fetch(`${backendUrl}/api/cargos-servicio`, {
+    const res = await fetch(`${backendUrl}/api/cargos-servicio?empresa_id=1`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "x-api-key": "pb_672279ef9d806211729790be1ae23af7c31f55ba8027a2df",
       },
       cache: "no-store",
     });
@@ -39,4 +40,5 @@ export async function GET() {
     );
   }
 }
+
 
