@@ -248,6 +248,12 @@ export default function SeatsPage() {
     currentSelectedSeats.length > 0 &&
     currentSelectedSeats.length <= maxAllowed;
 
+  // Calcular total bruto de los asientos seleccionados sin cargos extra
+  const bruteTotal = [...selectedSeats, ...selectedReturnSeats].reduce(
+    (acc, seat) => acc + seat.price,
+    0
+  );
+
   // Limpiar error de bloqueo cuando el botón se vuelve a habilitar (nueva selección válida)
   useEffect(() => {
     if (canContinue && blockError) {
@@ -713,12 +719,9 @@ export default function SeatsPage() {
                         Total
                       </span>
                       <span className="text-xl md:text-2xl lg:text-3xl font-bold text-secondary">
-                        Gs. {totalPrice.toLocaleString("es-PY")}
+                        Gs. {bruteTotal.toLocaleString("es-PY")}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-900 dark:text-white/60 mt-1">
-                      Impuestos incluidos
-                    </p>
                   </div>
 
                   {/* Continue Button */}
