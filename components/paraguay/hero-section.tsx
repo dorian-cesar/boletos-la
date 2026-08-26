@@ -57,7 +57,7 @@ export function ParaguayHeroSection() {
         <div className="hidden lg:flex w-full max-w-[1400px] xl:px-4 mt-4 animate-fade-in-up justify-center" style={{ animationDelay: "0.6s" }}>
           <Link href="/paraguay/bases-promocion" className="block w-full max-w-4xl hover:opacity-95 transition-opacity">
             <Image
-              src="/images/travel-sale.jpg"
+              src="/images/travel-sale.png"
               alt="Travel Sale - Sorteo Tablet Doogee"
               width={1200}
               height={300}
@@ -71,7 +71,7 @@ export function ParaguayHeroSection() {
         <div className="flex lg:hidden w-full px-2 mt-3 animate-fade-in-up justify-center" style={{ animationDelay: "0.6s" }}>
           <Link href="/paraguay/bases-promocion" className="block w-full max-w-md hover:opacity-95 transition-opacity">
             <Image
-              src="/images/travel-sale-mobile.jpg"
+              src="/images/travel-sale-mobile.png"
               alt="Travel Sale - Sorteo Tablet Doogee (Mobile)"
               width={800}
               height={266}
