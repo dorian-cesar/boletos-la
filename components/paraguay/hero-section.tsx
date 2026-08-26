@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { ParaguaySearchForm } from "@/components/paraguay/search-form";
 
 export function ParaguayHeroSection() {
@@ -50,6 +51,20 @@ export function ParaguayHeroSection() {
         {/* Search Form Component - Prominent */}
         <div className="w-full max-w-[1400px] xl:px-4 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
           <ParaguaySearchForm />
+        </div>
+
+        {/* Banner Desktop - Travel Sale */}
+        <div className="hidden lg:flex w-full max-w-[1400px] xl:px-4 mt-8 animate-fade-in-up justify-center" style={{ animationDelay: "0.6s" }}>
+          <Link href="/paraguay/bases-promocion" className="block w-full max-w-4xl hover:opacity-95 transition-opacity">
+            <Image
+              src="/images/travel-sale.jpg"
+              alt="Travel Sale - Sorteo Tablet Doogee"
+              width={1200}
+              height={300}
+              className="w-full h-auto rounded-xl shadow-2xl object-cover"
+              priority
+            />
+          </Link>
         </div>
       </div>
 

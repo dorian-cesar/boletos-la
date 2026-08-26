@@ -259,6 +259,12 @@ export function ParaguayFooter() {
             {/* Links */}
             <div className="flex items-center gap-6 text-sm">
               <Link
+                href="/paraguay/bases-promocion"
+                className="text-slate-900 dark:text-white/50 hover:text-primary transition-colors font-medium text-primary/80 dark:text-primary/70"
+              >
+                Bases y Condiciones Travel Sale
+              </Link>
+              <Link
                 href="/paraguay/terminos-y-condiciones"
                 className="text-slate-900 dark:text-white/50 hover:text-primary transition-colors"
               >
