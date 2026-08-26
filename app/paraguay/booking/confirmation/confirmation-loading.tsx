@@ -65,9 +65,10 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
     discountCargoPorServicio,
     discountValorCargoServicio,
     serviceCharge,
+    appliedServiceChargeAmount,
   } = useBookingStore();
 
-  const appliedServiceCharge = 2500;
+  
 
   const primaryPassenger = passengerDetails[0];
 
@@ -81,6 +82,9 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
     const getTicketNumber = (label: string, seatNumber: string) => {
       return tickets[`${label}-${seatNumber}`] || `${activeRef}-${seatNumber}`;
     };
+
+    const totalPassengers = selectedSeats.length + selectedReturnSeats.length;
+    const appliedServiceCharge = totalPassengers > 0 ? Math.round(appliedServiceChargeAmount / totalPassengers) : 0;
 
     const saveTripTickets = async (trip: any, seats: any[], label: string, offset: number, connectionId: string, origin: string, dest: string, date: string) => {
       const tasks = seats.map(async (seat, index) => {
@@ -100,7 +104,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           if (upper === 'LSA') return 'La Santaniana Argentina';
           if (upper === 'LSP') return 'La Sampedrana';
           if (upper === 'RYSA') return 'RYSA';
-          if (upper === 'NSA') return 'Nuestra Señora de la Asunción';
+          if (upper === 'NSA') return 'Nuestra SeÃ±ora de la AsunciÃ³n';
           if (upper === 'SLT') return 'San Luis S.A.';
           return code;
         };
@@ -243,7 +247,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
 
         const simulatedPaymentDetails = {
           pagado: true,
-          forma_pago: "Tarjetas de crédito",
+          forma_pago: "Tarjetas de crÃ©dito",
           fecha_pago: simDate,
           monto: totalPrice.toFixed(2),
           fecha_maxima_pago: simDate,
@@ -371,7 +375,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
             }
             setStorePaymentStatus("completed");
 
-            // 1. Polling (Reintentos) en la confirmación para obtener el electronicBillCdc
+            // 1. Polling (Reintentos) en la confirmaciÃ³n para obtener el electronicBillCdc
             let electronicBillCdc: string | null = null;
             let electronicBillNumber: string | null = null;
             let electronicBillStamp: string | null = null;
@@ -502,7 +506,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 (selectedReturnTrip ? selectedReturnSeats.length : 0);
               const actualTicketsCount = Object.keys(ticketMap).length;
 
-              // 3. Manejo de Rollback si el GDS falla en la emisión del pasaje
+              // 3. Manejo de Rollback si el GDS falla en la emisiÃ³n del pasaje
               // if (actualTicketsCount < expectedTicketsCount) {
               //   console.error(
               //     "GDS sell failed for Bancard: expected",
@@ -512,7 +516,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               //   );
 
               //   try {
-              //     console.log("Iniciando rollback por falla de emisión GDS...");
+              //     console.log("Iniciando rollback por falla de emisiÃ³n GDS...");
               //     await fetch("/api/bancard/rollback-transaccion", {
               //       method: "POST",
               //       headers: { "Content-Type": "application/json" },
@@ -521,7 +525,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               //         processId: processId,
               //       }),
               //     });
-              //     console.log("Rollback de Bancard completado con éxito.");
+              //     console.log("Rollback de Bancard completado con Ã©xito.");
               //   } catch (rollbackErr) {
               //     console.error("Error al hacer rollback de Bancard:", rollbackErr);
               //   }
@@ -737,12 +741,12 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                     <AlertCircle className="h-6 w-6 text-amber-400 shrink-0 mt-0.5" />
                     <div>
                       <h3 className="font-semibold text-amber-300 text-sm">
-                        Inconveniente en la emisión del pasaje
+                        Inconveniente en la emisiÃ³n del pasaje
                       </h3>
                       <p className="text-xs text-amber-200/90 mt-1 leading-relaxed">
-                        Tu pago fue recibido, pero ocurrió una demora técnica al
+                        Tu pago fue recibido, pero ocurriÃ³ una demora tÃ©cnica al
                         emitir los boletos en el sistema de transporte. No te
-                        preocupes, tus pasajes y fondos están resguardados.
+                        preocupes, tus pasajes y fondos estÃ¡n resguardados.
                       </p>
                     </div>
                   </div>
@@ -751,7 +755,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 {bookingReference && (
                   <div className="w-full bg-slate-800/80 rounded-xl p-4 border border-slate-700/60 text-xs space-y-2">
                     <div className="flex justify-between text-slate-300">
-                      <span>Código de referencia:</span>
+                      <span>CÃ³digo de referencia:</span>
                       <span className="font-mono font-bold text-emerald-400">
                         {bookingReference}
                       </span>
@@ -769,14 +773,14 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
 
                 <p className="text-sm text-slate-300 mt-1">
                   Por favor, contactate con nuestro equipo de soporte para la
-                  emisión directa de tus boletos:
+                  emisiÃ³n directa de tus boletos:
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-3 w-full mt-2">
                   <Button
                     onClick={() => {
                       const msg = encodeURIComponent(
-                        `Hola, mi pago fue procesado correctamente pero ocurrió un inconveniente en la emisión de boletos. Mi código de referencia es: ${bookingReference || "Sin código"}.`,
+                        `Hola, mi pago fue procesado correctamente pero ocurriÃ³ un inconveniente en la emisiÃ³n de boletos. Mi cÃ³digo de referencia es: ${bookingReference || "Sin cÃ³digo"}.`,
                       );
                       window.open(
                         `https://wa.me/595991224613?text=${msg}`,
@@ -792,10 +796,10 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                   <Button
                     onClick={() => {
                       const subject = encodeURIComponent(
-                        `Soporte Emisión - Ref: ${bookingReference || ""}`,
+                        `Soporte EmisiÃ³n - Ref: ${bookingReference || ""}`,
                       );
                       const body = encodeURIComponent(
-                        `Hola equipo de Soporte,\n\nMi pago fue confirmado pero ocurrió un error en la emisión automática de pasajes.\n\nCódigo de referencia: ${bookingReference || ""}\nMonto: Gs. ${totalPrice}\n\nQuedo a la espera de sus comentarios.`,
+                        `Hola equipo de Soporte,\n\nMi pago fue confirmado pero ocurriÃ³ un error en la emisiÃ³n automÃ¡tica de pasajes.\n\nCÃ³digo de referencia: ${bookingReference || ""}\nMonto: Gs. ${totalPrice}\n\nQuedo a la espera de sus comentarios.`,
                       );
                       window.location.href = `mailto:soporte@boletos.la?subject=${subject}&body=${body}`;
                     }}
@@ -825,7 +829,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                     Pago pendiente
                   </h3>
                   <p className="text-sm text-yellow-400 mb-4">
-                    Tu pedido está esperando el pago. Completá el pago en
+                    Tu pedido estÃ¡ esperando el pago. CompletÃ¡ el pago en
                     Pagopar para confirmar tu reserva.
                   </p>
                   <Button
@@ -849,12 +853,12 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                   <h3 className="font-semibold text-amber-300 mb-2">
                     {status === "cancelled"
                       ? "Pago cancelado"
-                      : "La confirmación del pasaje no se pudo realizar"}
+                      : "La confirmaciÃ³n del pasaje no se pudo realizar"}
                   </h3>
                   <p className="text-sm text-amber-400 mb-4">
                     {status === "cancelled"
                       ? "El pago fue cancelado."
-                      : "No se pudo completar la reserva o emisión de los pasajes en el sistema. Por favor, intentá nuevamente."}
+                      : "No se pudo completar la reserva o emisiÃ³n de los pasajes en el sistema. Por favor, intentÃ¡ nuevamente."}
                   </p>
                   <Button
                     onClick={() => router.push("/paraguay/booking/checkout")}
@@ -872,3 +876,4 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
     </div>
   );
 }
+

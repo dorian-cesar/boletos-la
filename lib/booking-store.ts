@@ -1,4 +1,4 @@
-﻿// lib/booking-store.ts
+// lib/booking-store.ts
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
@@ -92,8 +92,8 @@ export interface BookingState {
   serviceCharge: number;
   bookingExpiresAt: number | null;
   checkoutData: any;
-dynamicServiceCharge: number | null;
-
+  dynamicServiceCharge: number | null;
+  appliedServiceChargeAmount: number;
   setStep: (step: number) => void;
   setTripType: (type: "one-way" | "round-trip") => void;
   setOrigin: (origin: string) => void;
@@ -175,7 +175,8 @@ const initialState = {
   discountCargoPorServicio: null,
   discountValorCargoServicio: null,
   serviceCharge: 2500,
-dynamicServiceCharge: null,
+  dynamicServiceCharge: null,
+  appliedServiceChargeAmount: 0,
 };
 
 export const useBookingStore = create<BookingState>()(
@@ -349,12 +350,18 @@ export const useBookingStore = create<BookingState>()(
         }
 
         const totalPassengers = selectedSeats.length + selectedReturnSeats.length;
+        let calculatedServiceCharge = 0;
         if (totalPassengers > 0) {
-          const appliedServiceCharge = 2500;
-          total += totalPassengers * appliedServiceCharge;
+          const { dynamicServiceCharge } = get();
+          if (dynamicServiceCharge !== null) {
+            calculatedServiceCharge = Math.round(total * (dynamicServiceCharge / 100));
+          } else {
+            calculatedServiceCharge = totalPassengers * 2500;
+          }
+          total += calculatedServiceCharge;
         }
 
-        set({ totalPrice: total });
+        set({ totalPrice: total, appliedServiceChargeAmount: calculatedServiceCharge });
       },
 
       setDiscount: (code, percentage, empresa = null, convenio = null, cargoPorServicio = null, valorCargoServicio = null) => {
@@ -416,6 +423,23 @@ export const useBookingStore = create<BookingState>()(
         set({ originTitle: destinationTitle, destinationTitle: originTitle });
       },
 
+      fetchServiceCharge: async () => {
+        try {
+          const response = await fetch("/api/cargos-servicio?empresa_id=1");
+          const data = await response.json();
+          if (data && data.status === "success" && data.data && data.data.length > 0) {
+            const charge = data.data[0];
+            set({ dynamicServiceCharge: parseFloat(charge.porcentaje) });
+          } else {
+            set({ dynamicServiceCharge: null });
+          }
+        } catch (error) {
+          console.error("Error fetching service charge:", error);
+          set({ dynamicServiceCharge: null });
+        }
+        get().calculateTotal();
+      },
+
       resetBooking: () => {
         // Limpiar localStorage al hacer reset
         if (typeof window !== "undefined") {
@@ -459,6 +483,7 @@ export const useBookingStore = create<BookingState>()(
         discountCargoPorServicio: state.discountCargoPorServicio,
         discountValorCargoServicio: state.discountValorCargoServicio,
         serviceCharge: state.serviceCharge,
+        appliedServiceChargeAmount: state.appliedServiceChargeAmount,
       }),
       // VersiÃ³n para migraciones futuras
       version: 1,

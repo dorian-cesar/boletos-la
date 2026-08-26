@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -74,7 +74,7 @@ export default function DetailsPage() {
     }
   }, [mounted, selectedSeats, router]);
 
-  // Validar que los pasajeros de IDA estén completos
+  // Validar que los pasajeros de IDA estÃ©n completos
   const arePassengersComplete =
     selectedSeats.length > 0 &&
     selectedSeats.every((_, i) => {
@@ -98,7 +98,7 @@ export default function DetailsPage() {
       const res = await fetch(`/api/convenios/validar/${discountInput.trim()}`);
       const data = await res.json();
       if (!res.ok || !data.valido) {
-        throw new Error(data.error || data.msj || "Código inválido");
+        throw new Error(data.error || data.msj || "CÃ³digo invÃ¡lido");
       }
       
       const percentage = data.descuento;
@@ -111,13 +111,13 @@ export default function DetailsPage() {
           data.cargo_por_servicio,
           data.valor_cargo_servicio
         );
-        setDiscountSuccess(`¡Descuento de ${percentage}% aplicado! ${data.nombre ? `(${data.nombre})` : ''}`);
+        setDiscountSuccess(`Â¡Descuento de ${percentage}% aplicado! ${data.nombre ? `(${data.nombre})` : ''}`);
       } else {
-        throw new Error("El código no tiene un porcentaje válido asociado");
+        throw new Error("El cÃ³digo no tiene un porcentaje vÃ¡lido asociado");
       }
     } catch (err: any) {
       setDiscountError(err.message);
-      setDiscount(null, null); // Clear discount si era inválido
+      setDiscount(null, null); // Clear discount si era invÃ¡lido
     } finally {
       setIsApplyingDiscount(false);
     }
@@ -190,7 +190,7 @@ export default function DetailsPage() {
             <div className="lg:col-span-2 space-y-4 md:space-y-6">
               <div className="mb-6 animate-fade-in">
                 <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-                  Completá tus datos
+                  CompletÃ¡ tus datos
                 </h1>
                 <p className="text-sm md:text-base text-slate-900 dark:text-white/60 mt-1 md:mt-2">
                   Ingresa los detalles de los pasajeros para continuar con el pago
@@ -235,7 +235,7 @@ export default function DetailsPage() {
                 <div className="flex items-center gap-2 mb-4">
                   <Tag className="h-5 w-5 text-secondary" />
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                    Código de Descuento
+                    CÃ³digo de Descuento
                   </h3>
                 </div>
                 
@@ -252,7 +252,7 @@ export default function DetailsPage() {
                     }}
                   />
                   <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                    Tengo un código de descuento
+                    Tengo un cÃ³digo de descuento
                   </span>
                 </label>
 
@@ -261,7 +261,7 @@ export default function DetailsPage() {
                     {!discountPercentage ? (
                       <div className="flex gap-2">
                         <Input
-                          placeholder="Ingresa tu código"
+                          placeholder="Ingresa tu cÃ³digo"
                           value={discountInput}
                           onChange={(e) => setDiscountInput(e.target.value.toUpperCase())}
                           className="uppercase bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/20"
@@ -284,9 +284,9 @@ export default function DetailsPage() {
                           <Check className="h-5 w-5" />
                           <div>
                             <p className="font-medium text-sm">
-                              {discountSuccess || `¡Descuento de ${discountPercentage}% aplicado!`}
+                              {discountSuccess || `Â¡Descuento de ${discountPercentage}% aplicado!`}
                             </p>
-                            <p className="text-xs opacity-80">Código: {discountCode}</p>
+                            <p className="text-xs opacity-80">CÃ³digo: {discountCode}</p>
                           </div>
                         </div>
                         <Button 
@@ -362,7 +362,7 @@ export default function DetailsPage() {
                   <div className="pb-4 border-b border-black/10 dark:border-white/20">
                     <p className="font-semibold text-sm mb-1 text-slate-900 dark:text-white">Ida: {originTitle} - {destinationTitle}</p>
                     <p className="text-xs text-slate-500 dark:text-white/60 mb-2">
-                      {format(parse(departureDate || "", "yyyy-MM-dd", new Date()), "dd MMM yyyy", { locale: es })} • {selectedOutboundTrip?.departureTime}
+                      {format(parse(departureDate || "", "yyyy-MM-dd", new Date()), "dd MMM yyyy", { locale: es })} â€¢ {selectedOutboundTrip?.departureTime}
                     </p>
                     <div className="flex justify-between text-sm">
                       <span className="text-slate-600 dark:text-white/70">Asientos ({selectedSeats.length})</span>
@@ -375,7 +375,7 @@ export default function DetailsPage() {
                     <div className="pb-4 border-b border-black/10 dark:border-white/20">
                       <p className="font-semibold text-sm mb-1 text-slate-900 dark:text-white">Regreso: {destinationTitle} - {originTitle}</p>
                       <p className="text-xs text-slate-500 dark:text-white/60 mb-2">
-                        {format(parse(returnDate || "", "yyyy-MM-dd", new Date()), "dd MMM yyyy", { locale: es })} • {selectedReturnTrip?.departureTime}
+                        {format(parse(returnDate || "", "yyyy-MM-dd", new Date()), "dd MMM yyyy", { locale: es })} â€¢ {selectedReturnTrip?.departureTime}
                       </p>
                       <div className="flex justify-between text-sm">
                         <span className="text-slate-600 dark:text-white/70">Asientos ({selectedReturnSeats.length})</span>
@@ -420,7 +420,7 @@ export default function DetailsPage() {
                               <button
                                 type="button"
                                 className="relative inline-flex items-center justify-center w-5 h-5 rounded-full bg-secondary/20 hover:bg-secondary/30 text-amber-700 dark:text-secondary border border-secondary/50 transition-all duration-200 hover:scale-125 shadow-xs cursor-pointer focus:outline-none"
-                                aria-label="Información sobre el cargo por servicio"
+                                aria-label="InformaciÃ³n sobre el cargo por servicio"
                               >
                                 <HelpCircle className="h-3.5 w-3.5 stroke-[2.5]" />
                               </button>
@@ -455,7 +455,7 @@ export default function DetailsPage() {
                 {!arePassengersComplete && (
                    <div className="flex items-center gap-2 bg-orange-500/15 text-orange-600 dark:text-orange-400 p-3 rounded-lg border border-orange-500/30 mb-4 text-xs font-medium">
                      <AlertCircle className="h-4 w-4 shrink-0" />
-                     Completá los datos de todos los pasajeros
+                     CompletÃ¡ los datos de todos los pasajeros
                    </div>
                 )}
 
@@ -484,3 +484,4 @@ export default function DetailsPage() {
     </div>
   );
 }
+

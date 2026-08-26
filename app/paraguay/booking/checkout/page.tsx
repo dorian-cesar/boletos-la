@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -88,15 +88,16 @@ export default function CheckoutPage() {
     discountValorCargoServicio,
     serviceCharge,
     calculateTotal,
+    appliedServiceChargeAmount,
   } = useBookingStore();
 
-  const appliedServiceCharge = 2500;
+  
 
   const [isExpired, setIsExpired] = useState(false);
   const [showVisaModal, setShowVisaModal] = useState(false);
   const handleExpire = useCallback(() => setIsExpired(true), []);
 
-  // Validar que los pasajeros del store estén completos
+  // Validar que los pasajeros del store estÃ©n completos
   const isFormValid =
     passengerDetails.length > 0 &&
     passengerDetails.every(
@@ -129,7 +130,7 @@ export default function CheckoutPage() {
             `${primaryPassenger?.firstName} ${primaryPassenger?.lastName}`.toUpperCase(),
           client_email: primaryPassenger?.email || "fallback",
           total_items: totalPassengers,
-          preauthorization: false, // Siempre sin preautorización
+          preauthorization: false, // Siempre sin preautorizaciÃ³n
         }),
       });
 
@@ -195,7 +196,7 @@ export default function CheckoutPage() {
     calculateTotal();
   }, [setStep, calculateTotal]);
 
-  // Efecto para inyectar dinámicamente el SDK de Bancard e inicializar el formulario de pago
+  // Efecto para inyectar dinÃ¡micamente el SDK de Bancard e inicializar el formulario de pago
   useEffect(() => {
     if (!iframeProcessId) return;
 
@@ -267,7 +268,7 @@ export default function CheckoutPage() {
         setTimeout(checkContainerAndInitialize, 100);
       };
       script.onerror = () => {
-        console.error("Error al cargar la librería de Bancard");
+        console.error("Error al cargar la librerÃ­a de Bancard");
       };
       document.body.appendChild(script);
     } else {
@@ -286,7 +287,7 @@ export default function CheckoutPage() {
     };
   }, [iframeProcessId]);
 
-  // Efecto para bloquear el scroll del fondo (body) mientras el modal de pago está abierto
+  // Efecto para bloquear el scroll del fondo (body) mientras el modal de pago estÃ¡ abierto
   useEffect(() => {
     if (iframeProcessId) {
       const originalOverflow = document.body.style.overflow;
@@ -562,7 +563,7 @@ export default function CheckoutPage() {
                                 <button
                                   type="button"
                                   className="relative inline-flex items-center justify-center w-5 h-5 rounded-full bg-secondary/20 hover:bg-secondary/30 text-amber-700 dark:text-secondary border border-secondary/50 transition-all duration-200 hover:scale-125 shadow-xs cursor-pointer focus:outline-none"
-                                  aria-label="Información sobre el cargo por servicio"
+                                  aria-label="InformaciÃ³n sobre el cargo por servicio"
                                 >
                                   <HelpCircle className="h-3.5 w-3.5 stroke-[2.5]" />
                                 </button>
@@ -581,7 +582,7 @@ export default function CheckoutPage() {
                         </TooltipProvider>
                       </span>
                       <span className="text-slate-900 dark:text-white truncate text-right">
-                        Gs. {(totalPassengers * appliedServiceCharge).toLocaleString("es-PY")}
+                        Gs. {appliedServiceChargeAmount.toLocaleString("es-PY")}
                       </span>
                     </div>
                   </div>
@@ -641,7 +642,7 @@ export default function CheckoutPage() {
                     variant="outline"
                     className="animate-fade-in border-destructive/50 text-destructive shrink-0"
                   >
-                    Completa los datos en la página de asientos
+                    Completa los datos en la pÃ¡gina de asientos
                   </Badge>
                 )}
               </div>
@@ -745,7 +746,7 @@ export default function CheckoutPage() {
                         Datos incompletos
                       </p>
                       <p className="text-xs text-destructive/80 mt-0.5">
-                        Vuelve a la selección de asientos para completar los
+                        Vuelve a la selecciÃ³n de asientos para completar los
                         datos de los pasajeros.
                       </p>
                       <Button
@@ -754,7 +755,7 @@ export default function CheckoutPage() {
                         className="mt-2 h-7 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 px-2"
                         onClick={() => router.push("/paraguay/booking/seats")}
                       >
-                        ← Volver a asientos
+                        â† Volver a asientos
                       </Button>
                     </div>
                   </div>
@@ -796,7 +797,7 @@ export default function CheckoutPage() {
             </h3>
             <p className="text-sm sm:text-base text-gray-300 mb-4 break-words">
               {selectedPaymentMethod === "tarjeta"
-                ? "Tu reserva se confirmará en instantes..."
+                ? "Tu reserva se confirmarÃ¡ en instantes..."
                 : "Estamos abriendo tu entorno seguro de pago. Por favor espera."}
             </p>
             <Loader2 className="h-10 w-10 sm:h-12 sm:w-12 text-blue-400 mx-auto mb-4 animate-spin" />
@@ -808,7 +809,7 @@ export default function CheckoutPage() {
       )}
 
       {/* Modal de consulta para Tarjeta VISA */}
-      {/* Modal de selección VISA desactivado */}
+      {/* Modal de selecciÃ³n VISA desactivado */}
       {showVisaModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
           <div className="relative w-full max-w-md bg-slate-50 dark:bg-[#0f1419] border border-blue-500/30 rounded-2xl p-6 sm:p-8 shadow-2xl text-center">
@@ -883,7 +884,7 @@ export default function CheckoutPage() {
   );
 }
 
-// ── Subcomponentes ────────────────────────────────────────────────────────────
+// â”€â”€ Subcomponentes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function CheckoutTimer({ onExpire }: { onExpire: () => void }) {
   const [seconds, setSeconds] = useState(8 * 60);
@@ -906,7 +907,7 @@ function CheckoutTimer({ onExpire }: { onExpire: () => void }) {
     return () => clearInterval(interval);
   }, []);
 
-  // Invocar la expiración de forma segura en la fase posterior al renderizado (efectos)
+  // Invocar la expiraciÃ³n de forma segura en la fase posterior al renderizado (efectos)
   useEffect(() => {
     if (seconds <= 0) {
       onExpireRef.current();
@@ -930,3 +931,4 @@ function CheckoutTimer({ onExpire }: { onExpire: () => void }) {
     </div>
   );
 }
+
