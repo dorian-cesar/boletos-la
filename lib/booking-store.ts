@@ -427,9 +427,13 @@ export const useBookingStore = create<BookingState>()(
         try {
           const response = await fetch("/api/cargos-servicio?empresa_id=1");
           const data = await response.json();
-          if (data && data.status === "success" && data.data && data.data.length > 0) {
-            const charge = data.data[0];
-            set({ dynamicServiceCharge: parseFloat(charge.porcentaje) });
+          if (data && Array.isArray(data.value) && data.value.length > 0) {
+            const activeCharge = data.value.find((c: any) => c.activo === true) || data.value[0];
+            if (activeCharge && activeCharge.valor != null) {
+              set({ dynamicServiceCharge: parseFloat(activeCharge.valor) });
+            } else {
+              set({ dynamicServiceCharge: null });
+            }
           } else {
             set({ dynamicServiceCharge: null });
           }
