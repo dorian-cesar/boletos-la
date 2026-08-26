@@ -368,7 +368,7 @@ export default function DetailsPage() {
                   <div className="pb-4 border-b border-black/10 dark:border-white/20">
                     <p className="font-semibold text-sm mb-1 text-slate-900 dark:text-white">Ida: {originTitle} - {destinationTitle}</p>
                     <p className="text-xs text-slate-500 dark:text-white/60 mb-2">
-                      {format(parse(departureDate || "", "yyyy-MM-dd", new Date()), "dd MMM yyyy", { locale: es })} â€¢ {selectedOutboundTrip?.departureTime}
+                      {format(parse(departureDate || "", "yyyy-MM-dd", new Date()), "dd MMM yyyy", { locale: es })} • {selectedOutboundTrip?.departureTime}
                     </p>
                     <div className="flex justify-between text-sm">
                       <span className="text-slate-600 dark:text-white/70">Asientos ({selectedSeats.length})</span>
@@ -381,7 +381,7 @@ export default function DetailsPage() {
                     <div className="pb-4 border-b border-black/10 dark:border-white/20">
                       <p className="font-semibold text-sm mb-1 text-slate-900 dark:text-white">Regreso: {destinationTitle} - {originTitle}</p>
                       <p className="text-xs text-slate-500 dark:text-white/60 mb-2">
-                        {format(parse(returnDate || "", "yyyy-MM-dd", new Date()), "dd MMM yyyy", { locale: es })} â€¢ {selectedReturnTrip?.departureTime}
+                        {format(parse(returnDate || "", "yyyy-MM-dd", new Date()), "dd MMM yyyy", { locale: es })} • {selectedReturnTrip?.departureTime}
                       </p>
                       <div className="flex justify-between text-sm">
                         <span className="text-slate-600 dark:text-white/70">Asientos ({selectedReturnSeats.length})</span>
