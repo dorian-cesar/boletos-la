@@ -5,9 +5,15 @@ import Link from "next/link";
 
 export function PromoSection() {
   return (
-    <section className="py-16 md:py-24 bg-white dark:bg-[#0f1419] overflow-hidden">
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="border border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-10 lg:p-12 shadow-sm bg-slate-50/50 dark:bg-slate-900/30 flex flex-col gap-8 md:gap-12">
+    <section className="py-24 bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/3 w-[450px] h-[450px] bg-primary/10 rounded-full blur-[140px]" />
+        <div className="absolute bottom-0 right-1/4 w-[350px] h-[350px] bg-secondary/10 rounded-full blur-[120px]" />
+      </div>
+
+      <div className="container mx-auto px-4 md:px-6 relative z-10">
+        <div className="border border-slate-200/80 dark:border-slate-800/80 rounded-3xl p-6 md:p-10 lg:p-12 shadow-md bg-white/80 dark:bg-[#0f1419]/70 backdrop-blur-md flex flex-col gap-8 md:gap-12">
           
           {/* Header Centrado - Título y Subtítulo */}
           <div className="text-center max-w-3xl mx-auto space-y-3">
@@ -22,7 +28,7 @@ export function PromoSection() {
           {/* Contenido Principal: Imagen a la izquierda y Enlaces/Bases a la derecha */}
           <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
             {/* Columna Izquierda - Imagen */}
-            <div className="w-full lg:w-1/2 relative rounded-2xl overflow-hidden shadow-lg aspect-[4/3] md:aspect-[16/9] lg:aspect-[4/3] group">
+            <div className="w-full lg:w-1/2 relative rounded-2xl overflow-hidden shadow-lg aspect-[4/3] md:aspect-[16/9] lg:aspect-[4/3] group border border-slate-200/50 dark:border-slate-800/50">
               {/* Usamos una imagen de destino existente como ejemplo */}
               <Image
                 src="/images/destinations/carrusel-paraguay.jpg" 
