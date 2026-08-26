@@ -439,7 +439,7 @@ export default function DetailsPage() {
                             className="z-50 max-w-xs sm:max-w-sm bg-slate-900 text-white dark:bg-slate-950 dark:text-white border border-slate-700/80 px-4 py-2.5 rounded-xl shadow-2xl"
                           >
                             <p className="text-sm sm:text-base font-normal text-slate-100 leading-relaxed">
-                              texto de ejemplo
+                              Este cargo te da acceso a nuestro amplio catálogo, servicios de atención al cliente y devolución de los pasajes cuando sea posible.
                             </p>
                           </TooltipContent>
                         </Tooltip>
