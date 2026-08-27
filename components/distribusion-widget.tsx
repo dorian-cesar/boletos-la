@@ -452,14 +452,31 @@ export function DistributionWidget({
           >
           </div>
           <style dangerouslySetInnerHTML={{__html: `
-            #distribusion-search button,
-            #distribusion-search button *,
-            #distribusion-search .mantine-Button-root,
-            #distribusion-search .mantine-Button-root *,
-            #distribusion-search [class*="Button"],
-            #distribusion-search [class*="Button"] * {
+            #distribusion-search button[type="submit"],
+            #distribusion-search button[type="submit"] *,
+            #distribusion-search .mantine-Button-filled,
+            #distribusion-search .mantine-Button-filled * {
               color: #ffffff !important;
               -webkit-text-fill-color: #ffffff !important;
+            }
+
+            .mantine-Combobox-option,
+            .mantine-Combobox-option *,
+            .mantine-Select-option,
+            .mantine-Select-option *,
+            #distribusion-search [role="option"],
+            #distribusion-search [role="option"] * {
+              color: #0f172a !important;
+              -webkit-text-fill-color: #0f172a !important;
+            }
+
+            .mantine-Combobox-dropdown,
+            .mantine-Popover-dropdown {
+              background-color: #ffffff !important;
+              border: 1px solid #e2e8f0 !important;
+              box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+              border-radius: 0.75rem !important;
+              z-index: 9999 !important;
             }
           `}} />
         </div>

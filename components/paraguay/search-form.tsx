@@ -476,20 +476,20 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
    orientation={orientation}
    />
   </div>
-  <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" />
-  </Button>
-  </PopoverTrigger>
+   <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" />
+   </Button>
+   </PopoverTrigger>
   <PopoverContent
-  className={cn("w-full p-0 min-w-[var(--radix-popover-trigger-width)] shadow-2xl", orientation === "vertical" ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" : "bg-white/95 border-black/20")}
+  className={cn("w-[var(--radix-popover-trigger-width)] min-w-[280px] p-0 shadow-2xl rounded-2xl overflow-hidden", orientation === "vertical" ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800")}
   align="start"
  >
  <Command className="bg-transparent">
  <CommandInput
  placeholder="Buscá ciudad..."
- className={cn("h-12 bg-transparent border-b transition-colors", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 border-slate-200 dark:border-slate-700 placeholder:text-slate-500 dark:placeholder:text-slate-400" : "text-gray-700 border-black/20 placeholder:text-gray-500")}
+ className={cn("h-12 bg-transparent border-b transition-colors px-3 text-slate-900 dark:text-slate-200 border-slate-200 dark:border-slate-700 placeholder:text-slate-400")}
  />
- <CommandList>
- <CommandEmpty className={cn("text-gray-500", orientation === "vertical" && "dark:text-slate-400")}>
+ <CommandList className="max-h-72 overflow-y-auto p-1">
+ <CommandEmpty className={cn("text-gray-500 p-4 text-sm text-center", orientation === "vertical" && "dark:text-slate-400")}>
  {stopsLoading || destLoading
  ? "Cargando ciudades..."
  : stopsError
@@ -512,11 +512,11 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
  setDestinationTitle("");
  setOriginOpen(false);
  }}
- className={cn("cursor-pointer py-3 group transition-colors duration-150 rounded-lg px-2", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 data-[selected=true]:bg-primary data-[selected=true]:text-slate-900 hover:bg-primary hover:text-slate-900" : "text-slate-900 data-[selected=true]:bg-primary data-[selected=true]:text-slate-900 hover:bg-primary hover:text-slate-900")}
+ className={cn("cursor-pointer py-3 group transition-colors duration-150 rounded-lg px-3 flex items-center", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 data-[selected=true]:bg-primary data-[selected=true]:text-slate-900 hover:bg-primary hover:text-slate-900" : "text-slate-900 dark:text-slate-200 data-[selected=true]:bg-primary data-[selected=true]:text-slate-900 hover:bg-primary hover:text-slate-900")}
  >
- <MapPin className="h-4 w-4 mr-2 text-chart-4 shrink-0 group-hover:text-slate-900 group-data-[selected=true]:text-slate-900 transition-colors" strokeWidth={2.2} />
- <div className="min-w-0">
- <p className={cn("font-bold truncate tracking-wide transition-all", orientation === "horizontal" && "[text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none]", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 group-hover:text-slate-900 group-data-[selected=true]:text-slate-900" : "text-slate-900 group-hover:text-slate-900 group-data-[selected=true]:text-slate-900")}>
+ <MapPin className="h-4 w-4 mr-2.5 text-primary shrink-0 group-hover:text-slate-900 group-data-[selected=true]:text-slate-900 transition-colors" strokeWidth={2.2} />
+ <div className="min-w-0 flex-1">
+ <p className="font-bold truncate tracking-wide transition-all text-slate-900 dark:text-slate-100 group-hover:text-slate-900 group-data-[selected=true]:text-slate-900">
  {city.name}
  </p>
  </div>
@@ -605,16 +605,16 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
   </Button>
   </PopoverTrigger>
   <PopoverContent
-  className={cn("w-full p-0 min-w-[var(--radix-popover-trigger-width)] shadow-2xl", orientation === "vertical" ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" : "bg-white/95 border-black/20")}
+  className={cn("w-[var(--radix-popover-trigger-width)] min-w-[280px] p-0 shadow-2xl rounded-2xl overflow-hidden", orientation === "vertical" ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800")}
   align="start"
   >
   <Command className="bg-transparent">
   <CommandInput
   placeholder="Buscá ciudad..."
-  className="h-12 bg-transparent border-b transition-colors text-slate-900 dark:text-slate-200 border-slate-200 dark:border-slate-700 placeholder:text-slate-500 dark:placeholder:text-slate-400"
+  className="h-12 bg-transparent border-b transition-colors px-3 text-slate-900 dark:text-slate-200 border-slate-200 dark:border-slate-700 placeholder:text-slate-400"
   />
-  <CommandList>
-  <CommandEmpty className={cn("text-gray-500", orientation === "vertical" && "dark:text-slate-400")}>
+  <CommandList className="max-h-72 overflow-y-auto p-1">
+  <CommandEmpty className={cn("text-gray-500 p-4 text-sm text-center", orientation === "vertical" && "dark:text-slate-400")}>
   {stopsLoading
   ? "Cargando ciudades..."
   : stopsError
@@ -623,7 +623,7 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
   </CommandEmpty>
   <CommandGroup className="bg-transparent">
   {originTitle && orientation === "horizontal" && (
- <div className="px-2 py-2 text-xs font-semibold backdrop-blur-sm rounded-lg mb-2 flex items-center gap-2 border shadow-sm text-gray-700 bg-white/40 border-white/50">
+ <div className="px-3 py-2 text-xs font-semibold backdrop-blur-sm rounded-lg mb-1 flex items-center gap-2 border shadow-sm text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
   <MapPin className="h-3.5 w-3.5 text-secondary" />
   Rutas disponibles desde {originTitle}
   </div>
@@ -639,11 +639,11 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
   setDestinationTitle(city.name);
   setDestinationOpen(false);
   }}
- className={cn("cursor-pointer py-3 group transition-colors duration-150 rounded-lg px-2", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 data-[selected=true]:bg-secondary data-[selected=true]:text-black hover:bg-secondary hover:text-black" : "text-slate-900 data-[selected=true]:bg-secondary data-[selected=true]:text-black hover:bg-secondary hover:text-black")}
+ className={cn("cursor-pointer py-3 group transition-colors duration-150 rounded-lg px-3 flex items-center", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 data-[selected=true]:bg-secondary data-[selected=true]:text-black hover:bg-secondary hover:text-black" : "text-slate-900 dark:text-slate-200 data-[selected=true]:bg-secondary data-[selected=true]:text-black hover:bg-secondary hover:text-black")}
   >
-  <MapPin className="h-4 w-4 mr-2 text-secondary shrink-0 group-hover:text-black group-data-[selected=true]:text-black transition-colors" strokeWidth={2.2} />
-  <div className="min-w-0">
-  <p className={cn("font-bold truncate tracking-wide transition-all", orientation === "horizontal" && "[text-shadow:_0_1px_3px_rgb(255_255_255_/_90%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none]", orientation === "vertical" ? "text-slate-900 dark:text-slate-200 group-hover:text-black group-data-[selected=true]:text-black" : "text-slate-900 group-hover:text-black group-data-[selected=true]:text-black")}>
+  <MapPin className="h-4 w-4 mr-2.5 text-secondary shrink-0 group-hover:text-black group-data-[selected=true]:text-black transition-colors" strokeWidth={2.2} />
+  <div className="min-w-0 flex-1">
+  <p className="font-bold truncate tracking-wide transition-all text-slate-900 dark:text-slate-100 group-hover:text-black group-data-[selected=true]:text-black">
   {city.name}
   </p>
   {(() => {
@@ -658,13 +658,13 @@ export function ParaguaySearchForm({ orientation = 'horizontal' }: { orientation
    if (isObject) {
    if (dynamicCount > 0) {
    return (
-   <p className={cn("text-xs font-medium mt-0.5 transition-all", orientation === "horizontal" ? "text-slate-700 group-hover:text-black group-data-[selected=true]:text-black [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none]" : "text-slate-700 dark:text-slate-400 group-hover:text-black group-data-[selected=true]:text-black")}>
+   <p className="text-xs font-medium mt-0.5 transition-all text-slate-600 dark:text-slate-400 group-hover:text-black group-data-[selected=true]:text-black">
    {dynamicCount} {dynamicCount === 1 ? 'servicio' : 'servicios'}
    </p>
    );
    } else if ((destData as any).times?.length > 0) {
    return (
-   <p className={cn("text-xs font-semibold mt-0.5 transition-all", orientation === "horizontal" ? "text-red-600 group-hover:text-red-900 group-data-[selected=true]:text-red-900 [text-shadow:_0_1px_2px_rgb(255_255_255_/_80%)] group-hover:[text-shadow:none] group-data-[selected=true]:[text-shadow:none]" : "text-red-600 dark:text-red-400 group-hover:text-red-900 group-data-[selected=true]:text-red-900")}>
+   <p className="text-xs font-semibold mt-0.5 transition-all text-red-600 dark:text-red-400 group-hover:text-red-900 group-data-[selected=true]:text-red-900">
    Salidas finalizadas por hoy
    </p>
    );

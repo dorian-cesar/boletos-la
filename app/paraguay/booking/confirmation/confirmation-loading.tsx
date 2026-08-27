@@ -375,12 +375,10 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
             }
             setStorePaymentStatus("completed");
 
-            // 1. Polling (Reintentos) en la confirmación para validar la aprobación de la transacción
+            // 1. Polling (Reintentos) en la confirmación para obtener el electronicBillNumber
             let electronicBillCdc: string | null = null;
             let electronicBillNumber: string | null = null;
             let electronicBillStamp: string | null = null;
-            let confirmData: any = null;
-            let isTransactionApproved = false;
 
             const maxAttempts = 5;
             for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -406,7 +404,6 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
 
                 if (confirmRes.ok) {
                   const rawData = await confirmRes.json();
-                  confirmData = rawData;
 
                   if (!trackedPurchaseRef.current) {
                     trackedPurchaseRef.current = true;
@@ -422,31 +419,16 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
 
                   const confirmation =
                     rawData?.data?.confirmation || rawData?.confirmation;
-                  const responseCode = confirmation?.responseCode;
-                  const cdc = confirmation?.electronicBillCdc;
                   const billNum = confirmation?.electronicBillNumber;
+                  const cdc = confirmation?.electronicBillCdc;
                   const stamp = confirmation?.commerceStamp;
-                  const authNum =
-                    rawData?.operation?.authorization_number ||
-                    rawData?.data?.operation?.authorization_number;
 
-                  const isApproved =
-                    rawData?.status === "success" &&
-                    (rawData?.data?.status === "success" ||
-                      responseCode === "00" ||
-                      confirmation?.responseDescription
-                        ?.toLowerCase()
-                        .includes("aprobada") ||
-                      Boolean(stamp) ||
-                      Boolean(authNum));
-
-                  if (isApproved) {
-                    isTransactionApproved = true;
+                  if (billNum) {
+                    electronicBillNumber = String(billNum);
                     electronicBillCdc = cdc || "";
-                    electronicBillNumber = billNum || "";
                     electronicBillStamp = stamp || "";
                     console.log(
-                      `[Bancard Confirmation] Transacción aprobada en intento ${attempt} (responseCode: ${responseCode}, stamp: ${stamp})`,
+                      `[Bancard Confirmation] electronicBillNumber obtenido en intento ${attempt}: ${billNum}`,
                     );
                     break;
                   }
@@ -461,6 +443,32 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               if (attempt < maxAttempts) {
                 await new Promise((resolve) => setTimeout(resolve, 2500));
               }
+            }
+
+            if (!electronicBillNumber) {
+              console.warn(
+                "[Bancard Confirmation] No se obtuvo electronicBillNumber tras 5 intentos. No se confirma el pasaje y se ejecuta rollback.",
+              );
+              try {
+                await fetch("/api/bancard/rollback-transaccion", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    shopProcessId: shopProcessId ? parseInt(shopProcessId) : 0,
+                    processId: processId,
+                  }),
+                });
+                console.log(
+                  "[Bancard Rollback] Rollback completado por falta de electronicBillNumber.",
+                );
+              } catch (rollbackErr) {
+                console.error(
+                  "[Bancard Rollback] Error al realizar rollback:",
+                  rollbackErr,
+                );
+              }
+              setStatus("failed");
+              return;
             }
 
             const realPaymentDetails = {
