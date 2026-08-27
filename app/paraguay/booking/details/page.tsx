@@ -502,22 +502,12 @@ export default function DetailsPage() {
                   {saveError}
                 </div>
               )}
-              {/* Navigation buttons */}
-              <div className="flex justify-start items-center mt-8">
-                <Button
-                  variant="outline"
-                  onClick={handleGoBackToSeats}
-                  className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Volver a seleccionar asientos
-                </Button>
-              </div>
+
             </div>
 
             {/* Summary Sidebar */}
             <div className="lg:col-span-1 lg:sticky lg:top-24 self-start z-20">
-              <Card className="p-4 md:p-6 sticky top-24 animate-slide-in-right bg-white dark:bg-white/5 backdrop-blur-sm border-slate-200 dark:border-white/20 shadow-sm">
+              <Card className="p-4 md:p-6 animate-slide-in-right bg-white dark:bg-white/5 backdrop-blur-sm border-slate-200 dark:border-white/20 shadow-sm">
                 <div className="flex items-center justify-between gap-2 mb-4 md:mb-6">
                   <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">
                     Resumen de Reserva
@@ -699,6 +689,17 @@ export default function DetailsPage() {
                 </div>
               </Card>
             </div>
+          </div>
+          {/* Navigation buttons */}
+          <div className="flex justify-start items-center mt-8 pt-4 border-t border-slate-200 dark:border-white/10">
+            <Button
+              variant="outline"
+              onClick={handleGoBackToSeats}
+              className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Volver a seleccionar asientos
+            </Button>
           </div>
         </div>
       </main>

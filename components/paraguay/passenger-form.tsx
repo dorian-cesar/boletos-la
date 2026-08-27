@@ -156,7 +156,7 @@ export function PassengerForm({
   >(
     passenger?.documentNumber && passenger?.firstName && passenger?.lastName
       ? "found"
-      : "idle"
+      : "idle",
   );
   const [searchError, setSearchError] = useState<string | null>(null);
 
@@ -333,10 +333,18 @@ export function PassengerForm({
           clearPassengerData();
         } else {
           // Pasajero encontrado con datos reales
-          const birthDateRaw = p.FecNacimiento || p.FecNac || p.FchNac || p.FechaNac || p.birthDate || "";
+          const birthDateRaw =
+            p.FecNacimiento ||
+            p.FecNac ||
+            p.FchNac ||
+            p.FechaNac ||
+            p.birthDate ||
+            "";
           // Convert from YYYY/MM/DD to YYYY-MM-DD for the HTML date input
-          const formattedBirthDate = birthDateRaw ? birthDateRaw.replace(/\//g, "-") : "";
-          
+          const formattedBirthDate = birthDateRaw
+            ? birthDateRaw.replace(/\//g, "-")
+            : "";
+
           const rawNac = p.PasNac || p.Nacionalidad || p.nationality;
           const parsedNac = sanitizeGdsValue(rawNac);
 
@@ -346,12 +354,15 @@ export function PassengerForm({
           let parsedGender = sanitizeGdsValue(p.Sexo || p.Sex || p.gender);
           if (parsedGender && parsedGender.length > 1) {
             if (parsedGender.toUpperCase().startsWith("M")) parsedGender = "M";
-            else if (parsedGender.toUpperCase().startsWith("F")) parsedGender = "F";
+            else if (parsedGender.toUpperCase().startsWith("F"))
+              parsedGender = "F";
             else parsedGender = "N";
           }
 
           applyPassengerData({
-            firstName: toTitleCase(sanitizeGdsValue(p.PasNom || p.name || p.firstName)),
+            firstName: toTitleCase(
+              sanitizeGdsValue(p.PasNom || p.name || p.firstName),
+            ),
             lastName: toTitleCase(sanitizeGdsValue(p.PasApe || p.lastName)),
             phone: sanitizeGdsValue(p.Telefono || p.phone),
             docNumber: sanitizeGdsValue(p.DocNro || p.docNumber) || docNumber,
@@ -583,7 +594,9 @@ export function PassengerForm({
               {searchStatus === "created"
                 ? "Pasajero registrado correctamente:"
                 : "Pasajero encontrado:"}{" "}
-              <span className="font-semibold">{passenger.firstName} {passenger.lastName}</span>
+              <span className="font-semibold">
+                {passenger.firstName} {passenger.lastName}
+              </span>
             </span>
             {isEditing ? (
               <Button
@@ -807,13 +820,22 @@ export function PassengerForm({
                     >
                       Elegí género
                     </option>
-                    <option value="M" className="bg-white dark:bg-[#1a2332] text-slate-900 dark:text-white">
+                    <option
+                      value="M"
+                      className="bg-white dark:bg-[#1a2332] text-slate-900 dark:text-white"
+                    >
                       Masculino
                     </option>
-                    <option value="F" className="bg-white dark:bg-[#1a2332] text-slate-900 dark:text-white">
+                    <option
+                      value="F"
+                      className="bg-white dark:bg-[#1a2332] text-slate-900 dark:text-white"
+                    >
                       Femenino
                     </option>
-                    <option value="N" className="bg-white dark:bg-[#1a2332] text-slate-900 dark:text-white">
+                    <option
+                      value="N"
+                      className="bg-white dark:bg-[#1a2332] text-slate-900 dark:text-white"
+                    >
                       Prefiero no decir
                     </option>
                   </select>
@@ -837,7 +859,7 @@ export function PassengerForm({
                       variant="outline"
                       role="combobox"
                       aria-expanded={nationalityOpen}
-                      className="w-full justify-between h-11 bg-black/10 dark:bg-white/10 border border-black/15 dark:border-white/30 text-slate-900 dark:text-white hover:bg-black/20 dark:bg-white/20 font-normal"
+                      className="w-full justify-between h-11 bg-black/10 dark:bg-white/10 border border-black/15 dark:border-white/30 text-slate-900 dark:text-white hover:bg-black/20 font-normal"
                     >
                       <span className="truncate">
                         {passenger.nationality
@@ -904,7 +926,7 @@ export function PassengerForm({
                       variant="outline"
                       role="combobox"
                       aria-expanded={countryOpen}
-                      className="w-full justify-between h-11 bg-black/10 dark:bg-white/10 border border-black/15 dark:border-white/30 text-slate-900 dark:text-white hover:bg-black/20 dark:bg-white/20 font-normal"
+                      className="w-full justify-between h-11 bg-black/10 dark:bg-white/10 border border-black/15 dark:border-white/30 text-slate-900 dark:text-white hover:bg-black/20 font-normal"
                     >
                       <span className="truncate">
                         {passenger.country
@@ -1054,7 +1076,9 @@ function FieldWrapper({
         </p>
       )}
       {!error && hint && (
-        <p className="text-xs text-slate-900 dark:text-white/60 truncate">{hint}</p>
+        <p className="text-xs text-slate-900 dark:text-white/60 truncate">
+          {hint}
+        </p>
       )}
     </div>
   );
