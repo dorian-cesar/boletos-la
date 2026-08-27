@@ -62,7 +62,7 @@ export function ParaguayHeroSection() {
               width={1200}
               height={300}
               className="w-full h-auto object-cover"
-              style={{ clipPath: "inset(0.5px round 32px)" }}
+              style={{ clipPath: "inset(2px round 32px)" }}
               priority
             />
           </Link>
@@ -77,7 +77,7 @@ export function ParaguayHeroSection() {
               width={800}
               height={266}
               className="w-full h-auto object-cover"
-              style={{ clipPath: "inset(0.5px round 24px)" }}
+              style={{ clipPath: "inset(2px round 24px)" }}
               priority
             />
           </Link>
