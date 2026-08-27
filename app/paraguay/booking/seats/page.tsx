@@ -436,23 +436,12 @@ export default function SeatsPage() {
                   />
                 </div>
 
-                <div className="mt-8 hidden sm:flex justify-start">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      router.push("/paraguay/booking/services");
-                    }}
-                    className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20"
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                    Volver a seleccionar servicio
-                  </Button>
-                </div>
+
               </div>
 
               {/* Summary Sidebar */}
               <div className="lg:col-span-1 lg:sticky lg:top-24 self-start z-20">
-                <Card className="p-4 md:p-6 sticky top-24 animate-slide-in-right bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-white/20">
+                <Card className="p-4 md:p-6 animate-slide-in-right bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-white/20">
                   <div className="flex items-center justify-between gap-2 mb-4 md:mb-6">
                     <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">
                       Resumen de Reserva
@@ -665,30 +654,47 @@ export default function SeatsPage() {
                   )}
                 </Card>
 
-                {/* Botón Volver (Solo Mobile) */}
-                <div className="mt-4 sm:hidden flex justify-center w-full px-2">
-                  <Button
-                    variant="ghost"
-                    onClick={() => {
-                      if (selectingReturn) {
-                        setSelectingReturn(false);
-                      } else {
-                        router.push("/paraguay/booking/services");
-                      }
-                    }}
-                    className="text-slate-900 dark:text-white/60 hover:text-slate-900 dark:text-white hover:bg-black/5 dark:bg-white/5 w-full bg-black/5 border border-black/10 dark:border-white/10 h-12"
-                  >
-                    <ArrowLeft className="h-4 w-4 mr-2" />
-                    {selectingReturn
-                      ? "Volver a asientos de ida"
-                      : "Volver a seleccionar servicio"}
-                  </Button>
-                </div>
-              </div>
+            </div>
+          </div>
+
+          {/* Navigation Buttons */}
+          <div className="mt-8 pt-4 border-t border-slate-200 dark:border-white/10">
+            {/* Desktop */}
+            <div className="hidden sm:flex justify-start">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  router.push("/paraguay/booking/services");
+                }}
+                className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Volver a seleccionar servicio
+              </Button>
+            </div>
+            {/* Mobile */}
+            <div className="sm:hidden flex justify-center w-full">
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  if (selectingReturn) {
+                    setSelectingReturn(false);
+                  } else {
+                    router.push("/paraguay/booking/services");
+                  }
+                }}
+                className="text-slate-900 dark:text-white/60 hover:text-slate-900 dark:text-white hover:bg-black/5 dark:bg-white/5 w-full bg-black/5 border border-black/10 dark:border-white/10 h-12"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                {selectingReturn
+                  ? "Volver a asientos de ida"
+                  : "Volver a seleccionar servicio"}
+              </Button>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
   );
 }

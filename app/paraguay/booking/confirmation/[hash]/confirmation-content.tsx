@@ -1329,8 +1329,8 @@ export default function ConfirmationPageContent({
             </div>
 
             {/* Actions Sidebar */}
-            <div className="lg:col-span-1">
-              <Card className="p-6 sticky top-24 animate-slide-in-right bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-white/20">
+            <div className="lg:col-span-1 lg:sticky lg:top-24 self-start z-20">
+              <Card className="p-6 animate-slide-in-right bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-white/20">
                 <h3 className="text-xl font-bold mb-6 text-slate-900 dark:text-white">
                   Tu Boleto Electrónico
                 </h3>
