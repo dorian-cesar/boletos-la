@@ -337,6 +337,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
             passengers: passengerDetails,
             outboundConnectionId,
             returnConnectionId,
+            authorizationNumber: (simulatedPaymentDetails as any).authorization_number || "",
           });
 
 
@@ -558,6 +559,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 passengers: passengerDetails,
                 outboundConnectionId,
                 returnConnectionId,
+                authorizationNumber: realPaymentDetails.authorization_number,
               });
 
 
@@ -646,6 +648,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 passengers: passengerDetails,
                 outboundConnectionId,
                 returnConnectionId,
+                authorizationNumber: payment.authorization_number,
               });
 
 

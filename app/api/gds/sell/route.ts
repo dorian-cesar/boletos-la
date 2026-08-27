@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
       ticketCount,
       totalAmount,
       seats,
+      authorization_number,
     } = body;
 
     if (
@@ -110,6 +111,7 @@ export async function POST(req: NextRequest) {
 
     if (company) payload.company = company;
     if (connectionId) payload.connectionId = connectionId;
+    if (authorization_number) payload.authorization_number = authorization_number;
 
     console.log("📤 [sell] Enviando al backend:", JSON.stringify(payload));
 

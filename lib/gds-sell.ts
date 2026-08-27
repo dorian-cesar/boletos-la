@@ -8,6 +8,7 @@ interface SellParams {
   passengers: Passenger[];
   outboundConnectionId?: string | null;
   returnConnectionId?: string | null;
+  authorizationNumber?: string | null;
 }
 
 // Función auxiliar para formatear los asientos a enviar al /sell
@@ -139,6 +140,7 @@ export async function sellGdsSeats(
     passengers,
     outboundConnectionId,
     returnConnectionId,
+    authorizationNumber,
   } = params;
   const ticketMap: Record<string, string> = {};
 
@@ -152,6 +154,7 @@ export async function sellGdsSeats(
     originId: outboundTrip.origin,
     destinationId: outboundTrip.destination,
     ticketCount: outboundSeats.length,
+    authorization_number: authorizationNumber,
     totalAmount: outboundSeats.reduce(
       (acc, s) => acc + (s.price || outboundTrip.price || 0),
       0,
@@ -183,6 +186,7 @@ export async function sellGdsSeats(
       originId: returnTrip.origin,
       destinationId: returnTrip.destination,
       ticketCount: returnSeats.length,
+      authorization_number: authorizationNumber,
       totalAmount: returnSeats.reduce(
         (acc, s) => acc + (s.price || returnTrip.price || 0),
         0,
