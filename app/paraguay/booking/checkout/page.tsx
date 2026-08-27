@@ -119,23 +119,29 @@ export default function CheckoutPage() {
     // Si hay connectionIds, los liberamos
     const promises = [];
     if (outboundConnectionId) {
-      console.log(`[Checkout] Liberando asiento de ida: ${outboundConnectionId}`);
+      console.log(
+        `[Checkout] Liberando asiento de ida: ${outboundConnectionId}`,
+      );
       promises.push(
         fetch("/api/gds/unblock", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ connectionId: outboundConnectionId }),
-        }).catch((e) => console.error("Error al liberar asiento de ida:", e))
+        }).catch((e) => console.error("Error al liberar asiento de ida:", e)),
       );
     }
     if (returnConnectionId) {
-      console.log(`[Checkout] Liberando asiento de vuelta: ${returnConnectionId}`);
+      console.log(
+        `[Checkout] Liberando asiento de vuelta: ${returnConnectionId}`,
+      );
       promises.push(
         fetch("/api/gds/unblock", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ connectionId: returnConnectionId }),
-        }).catch((e) => console.error("Error al liberar asiento de vuelta:", e))
+        }).catch((e) =>
+          console.error("Error al liberar asiento de vuelta:", e),
+        ),
       );
     }
     if (promises.length > 0) {
@@ -857,8 +863,8 @@ export default function CheckoutPage() {
                 onClick={handleGoBackToSeats}
                 className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20 h-12 px-6"
               >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Volver a Asientos
+                <ArrowLeft className="h-4 w-4" />
+                Volver a seleccionar asientos
               </Button>
             </div>
           </div>

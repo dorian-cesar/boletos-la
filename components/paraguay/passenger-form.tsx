@@ -144,14 +144,20 @@ export function PassengerForm({
       .finally(() => setLoadingCountries(false));
   }, []);
 
+  const passenger = passengerDetails[outboundIndex];
+
   // Estado de búsqueda
-  const [docType, setDocType] = useState("C"); // C.I. Paraguaya por defecto
-  const [docNumber, setDocNumber] = useState("");
+  const [docType, setDocType] = useState(passenger?.docType?.codigo || "C"); // C.I. Paraguaya por defecto
+  const [docNumber, setDocNumber] = useState(passenger?.documentNumber || "");
   const [isSearching, setIsSearching] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [searchStatus, setSearchStatus] = useState<
     "idle" | "found" | "not_found" | "created" | "error"
-  >("idle");
+  >(
+    passenger?.documentNumber && passenger?.firstName && passenger?.lastName
+      ? "found"
+      : "idle"
+  );
   const [searchError, setSearchError] = useState<string | null>(null);
 
   // Estado de campos adicionales (solo visibles tras búsqueda)
@@ -159,8 +165,6 @@ export function PassengerForm({
     {},
   );
   const [isEditing, setIsEditing] = useState(false);
-
-  const passenger = passengerDetails[outboundIndex];
 
   // Estado local para inputs de texto (previene re-renders lentos en cada tecla)
   const [localData, setLocalData] = useState({
