@@ -106,23 +106,29 @@ export default function DetailsPage() {
     // Si hay connectionIds (ej. si el usuario regresó desde el checkout por navegador e intenta retroceder más)
     const promises = [];
     if (outboundConnectionId) {
-      console.log(`[Details] Liberando asiento de ida preventivo: ${outboundConnectionId}`);
+      console.log(
+        `[Details] Liberando asiento de ida preventivo: ${outboundConnectionId}`,
+      );
       promises.push(
         fetch("/api/gds/unblock", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ connectionId: outboundConnectionId }),
-        }).catch((e) => console.error("Error al liberar asiento de ida:", e))
+        }).catch((e) => console.error("Error al liberar asiento de ida:", e)),
       );
     }
     if (returnConnectionId) {
-      console.log(`[Details] Liberando asiento de vuelta preventivo: ${returnConnectionId}`);
+      console.log(
+        `[Details] Liberando asiento de vuelta preventivo: ${returnConnectionId}`,
+      );
       promises.push(
         fetch("/api/gds/unblock", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ connectionId: returnConnectionId }),
-        }).catch((e) => console.error("Error al liberar asiento de vuelta:", e))
+        }).catch((e) =>
+          console.error("Error al liberar asiento de vuelta:", e),
+        ),
       );
     }
     if (promises.length > 0) {
@@ -503,8 +509,8 @@ export default function DetailsPage() {
                   onClick={handleGoBackToSeats}
                   className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20"
                 >
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Volver a asientos
+                  <ArrowLeft className="h-4 w-4" />
+                  Volver a seleccionar asientos
                 </Button>
               </div>
             </div>
@@ -686,7 +692,9 @@ export default function DetailsPage() {
                     ) : (
                       "Continuar al Pago"
                     )}
-                    {!isSaving && <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />}
+                    {!isSaving && (
+                      <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
+                    )}
                   </Button>
                 </div>
               </Card>
