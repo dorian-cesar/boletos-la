@@ -95,6 +95,8 @@ export default function ConfirmationPageContent({
     resetBooking,
     originTitle,
     destinationTitle,
+    discountPercentage,
+    appliedServiceChargeAmount,
   } = useBookingStore();
 
   useEffect(() => {
@@ -102,6 +104,18 @@ export default function ConfirmationPageContent({
   }, []);
 
   const primaryPassenger = passengerDetails[0];
+
+  const getFinalSeatPrice = (seatPrice: number) => {
+    const totalPassengers = selectedSeats.length + selectedReturnSeats.length;
+    const seatDiscount = discountPercentage
+      ? Math.round(seatPrice * (discountPercentage / 100))
+      : 0;
+    const seatServiceCharge =
+      totalPassengers > 0
+        ? Math.round(appliedServiceChargeAmount / totalPassengers)
+        : 0;
+    return seatPrice - seatDiscount + seatServiceCharge;
+  };
 
   // Helper para verificar si se está procesando algo
   const isProcessing = (
@@ -183,10 +197,9 @@ export default function ConfirmationPageContent({
         // Generar QR en base64
         const qrBase64 = await QRCode.toDataURL(qrContent);
 
-        // Calcular precio por pasajero
-        const pricePerPassenger = Math.round(
-          totalPrice / passengerDetails.length,
-        );
+        // Calcular precio por asiento aplicando descuentos y comisiones individuales
+        const seatPrice = Number(seatsArray[seatIndex]?.price || trip.price || 0);
+        const finalSeatPrice = getFinalSeatPrice(seatPrice);
 
         // Preparar payload EXACTO como lo espera el backend externo
         const payload = {
@@ -216,7 +229,7 @@ export default function ConfirmationPageContent({
           email: passenger.email || "Sin email",
           fechaNacimiento: passenger.birthDate || "01/01/1990",
           telefono: passenger.phone || "Sin teléfono",
-          total: `Gs. ${pricePerPassenger.toLocaleString("es-PY")}`,
+          total: `Gs. ${finalSeatPrice.toLocaleString("es-PY")}`,
           pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
           metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
           numeroFactura: paymentDetails?.numero_factura || "",
@@ -369,10 +382,9 @@ export default function ConfirmationPageContent({
       // Generar QR en base64
       const qrBase64 = await QRCode.toDataURL(reservaCodigo);
 
-      // Calcular precio por pasajero
-      const pricePerPassenger = Math.round(
-        totalPrice / passengerDetails.length,
-      );
+      // Calcular precio por asiento aplicando descuentos y comisiones individuales
+      const seatPrice = Number(seatsArray[seatIndex]?.price || trip.price || 0);
+      const finalSeatPrice = getFinalSeatPrice(seatPrice);
 
       // Preparar payload
       const payload = {
@@ -402,7 +414,7 @@ export default function ConfirmationPageContent({
         email: passenger.email || "Sin email",
         fechaNacimiento: passenger.birthDate || "01/01/1990",
         telefono: passenger.phone || "Sin teléfono",
-        total: `Gs. ${pricePerPassenger.toLocaleString("es-PY")}`,
+        total: `Gs. ${finalSeatPrice.toLocaleString("es-PY")}`,
         pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
         numeroFactura: paymentDetails?.numero_factura || "",
@@ -471,7 +483,7 @@ export default function ConfirmationPageContent({
     setProcessing({ type: "email-all", passengerIndex: null });
     setEmailSent(false);
     setAutoEmailStatus("sending");
-    setAutoEmailMessage("Enviando boletos por email...");
+    const pricePerPassenger = Math.round(totalPrice / passengerDetails.length);
 
     // Helper interno para enviar un email específico
     const sendTripEmail = async (
@@ -518,7 +530,7 @@ export default function ConfirmationPageContent({
         email: passenger.email || "Sin email",
         fechaNacimiento: passenger.birthDate || "01/01/1990",
         telefono: passenger.phone || "Sin teléfono",
-        total: `Gs. ${seat.price.toLocaleString("es-PY")}`,
+        total: `Gs. ${getFinalSeatPrice(Number(seat.price || trip.price || 0)).toLocaleString("es-PY")}`,
         pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
         numeroFactura: paymentDetails?.numero_factura || "",
@@ -666,13 +678,12 @@ export default function ConfirmationPageContent({
       const passengerSeat =
         seatObj?.number || passenger.seatNumber || `A${passengerIndex + 1}`;
 
-      // Calcular precio por pasajero
-      const pricePerPassenger = Math.round(
-        totalPrice / passengerDetails.length,
-      );
-
       const trip = isOutbound ? selectedOutboundTrip : selectedReturnTrip;
       if (!trip) return;
+
+      // Calcular precio por asiento aplicando descuentos y comisiones individuales
+      const seatPrice = Number(seatObj?.price || trip.price || 0);
+      const finalSeatPrice = getFinalSeatPrice(seatPrice);
 
       const reservaCodigo =
         seatObj?.ticketNumber || `${bookingReference}-${passengerSeat}`;
@@ -708,7 +719,7 @@ export default function ConfirmationPageContent({
         email: passenger.email || "Sin email",
         fechaNacimiento: passenger.birthDate || "01/01/1990",
         telefono: passenger.phone || "Sin teléfono",
-        total: `Gs. ${pricePerPassenger.toLocaleString("es-PY")}`,
+        total: `Gs. ${finalSeatPrice.toLocaleString("es-PY")}`,
         pagoFecha: format(new Date(), "dd/MM/yyyy HH:mm"),
         metodoPago: paymentDetails?.forma_pago || "Tarjeta de Crédito/Débito",
         numeroFactura: paymentDetails?.numero_factura || "",
