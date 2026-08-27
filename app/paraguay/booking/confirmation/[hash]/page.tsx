@@ -19,8 +19,6 @@ export default function ConfirmationPage({ params }: ConfirmationPageProps) {
     selectedOutboundTrip,
     setSelectedOutboundTrip,
     setPassengerDetails,
-    setSelectedSeats,
-    setTotalPrice,
     setBookingReference,
     setDepartureDate,
     setOriginTitle,
@@ -53,20 +51,22 @@ export default function ConfirmationPage({ params }: ConfirmationPageProps) {
         setDepartureDate("2026-09-01");
         setOriginTitle("Asunción");
         setDestinationTitle("Ciudad del Este");
-        setSelectedSeats([
-          {
-            id: "s-12",
-            number: "12",
-            row: 3,
-            column: 2,
-            floor: 1,
-            type: "standard",
-            status: "selected",
-            price: 120000,
-            qualityCode: "CA",
-            ticketNumber: "BOL-PY-84920-12",
-          },
-        ]);
+        useBookingStore.setState({
+          selectedSeats: [
+            {
+              id: "s-12",
+              number: "12",
+              row: 3,
+              column: 2,
+              floor: 1,
+              type: "standard",
+              status: "selected",
+              price: 120000,
+              qualityCode: "CA",
+              ticketNumber: "BOL-PY-84920-12",
+            },
+          ]
+        });
         setPassengerDetails([
           {
             seatId: "s-12",
@@ -79,7 +79,7 @@ export default function ConfirmationPage({ params }: ConfirmationPageProps) {
             birthDate: "1990-05-15",
           },
         ]);
-        setTotalPrice(120000);
+        useBookingStore.setState({ totalPrice: 120000 });
         setBookingReference("BOL-PY-84920");
       }
 
@@ -106,9 +106,7 @@ export default function ConfirmationPage({ params }: ConfirmationPageProps) {
     setDepartureDate,
     setOriginTitle,
     setDestinationTitle,
-    setSelectedSeats,
     setPassengerDetails,
-    setTotalPrice,
     setBookingReference,
   ]);
 

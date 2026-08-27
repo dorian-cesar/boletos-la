@@ -1,5 +1,5 @@
+"use client";
 import React from "react";
-
 import { useEffect, useRef, useState } from "react";
 import { Shield, CreditCard, Clock, Headphones } from "lucide-react";
 import { cn } from "@/lib/utils";

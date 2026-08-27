@@ -197,6 +197,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           numero_factura: paymentDetails.numero_factura || null,
           cdc: paymentDetails.cdc || null,
           timbrado: paymentDetails.timbrado || null,
+          codigoAutorizacion: paymentDetails.authorization_number || null,
           origen_transaccion: "web",
           agencia_delta: "BO2",
           tipo_pago: "BANCARD",
