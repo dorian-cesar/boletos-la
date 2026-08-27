@@ -101,6 +101,37 @@ export default function DetailsPage() {
       );
     });
 
+  const handleGoBackToSeats = async () => {
+    // Si hay connectionIds (ej. si el usuario regresó desde el checkout por navegador e intenta retroceder más)
+    const promises = [];
+    if (outboundConnectionId) {
+      console.log(`[Details] Liberando asiento de ida preventivo: ${outboundConnectionId}`);
+      promises.push(
+        fetch("/api/gds/unblock", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ connectionId: outboundConnectionId }),
+        }).catch((e) => console.error("Error al liberar asiento de ida:", e))
+      );
+    }
+    if (returnConnectionId) {
+      console.log(`[Details] Liberando asiento de vuelta preventivo: ${returnConnectionId}`);
+      promises.push(
+        fetch("/api/gds/unblock", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ connectionId: returnConnectionId }),
+        }).catch((e) => console.error("Error al liberar asiento de vuelta:", e))
+      );
+    }
+    if (promises.length > 0) {
+      await Promise.all(promises);
+    }
+    setOutboundConnectionId(null);
+    setReturnConnectionId(null);
+    router.push("/paraguay/booking/seats");
+  };
+
   const handleApplyDiscount = async () => {
     if (!discountInput.trim()) return;
     setIsApplyingDiscount(true);
@@ -466,7 +497,7 @@ export default function DetailsPage() {
               <div className="flex justify-start items-center mt-8">
                 <Button
                   variant="outline"
-                  onClick={() => router.push("/paraguay/booking/seats")}
+                  onClick={handleGoBackToSeats}
                   className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />

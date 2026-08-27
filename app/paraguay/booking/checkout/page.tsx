@@ -90,6 +90,10 @@ export default function CheckoutPage() {
     dynamicServiceCharge,
     calculateTotal,
     appliedServiceChargeAmount,
+    outboundConnectionId,
+    returnConnectionId,
+    setOutboundConnectionId,
+    setReturnConnectionId,
   } = useBookingStore();
 
   const [isExpired, setIsExpired] = useState(false);
@@ -109,6 +113,37 @@ export default function CheckoutPage() {
     );
 
   const totalPassengers = selectedSeats.length + selectedReturnSeats.length;
+
+  const handleGoBackToSeats = async () => {
+    // Si hay connectionIds, los liberamos
+    const promises = [];
+    if (outboundConnectionId) {
+      console.log(`[Checkout] Liberando asiento de ida: ${outboundConnectionId}`);
+      promises.push(
+        fetch("/api/gds/unblock", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ connectionId: outboundConnectionId }),
+        }).catch((e) => console.error("Error al liberar asiento de ida:", e))
+      );
+    }
+    if (returnConnectionId) {
+      console.log(`[Checkout] Liberando asiento de vuelta: ${returnConnectionId}`);
+      promises.push(
+        fetch("/api/gds/unblock", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ connectionId: returnConnectionId }),
+        }).catch((e) => console.error("Error al liberar asiento de vuelta:", e))
+      );
+    }
+    if (promises.length > 0) {
+      await Promise.all(promises);
+    }
+    setOutboundConnectionId(null);
+    setReturnConnectionId(null);
+    router.push("/paraguay/booking/seats");
+  };
 
   const handlePaymentMethodSelect = (method: "tarjeta" | "bancard") => {
     setSelectedPaymentMethod(method);
@@ -804,7 +839,7 @@ export default function CheckoutPage() {
                         variant="ghost"
                         size="sm"
                         className="mt-2 h-7 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 px-2"
-                        onClick={() => router.push("/paraguay/booking/seats")}
+                        onClick={handleGoBackToSeats}
                       >
                         ← Volver a asientos
                       </Button>
@@ -817,7 +852,7 @@ export default function CheckoutPage() {
             <div className="flex justify-start mt-2">
               <Button
                 variant="outline"
-                onClick={() => router.push("/paraguay/booking/seats")}
+                onClick={handleGoBackToSeats}
                 className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20 h-12 px-6"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />

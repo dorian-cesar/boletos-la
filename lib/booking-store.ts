@@ -192,9 +192,20 @@ export const useBookingStore = create<BookingState>()(
       setReturnDate: (returnDate) => set({ returnDate }),
       setPax: (pax) => set({ pax }),
       setSelectedOutboundTrip: (selectedOutboundTrip) =>
-        set({ selectedOutboundTrip }),
+        set({
+          selectedOutboundTrip,
+          selectedSeats: [],
+          selectedReturnSeats: [],
+          passengerDetails: [],
+          outboundConnectionId: null,
+          returnConnectionId: null,
+        }),
       setSelectedReturnTrip: (selectedReturnTrip) =>
-        set({ selectedReturnTrip }),
+        set({
+          selectedReturnTrip,
+          selectedReturnSeats: [],
+          returnConnectionId: null,
+        }),
 
       addSeat: (seat) => {
         const { selectedSeats } = get();
