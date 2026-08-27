@@ -121,6 +121,8 @@ export async function POST(request: Request) {
         iframeUrl: iframeUrl,
         processId: processId,
         shopProcessId: shopProcessId,
+        sdkUrl: apiResponse.data?.sdkUrl || apiResponse.sdkUrl || null,
+        environment: apiResponse.data?.environment || apiResponse.environment || null,
       });
     } else {
       throw new Error(
