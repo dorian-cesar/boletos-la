@@ -90,11 +90,11 @@ function ServicesPageContent() {
   }, [setStep]);
 
   const searchParams = useSearchParams();
-  const originParam = searchParams.get('originId');
-  const destinationParam = searchParams.get('destinationId');
-  const dateParam = searchParams.get('date');
-  const returnParam = searchParams.get('returnDate');
-  const paxParam = searchParams.get('pax');
+  const originParam = searchParams.get("originId");
+  const destinationParam = searchParams.get("destinationId");
+  const dateParam = searchParams.get("date");
+  const returnParam = searchParams.get("returnDate");
+  const paxParam = searchParams.get("pax");
 
   useEffect(() => {
     if (originParam || destinationParam || dateParam) {
@@ -104,24 +104,38 @@ function ServicesPageContent() {
         if (origin !== "") setOrigin("");
       }
 
-      if (destinationParam && destination !== destinationParam) setDestination(destinationParam);
-      
+      if (destinationParam && destination !== destinationParam)
+        setDestination(destinationParam);
+
       const targetDate = dateParam || format(new Date(), "yyyy-MM-dd");
       if (departureDate !== targetDate) setDepartureDate(targetDate);
-      
+
       if (returnParam) {
         if (returnDate !== returnParam) setReturnDate(returnParam);
         if (tripType !== "round-trip") setTripType("round-trip");
       } else {
         if (tripType !== "one-way") setTripType("one-way");
       }
-      
+
       if (paxParam && !isNaN(Number(paxParam))) setPax(Number(paxParam));
     }
   }, [
-    originParam, destinationParam, dateParam, returnParam, paxParam,
-    origin, destination, departureDate, returnDate, tripType,
-    setOrigin, setDestination, setDepartureDate, setReturnDate, setTripType, setPax
+    originParam,
+    destinationParam,
+    dateParam,
+    returnParam,
+    paxParam,
+    origin,
+    destination,
+    departureDate,
+    returnDate,
+    tripType,
+    setOrigin,
+    setDestination,
+    setDepartureDate,
+    setReturnDate,
+    setTripType,
+    setPax,
   ]);
 
   // Sincronizar store a URL cuando cambian desde el widget
@@ -130,31 +144,61 @@ function ServicesPageContent() {
       const currentParams = new URLSearchParams(window.location.search);
       let changed = false;
 
-      if (currentParams.get('originId') !== origin) { currentParams.set('originId', origin); changed = true; }
-      if (currentParams.get('destinationId') !== destination) { currentParams.set('destinationId', destination); changed = true; }
-      
+      if (currentParams.get("originId") !== origin) {
+        currentParams.set("originId", origin);
+        changed = true;
+      }
+      if (currentParams.get("destinationId") !== destination) {
+        currentParams.set("destinationId", destination);
+        changed = true;
+      }
+
       const todayStr = format(new Date(), "yyyy-MM-dd");
       if (departureDate === todayStr) {
-        if (currentParams.has('date')) { currentParams.delete('date'); changed = true; }
+        if (currentParams.has("date")) {
+          currentParams.delete("date");
+          changed = true;
+        }
       } else {
-        if (currentParams.get('date') !== departureDate) { currentParams.set('date', departureDate); changed = true; }
+        if (currentParams.get("date") !== departureDate) {
+          currentParams.set("date", departureDate);
+          changed = true;
+        }
       }
-      
-      if (tripType === 'round-trip' && returnDate) {
-        if (currentParams.get('returnDate') !== returnDate) { currentParams.set('returnDate', returnDate); changed = true; }
-      } else if (currentParams.has('returnDate')) {
-        currentParams.delete('returnDate');
+
+      if (tripType === "round-trip" && returnDate) {
+        if (currentParams.get("returnDate") !== returnDate) {
+          currentParams.set("returnDate", returnDate);
+          changed = true;
+        }
+      } else if (currentParams.has("returnDate")) {
+        currentParams.delete("returnDate");
         changed = true;
       }
 
       const paxStr = String(pax);
-      if (currentParams.get('pax') !== paxStr) { currentParams.set('pax', paxStr); changed = true; }
+      if (currentParams.get("pax") !== paxStr) {
+        currentParams.set("pax", paxStr);
+        changed = true;
+      }
 
       if (changed) {
-        router.replace(`${window.location.pathname}?${currentParams.toString()}`, { scroll: false });
+        router.replace(
+          `${window.location.pathname}?${currentParams.toString()}`,
+          { scroll: false },
+        );
       }
     }
-  }, [origin, destination, departureDate, returnDate, pax, tripType, mounted, router]);
+  }, [
+    origin,
+    destination,
+    departureDate,
+    returnDate,
+    pax,
+    tripType,
+    mounted,
+    router,
+  ]);
 
   useEffect(() => {
     if (!searchLoading && currentTrips && currentTrips.length > 0) {
@@ -164,7 +208,14 @@ function ServicesPageContent() {
         content_ids: currentTrips.slice(0, 10).map((t) => t.id),
       });
     }
-  }, [searchLoading, currentTrips, originTitle, destinationTitle, origin, destination]);
+  }, [
+    searchLoading,
+    currentTrips,
+    originTitle,
+    destinationTitle,
+    origin,
+    destination,
+  ]);
 
   const handleSelectTrip = (trip: Trip) => {
     trackInitiateCheckout();
@@ -203,7 +254,6 @@ function ServicesPageContent() {
     );
   }
 
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] text-slate-900 dark:text-white w-full overflow-x-hidden">
       {/* Background Effects */}
@@ -215,22 +265,19 @@ function ServicesPageContent() {
       <div className="relative z-10 w-full">
         <BookingProgress />
 
-
-
         {/* Trips List */}
         <div className="w-full px-4 py-8 relative z-10">
           <div className="container mx-auto max-w-[1400px]">
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 lg:gap-8 items-start">
-              
+            <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-6 xl:gap-8 items-start">
               {/* Sidebar Search Form */}
-              <div className="hidden lg:block sticky top-8 order-2">
+              <div className="hidden xl:block sticky top-8 order-2">
                 <ParaguaySearchForm orientation="vertical" />
               </div>
 
               {/* Main Content Area */}
               <div className="flex flex-col min-w-0 w-full order-1">
                 {/* Mobile Search Form Toggle */}
-                <div className="lg:hidden mb-6">
+                <div className="xl:hidden mb-6">
                   <Button
                     variant="outline"
                     onClick={() => setShowMobileSearch(!showMobileSearch)}
@@ -246,18 +293,22 @@ function ServicesPageContent() {
                       <ChevronDown className="h-5 w-5 text-slate-500" />
                     )}
                   </Button>
-                  
+
                   {/* Collapsible Search Form */}
-                  <div className={cn(
-                    "mt-4 transition-all duration-300 ease-in-out origin-top",
-                    showMobileSearch ? "max-h-[2000px] opacity-100 scale-y-100" : "max-h-0 opacity-0 scale-y-95 overflow-hidden"
-                  )}>
+                  <div
+                    className={cn(
+                      "mt-4 transition-all duration-300 ease-in-out origin-top",
+                      showMobileSearch
+                        ? "max-h-[2000px] opacity-100 scale-y-100"
+                        : "max-h-0 opacity-0 scale-y-95 overflow-hidden",
+                    )}
+                  >
                     <ParaguaySearchForm orientation="vertical" />
                   </div>
                 </div>
 
                 <div className="mb-6">
-                  <DateNavbar 
+                  <DateNavbar
                     currentDate={
                       showingReturn
                         ? returnDate || departureDate || ""
@@ -269,18 +320,22 @@ function ServicesPageContent() {
                       } else {
                         setDepartureDate(newDate);
                       }
-                    }} 
+                    }}
                   />
                 </div>
 
                 <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-2">
                   <div className="flex flex-col">
                     {tripType === "round-trip" && (
-                      <span className={cn(
-                        "text-[11px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1",
-                        showingReturn ? "text-secondary" : "text-primary"
-                      )}>
-                        {showingReturn ? "Selecciona tu viaje de Vuelta" : "Selecciona tu viaje de Ida"}
+                      <span
+                        className={cn(
+                          "text-[11px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1",
+                          showingReturn ? "text-secondary" : "text-primary",
+                        )}
+                      >
+                        {showingReturn
+                          ? "Selecciona tu viaje de Vuelta"
+                          : "Selecciona tu viaje de Ida"}
                       </span>
                     )}
                     <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
@@ -293,265 +348,291 @@ function ServicesPageContent() {
                   </div>
                 </div>
 
-            {searchLoading ? (
-              <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <Card
-                    key={i}
-                    className="p-6 bg-white/5 border-black/10 dark:border-white/10 animate-pulse h-32"
-                  >
-                    <div className="flex gap-6 h-full items-center">
-                      <div className="w-16 h-16 bg-white/10 rounded-xl" />
-                      <div className="flex-1 space-y-3">
-                        <div className="h-4 bg-white/10 rounded w-1/4" />
-                        <div className="h-4 bg-white/10 rounded w-1/2" />
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            ) : searchError ? (
-              <div className="text-center py-12 bg-black/5 dark:bg-white/5 rounded-3xl border border-black/10 dark:border-white/10">
-                <p className="text-destructive mb-4">{searchError}</p>
-                <Button variant="outline" onClick={() => router.refresh()}>
-                  Reintentar
-                </Button>
-              </div>
-            ) : !origin || !destination || !departureDate ? (
-              <div className="text-center py-12 bg-black/5 dark:bg-white/5 rounded-3xl border border-black/10 dark:border-white/10">
-                <Bus className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-lg font-semibold text-slate-900 dark:text-white mb-2">Completa tu búsqueda</p>
-                <p className="text-muted-foreground">Por favor, selecciona origen y destino para ver los servicios disponibles.</p>
-              </div>
-            ) : trips.length === 0 ? (
-              <AlternateDatesInline
-                originalDate={
-                  showingReturn
-                    ? returnDate
-                      ? parse(returnDate, "yyyy-MM-dd", new Date())
-                      : null
-                    : departureDate
-                      ? parse(departureDate, "yyyy-MM-dd", new Date())
-                      : null
-                }
-                originId={showingReturn ? destination : origin}
-                destinationId={showingReturn ? origin : destination}
-                onSelectDate={(newDate) => {
-                  const formatted = format(newDate, "yyyy-MM-dd");
-                  if (showingReturn) {
-                    setReturnDate(formatted);
-                  } else {
-                    setDepartureDate(formatted);
-                  }
-                }}
-              />
-            ) : (
-              <div className="space-y-4">
-                {trips.map((trip, index) => (
-                  <Card
-                    key={trip.id}
-                    className={cn(
-                      "overflow-hidden transition-all duration-500 animate-fade-in hover:shadow-lg bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-white/20",
-                      selectedOutboundTrip?.id === trip.id ||
-                        selectedReturnTrip?.id === trip.id
-                        ? "ring-2 ring-primary"
-                        : "",
-                    )}
-                    style={{ animationDelay: `${index * 100}ms` }}
-                  >
-                    <div className="p-6">
-                      <div className="flex flex-col lg:flex-row lg:items-center gap-6">
-                        {/* Company Info */}
-                        <div className="flex items-center gap-4 lg:w-48">
-                          {(() => {
-                            const code = (trip.company || '').toUpperCase();
-                            let name = trip.company;
-                            let logo = null;
-                            let isObjectFitContain = false;
-                            
-                            if (code === 'LSN' || code === 'LSA' || code.includes('SANTANIANA')) {
-                              name = code === 'LSA' ? 'La Santaniana Argentina' : 'La Santaniana';
-                              logo = '/logos/santaniana-color.jpeg';
-                            } else if (code === 'LSP' || code.includes('SAMPEDRANA')) {
-                              name = 'La Sampedrana';
-                              logo = '/logos/logo-la-sampedrana.original.png';
-                              isObjectFitContain = true;
-                            }
-                            
-                            return (
-                              <>
-                                <div className="w-16 h-16 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/20 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                                  {logo ? (
-                                    <Image src={logo} alt={name} width={64} height={64} className={cn("w-full h-full", isObjectFitContain ? "object-contain scale-150" : "object-cover")} />
-                                  ) : (
-                                    <Bus className="h-8 w-8 text-primary" />
-                                  )}
-                                </div>
-                                <div>
-                                  <p className="font-bold text-slate-900 dark:text-white leading-tight">
-                                    {name}
-                                  </p>
-                                  <p className="text-sm text-slate-900 dark:text-white/60 mt-1">
-                                    {trip.busType}
-                                  </p>
-                                </div>
-                              </>
-                            );
-                          })()}
+                {searchLoading ? (
+                  <div className="space-y-4">
+                    {[1, 2, 3].map((i) => (
+                      <Card
+                        key={i}
+                        className="p-6 bg-white/5 border-black/10 dark:border-white/10 animate-pulse h-32"
+                      >
+                        <div className="flex gap-6 h-full items-center">
+                          <div className="w-16 h-16 bg-white/10 rounded-xl" />
+                          <div className="flex-1 space-y-3">
+                            <div className="h-4 bg-white/10 rounded w-1/4" />
+                            <div className="h-4 bg-white/10 rounded w-1/2" />
+                          </div>
                         </div>
+                      </Card>
+                    ))}
+                  </div>
+                ) : searchError ? (
+                  <div className="text-center py-12 bg-black/5 dark:bg-white/5 rounded-3xl border border-black/10 dark:border-white/10">
+                    <p className="text-destructive mb-4">{searchError}</p>
+                    <Button variant="outline" onClick={() => router.refresh()}>
+                      Reintentar
+                    </Button>
+                  </div>
+                ) : !origin || !destination || !departureDate ? (
+                  <div className="text-center py-12 bg-black/5 dark:bg-white/5 rounded-3xl border border-black/10 dark:border-white/10">
+                    <Bus className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+                      Completa tu búsqueda
+                    </p>
+                    <p className="text-muted-foreground">
+                      Por favor, selecciona origen y destino para ver los
+                      servicios disponibles.
+                    </p>
+                  </div>
+                ) : trips.length === 0 ? (
+                  <AlternateDatesInline
+                    originalDate={
+                      showingReturn
+                        ? returnDate
+                          ? parse(returnDate, "yyyy-MM-dd", new Date())
+                          : null
+                        : departureDate
+                          ? parse(departureDate, "yyyy-MM-dd", new Date())
+                          : null
+                    }
+                    originId={showingReturn ? destination : origin}
+                    destinationId={showingReturn ? origin : destination}
+                    onSelectDate={(newDate) => {
+                      const formatted = format(newDate, "yyyy-MM-dd");
+                      if (showingReturn) {
+                        setReturnDate(formatted);
+                      } else {
+                        setDepartureDate(formatted);
+                      }
+                    }}
+                  />
+                ) : (
+                  <div className="space-y-4">
+                    {trips.map((trip, index) => (
+                      <Card
+                        key={trip.id}
+                        className={cn(
+                          "overflow-hidden transition-all duration-500 animate-fade-in hover:shadow-lg bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-white/20",
+                          selectedOutboundTrip?.id === trip.id ||
+                            selectedReturnTrip?.id === trip.id
+                            ? "ring-2 ring-primary"
+                            : "",
+                        )}
+                        style={{ animationDelay: `${index * 100}ms` }}
+                      >
+                        <div className="p-5 md:p-6">
+                          <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+                            {/* Column 1: Company Info */}
+                            <div className="flex items-center gap-4 md:w-44 shrink-0">
+                              {(() => {
+                                const code = (trip.company || "").toUpperCase();
+                                let name = trip.company;
+                                let logo = null;
+                                let isObjectFitContain = false;
 
-                        {/* Time Info */}
-                        <div className="flex-1 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6">
-                          <div className="flex w-full md:w-auto justify-between md:justify-start md:flex-1">
-                            <div className="text-center flex-1 md:flex-none">
-                              <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                                {trip.departureTime}
-                              </p>
-                              <p className="text-sm text-slate-900 dark:text-white/60">
-                                {originCityName}
-                              </p>
+                                if (
+                                  code === "LSN" ||
+                                  code === "LSA" ||
+                                  code.includes("SANTANIANA")
+                                ) {
+                                  name =
+                                    code === "LSA"
+                                      ? "La Santaniana Argentina"
+                                      : "La Santaniana";
+                                  logo = "/logos/santaniana-color.jpeg";
+                                } else if (
+                                  code === "LSP" ||
+                                  code.includes("SAMPEDRANA")
+                                ) {
+                                  name = "La Sampedrana";
+                                  logo =
+                                    "/logos/logo-la-sampedrana.original.png";
+                                  isObjectFitContain = true;
+                                }
+
+                                return (
+                                  <>
+                                    <div className="w-14 h-14 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/20 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                      {logo ? (
+                                        <Image
+                                          src={logo}
+                                          alt={name}
+                                          width={56}
+                                          height={56}
+                                          className={cn(
+                                            "w-full h-full",
+                                            isObjectFitContain
+                                              ? "object-contain scale-150"
+                                              : "object-cover",
+                                          )}
+                                        />
+                                      ) : (
+                                        <Bus className="h-7 w-7 text-primary" />
+                                      )}
+                                    </div>
+                                    <div>
+                                      <p className="font-bold text-slate-900 dark:text-white leading-tight text-sm md:text-base">
+                                        {name}
+                                      </p>
+                                      <p className="text-xs text-slate-900 dark:text-white/60 mt-0.5">
+                                        {trip.busType}
+                                      </p>
+                                      {/* Seats Available Badge (Nested inside Company info to save horizontal space) */}
+                                      <div className="mt-1 flex items-center gap-1.5">
+                                        <span
+                                          className={cn(
+                                            "text-[10px] px-1.5 py-0.5 rounded font-semibold tracking-wider uppercase",
+                                            trip.availableSeats < 10
+                                              ? "bg-red-500/10 text-red-500"
+                                              : "bg-green-500/10 text-green-500",
+                                          )}
+                                        >
+                                          {trip.availableSeats} asientos
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </>
+                                );
+                              })()}
                             </div>
 
-                            <div className="flex flex-col items-center px-4">
-                              <p className="text-xs text-slate-900 dark:text-white/60 mb-1">
-                                {trip.duration}
-                              </p>
-                              <div className="relative w-24 lg:w-32">
-                                <div className="h-0.5 bg-black/20 dark:bg-white/20 w-full" />
-                                <div className="absolute top-1/2 left-0 w-2 h-2 rounded-full bg-primary -translate-y-1/2" />
-                                <div className="absolute top-1/2 right-0 w-2 h-2 rounded-full bg-secondary -translate-y-1/2" />
-                                <Bus className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-4 w-4 text-primary" />
+                            {/* Column 2: Time Info */}
+                            <div className="flex items-center justify-between md:justify-center gap-4 flex-1 w-full md:w-auto border-t md:border-t-0 pt-4 md:pt-0 border-black/5 dark:border-white/5">
+                              {/* Departure */}
+                              <div className="text-center md:text-left flex-1 md:flex-none">
+                                <p className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">
+                                  {trip.departureTime}
+                                </p>
+                                <p className="text-xs text-slate-900 dark:text-white/60 mt-0.5">
+                                  {originCityName}
+                                </p>
+                              </div>
+
+                              {/* Duration Line */}
+                              <div className="flex flex-col items-center px-2">
+                                <p className="text-[10px] text-slate-900 dark:text-white/40 mb-1">
+                                  {trip.duration}
+                                </p>
+                                <div className="relative w-20 sm:w-24 md:w-20 lg:w-28">
+                                  <div className="h-0.5 bg-black/20 dark:bg-white/20 w-full" />
+                                  <div className="absolute top-1/2 left-0 w-1.5 h-1.5 rounded-full bg-primary -translate-y-1/2" />
+                                  <div className="absolute top-1/2 right-0 w-1.5 h-1.5 rounded-full bg-secondary -translate-y-1/2" />
+                                  <Bus className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-3.5 w-3.5 text-primary bg-slate-50 dark:bg-[#1a2332] px-0.5" />
+                                </div>
+                              </div>
+
+                              {/* Arrival */}
+                              <div className="text-center md:text-left flex-1 md:flex-none">
+                                <p className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">
+                                  {trip.arrivalTime}
+                                </p>
+                                <p className="text-xs text-slate-900 dark:text-white/60 mt-0.5">
+                                  {destinationCityName}
+                                </p>
                               </div>
                             </div>
 
-                            <div className="text-center flex-1 md:flex-none">
-                              <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                                {trip.arrivalTime}
-                              </p>
-                              <p className="text-sm text-slate-900 dark:text-white/60">
-                                {destinationCityName}
-                              </p>
+                            {/* Column 3: Price & Action */}
+                            <div className="flex items-center md:flex-col justify-between md:items-end gap-3 md:w-36 shrink-0 w-full border-t md:border-t-0 pt-4 md:pt-0 border-black/5 dark:border-white/5">
+                              <div className="text-left md:text-right">
+                                <p className="text-2xl font-bold text-secondary">
+                                  Gs. {trip.price.toLocaleString("es-PY")}
+                                </p>
+                                <p className="text-[10px] text-slate-900 dark:text-white/40 mt-0.5">
+                                  por asiento
+                                </p>
+                              </div>
+                              <Button
+                                onClick={() => handleSelectTrip(trip)}
+                                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground h-10 px-4 text-sm font-bold rounded-lg transition-all duration-300 transform active:scale-95 whitespace-nowrap"
+                              >
+                                Seleccionar
+                                <ArrowRight className="h-4 w-4 ml-1.5" />
+                              </Button>
                             </div>
                           </div>
 
-                          {/* Seats Available */}
-                          <div className="flex items-center gap-2 lg:w-32">
-                            <Users className="h-5 w-5 text-slate-900 dark:text-white/60" />
-                            <span
+                          {/* Expandable Details */}
+                          <div className="mt-4 pt-4 border-t border-black/10 dark:border-white/20">
+                            <button
+                              onClick={() =>
+                                setExpandedTrip(
+                                  expandedTrip === trip.id ? null : trip.id,
+                                )
+                              }
+                              className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+                            >
+                              Ver detalles
+                              {expandedTrip === trip.id ? (
+                                <ChevronUp className="h-4 w-4" />
+                              ) : (
+                                <ChevronDown className="h-4 w-4" />
+                              )}
+                            </button>
+
+                            <div
                               className={cn(
-                                "text-sm font-medium whitespace-nowrap",
-                                trip.availableSeats < 10
-                                  ? "text-destructive"
-                                  : "text-primary",
+                                "overflow-hidden transition-all duration-500",
+                                expandedTrip === trip.id
+                                  ? "max-h-40 mt-4"
+                                  : "max-h-0",
                               )}
                             >
-                              {trip.availableSeats} asientos
-                            </span>
-                          </div>
-
-                          {/* Price & Action */}
-                          <div className="flex items-center justify-between lg:flex-col lg:items-end gap-4 lg:w-40 w-full">
-                            <div className="text-left lg:text-right">
-                              <p className="text-2xl font-bold text-secondary">
-                                Gs. {trip.price.toLocaleString("es-PY")}
-                              </p>
-                              <p className="text-xs text-slate-900 dark:text-white/60">
-                                por asiento
-                              </p>
+                              <div className="flex flex-wrap gap-2">
+                                {trip.amenities.map((amenity) => {
+                                  const Icon = amenityIcons[amenity];
+                                  return (
+                                    <Badge
+                                      key={amenity}
+                                      variant="secondary"
+                                      className="flex items-center gap-1.5 bg-black/10 dark:bg-white/10 text-slate-900 dark:text-white"
+                                    >
+                                      {Icon && <Icon className="h-3.5 w-3.5" />}
+                                      {amenity}
+                                    </Badge>
+                                  );
+                                })}
+                              </div>
                             </div>
-                            <Button
-                              onClick={() => handleSelectTrip(trip)}
-                              className="bg-secondary hover:bg-secondary/90 text-secondary-foreground transition-all duration-300 transform hover:scale-105 whitespace-nowrap"
-                            >
-                              Seleccionar
-                              <ArrowRight className="h-4 w-4 ml-1" />
-                            </Button>
                           </div>
                         </div>
-                      </div>
+                      </Card>
+                    ))}
+                  </div>
+                )}
 
-                      {/* Expandable Details */}
-                      <div className="mt-4 pt-4 border-t border-black/10 dark:border-white/20">
-                        <button
-                          onClick={() =>
-                            setExpandedTrip(
-                              expandedTrip === trip.id ? null : trip.id,
-                            )
-                          }
-                          className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
-                        >
-                          Ver detalles
-                          {expandedTrip === trip.id ? (
-                            <ChevronUp className="h-4 w-4" />
-                          ) : (
-                            <ChevronDown className="h-4 w-4" />
-                          )}
-                        </button>
+                {/* Botones de navegación */}
+                {/* Botón para volver a seleccionar servicio en viaje de ida */}
+                {!showingReturn && !selectedOutboundTrip && (
+                  <div className="mt-8 flex justify-start">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        router.push("/paraguay");
+                      }}
+                      className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20"
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                      Volver a buscar servicios
+                    </Button>
+                  </div>
+                )}
 
-                        <div
-                          className={cn(
-                            "overflow-hidden transition-all duration-500",
-                            expandedTrip === trip.id
-                              ? "max-h-40 mt-4"
-                              : "max-h-0",
-                          )}
-                        >
-                          <div className="flex flex-wrap gap-2">
-                            {trip.amenities.map((amenity) => {
-                              const Icon = amenityIcons[amenity];
-                              return (
-                                <Badge
-                                  key={amenity}
-                                  variant="secondary"
-                                  className="flex items-center gap-1.5 bg-black/10 dark:bg-white/10 text-slate-900 dark:text-white"
-                                >
-                                  {Icon && <Icon className="h-3.5 w-3.5" />}
-                                  {amenity}
-                                </Badge>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            )}
-
-            {/* Botones de navegación */}
-            {/* Botón para volver a seleccionar servicio en viaje de ida */}
-            {!showingReturn && !selectedOutboundTrip && (
-              <div className="mt-8 flex justify-start">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    router.push("/paraguay");
-                  }}
-                  className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:bg-white/20"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Volver a buscar servicios
-                </Button>
-              </div>
-            )}
-
-            {/* Botón para volver a seleccionar ida en viaje de vuelta */}
-            {showingReturn && (
-              <div className="mt-8 flex justify-start">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setShowingReturn(false);
-                    setSelectedOutboundTrip(null);
-                  }}
-                  className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:bg-white/20"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Volver a seleccionar ida
-                </Button>
-              </div>
-            )}
+                {/* Botón para volver a seleccionar ida en viaje de vuelta */}
+                {showingReturn && (
+                  <div className="mt-8 flex justify-start">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setShowingReturn(false);
+                        setSelectedOutboundTrip(null);
+                      }}
+                      className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20"
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                      Volver a seleccionar ida
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -563,13 +644,15 @@ function ServicesPageContent() {
 
 export default function ServicesPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419]">
-        <div className="text-center text-slate-900 dark:text-white animate-pulse">
-          Cargando búsqueda...
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419]">
+          <div className="text-center text-slate-900 dark:text-white animate-pulse">
+            Cargando búsqueda...
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <ServicesPageContent />
     </Suspense>
   );

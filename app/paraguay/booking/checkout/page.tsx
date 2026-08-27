@@ -94,6 +94,7 @@ export default function CheckoutPage() {
     returnConnectionId,
     setOutboundConnectionId,
     setReturnConnectionId,
+    setBookingExpiresAt,
   } = useBookingStore();
 
   const [isExpired, setIsExpired] = useState(false);
@@ -142,6 +143,7 @@ export default function CheckoutPage() {
     }
     setOutboundConnectionId(null);
     setReturnConnectionId(null);
+    setBookingExpiresAt(null);
     router.push("/paraguay/booking/seats");
   };
 

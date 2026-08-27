@@ -51,6 +51,7 @@ export default function DetailsPage() {
     selectedReturnSeats,
     passengerDetails,
     setStep,
+    setBookingExpiresAt,
     calculateTotal,
     totalPrice,
     originTitle,
@@ -336,6 +337,8 @@ export default function DetailsPage() {
         }
       }
 
+      // Iniciar el temporizador global al bloquear los asientos
+      setBookingExpiresAt(Date.now() + 10 * 60 * 1000);
       router.push("/paraguay/booking/checkout");
     } catch (err: any) {
       console.error("Save / Block error:", err);
