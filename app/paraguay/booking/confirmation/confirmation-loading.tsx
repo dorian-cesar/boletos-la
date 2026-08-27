@@ -375,11 +375,12 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
             }
             setStorePaymentStatus("completed");
 
-            // 1. Polling (Reintentos) en la confirmaciÃ³n para obtener el electronicBillCdc
+            // 1. Polling (Reintentos) en la confirmación para validar la aprobación de la transacción
             let electronicBillCdc: string | null = null;
             let electronicBillNumber: string | null = null;
             let electronicBillStamp: string | null = null;
             let confirmData: any = null;
+            let isTransactionApproved = false;
 
             const maxAttempts = 5;
             for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -419,22 +420,33 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                     });
                   }
 
-                  const cdc =
-                    rawData?.data?.confirmation?.electronicBillCdc ||
-                    rawData?.confirmation?.electronicBillCdc;
-                  const billNum =
-                    rawData?.data?.confirmation?.electronicBillNumber ||
-                    rawData?.confirmation?.electronicBillNumber;
-                  const stamp =
-                    rawData?.data?.confirmation?.commerceStamp ||
-                    rawData?.confirmation?.commerceStamp;
+                  const confirmation =
+                    rawData?.data?.confirmation || rawData?.confirmation;
+                  const responseCode = confirmation?.responseCode;
+                  const cdc = confirmation?.electronicBillCdc;
+                  const billNum = confirmation?.electronicBillNumber;
+                  const stamp = confirmation?.commerceStamp;
+                  const authNum =
+                    rawData?.operation?.authorization_number ||
+                    rawData?.data?.operation?.authorization_number;
 
-                  if (cdc) {
-                    electronicBillCdc = cdc;
+                  const isApproved =
+                    rawData?.status === "success" &&
+                    (rawData?.data?.status === "success" ||
+                      responseCode === "00" ||
+                      confirmation?.responseDescription
+                        ?.toLowerCase()
+                        .includes("aprobada") ||
+                      Boolean(stamp) ||
+                      Boolean(authNum));
+
+                  if (isApproved) {
+                    isTransactionApproved = true;
+                    electronicBillCdc = cdc || "";
                     electronicBillNumber = billNum || "";
                     electronicBillStamp = stamp || "";
                     console.log(
-                      `[Bancard Confirmation] CDC obtenido en intento ${attempt}: ${cdc}`,
+                      `[Bancard Confirmation] Transacción aprobada en intento ${attempt} (responseCode: ${responseCode}, stamp: ${stamp})`,
                     );
                     break;
                   }
@@ -450,32 +462,6 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 await new Promise((resolve) => setTimeout(resolve, 2500));
               }
             }
-
-            // if (!electronicBillCdc) {
-            //   console.warn(
-            //     "[Bancard Confirmation] No se obtuvo electronicBillCdc tras agotar los 5 reintentos. Ejecutando rollback...",
-            //   );
-            //   try {
-            //     await fetch("/api/bancard/rollback-transaccion", {
-            //       method: "POST",
-            //       headers: { "Content-Type": "application/json" },
-            //       body: JSON.stringify({
-            //         shopProcessId: shopProcessId ? parseInt(shopProcessId) : 0,
-            //         processId: processId,
-            //       }),
-            //     });
-            //     console.log(
-            //       "[Bancard Rollback] Rollback completado por falta de CDC.",
-            //     );
-            //   } catch (rollbackErr) {
-            //     console.error(
-            //       "[Bancard Rollback] Error al realizar rollback por falta de CDC:",
-            //       rollbackErr,
-            //     );
-            //   }
-            //   setStatus("failed");
-            //   return;
-            // }
 
             const realPaymentDetails = {
               pagado: true,
@@ -506,33 +492,16 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 (selectedReturnTrip ? selectedReturnSeats.length : 0);
               const actualTicketsCount = Object.keys(ticketMap).length;
 
-              // 3. Manejo de Rollback si el GDS falla en la emisiÃ³n del pasaje
-              // if (actualTicketsCount < expectedTicketsCount) {
-              //   console.error(
-              //     "GDS sell failed for Bancard: expected",
-              //     expectedTicketsCount,
-              //     "tickets but got",
-              //     actualTicketsCount,
-              //   );
-
-              //   try {
-              //     console.log("Iniciando rollback por falla de emisiÃ³n GDS...");
-              //     await fetch("/api/bancard/rollback-transaccion", {
-              //       method: "POST",
-              //       headers: { "Content-Type": "application/json" },
-              //       body: JSON.stringify({
-              //         shopProcessId: shopProcessId ? parseInt(shopProcessId) : 0,
-              //         processId: processId,
-              //       }),
-              //     });
-              //     console.log("Rollback de Bancard completado con Ã©xito.");
-              //   } catch (rollbackErr) {
-              //     console.error("Error al hacer rollback de Bancard:", rollbackErr);
-              //   }
-
-              //   setStatus("issue_failed");
-              //   return;
-              // }
+              if (actualTicketsCount < expectedTicketsCount) {
+                console.error(
+                  "GDS sell failed for Bancard: expected",
+                  expectedTicketsCount,
+                  "tickets but got",
+                  actualTicketsCount,
+                );
+                setStatus("issue_failed");
+                return;
+              }
 
               if (Object.keys(ticketMap).length > 0) {
                 assignTicketNumbers(ticketMap);
@@ -542,11 +511,6 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                   finalRef = first;
                 }
               }
-              await sendEmailAlertsInBackground(
-                realPaymentDetails,
-                finalRef,
-                ticketMap,
-              );
               await sendEmailAlertsInBackground(
                 realPaymentDetails,
                 finalRef,
@@ -853,12 +817,12 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                   <h3 className="font-semibold text-amber-300 mb-2">
                     {status === "cancelled"
                       ? "Pago cancelado"
-                      : "La confirmaciÃ³n del pasaje no se pudo realizar"}
+                      : "La confirmación del pasaje no se pudo realizar"}
                   </h3>
                   <p className="text-sm text-amber-400 mb-4">
                     {status === "cancelled"
                       ? "El pago fue cancelado."
-                      : "No se pudo completar la reserva o emisiÃ³n de los pasajes en el sistema. Por favor, intentÃ¡ nuevamente."}
+                      : "No se pudo completar la reserva o emisión de los pasajes en el sistema. Por favor, intentá nuevamente."}
                   </p>
                   <Button
                     onClick={() => router.push("/paraguay/booking/checkout")}
