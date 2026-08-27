@@ -325,6 +325,20 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
         return;
       }
 
+      const demoParam = searchParams.get("demo");
+      if (demoParam === "failed") {
+        setStatus("failed");
+        return;
+      }
+      if (demoParam === "issue_failed") {
+        setStatus("issue_failed");
+        return;
+      }
+      if (demoParam === "cancelled") {
+        setStatus("cancelled");
+        return;
+      }
+
       if (hash === "bancard") {
         const paymentStatus = searchParams.get("status");
         if (paymentStatus === "payment_fail") {
@@ -818,26 +832,41 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               </div>
             </Card>
           ) : (
-            <Card className="p-6 bg-amber-500/10 backdrop-blur-sm border-amber-500/30">
-              <div className="flex items-start gap-4">
-                <AlertCircle className="h-8 w-8 text-amber-400 mt-0.5 shrink-0" />
-                <div className="flex-1">
-                  <h3 className="font-semibold text-amber-300 mb-2">
+            <Card className="p-6 sm:p-8 bg-white dark:bg-[#1a2332]/90 backdrop-blur-md border border-red-500/30 rounded-2xl shadow-2xl text-center max-w-xl mx-auto">
+              <div className="flex flex-col items-center gap-4">
+                <div className="w-16 h-16 bg-red-500/10 border border-red-500/40 rounded-full flex items-center justify-center mb-2">
+                  <AlertCircle className="h-9 w-9 text-red-500" />
+                </div>
+                <div>
+                  <span className="inline-block px-3 py-1 bg-red-500/10 text-red-600 dark:text-red-400 text-xs font-semibold rounded-full mb-3">
+                    {status === "cancelled" ? "Operación Cancelada" : "Error en el Pago"}
+                  </span>
+                  <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
                     {status === "cancelled"
                       ? "Pago cancelado"
                       : "La confirmación del pasaje no se pudo realizar"}
-                  </h3>
-                  <p className="text-sm text-amber-400 mb-4">
+                  </h2>
+                  <p className="text-sm text-slate-600 dark:text-slate-300 mb-6">
                     {status === "cancelled"
-                      ? "El pago fue cancelado."
-                      : "No se pudo completar la reserva o emisión de los pasajes en el sistema. Por favor, intentá nuevamente."}
+                      ? "Has cancelado el proceso de pago. Si cambias de opinión, puedes volver a intentarlo."
+                      : "No se pudo completar la reserva o emisión de los pasajes en el sistema. Por favor, verifica tus datos o el saldo de tu cuenta e intentá nuevamente."}
                   </p>
+                </div>
+                
+                <div className="w-full mt-2">
                   <Button
                     onClick={() => router.push("/paraguay/booking/checkout")}
-                    className="bg-purple-600 hover:bg-purple-700 w-full sm:w-auto"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium w-full py-6 rounded-xl shadow-lg flex items-center justify-center gap-2 text-base"
                   >
-                    <Wallet className="h-4 w-4" />
+                    <Wallet className="h-5 w-5" />
                     Intentar pago nuevamente
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => router.push("/paraguay")}
+                    className="text-sm text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white mt-4"
+                  >
+                    Volver al inicio
                   </Button>
                 </div>
               </div>
