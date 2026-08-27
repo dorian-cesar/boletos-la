@@ -81,7 +81,7 @@ export default function DetailsPage() {
     }
   }, [mounted, selectedSeats, router]);
 
-  // Validar que los pasajeros de IDA estÃ©n completos
+  // Validar que los pasajeros de IDA estén completos
   const arePassengersComplete =
     selectedSeats.length > 0 &&
     selectedSeats.every((_, i) => {
@@ -116,9 +116,11 @@ export default function DetailsPage() {
           data.empresa_convenio,
           data.convenio,
           data.cargo_por_servicio,
-          data.valor_cargo_servicio
+          data.valor_cargo_servicio,
         );
-        setDiscountSuccess(`¡Descuento de ${percentage}% aplicado! ${data.nombre ? `(${data.nombre})` : ''}`);
+        setDiscountSuccess(
+          `¡Descuento de ${percentage}% aplicado! ${data.nombre ? `(${data.nombre})` : ""}`,
+        );
       } else {
         throw new Error("El código no tiene un porcentaje válido asociado");
       }
@@ -178,7 +180,7 @@ export default function DetailsPage() {
       console.error("Save error:", err);
       setSaveError(
         err.message ||
-        "Hubo un error al guardar los pasajeros. Por favor intenta de nuevo.",
+          "Hubo un error al guardar los pasajeros. Por favor intenta de nuevo.",
       );
     } finally {
       setIsSaving(false);
@@ -200,7 +202,8 @@ export default function DetailsPage() {
                   Completá tus datos
                 </h1>
                 <p className="text-sm md:text-base text-slate-900 dark:text-white/60 mt-1 md:mt-2">
-                  Ingresa los detalles de los pasajeros para continuar con el pago
+                  Ingresa los detalles de los pasajeros para continuar con el
+                  pago
                 </p>
               </div>
 
@@ -213,7 +216,8 @@ export default function DetailsPage() {
                       Datos de los Pasajeros
                     </h3>
                     <span className="text-xs text-slate-900 dark:text-white/50 ml-1">
-                      ({selectedSeats.length} asiento{selectedSeats.length > 1 ? "s" : ""})
+                      ({selectedSeats.length} asiento
+                      {selectedSeats.length > 1 ? "s" : ""})
                     </span>
                   </div>
                   {selectedSeats.map((seat, i) => {
@@ -270,7 +274,9 @@ export default function DetailsPage() {
                         <Input
                           placeholder="Ingresá tu código"
                           value={discountInput}
-                          onChange={(e) => setDiscountInput(e.target.value.toUpperCase())}
+                          onChange={(e) =>
+                            setDiscountInput(e.target.value.toUpperCase())
+                          }
                           className="uppercase bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/20"
                         />
                         <Button
@@ -291,9 +297,12 @@ export default function DetailsPage() {
                           <Check className="h-5 w-5" />
                           <div>
                             <p className="font-medium text-sm">
-                              {discountSuccess || `¡Descuento de ${discountPercentage}% aplicado!`}
+                              {discountSuccess ||
+                                `¡Descuento de ${discountPercentage}% aplicado!`}
                             </p>
-                            <p className="text-xs opacity-80">Código: {discountCode}</p>
+                            <p className="text-xs opacity-80">
+                              Código: {discountCode}
+                            </p>
                           </div>
                         </div>
                         <Button
@@ -329,7 +338,7 @@ export default function DetailsPage() {
                 <Button
                   variant="outline"
                   onClick={() => router.push("/paraguay/booking/seats")}
-                  className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:bg-white/20"
+                  className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Volver a asientos
@@ -367,26 +376,54 @@ export default function DetailsPage() {
                 <div className="space-y-4 mb-6">
                   {/* Ida */}
                   <div className="pb-4 border-b border-black/10 dark:border-white/20">
-                    <p className="font-semibold text-sm mb-1 text-slate-900 dark:text-white">Ida: {originTitle} - {destinationTitle}</p>
+                    <p className="font-semibold text-sm mb-1 text-slate-900 dark:text-white">
+                      Ida: {originTitle} - {destinationTitle}
+                    </p>
                     <p className="text-xs text-slate-500 dark:text-white/60 mb-2">
-                      {format(parse(departureDate || "", "yyyy-MM-dd", new Date()), "dd MMM yyyy", { locale: es })} • {selectedOutboundTrip?.departureTime}
+                      {format(
+                        parse(departureDate || "", "yyyy-MM-dd", new Date()),
+                        "dd MMM yyyy",
+                        { locale: es },
+                      )}{" "}
+                      • {selectedOutboundTrip?.departureTime}
                     </p>
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-600 dark:text-white/70">Asientos ({selectedSeats.length})</span>
-                      <span className="font-medium text-slate-900 dark:text-white">Gs. {selectedSeats.reduce((acc, s) => acc + s.price, 0).toLocaleString("es-PY")}</span>
+                      <span className="text-slate-600 dark:text-white/70">
+                        Asientos ({selectedSeats.length})
+                      </span>
+                      <span className="font-medium text-slate-900 dark:text-white">
+                        Gs.{" "}
+                        {selectedSeats
+                          .reduce((acc, s) => acc + s.price, 0)
+                          .toLocaleString("es-PY")}
+                      </span>
                     </div>
                   </div>
 
                   {/* Regreso */}
                   {tripType === "round-trip" && selectedReturnTrip && (
                     <div className="pb-4 border-b border-black/10 dark:border-white/20">
-                      <p className="font-semibold text-sm mb-1 text-slate-900 dark:text-white">Regreso: {destinationTitle} - {originTitle}</p>
+                      <p className="font-semibold text-sm mb-1 text-slate-900 dark:text-white">
+                        Regreso: {destinationTitle} - {originTitle}
+                      </p>
                       <p className="text-xs text-slate-500 dark:text-white/60 mb-2">
-                        {format(parse(returnDate || "", "yyyy-MM-dd", new Date()), "dd MMM yyyy", { locale: es })} • {selectedReturnTrip?.departureTime}
+                        {format(
+                          parse(returnDate || "", "yyyy-MM-dd", new Date()),
+                          "dd MMM yyyy",
+                          { locale: es },
+                        )}{" "}
+                        • {selectedReturnTrip?.departureTime}
                       </p>
                       <div className="flex justify-between text-sm">
-                        <span className="text-slate-600 dark:text-white/70">Asientos ({selectedReturnSeats.length})</span>
-                        <span className="font-medium text-slate-900 dark:text-white">Gs. {selectedReturnSeats.reduce((acc, s) => acc + s.price, 0).toLocaleString("es-PY")}</span>
+                        <span className="text-slate-600 dark:text-white/70">
+                          Asientos ({selectedReturnSeats.length})
+                        </span>
+                        <span className="font-medium text-slate-900 dark:text-white">
+                          Gs.{" "}
+                          {selectedReturnSeats
+                            .reduce((acc, s) => acc + s.price, 0)
+                            .toLocaleString("es-PY")}
+                        </span>
                       </div>
                     </div>
                   )}
@@ -399,19 +436,31 @@ export default function DetailsPage() {
                       <div className="flex items-center justify-between text-sm mb-1 text-slate-500 dark:text-white/60 line-through">
                         <span>Subtotal</span>
                         <span>
-                          Gs. {(
+                          Gs.{" "}
+                          {(
                             selectedSeats.reduce((acc, s) => acc + s.price, 0) +
-                            selectedReturnSeats.reduce((acc, s) => acc + s.price, 0)
+                            selectedReturnSeats.reduce(
+                              (acc, s) => acc + s.price,
+                              0,
+                            )
                           ).toLocaleString("es-PY")}
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-sm mb-3 text-green-600 dark:text-green-400 font-medium">
                         <span>Descuento ({discountPercentage}%)</span>
                         <span>
-                          - Gs. {((
-                            selectedSeats.reduce((acc, s) => acc + s.price, 0) +
-                            selectedReturnSeats.reduce((acc, s) => acc + s.price, 0)
-                          ) * (discountPercentage / 100)).toLocaleString("es-PY")}
+                          - Gs.{" "}
+                          {(
+                            (selectedSeats.reduce(
+                              (acc, s) => acc + s.price,
+                              0,
+                            ) +
+                              selectedReturnSeats.reduce(
+                                (acc, s) => acc + s.price,
+                                0,
+                              )) *
+                            (discountPercentage / 100)
+                          ).toLocaleString("es-PY")}
                         </span>
                       </div>
                     </>
@@ -439,7 +488,9 @@ export default function DetailsPage() {
                             className="z-50 max-w-xs sm:max-w-sm bg-white text-slate-800 dark:bg-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 px-4 py-2.5 rounded-xl shadow-xl backdrop-blur-md"
                           >
                             <p className="text-sm font-normal text-slate-700 dark:text-slate-200 leading-relaxed">
-                              Este cargo te da acceso a nuestro amplio catálogo, servicios de atención al cliente y devolución de los pasajes cuando sea posible.
+                              Este cargo te da acceso a nuestro amplio catálogo,
+                              servicios de atención al cliente y devolución de
+                              los pasajes cuando sea posible.
                             </p>
                           </TooltipContent>
                         </Tooltip>
@@ -491,4 +542,3 @@ export default function DetailsPage() {
     </div>
   );
 }
-

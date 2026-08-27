@@ -92,13 +92,11 @@ export default function CheckoutPage() {
     appliedServiceChargeAmount,
   } = useBookingStore();
 
-  
-
   const [isExpired, setIsExpired] = useState(false);
   const [showVisaModal, setShowVisaModal] = useState(false);
   const handleExpire = useCallback(() => setIsExpired(true), []);
 
-  // Validar que los pasajeros del store estÃ©n completos
+  // Validar que los pasajeros del store estén completos
   const isFormValid =
     passengerDetails.length > 0 &&
     passengerDetails.every(
@@ -131,7 +129,7 @@ export default function CheckoutPage() {
             `${primaryPassenger?.firstName} ${primaryPassenger?.lastName}`.toUpperCase(),
           client_email: primaryPassenger?.email || "fallback",
           total_items: totalPassengers,
-          preauthorization: false, // Siempre sin preautorizaciÃ³n
+          preauthorization: false, // Siempre sin preautorización
         }),
       });
 
@@ -197,7 +195,7 @@ export default function CheckoutPage() {
     calculateTotal();
   }, [setStep, calculateTotal]);
 
-  // Efecto para inyectar dinÃ¡micamente el SDK de Bancard e inicializar el formulario de pago
+  // Efecto para inyectar dinámicamente el SDK de Bancard e inicializar el formulario de pago
   useEffect(() => {
     if (!iframeProcessId) return;
 
@@ -269,7 +267,7 @@ export default function CheckoutPage() {
         setTimeout(checkContainerAndInitialize, 100);
       };
       script.onerror = () => {
-        console.error("Error al cargar la librerÃ­a de Bancard");
+        console.error("Error al cargar la librería de Bancard");
       };
       document.body.appendChild(script);
     } else {
@@ -288,7 +286,7 @@ export default function CheckoutPage() {
     };
   }, [iframeProcessId]);
 
-  // Efecto para bloquear el scroll del fondo (body) mientras el modal de pago estÃ¡ abierto
+  // Efecto para bloquear el scroll del fondo (body) mientras el modal de pago está abierto
   useEffect(() => {
     if (iframeProcessId) {
       const originalOverflow = document.body.style.overflow;
@@ -384,7 +382,8 @@ export default function CheckoutPage() {
                     <div className="flex items-center justify-between gap-4 mb-4">
                       <div className="flex items-center gap-4 min-w-0">
                         {(() => {
-                          const { name, logo, isObjectFitContain } = resolveCompanyInfo(selectedOutboundTrip?.company);
+                          const { name, logo, isObjectFitContain } =
+                            resolveCompanyInfo(selectedOutboundTrip?.company);
                           return (
                             <>
                               {logo ? (
@@ -394,7 +393,12 @@ export default function CheckoutPage() {
                                     alt={name}
                                     width={64}
                                     height={64}
-                                    className={cn("w-full h-full", isObjectFitContain ? "object-contain scale-125" : "object-cover")}
+                                    className={cn(
+                                      "w-full h-full",
+                                      isObjectFitContain
+                                        ? "object-contain scale-125"
+                                        : "object-cover",
+                                    )}
                                   />
                                 </div>
                               ) : (
@@ -426,29 +430,40 @@ export default function CheckoutPage() {
                     </div>
                     <div className="space-y-2 text-sm">
                       <p className="flex justify-between gap-2">
-                        <span className="text-slate-900 dark:text-white/60 shrink-0">Fecha</span>
+                        <span className="text-slate-900 dark:text-white/60 shrink-0">
+                          Fecha
+                        </span>
                         <span className="text-slate-900 dark:text-white truncate text-right">
-                          {departureDate ? format(
-                            parse(departureDate, "yyyy-MM-dd", new Date()),
-                            "dd MMM yyyy",
-                            { locale: es }
-                          ) : ""}
+                          {departureDate
+                            ? format(
+                                parse(departureDate, "yyyy-MM-dd", new Date()),
+                                "dd MMM yyyy",
+                                { locale: es },
+                              )
+                            : ""}
                         </span>
                       </p>
                       <p className="flex justify-between gap-2">
-                        <span className="text-slate-900 dark:text-white/60 shrink-0">Ruta</span>
+                        <span className="text-slate-900 dark:text-white/60 shrink-0">
+                          Ruta
+                        </span>
                         <span className="text-slate-900 dark:text-white truncate text-right">
                           {originTitle} - {destinationTitle}
                         </span>
                       </p>
                       <p className="flex justify-between gap-2">
-                        <span className="text-slate-900 dark:text-white/60 shrink-0">Horario</span>
+                        <span className="text-slate-900 dark:text-white/60 shrink-0">
+                          Horario
+                        </span>
                         <span className="text-slate-900 dark:text-white truncate text-right">
-                          {selectedOutboundTrip?.departureTime} - {selectedOutboundTrip?.arrivalTime}
+                          {selectedOutboundTrip?.departureTime} -{" "}
+                          {selectedOutboundTrip?.arrivalTime}
                         </span>
                       </p>
                       <p className="flex justify-between gap-2">
-                        <span className="text-slate-900 dark:text-white/60 shrink-0">Asientos</span>
+                        <span className="text-slate-900 dark:text-white/60 shrink-0">
+                          Asientos
+                        </span>
                         <span className="text-slate-900 dark:text-white truncate text-right">
                           {selectedSeats.map((s) => s.number).join(", ")}
                         </span>
@@ -464,7 +479,8 @@ export default function CheckoutPage() {
                       </p>
                       <div className="flex items-center justify-start gap-4 mb-4">
                         {(() => {
-                          const { name, logo, isObjectFitContain } = resolveCompanyInfo(selectedReturnTrip?.company);
+                          const { name, logo, isObjectFitContain } =
+                            resolveCompanyInfo(selectedReturnTrip?.company);
                           return (
                             <>
                               {logo ? (
@@ -474,7 +490,12 @@ export default function CheckoutPage() {
                                     alt={name}
                                     width={64}
                                     height={64}
-                                    className={cn("w-full h-full", isObjectFitContain ? "object-contain scale-125" : "object-cover")}
+                                    className={cn(
+                                      "w-full h-full",
+                                      isObjectFitContain
+                                        ? "object-contain scale-125"
+                                        : "object-cover",
+                                    )}
                                   />
                                 </div>
                               ) : (
@@ -496,31 +517,44 @@ export default function CheckoutPage() {
                       </div>
                       <div className="space-y-2 text-sm">
                         <p className="flex justify-between gap-2">
-                          <span className="text-slate-900 dark:text-white/60 shrink-0">Fecha</span>
+                          <span className="text-slate-900 dark:text-white/60 shrink-0">
+                            Fecha
+                          </span>
                           <span className="text-slate-900 dark:text-white truncate text-right">
-                            {returnDate ? format(
-                              parse(returnDate, "yyyy-MM-dd", new Date()),
-                              "dd MMM yyyy",
-                              { locale: es }
-                            ) : ""}
+                            {returnDate
+                              ? format(
+                                  parse(returnDate, "yyyy-MM-dd", new Date()),
+                                  "dd MMM yyyy",
+                                  { locale: es },
+                                )
+                              : ""}
                           </span>
                         </p>
                         <p className="flex justify-between gap-2">
-                          <span className="text-slate-900 dark:text-white/60 shrink-0">Ruta</span>
+                          <span className="text-slate-900 dark:text-white/60 shrink-0">
+                            Ruta
+                          </span>
                           <span className="text-slate-900 dark:text-white truncate text-right">
                             {destinationTitle} - {originTitle}
                           </span>
                         </p>
                         <p className="flex justify-between gap-2">
-                          <span className="text-slate-900 dark:text-white/60 shrink-0">Horario</span>
+                          <span className="text-slate-900 dark:text-white/60 shrink-0">
+                            Horario
+                          </span>
                           <span className="text-slate-900 dark:text-white truncate text-right">
-                            {selectedReturnTrip.departureTime} - {selectedReturnTrip.arrivalTime}
+                            {selectedReturnTrip.departureTime} -{" "}
+                            {selectedReturnTrip.arrivalTime}
                           </span>
                         </p>
                         <p className="flex justify-between gap-2">
-                          <span className="text-slate-900 dark:text-white/60 shrink-0">Asientos</span>
+                          <span className="text-slate-900 dark:text-white/60 shrink-0">
+                            Asientos
+                          </span>
                           <span className="text-slate-900 dark:text-white truncate text-right">
-                            {selectedReturnSeats.map((s) => s.number).join(", ")}
+                            {selectedReturnSeats
+                              .map((s) => s.number)
+                              .join(", ")}
                           </span>
                         </p>
                       </div>
@@ -534,9 +568,13 @@ export default function CheckoutPage() {
                         Asientos ({totalPassengers})
                       </span>
                       <span className="text-slate-900 dark:text-white truncate text-right">
-                        Gs. {(
+                        Gs.{" "}
+                        {(
                           selectedSeats.reduce((acc, s) => acc + s.price, 0) +
-                          selectedReturnSeats.reduce((acc, s) => acc + s.price, 0)
+                          selectedReturnSeats.reduce(
+                            (acc, s) => acc + s.price,
+                            0,
+                          )
                         ).toLocaleString("es-PY")}
                       </span>
                     </p>
@@ -546,10 +584,18 @@ export default function CheckoutPage() {
                           Descuento ({discountPercentage}%)
                         </span>
                         <span className="truncate text-right">
-                          - Gs. {((
-                            selectedSeats.reduce((acc, s) => acc + s.price, 0) +
-                            selectedReturnSeats.reduce((acc, s) => acc + s.price, 0)
-                          ) * (discountPercentage / 100)).toLocaleString("es-PY")}
+                          - Gs.{" "}
+                          {(
+                            (selectedSeats.reduce(
+                              (acc, s) => acc + s.price,
+                              0,
+                            ) +
+                              selectedReturnSeats.reduce(
+                                (acc, s) => acc + s.price,
+                                0,
+                              )) *
+                            (discountPercentage / 100)
+                          ).toLocaleString("es-PY")}
                         </span>
                       </p>
                     ) : null}
@@ -570,13 +616,15 @@ export default function CheckoutPage() {
                                 </button>
                               </span>
                             </TooltipTrigger>
-                            <TooltipContent 
-                              side="top" 
+                            <TooltipContent
+                              side="top"
                               sideOffset={6}
                               className="z-50 max-w-xs sm:max-w-sm bg-white text-slate-800 dark:bg-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 px-4 py-2.5 rounded-xl shadow-xl backdrop-blur-md"
                             >
                               <p className="text-sm font-normal text-slate-700 dark:text-slate-200 leading-relaxed">
-                                Este cargo te da acceso a nuestro amplio catálogo, servicios de atención al cliente y devolución de los pasajes cuando sea posible.
+                                Este cargo te da acceso a nuestro amplio
+                                catálogo, servicios de atención al cliente y
+                                devolución de los pasajes cuando sea posible.
                               </p>
                             </TooltipContent>
                           </Tooltip>
@@ -618,7 +666,9 @@ export default function CheckoutPage() {
                     ) : isProcessing ? (
                       <>
                         <Loader2 className="h-5 w-5 mr-2 animate-spin shrink-0" />
-                        <span className="truncate">Conectando con Bancard...</span>
+                        <span className="truncate">
+                          Conectando con Bancard...
+                        </span>
                       </>
                     ) : passengerDetails.length === 0 ? (
                       "Cargando..."
@@ -643,7 +693,7 @@ export default function CheckoutPage() {
                     variant="outline"
                     className="animate-fade-in border-destructive/50 text-destructive shrink-0"
                   >
-                    Completa los datos en la pÃ¡gina de asientos
+                    Completa los datos en la página de asientos
                   </Badge>
                 )}
               </div>
@@ -747,7 +797,7 @@ export default function CheckoutPage() {
                         Datos incompletos
                       </p>
                       <p className="text-xs text-destructive/80 mt-0.5">
-                        Vuelve a la selecciÃ³n de asientos para completar los
+                        Vuelve a la selección de asientos para completar los
                         datos de los pasajeros.
                       </p>
                       <Button
@@ -756,24 +806,24 @@ export default function CheckoutPage() {
                         className="mt-2 h-7 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 px-2"
                         onClick={() => router.push("/paraguay/booking/seats")}
                       >
-                        â† Volver a asientos
+                        ← Volver a asientos
                       </Button>
                     </div>
                   </div>
                 </Card>
               )}
-              </div>
+            </div>
 
-              <div className="flex justify-start mt-2">
-                <Button
-                  variant="outline"
-                  onClick={() => router.push("/paraguay/booking/seats")}
-                  className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:bg-white/20 h-12 px-6"
-                >
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Volver a Asientos
-                </Button>
-              </div>
+            <div className="flex justify-start mt-2">
+              <Button
+                variant="outline"
+                onClick={() => router.push("/paraguay/booking/seats")}
+                className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20 h-12 px-6"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Volver a Asientos
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -798,7 +848,7 @@ export default function CheckoutPage() {
             </h3>
             <p className="text-sm sm:text-base text-gray-300 mb-4 break-words">
               {selectedPaymentMethod === "tarjeta"
-                ? "Tu reserva se confirmarÃ¡ en instantes..."
+                ? "Tu reserva se confirmará en instantes..."
                 : "Estamos abriendo tu entorno seguro de pago. Por favor espera."}
             </p>
             <Loader2 className="h-10 w-10 sm:h-12 sm:w-12 text-blue-400 mx-auto mb-4 animate-spin" />
@@ -810,7 +860,7 @@ export default function CheckoutPage() {
       )}
 
       {/* Modal de consulta para Tarjeta VISA */}
-      {/* Modal de selecciÃ³n VISA desactivado */}
+      {/* Modal de selección VISA desactivado */}
       {showVisaModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
           <div className="relative w-full max-w-md bg-slate-50 dark:bg-[#0f1419] border border-blue-500/30 rounded-2xl p-6 sm:p-8 shadow-2xl text-center">
@@ -908,7 +958,7 @@ function CheckoutTimer({ onExpire }: { onExpire: () => void }) {
     return () => clearInterval(interval);
   }, []);
 
-  // Invocar la expiraciÃ³n de forma segura en la fase posterior al renderizado (efectos)
+  // Invocar la expiración de forma segura en la fase posterior al renderizado (efectos)
   useEffect(() => {
     if (seconds <= 0) {
       onExpireRef.current();
@@ -932,4 +982,3 @@ function CheckoutTimer({ onExpire }: { onExpire: () => void }) {
     </div>
   );
 }
-

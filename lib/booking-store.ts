@@ -26,8 +26,8 @@ export interface Seat {
   type: "standard" | "vip" | "premium";
   status: "available" | "occupied" | "selected" | "blocked";
   price: number;
-  qualityCode: string; // CÃ³digo de calidad del asiento (ej: "CA") â€” requerido por GDS /sell
-  ticketNumber?: string; // NÃºmero de ticket asignado por el GDS tras /sell exitoso
+  qualityCode: string; // Código de calidad del asiento (ej: "CA") — requerido por GDS /sell
+  ticketNumber?: string; // Número de ticket asignado por el GDS tras /sell exitoso
 }
 
 export interface Passenger {
@@ -277,10 +277,10 @@ export const useBookingStore = create<BookingState>()(
           );
         }
 
-        // Asientos de VUELTA â€” mismos datos del pasajero de ida (por orden)
+        // Asientos de VUELTA — mismos datos del pasajero de ida (por orden)
         for (let i = 0; i < selectedReturnSeats.length; i++) {
           const retSeat = selectedReturnSeats[i];
-          // El pasajero correspondiente ya estÃ¡ en updated[i] (el de ida)
+          // El pasajero correspondiente ya está en updated[i] (el de ida)
           const outPassenger = updated[i];
           const existingRet = passengerDetails[selectedSeats.length + i];
 
@@ -457,7 +457,7 @@ export const useBookingStore = create<BookingState>()(
       },
     }),
     {
-      name: "booking-store", // Nombre Ãºnico en localStorage
+      name: "booking-store", // Nombre único en localStorage
       storage: createJSONStorage(() => localStorage),
       // Solo persistir estos campos (excluir funciones)
       partialize: (state) => ({
@@ -493,12 +493,12 @@ export const useBookingStore = create<BookingState>()(
         serviceCharge: state.serviceCharge,
         appliedServiceChargeAmount: state.appliedServiceChargeAmount,
       }),
-      // VersiÃ³n para migraciones futuras
+      // Versión para migraciones futuras
       version: 1,
       // Migrar datos de versiones anteriores si es necesario
       migrate: (persistedState: any, version: number) => {
         if (version === 0) {
-          // Migrar de versiÃ³n 0 a 1 si es necesario
+          // Migrar de versión 0 a 1 si es necesario
           return {
             ...persistedState,
             paymentStatus: persistedState.paymentStatus || "pending",
@@ -512,18 +512,18 @@ export const useBookingStore = create<BookingState>()(
 
 // Datos para Paraguay
 export const cities = [
-  { id: "asu", name: "AsunciÃ³n", department: "Capital", distribusionCode: "PYASU" },
-  { id: "cde", name: "Ciudad del Este", department: "Alto ParanÃ¡", distribusionCode: "PYAGT" },
-  { id: "enc", name: "EncarnaciÃ³n", department: "ItapÃºa", distribusionCode: "PYENO" },
+  { id: "asu", name: "Asunción", department: "Capital", distribusionCode: "PYASU" },
+  { id: "cde", name: "Ciudad del Este", department: "Alto Paraná", distribusionCode: "PYAGT" },
+  { id: "enc", name: "Encarnación", department: "Itapúa", distribusionCode: "PYENO" },
   { id: "pjc", name: "Pedro Juan Caballero", department: "Amambay", distribusionCode: "PYPJC" },
-  { id: "caz", name: "CaazapÃ¡", department: "CaazapÃ¡", distribusionCode: "PYCAZ" },
-  { id: "cor", name: "Coronel Oviedo", department: "CaaguazÃº", distribusionCode: "PYCOO" },
-  { id: "sal", name: "Salto del GuairÃ¡", department: "CanindeyÃº", distribusionCode: "PYSG" },
-  { id: "pil", name: "Pilar", department: "Ã‘eembucÃº", distribusionCode: "PYPIL" },
-  { id: "con", name: "ConcepciÃ³n", department: "ConcepciÃ³n", distribusionCode: "PYCIO" },
+  { id: "caz", name: "Caazapá", department: "Caazapá", distribusionCode: "PYCAZ" },
+  { id: "cor", name: "Coronel Oviedo", department: "Caaguazú", distribusionCode: "PYCOO" },
+  { id: "sal", name: "Salto del Guairá", department: "Canindeyú", distribusionCode: "PYSG" },
+  { id: "pil", name: "Pilar", department: "Ñeembucú", distribusionCode: "PYPIL" },
+  { id: "con", name: "Concepción", department: "Concepción", distribusionCode: "PYCIO" },
   { id: "vde", name: "Villa del Rosario", department: "San Pedro", distribusionCode: "PYVDR" },
-  { id: "may", name: "Mayor OtaÃ±o", department: "ItapÃºa", distribusionCode: "PYMOT" },
-  { id: "her", name: "Hernandarias", department: "Alto ParanÃ¡", distribusionCode: "PYHER" },
+  { id: "may", name: "Mayor Otaño", department: "Itapúa", distribusionCode: "PYMOT" },
+  { id: "her", name: "Hernandarias", department: "Alto Paraná", distribusionCode: "PYHER" },
 ];
 
 export const generateTrips = (
@@ -542,26 +542,26 @@ export const generateTrips = (
     "22:30",
   ];
   const companies = [
-    "Nuestra SeÃ±ora de la AsunciÃ³n",
+    "Nuestra Señora de la Asunción",
     "Stel Turismo",
     "Rysa",
     "Sol del Paraguay",
     "La Encarnacena",
     "Catedral Turismo",
   ];
-  const busTypes = ["Semi Cama", "Cama Ejecutivo", "Premium", "ClÃ¡sico"];
+  const busTypes = ["Semi Cama", "Cama Ejecutivo", "Premium", "Clásico"];
   const amenities = [
-    ["WiFi", "TV", "BaÃ±o", "Aire Acondicionado"],
-    ["WiFi", "TV", "BaÃ±o", "Aire Acondicionado", "Enchufes USB"],
+    ["WiFi", "TV", "Baño", "Aire Acondicionado"],
+    ["WiFi", "TV", "Baño", "Aire Acondicionado", "Enchufes USB"],
     [
       "WiFi",
       "TV",
-      "BaÃ±o",
+      "Baño",
       "Aire Acondicionado",
       "Enchufes USB",
-      "RefrigeraciÃ³n",
+      "Refrigeración",
     ],
-    ["TV", "BaÃ±o", "Aire Acondicionado"],
+    ["TV", "Baño", "Aire Acondicionado"],
   ];
 
   return times.map((time, index) => {
