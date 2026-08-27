@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 interface Promocion {
@@ -42,7 +41,7 @@ export async function PromoSection() {
   const promociones = await getActivePromociones();
   
   if (!promociones || promociones.length === 0) {
-    return null; // Ocultar si no hay promociones activas
+    return null;
   }
 
   // Tomamos solo la primera según lo acordado
@@ -76,22 +75,21 @@ export async function PromoSection() {
           )}
 
           {/* Contenido Principal */}
-          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
-            {/* Columna Izquierda - Imagen */}
+          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-10">
+            {/* Columna Izquierda - Imagen (75% en desktop) */}
             {promo.imagen && (
-              <div className="w-full lg:w-1/2 relative rounded-2xl overflow-hidden shadow-lg aspect-[4/3] md:aspect-[16/9] lg:aspect-[4/3] group border border-slate-200/50 dark:border-slate-800/50">
-                <Image
+              <div className="w-full lg:w-3/4 relative rounded-2xl overflow-hidden shadow-lg aspect-[4/3] md:aspect-[16/9] lg:aspect-[16/8] group border border-slate-200/50 dark:border-slate-800/50">
+                <img
                   src={promo.imagen} 
                   alt={promo.titulo || "Imagen de promoción"}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-500" />
               </div>
             )}
 
-            {/* Columna Derecha - Link y Base de Promoción */}
-            <div className={`w-full ${promo.imagen ? 'lg:w-1/2' : 'lg:w-full'} flex flex-col items-center justify-center text-center space-y-10 py-6`}>
+            {/* Columna Derecha - Link y Base de Promoción (25% en desktop) */}
+            <div className={`w-full ${promo.imagen ? 'lg:w-1/4' : 'lg:w-full'} flex flex-col items-center justify-center text-center space-y-6 py-4`}>
               
               {promo.texto && (
                 <div className="w-full px-4 text-slate-700 dark:text-slate-200 text-lg">

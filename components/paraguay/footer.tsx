@@ -282,28 +282,6 @@ export function ParaguayFooter() {
               >
                 Ayuda
               </Link>
-              {/* Vistas Demo */}
-              <div className="flex items-center gap-2 border-l border-slate-300 dark:border-slate-700 pl-4 ml-2">
-                <span className="text-xs font-semibold text-amber-500 uppercase tracking-wider">Dev Vistas:</span>
-                <Link
-                  href="/paraguay/booking/confirmation/bancard?demo=success"
-                  className="text-slate-900 dark:text-white/50 hover:text-emerald-500 transition-colors text-xs font-medium"
-                >
-                  [Éxito / Boletos]
-                </Link>
-                <Link
-                  href="/paraguay/booking/confirmation/bancard?status=payment_fail"
-                  className="text-slate-900 dark:text-white/50 hover:text-red-500 transition-colors text-xs font-medium"
-                >
-                  [Rechazo Bancard]
-                </Link>
-                <Link
-                  href="/paraguay/booking/confirmation/bancard?demo=issue_failed"
-                  className="text-slate-900 dark:text-white/50 hover:text-amber-500 transition-colors text-xs font-medium"
-                >
-                  [Falla Emisión]
-                </Link>
-              </div>
             </div>
           </div>
         </div>
