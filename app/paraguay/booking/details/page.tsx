@@ -62,6 +62,11 @@ export default function DetailsPage() {
     appliedServiceChargeAmount,
     fetchServiceCharge,
     setDiscount,
+    outboundConnectionId,
+    returnConnectionId,
+    setOutboundConnectionId,
+    setReturnConnectionId,
+    addFailedSeats,
   } = useBookingStore();
 
   useEffect(() => {
@@ -144,43 +149,168 @@ export default function DetailsPage() {
       setIsSaving(true);
       setSaveError(null);
 
-      // Auto-guardar pasajeros antes del checkout final
+      // 1. Auto-guardar (crear) pasajeros
       const saveTasks = selectedSeats.map(async (_, i) => {
         const p = passengerDetails[i];
         if (!p || !p.documentNumber || !p.firstName || !p.lastName) return;
 
-        try {
-          await fetch("/api/gds/passenger/create", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              docType: p.docType?.codigo || "C",
-              docNumber: p.documentNumber.replace(/[.\-\s]/g, ""),
-              lastName: p.lastName,
-              name: p.firstName,
-              phone: p.phone,
-              occupation: p.occupation || "EMPLEADO",
-              birthDate: p.birthDate
-                ? p.birthDate.replace(/-/g, "/")
-                : "1991/06/08",
-              gender: p.gender || "M",
-              nationality: p.nationality || "PA",
-              country: p.country || "PA",
-            }),
-          });
-        } catch (error) {
-          console.error("Error auto-guardando pasajero:", error);
+        const res = await fetch("/api/gds/passenger/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            docType: p.docType?.codigo || "C",
+            docNumber: p.documentNumber.replace(/[.\-\s]/g, ""),
+            lastName: p.lastName,
+            name: p.firstName,
+            phone: p.phone,
+            occupation: p.occupation || "EMPLEADO",
+            birthDate: p.birthDate
+              ? p.birthDate.replace(/-/g, "/")
+              : "1991/06/08",
+            gender: p.gender || "M",
+            nationality: p.nationality || "PA",
+            country: p.country || "PA",
+          }),
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(
+            err.error ||
+              `Error al registrar los datos del pasajero ${p.firstName} ${p.lastName}`,
+          );
         }
       });
 
-      await Promise.allSettled(saveTasks);
+      await Promise.all(saveTasks);
+
+      // 2. Bloquear asientos de ida
+      try {
+        const res = await fetch("/api/gds/block", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            serviceId: selectedOutboundTrip?.id,
+            originId: selectedOutboundTrip?.origin,
+            destinationId: selectedOutboundTrip?.destination,
+            seats: selectedSeats.map((s) => s.number).join(","),
+            ...(outboundConnectionId && { connectionId: outboundConnectionId }),
+          }),
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || "Error al reservar asientos de ida");
+        }
+
+        const data = await res.json();
+        const blockData = data.data || data;
+
+        console.log("=== INSPECCIÓN GDS BLOCK (IDA) ===");
+        console.log(JSON.stringify(blockData, null, 2));
+
+        const isGdsError =
+          blockData.success === false ||
+          (blockData.providerResult && blockData.providerResult !== "0");
+
+        if (isGdsError) {
+          const detail =
+            blockData.Descripcion ||
+            blockData.raw?.Descripcion ||
+            blockData.message ||
+            blockData.error?.message ||
+            blockData.error;
+          throw new Error(
+            detail
+              ? `No se pudo reservar el asiento (${detail}). Por favor regresa a la selección de asientos y elige otro.`
+              : "No se pudo reservar el asiento. Por favor regresa a la selección de asientos y elige otro.",
+          );
+        }
+
+        if (blockData.connectionId) {
+          setOutboundConnectionId(blockData.connectionId);
+        }
+      } catch (err: any) {
+        if (selectedOutboundTrip) {
+          addFailedSeats(
+            selectedOutboundTrip.id,
+            selectedSeats.map((s) => s.number),
+          );
+        }
+        throw err;
+      }
+
+      // 3. Bloquear asientos de regreso (si aplica)
+      if (
+        tripType === "round-trip" &&
+        selectedReturnTrip &&
+        selectedReturnSeats.length > 0
+      ) {
+        try {
+          const returnRes = await fetch("/api/gds/block", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              serviceId: selectedReturnTrip.id,
+              originId: selectedReturnTrip.origin,
+              destinationId: selectedReturnTrip.destination,
+              seats: selectedReturnSeats.map((s) => s.number).join(","),
+              ...(returnConnectionId && { connectionId: returnConnectionId }),
+            }),
+          });
+
+          if (!returnRes.ok) {
+            const err = await returnRes.json();
+            throw new Error(
+              err.error || "Error al reservar asientos de regreso",
+            );
+          }
+
+          const returnData = await returnRes.json();
+          const returnBlockData = returnData.data || returnData;
+
+          console.log("=== INSPECCIÓN GDS BLOCK (VUELTA) ===");
+          console.log(JSON.stringify(returnBlockData, null, 2));
+
+          const isReturnGdsError =
+            returnBlockData.success === false ||
+            (returnBlockData.providerResult &&
+              returnBlockData.providerResult !== "0");
+
+          if (isReturnGdsError) {
+            const detail =
+              returnBlockData.Descripcion ||
+              returnBlockData.raw?.Descripcion ||
+              returnBlockData.message ||
+              returnBlockData.error?.message ||
+              returnBlockData.error;
+            throw new Error(
+              detail
+                ? `No se pudo reservar el asiento de regreso (${detail}). Por favor regresa a la selección de asientos y elige otro.`
+                : "No se pudo reservar el asiento de regreso. Por favor regresa a la selección de asientos y elige otro.",
+            );
+          }
+
+          if (returnBlockData.connectionId) {
+            setReturnConnectionId(returnBlockData.connectionId);
+          }
+        } catch (err: any) {
+          if (selectedReturnTrip) {
+            addFailedSeats(
+              selectedReturnTrip.id,
+              selectedReturnSeats.map((s) => s.number),
+            );
+          }
+          throw err;
+        }
+      }
 
       router.push("/paraguay/booking/checkout");
     } catch (err: any) {
-      console.error("Save error:", err);
+      console.error("Save / Block error:", err);
       setSaveError(
         err.message ||
-          "Hubo un error al guardar los pasajeros. Por favor intenta de nuevo.",
+          "Hubo un error al procesar tu reserva. Por favor intenta de nuevo.",
       );
     } finally {
       setIsSaving(false);
@@ -332,9 +462,8 @@ export default function DetailsPage() {
                   {saveError}
                 </div>
               )}
-
               {/* Navigation buttons */}
-              <div className="hidden sm:flex justify-between items-center mt-8">
+              <div className="flex justify-start items-center mt-8">
                 <Button
                   variant="outline"
                   onClick={() => router.push("/paraguay/booking/seats")}
@@ -342,22 +471,6 @@ export default function DetailsPage() {
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Volver a asientos
-                </Button>
-
-                <Button
-                  onClick={handleContinue}
-                  disabled={!arePassengersComplete || isSaving}
-                  className="bg-secondary hover:bg-secondary/90 text-secondary-foreground h-12 px-8 text-base font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
-                >
-                  {isSaving ? (
-                    <>
-                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                      Continuando...
-                    </>
-                  ) : (
-                    "Continuar al Pago"
-                  )}
-                  {!isSaving && <ArrowRight className="h-4 w-4 ml-2" />}
                 </Button>
               </div>
             </div>
@@ -517,21 +630,29 @@ export default function DetailsPage() {
                   </div>
                 )}
 
-                {/* Continue Button Mobile */}
-                <div className="sm:hidden w-full flex flex-col gap-3 mt-4">
+                {saveError && (
+                  <div className="text-sm text-destructive font-medium flex items-center gap-1.5 mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg animate-fade-in">
+                    <AlertCircle className="h-4 w-4 shrink-0" />
+                    <span>{saveError}</span>
+                  </div>
+                )}
+
+                {/* Action Buttons inside Card */}
+                <div className="w-full flex flex-col gap-3 mt-4">
                   <Button
                     onClick={handleContinue}
                     disabled={!arePassengersComplete || isSaving}
-                    className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground h-12 text-base font-semibold"
+                    className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground h-12 md:h-14 text-base md:text-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none flex items-center justify-center gap-2"
                   >
-                    {isSaving ? "Continuando..." : "Continuar al Pago"}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    onClick={() => router.push("/paraguay/booking/seats")}
-                    className="w-full text-slate-900 dark:text-white/60 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 h-12"
-                  >
-                    Volver a asientos
+                    {isSaving ? (
+                      <>
+                        <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                        Continuando...
+                      </>
+                    ) : (
+                      "Continuar al Pago"
+                    )}
+                    {!isSaving && <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />}
                   </Button>
                 </div>
               </Card>

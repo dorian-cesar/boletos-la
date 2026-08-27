@@ -367,11 +367,6 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
             finalRef,
             ticketMap,
           );
-          await sendEmailAlertsInBackground(
-            simulatedPaymentDetails,
-            finalRef,
-            ticketMap,
-          );
         }
 
         setPaymentResult({
@@ -439,8 +434,9 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
             let electronicBillCdc: string | null = null;
             let electronicBillNumber: string | null = null;
             let electronicBillStamp: string | null = null;
+            let authorizationNumber: string | null = null;
 
-            const maxAttempts = 5;
+            const maxAttempts = 3;
             for (let attempt = 1; attempt <= maxAttempts; attempt++) {
               console.log(
                 `[Bancard Confirmation] Polling intento ${attempt}/${maxAttempts}...`,
@@ -487,11 +483,13 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                   const billNum = confirmation?.electronicBillNumber;
                   const cdc = confirmation?.electronicBillCdc;
                   const stamp = confirmation?.commerceStamp;
+                  const authNum = confirmation?.authorizationNumber;
 
                   if (billNum) {
                     electronicBillNumber = String(billNum);
                     electronicBillCdc = cdc || "";
                     electronicBillStamp = stamp || "";
+                    authorizationNumber = authNum ? String(authNum) : "";
                     console.log(
                       `[Bancard Confirmation] electronicBillNumber obtenido en intento ${attempt}: ${billNum}`,
                     );
@@ -547,6 +545,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               numero_factura: electronicBillNumber || "",
               cdc: electronicBillCdc || "",
               timbrado: electronicBillStamp || "",
+              authorization_number: authorizationNumber || "",
             };
 
             if (selectedOutboundTrip) {
@@ -687,7 +686,6 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 }
               }
               await sendEmailAlertsInBackground(payment, finalRef, ticketMap);
-              await sendEmailAlertsInBackground(payment, finalRef, ticketMap);
             }
 
             setPaymentResult({
@@ -781,8 +779,8 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                         Inconveniente en la emisión del pasaje
                       </h3>
                       <p className="text-xs text-amber-200/90 mt-1 leading-relaxed">
-                        Tu pago fue recibido, pero ocurrió una demora técnica
-                        al emitir los boletos en el sistema de transporte. No te
+                        Tu pago fue recibido, pero ocurrió una demora técnica al
+                        emitir los boletos en el sistema de transporte. No te
                         preocupes, tus pasajes y fondos están resguardados.
                       </p>
                     </div>
