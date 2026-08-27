@@ -13,6 +13,7 @@ interface SeatMapProps {
 export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
   const [activeFloor, setActiveFloor] = useState(1);
   const [showMaxAlert, setShowMaxAlert] = useState(false);
+  const [showDeselectedAlert, setShowDeselectedAlert] = useState(false);
 
   const {
     selectedSeats,
@@ -39,6 +40,65 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
   });
 
   const currentSelectedSeats = isReturn ? selectedReturnSeats : selectedSeats;
+
+  // Efecto para desmarcar automáticamente asientos que ya no estén disponibles
+  useEffect(() => {
+    if (loading || error || !realSeats.length) return;
+
+    let wasAnyDeselected = false;
+
+    // Verificar asientos de IDA
+    if (!isReturn && selectedSeats.length > 0) {
+      selectedSeats.forEach((selSeat) => {
+        const matchingReal = realSeats.find((s) => s.id === selSeat.id);
+        const isOccupied = matchingReal
+          ? matchingReal.status === "occupied" ||
+            matchingReal.status === "blocked"
+          : true;
+
+        if (isOccupied) {
+          console.warn(
+            `[SeatMap] Asiento de ida ${selSeat.number} ya no está disponible. Removiendo...`,
+          );
+          removeSeat(selSeat.id);
+          wasAnyDeselected = true;
+        }
+      });
+    }
+
+    // Verificar asientos de VUELTA
+    if (isReturn && selectedReturnSeats.length > 0) {
+      selectedReturnSeats.forEach((selSeat) => {
+        const matchingReal = realSeats.find((s) => s.id === selSeat.id);
+        const isOccupied = matchingReal
+          ? matchingReal.status === "occupied" ||
+            matchingReal.status === "blocked"
+          : true;
+
+        if (isOccupied) {
+          console.warn(
+            `[SeatMap] Asiento de vuelta ${selSeat.number} ya no está disponible. Removiendo...`,
+          );
+          removeReturnSeat(selSeat.id);
+          wasAnyDeselected = true;
+        }
+      });
+    }
+
+    if (wasAnyDeselected) {
+      setShowDeselectedAlert(true);
+      setTimeout(() => setShowDeselectedAlert(false), 6000);
+    }
+  }, [
+    realSeats,
+    loading,
+    error,
+    isReturn,
+    selectedSeats,
+    selectedReturnSeats,
+    removeSeat,
+    removeReturnSeat,
+  ]);
 
   const handleSeatClick = (seat: Seat) => {
     if (seat.status === "occupied") {
@@ -72,7 +132,9 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
     return (
       <div className="bg-black/5 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-12 flex flex-col items-center justify-center border border-black/10 dark:border-white/20">
         <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
-        <p className="text-slate-900 dark:text-white/60">Cargando mapa de asientos...</p>
+        <p className="text-slate-900 dark:text-white/60">
+          Cargando mapa de asientos...
+        </p>
       </div>
     );
   }
@@ -90,7 +152,9 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
     );
   }
 
-  const currentTripFailed = currentTrip ? failedSeats[currentTrip.id] || [] : [];
+  const currentTripFailed = currentTrip
+    ? failedSeats[currentTrip.id] || []
+    : [];
 
   const floorSeats = realSeats
     .map((s) => {
@@ -109,12 +173,22 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
     <div className="bg-black/5 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg border border-black/10 dark:border-white/20">
       {/* Alert para límite máximo */}
       {showMaxAlert && (
-        <Alert variant="destructive" className="mb-4 animate-fade-in">
-          <AlertCircle className="h-4 w-4" />
+        <Alert variant="destructive" className="mb-4 animate-fade-in flex items-center gap-3 p-4 [&>svg]:relative [&>svg]:left-0 [&>svg]:top-0 [&>svg~*]:pl-0 [&>svg+div]:translate-y-0">
+          <AlertCircle className="h-4 w-4 shrink-0" />
           <AlertDescription>
             {isReturn 
               ? `Solo puedes seleccionar un máximo de ${selectedSeats.length} asiento(s) de vuelta (igual a la ida).`
               : "Solo puedes seleccionar un máximo de 4 asientos por reserva."}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Alert para asiento ya no disponible */}
+      {showDeselectedAlert && (
+        <Alert variant="destructive" className="mb-4 animate-fade-in flex items-center gap-3 p-4 [&>svg]:relative [&>svg]:left-0 [&>svg]:top-0 [&>svg~*]:pl-0 [&>svg+div]:translate-y-0">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          <AlertDescription>
+            Alguno de tus asientos seleccionados ya no está disponible y fue desmarcado automáticamente.
           </AlertDescription>
         </Alert>
       )}
@@ -130,7 +204,7 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
                 "px-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 border",
                 activeFloor === floor
                   ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30 border-primary"
-                  : "bg-black/10 dark:bg-white/10 text-slate-900 dark:text-white/80 hover:bg-black/20 dark:bg-white/20 border-black/15 dark:border-white/30",
+                  : "bg-black/10 text-slate-900 dark:text-white/80 hover:bg-black/20 dark:bg-white/20 border-black/15 dark:border-white/30",
               )}
             >
               {floor === 1 ? "Piso Superior" : "Piso Inferior"}
@@ -155,7 +229,9 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
         </div>
         <div className="flex items-center gap-1.5 md:gap-2">
           <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-orange-500/80 border border-orange-600" />
-          <span className="text-xs md:text-sm text-slate-900 dark:text-white/60">Ocupado</span>
+          <span className="text-xs md:text-sm text-slate-900 dark:text-white/60">
+            Ocupado
+          </span>
         </div>
         <div className="flex items-center gap-1.5 md:gap-2">
           <div className="w-4 h-4 md:w-6 md:h-6 rounded bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/20 opacity-50" />
@@ -217,7 +293,8 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
                           (s) => s.id === seat.id,
                         )}
                         isDisabled={
-                          currentSelectedSeats.length >= (isReturn ? selectedSeats.length : 4) &&
+                          currentSelectedSeats.length >=
+                            (isReturn ? selectedSeats.length : 4) &&
                           !currentSelectedSeats.some((s) => s.id === seat.id)
                         }
                         maxLimit={isReturn ? selectedSeats.length : 4}
@@ -234,7 +311,9 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
         {/* Bus Back */}
         <div className="flex justify-center mt-4">
           <div className="w-48 h-8 bg-black/20 dark:bg-white/20 rounded-b-xl flex items-center justify-center border border-black/15 dark:border-white/30">
-            <span className="text-slate-900 dark:text-white/60 text-xs">Parte trasera</span>
+            <span className="text-slate-900 dark:text-white/60 text-xs">
+              Parte trasera
+            </span>
           </div>
         </div>
       </div>
@@ -243,11 +322,14 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
       <div className="mt-8 p-4 bg-black/10 dark:bg-white/10 rounded-xl border border-black/10 dark:border-white/20">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-slate-900 dark:text-white/60">Asientos seleccionados</p>
+            <p className="text-sm text-slate-900 dark:text-white/60">
+              Asientos seleccionados
+            </p>
             <p
               className={cn(
                 "font-bold text-2xl text-primary transition-colors duration-300",
-                currentSelectedSeats.length > (isReturn ? selectedSeats.length : 4) &&
+                currentSelectedSeats.length >
+                  (isReturn ? selectedSeats.length : 4) &&
                   "text-destructive animate-pulse",
               )}
             >
@@ -259,7 +341,9 @@ export function SeatMap({ tripId, isReturn = false }: SeatMapProps) {
           </div>
           {currentSelectedSeats.length > 0 && (
             <div className="text-right">
-              <p className="text-sm text-slate-900 dark:text-white/60">Total seleccionado</p>
+              <p className="text-sm text-slate-900 dark:text-white/60">
+                Total seleccionado
+              </p>
               <p className="font-bold text-lg text-secondary">
                 Gs.{" "}
                 {currentSelectedSeats
@@ -341,7 +425,9 @@ function SeatButton({
           !isSelected &&
           !isDisabled &&
           "bg-black/10 dark:bg-white/10 border-2 border-black/15 dark:border-white/30 hover:border-primary hover:bg-primary/10",
-        isSelected && !isOccupied && !isBlocked &&
+        isSelected &&
+          !isOccupied &&
+          !isBlocked &&
           "bg-primary text-primary-foreground shadow-lg transform scale-110 border border-primary",
       )}
       title={
@@ -359,7 +445,9 @@ function SeatButton({
           <span
             className={cn(
               "font-medium",
-              isSelected ? "text-primary-foreground" : "text-slate-900 dark:text-white",
+              isSelected
+                ? "text-primary-foreground"
+                : "text-slate-900 dark:text-white",
             )}
           >
             {seat.number}

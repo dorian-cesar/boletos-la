@@ -75,150 +75,8 @@ export default function SeatsPage() {
       return;
     }
 
-    try {
-      setIsBlocking(true);
-      setBlockError(null);
-
-      // Continuar solo con el bloqueo de asientos
-
-      // 1. Bloqueo para asientos de ida
-      try {
-        const res = await fetch("/api/gds/block", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            serviceId: selectedOutboundTrip?.id,
-            originId: selectedOutboundTrip?.origin,
-            destinationId: selectedOutboundTrip?.destination,
-            seats: selectedSeats.map((s) => s.number).join(","),
-            ...(outboundConnectionId && { connectionId: outboundConnectionId }),
-          }),
-        });
-
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.error || "Error al bloquear asientos de ida");
-        }
-
-        const data = await res.json();
-        const blockData = data.data || data;
-        
-        console.log("=== INSPECCIÓN GDS BLOCK (IDA) ===");
-        console.log(JSON.stringify(blockData, null, 2));
-        console.log("==================================");
-
-        const isGdsError =
-          blockData.success === false ||
-          (blockData.providerResult && blockData.providerResult !== "0");
-
-        if (isGdsError) {
-          const detail =
-            blockData.Descripcion ||
-            blockData.raw?.Descripcion ||
-            blockData.message ||
-            blockData.error?.message ||
-            blockData.error;
-          throw new Error(
-            detail
-              ? `No se pudo reservar el asiento (${detail}). Por favor intente con otro.`
-              : "No se pudo reservar el asiento, por favor intente con otro",
-          );
-        }
-
-        if (blockData.connectionId) {
-          setOutboundConnectionId(blockData.connectionId);
-        }
-      } catch (err: any) {
-        // Error específico en la IDA
-        if (selectedOutboundTrip) {
-          addFailedSeats(
-            selectedOutboundTrip.id,
-            selectedSeats.map((s) => s.number),
-          );
-          selectedSeats.forEach((s) => removeSeat(s.id));
-        }
-        throw err; // Re-lanzar para que lo atrape el catch principal y muestre el mensaje
-      }
-
-      // 2. Bloqueo para asientos de vuelta (si aplica)
-      if (
-        tripType === "round-trip" &&
-        selectedReturnTrip &&
-        selectedReturnSeats.length > 0
-      ) {
-        try {
-          const returnRes = await fetch("/api/gds/block", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              serviceId: selectedReturnTrip.id,
-              originId: selectedReturnTrip.origin,
-              destinationId: selectedReturnTrip.destination,
-              seats: selectedReturnSeats.map((s) => s.number).join(","),
-              ...(returnConnectionId && { connectionId: returnConnectionId }),
-            }),
-          });
-
-          if (!returnRes.ok) {
-            const err = await returnRes.json();
-            throw new Error(
-              err.error || "Error al bloquear asientos de regreso",
-            );
-          }
-
-          const returnData = await returnRes.json();
-          const returnBlockData = returnData.data || returnData;
-
-          console.log("=== INSPECCIÓN GDS BLOCK (VUELTA) ===");
-          console.log(JSON.stringify(returnBlockData, null, 2));
-          console.log("=====================================");
-
-          const isReturnGdsError =
-            returnBlockData.success === false ||
-            (returnBlockData.providerResult &&
-              returnBlockData.providerResult !== "0");
-
-          if (isReturnGdsError) {
-            const detail =
-              returnBlockData.Descripcion ||
-              returnBlockData.raw?.Descripcion ||
-              returnBlockData.message ||
-              returnBlockData.error?.message ||
-              returnBlockData.error;
-            throw new Error(
-              detail
-                ? `No se pudo reservar el asiento de regreso (${detail}). Por favor intente con otro.`
-                : "No se pudo reservar el asiento, por favor intente con otro",
-            );
-          }
-
-          if (returnBlockData.connectionId) {
-            setReturnConnectionId(returnBlockData.connectionId);
-          }
-        } catch (err: any) {
-          // Error específico en la VUELTA
-          if (selectedReturnTrip) {
-            addFailedSeats(
-              selectedReturnTrip.id,
-              selectedReturnSeats.map((s) => s.number),
-            );
-            selectedReturnSeats.forEach((s) => removeReturnSeat(s.id));
-          }
-          throw err;
-        }
-      }
-
-      trackInitiateCheckout();
-      router.push("/paraguay/booking/details");
-    } catch (err: any) {
-      console.error("Block error:", err);
-      setBlockError(
-        err.message ||
-          "No se pudieron reservar los asientos. Por favor intenta con otros.",
-      );
-    } finally {
-      setIsBlocking(false);
-    }
+    trackInitiateCheckout();
+    router.push("/paraguay/booking/details");
   };
 
   // Obtener asientos actuales basado en si estamos seleccionando ida o regreso
@@ -251,7 +109,7 @@ export default function SeatsPage() {
   // Calcular total bruto de los asientos seleccionados sin cargos extra
   const bruteTotal = [...selectedSeats, ...selectedReturnSeats].reduce(
     (acc, seat) => acc + seat.price,
-    0
+    0,
   );
 
   // Limpiar error de bloqueo cuando el botón se vuelve a habilitar (nueva selección válida)
@@ -278,8 +136,13 @@ export default function SeatsPage() {
   let companyLogo = null;
   let isObjectFitContain = false;
 
-  if (companyCode === "LSN" || companyCode === "LSA" || companyCode.includes("SANTANIANA")) {
-    companyName = companyCode === "LSA" ? "La Santaniana Argentina" : "La Santaniana";
+  if (
+    companyCode === "LSN" ||
+    companyCode === "LSA" ||
+    companyCode.includes("SANTANIANA")
+  ) {
+    companyName =
+      companyCode === "LSA" ? "La Santaniana Argentina" : "La Santaniana";
     companyLogo = "/logos/santaniana-color.jpeg";
   } else if (companyCode === "LSP" || companyCode.includes("SAMPEDRANA")) {
     companyName = "La Sampedrana";
@@ -366,12 +229,17 @@ export default function SeatsPage() {
                       <div className="flex items-center gap-2 min-w-0 flex-1">
                         {companyLogo ? (
                           <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 bg-white/10 flex items-center justify-center border border-black/10 dark:border-white/20">
-                            <Image 
-                              src={companyLogo} 
-                              alt={companyName} 
-                              width={32} 
-                              height={32} 
-                              className={cn("w-full h-full", isObjectFitContain ? "object-contain scale-125" : "object-cover")} 
+                            <Image
+                              src={companyLogo}
+                              alt={companyName}
+                              width={32}
+                              height={32}
+                              className={cn(
+                                "w-full h-full",
+                                isObjectFitContain
+                                  ? "object-contain scale-125"
+                                  : "object-cover",
+                              )}
                             />
                           </div>
                         ) : (
@@ -455,12 +323,17 @@ export default function SeatsPage() {
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0 overflow-hidden">
                           {companyLogo ? (
-                            <Image 
-                              src={companyLogo} 
-                              alt={companyName} 
-                              width={40} 
-                              height={40} 
-                              className={cn("w-full h-full", isObjectFitContain ? "object-contain scale-125" : "object-cover")} 
+                            <Image
+                              src={companyLogo}
+                              alt={companyName}
+                              width={40}
+                              height={40}
+                              className={cn(
+                                "w-full h-full",
+                                isObjectFitContain
+                                  ? "object-contain scale-125"
+                                  : "object-cover",
+                              )}
                             />
                           ) : (
                             <Bus className="h-5 w-5 text-primary" />
@@ -525,7 +398,11 @@ export default function SeatsPage() {
                             <Calendar className="h-3.5 w-3.5 text-slate-900 dark:text-white/40" />
                             <span className="text-xs text-slate-900 dark:text-white/60">
                               {format(
-                                parse(currentDate || "", "yyyy-MM-dd", new Date()),
+                                parse(
+                                  currentDate || "",
+                                  "yyyy-MM-dd",
+                                  new Date(),
+                                ),
                                 "d MMM",
                                 { locale: es },
                               )}
@@ -559,15 +436,13 @@ export default function SeatsPage() {
                   />
                 </div>
 
-
-
                 <div className="mt-8 hidden sm:flex justify-start">
                   <Button
                     variant="outline"
                     onClick={() => {
                       router.push("/paraguay/booking/services");
                     }}
-                    className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:bg-white/20"
+                    className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20"
                   >
                     <ArrowLeft className="h-4 w-4" />
                     Volver a seleccionar servicio
@@ -616,7 +491,9 @@ export default function SeatsPage() {
                     </div>
                     <div className="pl-8 md:pl-10 space-y-1.5 md:space-y-2">
                       <p className="text-xs md:text-sm text-slate-900 dark:text-white/80">
-                        <span className="text-slate-900 dark:text-white/60">Fecha:</span>{" "}
+                        <span className="text-slate-900 dark:text-white/60">
+                          Fecha:
+                        </span>{" "}
                         {format(
                           parse(departureDate || "", "yyyy-MM-dd", new Date()),
                           "dd MMM yyyy",
@@ -626,12 +503,16 @@ export default function SeatsPage() {
                         )}
                       </p>
                       <p className="text-xs md:text-sm text-slate-900 dark:text-white/80">
-                        <span className="text-slate-900 dark:text-white/60">Horario:</span>{" "}
+                        <span className="text-slate-900 dark:text-white/60">
+                          Horario:
+                        </span>{" "}
                         {selectedOutboundTrip?.departureTime} -{" "}
                         {selectedOutboundTrip?.arrivalTime}
                       </p>
                       <p className="text-xs md:text-sm text-slate-900 dark:text-white/80">
-                        <span className="text-slate-900 dark:text-white/60">Asientos:</span>{" "}
+                        <span className="text-slate-900 dark:text-white/60">
+                          Asientos:
+                        </span>{" "}
                         {selectedSeats.length > 0
                           ? selectedSeats.map((s) => s.number).join(", ")
                           : "Sin seleccionar"}
@@ -663,7 +544,9 @@ export default function SeatsPage() {
                       </div>
                       <div className="pl-8 md:pl-10 space-y-1.5 md:space-y-2">
                         <p className="text-xs md:text-sm text-slate-900 dark:text-white/80">
-                          <span className="text-slate-900 dark:text-white/60">Fecha:</span>{" "}
+                          <span className="text-slate-900 dark:text-white/60">
+                            Fecha:
+                          </span>{" "}
                           {format(
                             parse(returnDate || "", "yyyy-MM-dd", new Date()),
                             "dd MMM yyyy",
@@ -673,12 +556,16 @@ export default function SeatsPage() {
                           )}
                         </p>
                         <p className="text-xs md:text-sm text-slate-900 dark:text-white/80">
-                          <span className="text-slate-900 dark:text-white/60">Horario:</span>{" "}
+                          <span className="text-slate-900 dark:text-white/60">
+                            Horario:
+                          </span>{" "}
                           {selectedReturnTrip?.departureTime} -{" "}
                           {selectedReturnTrip?.arrivalTime}
                         </p>
                         <p className="text-xs md:text-sm text-slate-900 dark:text-white/80">
-                          <span className="text-slate-900 dark:text-white/60">Asientos:</span>{" "}
+                          <span className="text-slate-900 dark:text-white/60">
+                            Asientos:
+                          </span>{" "}
                           {selectedReturnSeats.length > 0
                             ? selectedReturnSeats
                                 .map((s) => s.number)
@@ -789,10 +676,12 @@ export default function SeatsPage() {
                         router.push("/paraguay/booking/services");
                       }
                     }}
-                    className="text-slate-900 dark:text-white/60 hover:text-slate-900 dark:text-white hover:bg-black/5 dark:bg-white/5 w-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 h-12"
+                    className="text-slate-900 dark:text-white/60 hover:text-slate-900 dark:text-white hover:bg-black/5 dark:bg-white/5 w-full bg-black/5 border border-black/10 dark:border-white/10 h-12"
                   >
                     <ArrowLeft className="h-4 w-4 mr-2" />
-                    {selectingReturn ? "Volver a asientos de ida" : "Volver a seleccionar servicio"}
+                    {selectingReturn
+                      ? "Volver a asientos de ida"
+                      : "Volver a seleccionar servicio"}
                   </Button>
                 </div>
               </div>

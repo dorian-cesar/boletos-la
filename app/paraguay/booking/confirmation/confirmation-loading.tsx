@@ -68,8 +68,6 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
     appliedServiceChargeAmount,
   } = useBookingStore();
 
-  
-
   const primaryPassenger = passengerDetails[0];
 
   const sendEmailAlertsInBackground = async (
@@ -84,43 +82,80 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
     };
 
     const totalPassengers = selectedSeats.length + selectedReturnSeats.length;
-    const appliedServiceCharge = totalPassengers > 0 ? Math.round(appliedServiceChargeAmount / totalPassengers) : 0;
+    const appliedServiceCharge =
+      totalPassengers > 0
+        ? Math.round(appliedServiceChargeAmount / totalPassengers)
+        : 0;
 
-    const saveTripTickets = async (trip: any, seats: any[], label: string, offset: number, connectionId: string, origin: string, dest: string, date: string) => {
+    const saveTripTickets = async (
+      trip: any,
+      seats: any[],
+      label: string,
+      offset: number,
+      connectionId: string,
+      origin: string,
+      dest: string,
+      date: string,
+    ) => {
       const tasks = seats.map(async (seat, index) => {
         const passenger = passengerDetails[index + offset] || primaryPassenger;
         if (!passenger) return;
 
         const reservaCodigo = getTicketNumber(label, seat.number);
         const cdcValue = paymentDetails?.cdc || "";
-        const qrContent = cdcValue ? `https://ekuatia.set.gov.py/consultas/${cdcValue}` : reservaCodigo;
+        const qrContent = cdcValue
+          ? `https://ekuatia.set.gov.py/consultas/${cdcValue}`
+          : reservaCodigo;
         const qrBase64 = await QRCode.toDataURL(qrContent);
-
 
         const resolveCompany = (code: string | null | undefined) => {
           if (!code) return null;
           const upper = String(code).toUpperCase();
-          if (upper === 'LSN') return 'La Santaniana';
-          if (upper === 'LSA') return 'La Santaniana Argentina';
-          if (upper === 'LSP') return 'La Sampedrana';
-          if (upper === 'RYSA') return 'RYSA';
-          if (upper === 'NSA') return 'Nuestra SeÃ±ora de la AsunciÃ³n';
-          if (upper === 'SLT') return 'San Luis S.A.';
+          if (upper === "LSN") return "La Santaniana";
+          if (upper === "LSA") return "La Santaniana Argentina";
+          if (upper === "LSP") return "La Sampedrana";
+          if (upper === "RYSA") return "RYSA";
+          if (upper === "NSA") return "Nuestra Señora de la Asunción";
+          if (upper === "SLT") return "San Luis S.A.";
           return code;
         };
 
         const payload = {
-          ticket_number: String(seat.ticketNumber || tickets[`${label}-${seat.number}`] || ""),
+          ticket_number: String(
+            seat.ticketNumber || tickets[`${label}-${seat.number}`] || "",
+          ),
           connection_id: String(connectionId || ""),
-          first_name: String(passenger.firstName || primaryPassenger?.firstName || ""),
-          last_name: String(passenger.lastName || primaryPassenger?.lastName || ""),
-          document_number: String(passenger.documentNumber || primaryPassenger?.documentNumber || ""),
-          document_type_code: String(passenger.docType?.codigo || primaryPassenger?.docType?.codigo || "C"),
-          document_type_name: String(passenger.docType?.nombre || primaryPassenger?.docType?.nombre || "Paraguay"),
+          first_name: String(
+            passenger.firstName || primaryPassenger?.firstName || "",
+          ),
+          last_name: String(
+            passenger.lastName || primaryPassenger?.lastName || "",
+          ),
+          document_number: String(
+            passenger.documentNumber || primaryPassenger?.documentNumber || "",
+          ),
+          document_type_code: String(
+            passenger.docType?.codigo ||
+              primaryPassenger?.docType?.codigo ||
+              "C",
+          ),
+          document_type_name: String(
+            passenger.docType?.nombre ||
+              primaryPassenger?.docType?.nombre ||
+              "Paraguay",
+          ),
           email: passenger.email || primaryPassenger?.email || null,
-          phone: passenger.phone || primaryPassenger?.phone ? String(passenger.phone || primaryPassenger?.phone).replace(/\D/g, "") : null,
+          phone:
+            passenger.phone || primaryPassenger?.phone
+              ? String(passenger.phone || primaryPassenger?.phone).replace(
+                  /\D/g,
+                  "",
+                )
+              : null,
           occupation: passenger.occupation || null,
-          birth_date: passenger.birthDate ? String(passenger.birthDate).replace(/\//g, "-") : null,
+          birth_date: passenger.birthDate
+            ? String(passenger.birthDate).replace(/\//g, "-")
+            : null,
           gender: passenger.gender || null,
           nationality: passenger.nationality || null,
           country: passenger.country || "PY",
@@ -134,8 +169,18 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           origin_title: origin || null,
           destination_title: dest || null,
           departure_date: date || null,
-          departure_time: trip.departureTime && trip.departureTime.includes(":") && trip.departureTime.split(":").length === 2 ? `${trip.departureTime}:00` : (trip.departureTime || null),
-          arrival_time: trip.arrivalTime && trip.arrivalTime.includes(":") && trip.arrivalTime.split(":").length === 2 ? `${trip.arrivalTime}:00` : (trip.arrivalTime || null),
+          departure_time:
+            trip.departureTime &&
+            trip.departureTime.includes(":") &&
+            trip.departureTime.split(":").length === 2
+              ? `${trip.departureTime}:00`
+              : trip.departureTime || null,
+          arrival_time:
+            trip.arrivalTime &&
+            trip.arrivalTime.includes(":") &&
+            trip.arrivalTime.split(":").length === 2
+              ? `${trip.arrivalTime}:00`
+              : trip.arrivalTime || null,
           duration: trip.duration || null,
           bus_type: trip.busType || null,
           company: trip.company || null,
@@ -145,17 +190,32 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
           payment_status: "completed",
           payment_amount: Number(seat.price || trip.price || 0),
           payment_paid: Boolean(paymentDetails.pagado),
-          payment_token: paymentDetails.token || paymentDetails.hash_pedido || null,
-          payment_hash: paymentDetails.hash_pedido || paymentDetails.token || null,
+          payment_token:
+            paymentDetails.token || paymentDetails.hash_pedido || null,
+          payment_hash:
+            paymentDetails.hash_pedido || paymentDetails.token || null,
           numero_factura: paymentDetails.numero_factura || null,
           cdc: paymentDetails.cdc || null,
           timbrado: paymentDetails.timbrado || null,
           origen_transaccion: "web",
           agencia_delta: "BO2",
           tipo_pago: "BANCARD",
-          descuento: discountPercentage ? Math.round(Number(seat.price || trip.price || 0) * (discountPercentage / 100)) : 0,
+          descuento: discountPercentage
+            ? Math.round(
+                Number(seat.price || trip.price || 0) *
+                  (discountPercentage / 100),
+              )
+            : 0,
           cargo_por_servicio: appliedServiceCharge,
-          monto_final: Number(seat.price || trip.price || 0) - (discountPercentage ? Math.round(Number(seat.price || trip.price || 0) * (discountPercentage / 100)) : 0) + appliedServiceCharge,
+          monto_final:
+            Number(seat.price || trip.price || 0) -
+            (discountPercentage
+              ? Math.round(
+                  Number(seat.price || trip.price || 0) *
+                    (discountPercentage / 100),
+                )
+              : 0) +
+            appliedServiceCharge,
           empresa_convenio: discountEmpresa || null,
           convenio: discountConvenio || null,
         };
@@ -247,7 +307,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
 
         const simulatedPaymentDetails = {
           pagado: true,
-          forma_pago: "Tarjetas de crÃ©dito",
+          forma_pago: "Tarjetas de crédito",
           fecha_pago: simDate,
           monto: totalPrice.toFixed(2),
           fecha_maxima_pago: simDate,
@@ -302,11 +362,6 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               finalRef = first;
             }
           }
-          await sendEmailAlertsInBackground(
-            simulatedPaymentDetails,
-            finalRef,
-            ticketMap,
-          );
           await sendEmailAlertsInBackground(
             simulatedPaymentDetails,
             finalRef,
@@ -393,8 +448,9 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
             let electronicBillCdc: string | null = null;
             let electronicBillNumber: string | null = null;
             let electronicBillStamp: string | null = null;
+            let authorizationNumber: string | null = null;
 
-            const maxAttempts = 5;
+            const maxAttempts = 3;
             for (let attempt = 1; attempt <= maxAttempts; attempt++) {
               console.log(
                 `[Bancard Confirmation] Polling intento ${attempt}/${maxAttempts}...`,
@@ -422,7 +478,12 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                   if (!trackedPurchaseRef.current) {
                     trackedPurchaseRef.current = true;
                     trackPurchase({
-                      value: totalPrice && totalPrice > 0 ? totalPrice : (rawData?.amount ? Number(rawData.amount) : 0),
+                      value:
+                        totalPrice && totalPrice > 0
+                          ? totalPrice
+                          : rawData?.amount
+                            ? Number(rawData.amount)
+                            : 0,
                       currency: "PYG",
                       content_category: "paraguay",
                       content_ids: selectedOutboundTrip?.id
@@ -436,11 +497,13 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                   const billNum = confirmation?.electronicBillNumber;
                   const cdc = confirmation?.electronicBillCdc;
                   const stamp = confirmation?.commerceStamp;
+                  const authNum = confirmation?.authorizationNumber;
 
                   if (billNum) {
                     electronicBillNumber = String(billNum);
                     electronicBillCdc = cdc || "";
                     electronicBillStamp = stamp || "";
+                    authorizationNumber = authNum ? String(authNum) : "";
                     console.log(
                       `[Bancard Confirmation] electronicBillNumber obtenido en intento ${attempt}: ${billNum}`,
                     );
@@ -496,6 +559,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
               numero_factura: electronicBillNumber || "",
               cdc: electronicBillCdc || "",
               timbrado: electronicBillStamp || "",
+              authorization_number: authorizationNumber || "",
             };
 
             if (selectedOutboundTrip) {
@@ -636,7 +700,6 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 }
               }
               await sendEmailAlertsInBackground(payment, finalRef, ticketMap);
-              await sendEmailAlertsInBackground(payment, finalRef, ticketMap);
             }
 
             setPaymentResult({
@@ -727,12 +790,12 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                     <AlertCircle className="h-6 w-6 text-amber-400 shrink-0 mt-0.5" />
                     <div>
                       <h3 className="font-semibold text-amber-300 text-sm">
-                        Inconveniente en la emisiÃ³n del pasaje
+                        Inconveniente en la emisión del pasaje
                       </h3>
                       <p className="text-xs text-amber-200/90 mt-1 leading-relaxed">
-                        Tu pago fue recibido, pero ocurriÃ³ una demora tÃ©cnica al
+                        Tu pago fue recibido, pero ocurrió una demora técnica al
                         emitir los boletos en el sistema de transporte. No te
-                        preocupes, tus pasajes y fondos estÃ¡n resguardados.
+                        preocupes, tus pasajes y fondos están resguardados.
                       </p>
                     </div>
                   </div>
@@ -741,7 +804,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                 {bookingReference && (
                   <div className="w-full bg-slate-800/80 rounded-xl p-4 border border-slate-700/60 text-xs space-y-2">
                     <div className="flex justify-between text-slate-300">
-                      <span>CÃ³digo de referencia:</span>
+                      <span>Código de referencia:</span>
                       <span className="font-mono font-bold text-emerald-400">
                         {bookingReference}
                       </span>
@@ -759,14 +822,14 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
 
                 <p className="text-sm text-slate-300 mt-1">
                   Por favor, contactate con nuestro equipo de soporte para la
-                  emisiÃ³n directa de tus boletos:
+                  emisión directa de tus boletos:
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-3 w-full mt-2">
                   <Button
                     onClick={() => {
                       const msg = encodeURIComponent(
-                        `Hola, mi pago fue procesado correctamente pero ocurriÃ³ un inconveniente en la emisiÃ³n de boletos. Mi cÃ³digo de referencia es: ${bookingReference || "Sin cÃ³digo"}.`,
+                        `Hola, mi pago fue procesado correctamente pero ocurrió un inconveniente en la emisión de boletos. Mi código de referencia es: ${bookingReference || "Sin código"}.`,
                       );
                       window.open(
                         `https://wa.me/595991224613?text=${msg}`,
@@ -782,10 +845,10 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                   <Button
                     onClick={() => {
                       const subject = encodeURIComponent(
-                        `Soporte EmisiÃ³n - Ref: ${bookingReference || ""}`,
+                        `Soporte Emisión - Ref: ${bookingReference || ""}`,
                       );
                       const body = encodeURIComponent(
-                        `Hola equipo de Soporte,\n\nMi pago fue confirmado pero ocurriÃ³ un error en la emisiÃ³n automÃ¡tica de pasajes.\n\nCÃ³digo de referencia: ${bookingReference || ""}\nMonto: Gs. ${totalPrice}\n\nQuedo a la espera de sus comentarios.`,
+                        `Hola equipo de Soporte,\n\nMi pago fue confirmado pero ocurrió un error en la emisión automática de pasajes.\n\nCódigo de referencia: ${bookingReference || ""}\nMonto: Gs. ${totalPrice}\n\nQuedo a la espera de sus comentarios.`,
                       );
                       window.location.href = `mailto:soporte@boletos.la?subject=${subject}&body=${body}`;
                     }}
@@ -815,7 +878,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                     Pago pendiente
                   </h3>
                   <p className="text-sm text-yellow-400 mb-4">
-                    Tu pedido estÃ¡ esperando el pago. CompletÃ¡ el pago en
+                    Tu pedido está esperando el pago. Completá el pago en
                     Pagopar para confirmar tu reserva.
                   </p>
                   <Button
@@ -877,4 +940,3 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
     </div>
   );
 }
-
