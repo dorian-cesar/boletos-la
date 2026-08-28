@@ -21,7 +21,7 @@ async function getActivePromociones(): Promise<Promocion[]> {
         'x-api-key': apiKey,
         // Si el backend también requiere Authorization temporalmente para GET publico, se puede añadir un token estático o configurar el endpoint
       },
-      next: { revalidate: 60 } // Revalidate every minute
+      cache: 'no-store',
     });
     
     if (!res.ok) {
@@ -38,9 +38,6 @@ async function getActivePromociones(): Promise<Promocion[]> {
 }
 
 export async function PromoSection() {
-  // Ocultado temporalmente para producción mientras se realizan cambios
-  return null;
-
   const promociones = await getActivePromociones();
   
   if (!promociones || promociones.length === 0) {
