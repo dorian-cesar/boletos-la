@@ -75,9 +75,9 @@ export async function PromoSection() {
 
           {/* Contenido Principal */}
           <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-10">
-            {/* Columna Izquierda - Imagen (75% en desktop) */}
+            {/* Columna Izquierda - Imagen (60%) */}
             {promo.imagen && (
-              <div className="w-full lg:w-3/4 relative rounded-2xl overflow-hidden shadow-lg aspect-[4/3] md:aspect-[16/9] lg:aspect-[16/8] group border border-slate-200/50 dark:border-slate-800/50">
+              <div className="w-full lg:w-3/5 relative rounded-2xl overflow-hidden shadow-lg aspect-[4/3] group border border-slate-200/50 dark:border-slate-800/50">
                 <img
                   src={promo.imagen} 
                   alt={promo.titulo || "Imagen de promoción"}
@@ -87,11 +87,24 @@ export async function PromoSection() {
               </div>
             )}
 
-            {/* Columna Derecha - Link y Base de Promoción (25% en desktop) */}
-            <div className={`w-full ${promo.imagen ? 'lg:w-1/4' : 'lg:w-full'} flex flex-col items-center justify-center text-center space-y-6 py-4`}>
+            {/* Columna Derecha - Links (40%) */}
+            <div className={`w-full ${promo.imagen ? 'lg:w-2/5' : 'lg:w-full'} flex flex-col items-center justify-center text-center space-y-12`}>
               
+              {promo.link && (
+                <div className="w-full px-2">
+                  <a 
+                    href={promo.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-base md:text-lg font-semibold text-primary dark:text-secondary break-all hover:underline"
+                  >
+                    {promo.link}
+                  </a>
+                </div>
+              )}
+
               {promo.texto && promo.contexto_enriquecido && (
-                <div className="w-full px-4 pt-4">
+                <div className="w-full text-center">
                   <Link 
                     href="/paraguay/bases-promocion"
                     className="inline-block px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
