@@ -38,6 +38,9 @@ async function getActivePromociones(): Promise<Promocion[]> {
 }
 
 export async function PromoSection() {
+  // Ocultado temporalmente para producción mientras se realizan cambios
+  return null;
+
   const promociones = await getActivePromociones();
   
   if (!promociones || promociones.length === 0) {
@@ -100,7 +103,7 @@ export async function PromoSection() {
               {promo.link && (
                 <div className="w-full px-4">
                   <Link 
-                    href={promo.link}
+                    href={promo.link || "#"}
                     target="_blank"
                     rel="noreferrer"
                     className="text-base md:text-lg lg:text-xl text-primary dark:text-secondary font-semibold hover:underline transition-all break-all"
@@ -117,7 +120,7 @@ export async function PromoSection() {
                   </p>
                   <div 
                     className="prose prose-sm md:prose-base dark:prose-invert max-w-none prose-a:text-primary dark:prose-a:text-secondary"
-                    dangerouslySetInnerHTML={{ __html: promo.contexto_enriquecido }} 
+                    dangerouslySetInnerHTML={{ __html: promo.contexto_enriquecido || "" }} 
                   />
                 </div>
               )}
