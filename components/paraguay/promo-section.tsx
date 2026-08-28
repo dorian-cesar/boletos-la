@@ -90,34 +90,14 @@ export async function PromoSection() {
             {/* Columna Derecha - Link y Base de Promoción (25% en desktop) */}
             <div className={`w-full ${promo.imagen ? 'lg:w-1/4' : 'lg:w-full'} flex flex-col items-center justify-center text-center space-y-6 py-4`}>
               
-              {promo.texto && (
-                <div className="w-full px-4 text-slate-700 dark:text-slate-200 text-lg">
-                  {promo.texto}
-                </div>
-              )}
-
-              {promo.link && (
-                <div className="w-full px-4">
+              {promo.texto && promo.contexto_enriquecido && (
+                <div className="w-full px-4 pt-4">
                   <Link 
-                    href={promo.link || "#"}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-base md:text-lg lg:text-xl text-primary dark:text-secondary font-semibold hover:underline transition-all break-all"
+                    href="/paraguay/bases-promocion"
+                    className="inline-block px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
                   >
-                    {promo.link}
+                    {promo.texto}
                   </Link>
-                </div>
-              )}
-
-              {promo.contexto_enriquecido && (
-                <div className="pt-4 w-full text-left bg-slate-50 dark:bg-slate-800/50 p-6 rounded-xl border border-slate-100 dark:border-slate-700">
-                  <p className="text-sm md:text-base font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest text-center mb-4">
-                    BASE PROMOCION
-                  </p>
-                  <div 
-                    className="prose prose-sm md:prose-base dark:prose-invert max-w-none prose-a:text-primary dark:prose-a:text-secondary"
-                    dangerouslySetInnerHTML={{ __html: promo.contexto_enriquecido || "" }} 
-                  />
                 </div>
               )}
             </div>
