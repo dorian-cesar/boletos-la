@@ -55,20 +55,35 @@ export function trackPageView(): void {
 
 export interface ViewContentParams {
   content_name: string;
-  content_category: string;
+  content_category?: string;
   content_ids?: string[];
+  content_type?: string;
+  value?: number;
+  currency?: string;
 }
 
 /**
  * Envía el evento estándar 'ViewContent' (búsqueda de pasaje o detalle de pasaje)
+ * Incluye obligatoriamente 'value' y 'currency' para solucionar errores de Prioridad Alta
+ * en el Administrador de Eventos (Event Manager) de Meta.
  */
 export function trackViewContent(params: ViewContentParams): void {
   if (!isPixelAllowed()) return;
   if (typeof window.fbq === "function") {
+    const numericValue =
+      typeof params.value === "number" && !isNaN(params.value) && isFinite(params.value)
+        ? Math.max(0, params.value)
+        : 0;
+
+    const currencyCode = (params.currency || "PYG").trim().toUpperCase();
+
     window.fbq("track", "ViewContent", {
       content_name: params.content_name,
-      content_category: params.content_category,
+      content_category: params.content_category || "paraguay",
+      content_type: params.content_type || "product",
       content_ids: params.content_ids || [],
+      value: numericValue,
+      currency: currencyCode,
     });
   }
 }

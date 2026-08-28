@@ -79,10 +79,17 @@ export default function ServicesPage() {
       if (outTrips.length > 0) {
         const originName = cities.find((c) => c.id === origin)?.name || origin;
         const destName = cities.find((c) => c.id === destination)?.name || destination;
+        const validPrices = outTrips
+          .map((t) => t.price)
+          .filter((p): p is number => typeof p === "number" && !isNaN(p) && p > 0);
+        const minPrice = validPrices.length > 0 ? Math.min(...validPrices) : 0;
+
         trackViewContent({
           content_name: `${originName} - ${destName}`,
           content_category: "paraguay",
           content_ids: outTrips.map((t) => t.id),
+          value: minPrice,
+          currency: "PYG",
         });
       }
     }

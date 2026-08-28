@@ -202,10 +202,17 @@ function ServicesPageContent() {
 
   useEffect(() => {
     if (!searchLoading && currentTrips && currentTrips.length > 0) {
+      const validPrices = currentTrips
+        .map((t) => t.price)
+        .filter((p): p is number => typeof p === "number" && !isNaN(p) && p > 0);
+      const minPrice = validPrices.length > 0 ? Math.min(...validPrices) : 0;
+
       trackViewContent({
         content_name: `${originTitle || origin} - ${destinationTitle || destination}`,
         content_category: "paraguay",
         content_ids: currentTrips.slice(0, 10).map((t) => t.id),
+        value: minPrice,
+        currency: "PYG",
       });
     }
   }, [
