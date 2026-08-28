@@ -9,6 +9,9 @@ import { ParaguayFooter } from "@/components/paraguay/footer";
 import { PromoSection } from "@/components/paraguay/promo-section";
 import { BookingResetter } from "@/components/paraguay/booking-resetter";
 
+export const revalidate = 60; // Refrescar la página cada 60 segundos en el servidor (ISR)
+
+
 export default function ParaguayPage() {
   return (
     <main className="min-h-screen">

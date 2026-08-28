@@ -19,9 +19,8 @@ async function getActivePromociones(): Promise<Promocion[]> {
     const res = await fetch(`${backendUrl}/promociones?activo=true`, {
       headers: {
         'x-api-key': apiKey,
-        // Si el backend también requiere Authorization temporalmente para GET publico, se puede añadir un token estático o configurar el endpoint
       },
-      cache: 'no-store',
+      next: { revalidate: 60 },
     });
     
     if (!res.ok) {
