@@ -3,7 +3,12 @@
 import React, { useEffect, useState } from "react";
 import Script from "next/script";
 import { usePathname, useSearchParams } from "next/navigation";
-import { FB_PIXEL_ID, isPixelAllowed, trackPageView } from "@/lib/meta-pixel";
+import {
+  FB_PIXEL_ID,
+  isPixelAllowed,
+  trackPageView,
+  getOrCreateExternalId,
+} from "@/lib/meta-pixel";
 
 function PixelNavigationTracker() {
   const pathname = usePathname();
@@ -24,14 +29,20 @@ function PixelNavigationTracker() {
 
 export default function MetaPixel() {
   const [allowed, setAllowed] = useState(false);
+  const [externalId, setExternalId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    setAllowed(isPixelAllowed());
+    if (isPixelAllowed()) {
+      setAllowed(true);
+      setExternalId(getOrCreateExternalId());
+    }
   }, []);
 
   if (!allowed) {
     return null;
   }
+
+  const externalIdObj = externalId ? { external_id: externalId } : {};
 
   return (
     <>
@@ -48,8 +59,8 @@ export default function MetaPixel() {
             t.src=v;s=b.getElementsByTagName(e)[0];
             s.parentNode.insertBefore(t,s)}(window, document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '${FB_PIXEL_ID}');
-            fbq('track', 'PageView');
+            fbq('init', '${FB_PIXEL_ID}', ${JSON.stringify(externalIdObj)});
+            fbq('track', 'PageView', {}, { eventID: 'pv_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7) });
           `,
         }}
       />
@@ -67,4 +78,3 @@ export default function MetaPixel() {
     </>
   );
 }
-

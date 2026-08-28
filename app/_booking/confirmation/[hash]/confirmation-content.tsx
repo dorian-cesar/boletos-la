@@ -119,9 +119,10 @@ export default function ConfirmationPageContent({
         content_ids: selectedOutboundTrip?.id
           ? [selectedOutboundTrip.id]
           : ["pasaje-paraguay"],
+        order_id: bookingReference || pagoparHash || hash || undefined,
       });
     }
-  }, [totalPrice, selectedOutboundTrip]);
+  }, [totalPrice, selectedOutboundTrip, bookingReference, pagoparHash, hash]);
 
   const originCity = cities.find((c) => c.id === selectedOutboundTrip?.origin);
   const destinationCity = cities.find(
