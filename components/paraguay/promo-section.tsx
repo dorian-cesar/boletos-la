@@ -12,8 +12,8 @@ interface Promocion {
 }
 
 async function getActivePromociones(): Promise<Promocion[]> {
-  const backendUrl = process.env.BACKEND_CONVENIOS_URL || 'https://backend-convenios-py.dev-wit.com/api';
-  const apiKey = process.env.CONVENIOS_API_KEY || '';
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_CONVENIOS_URL || process.env.BACKEND_CONVENIOS_URL || 'https://backend-convenios-py.dev-wit.com/api';
+  const apiKey = process.env.NEXT_PUBLIC_CONVENIOS_API_KEY || process.env.CONVENIOS_API_KEY || '';
 
   try {
     const res = await fetch(`${backendUrl}/promociones?activo=true`, {
