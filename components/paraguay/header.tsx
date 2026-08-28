@@ -13,6 +13,37 @@ export function ParaguayHeader() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [hasActiveBenefits, setHasActiveBenefits] = useState(false);
+
+  useEffect(() => {
+    async function checkActiveBenefits() {
+      try {
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_CONVENIOS_URL || "https://backend-convenios-py.dev-wit.com/api";
+        const apiKey = process.env.NEXT_PUBLIC_CONVENIOS_API_KEY || "";
+        
+        const response = await fetch(`${backendUrl}/convenios?beneficio=true`, {
+          headers: { "x-api-key": apiKey },
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          const hasActive = (data || []).some((c: any) => {
+            if (!c.inscripcion) return false;
+            const now = new Date();
+            const start = c.fecha_inicio_inscripcion ? new Date(c.fecha_inicio_inscripcion) : null;
+            const end = c.fecha_fin_inscripcion ? new Date(c.fecha_fin_inscripcion) : null;
+            if (start && now < start) return false;
+            if (end && now > end) return false;
+            return true;
+          });
+          setHasActiveBenefits(hasActive);
+        }
+      } catch (error) {
+        console.error("Error checking active benefits:", error);
+      }
+    }
+    checkActiveBenefits();
+  }, []);
 
   const isHome = pathname === "/paraguay";
 
@@ -99,6 +130,14 @@ export function ParaguayHeader() {
                 >
                   Ayuda
                 </Link>
+                {hasActiveBenefits && (
+                  <Link
+                    href="/paraguay/beneficios"
+                    className="text-primary font-bold hover:text-primary/80 transition-all duration-300 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
+                  >
+                    Inscríbete aquí
+                  </Link>
+                )}
             </nav>
 
             {/* CTA Button */}
@@ -169,6 +208,15 @@ export function ParaguayHeader() {
             >
               Ayuda
             </Link>
+            {hasActiveBenefits && (
+              <Link
+                href="/paraguay/beneficios"
+                className="text-primary hover:text-primary/80 transition-colors font-bold py-2"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Inscríbete aquí
+              </Link>
+            )}
             
             <div className="flex flex-col gap-2 pt-4 border-t border-black/10 dark:border-white/20">
               <div className="flex justify-start mb-2">
