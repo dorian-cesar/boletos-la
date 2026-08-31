@@ -10,17 +10,17 @@ export const metadata: Metadata = {
 
 export default function BeneficiosPage() {
   return (
-    <main className="min-h-screen flex flex-col bg-slate-50 dark:bg-[#0f1419]">
+    <main className="min-h-screen flex flex-col bg-slate-50 dark:bg-[#0f1419] overflow-x-hidden">
       <ParaguayHeader />
       
-      <div className="flex-grow">
+      <div className="flex-grow relative bg-gradient-to-b from-slate-100 to-slate-50 dark:from-[#1a2332] dark:to-[#0f1419]">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-[5%] left-[-10%] w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px]" />
+          <div className="absolute bottom-[10%] right-[-10%] w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[120px]" />
+        </div>
+
         {/* Hero Section para Beneficios */}
-        <section className="relative pt-20 pb-32 overflow-hidden bg-gradient-to-b from-slate-100 to-slate-50 dark:from-[#1a2332] dark:to-[#0f1419]">
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[100px]" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[100px]" />
-          </div>
-          
+        <section className="relative pt-20 pb-32">
           <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white tracking-tight mb-6">
               Únete al <span className="text-primary">Club de Beneficios</span>

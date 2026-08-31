@@ -47,21 +47,21 @@ export async function PromoSection() {
   const promo = promociones[0];
 
   return (
-    <section className="py-24 bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] relative overflow-hidden">
+    <section className="bg-gradient-to-b from-slate-50 to-slate-200 dark:from-[#1a2332] dark:to-[#0f1419] relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/3 w-[450px] h-[450px] bg-primary/10 rounded-full blur-[140px]" />
         <div className="absolute bottom-0 right-1/4 w-[350px] h-[350px] bg-secondary/10 rounded-full blur-[120px]" />
       </div>
 
-      <div className="container mx-auto px-4 md:px-6 relative z-10">
-        <div className="border border-slate-200/80 dark:border-slate-800/80 rounded-3xl p-6 md:p-10 lg:p-12 shadow-md bg-white/80 dark:bg-[#0f1419]/70 backdrop-blur-md flex flex-col gap-8 md:gap-12">
+      <div className="w-full relative z-10">
+        <div className="w-full shadow-md bg-white/80 dark:bg-[#0f1419]/70 backdrop-blur-md flex flex-col gap-8 md:gap-12">
           
           {/* Header Centrado - Título y Subtítulo */}
           {(promo.titulo || promo.subtitulo) && (
-            <div className="text-center max-w-3xl mx-auto space-y-3">
+            <div className="text-center max-w-3xl mx-auto space-y-3 pt-12 px-4">
               {promo.titulo && (
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white tracking-tight">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-400">
                   {promo.titulo}
                 </h2>
               )}

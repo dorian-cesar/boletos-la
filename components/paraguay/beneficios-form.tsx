@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { toast } from "sonner";
 import { Loader2, UploadCloud, CheckCircle2, User, Mail, Phone, MapPin } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Convenio {
   id: number;
-  titulo: string;
-  subtitulo: string;
+  nombre: string;
   inscripcion: boolean;
   fecha_inicio_inscripcion?: string;
   fecha_fin_inscripcion?: string;
@@ -38,6 +38,7 @@ export function BeneficiosForm() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
     reset,
   } = useForm<FormData>();
@@ -57,7 +58,7 @@ export function BeneficiosForm() {
         if (response.ok) {
           const data = await response.json();
           // Solo mostrar los que tienen inscripción habilitada
-          const activeConvenios = (data || []).filter((c: Convenio) => {
+          const activeConvenios = (data?.rows || data || []).filter((c: Convenio) => {
             if (!c.inscripcion) return false;
             const now = new Date();
             const start = c.fecha_inicio_inscripcion ? new Date(c.fecha_inicio_inscripcion) : null;
@@ -185,18 +186,25 @@ export function BeneficiosForm() {
             Selecciona el Beneficio *
           </label>
           <div className="relative">
-            <select
-              {...register("convenio_id", { required: "Debes seleccionar un beneficio" })}
-              disabled={isLoadingConvenios || convenios.length === 0}
-              className="w-full pl-4 pr-10 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all appearance-none"
-            >
-              <option value="">Selecciona una opción</option>
-              {convenios.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.titulo} {c.subtitulo ? `- ${c.subtitulo}` : ''}
-                </option>
-              ))}
-            </select>
+            <Controller
+              name="convenio_id"
+              control={control}
+              rules={{ required: "Debes seleccionar un beneficio" }}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value} disabled={isLoadingConvenios || convenios.length === 0}>
+                  <SelectTrigger className="w-full pl-4 pr-10 py-6 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                    <SelectValue placeholder="Selecciona una opción" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {convenios.map((c) => (
+                      <SelectItem key={c.id} value={c.id.toString()}>
+                        {c.nombre}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
             {isLoadingConvenios && (
               <Loader2 className="absolute right-3 top-3 w-5 h-5 animate-spin text-slate-400" />
             )}
@@ -311,18 +319,26 @@ export function BeneficiosForm() {
             Región o Departamento *
           </label>
           <div className="relative">
-            <MapPin className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
-            <select
-              {...register("region", { required: "Selecciona tu región" })}
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all appearance-none"
-            >
-              <option value="">Selecciona tu región</option>
-              <option value="Asunción">Asunción</option>
-              <option value="Central">Central</option>
-              <option value="Alto Paraná">Alto Paraná</option>
-              <option value="Itapúa">Itapúa</option>
-              <option value="Otra">Otra</option>
-            </select>
+            <MapPin className="absolute left-3 top-3 w-5 h-5 text-slate-400 z-10" />
+            <Controller
+              name="region"
+              control={control}
+              rules={{ required: "Selecciona tu región" }}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger className="w-full pl-10 py-6 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                    <SelectValue placeholder="Selecciona tu región" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Asunción">Asunción</SelectItem>
+                    <SelectItem value="Central">Central</SelectItem>
+                    <SelectItem value="Alto Paraná">Alto Paraná</SelectItem>
+                    <SelectItem value="Itapúa">Itapúa</SelectItem>
+                    <SelectItem value="Otra">Otra</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
           {errors.region && <p className="text-red-500 text-sm">{errors.region.message}</p>}
         </div>
