@@ -456,16 +456,16 @@ export function PassengerForm({
 
   return (
     <Card
-      className="p-3 sm:p-5 animate-fade-in bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-white/20 w-full"
+      className="p-3 sm:p-5 animate-fade-in bg-white dark:bg-white/5 dark:backdrop-blur-sm border-slate-200 shadow-sm dark:border-white/20 w-full"
       style={{ animationDelay: `${animationDelay}ms` }}
     >
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center border border-primary/30 shrink-0">
+        <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center shadow-sm shrink-0">
           {isPassengerReady ? (
-            <UserCheck className="h-4 w-4 text-green-500" />
+            <UserCheck className="h-5 w-5 text-white" />
           ) : (
-            <User className="h-4 w-4 text-primary" />
+            <User className="h-5 w-5 text-white" />
           )}
         </div>
         <div className="min-w-0 flex-1">
@@ -576,8 +576,7 @@ export function PassengerForm({
             type="button"
             onClick={handleSearch}
             disabled={!docNumber.trim() || isSearching}
-            className="h-11 px-3 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 w-full sm:w-auto sm:shrink-0"
-            variant="outline"
+            className="h-11 px-6 bg-primary hover:bg-primary/90 text-white shadow-sm w-full sm:w-auto sm:shrink-0 font-medium"
           >
             {isSearching ? (
               <Loader2 className="h-4 w-4 animate-spin" />
