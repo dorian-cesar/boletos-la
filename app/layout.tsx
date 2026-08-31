@@ -30,6 +30,7 @@ export const metadata: Metadata = {
   },
 };
 
+import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 
 export default function RootLayout({
@@ -46,6 +47,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Toaster position="top-center" richColors />
           <GoogleTagManager />
           <MetaPixel />
           <div className="zoom-wrapper">

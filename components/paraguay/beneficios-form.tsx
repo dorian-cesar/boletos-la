@@ -133,7 +133,16 @@ export function BeneficiosForm() {
 
       if (!response.ok) {
         const err = await response.json();
-        throw new Error(err.message || "Error al enviar la inscripción");
+        let errorMsg = err.message;
+        
+        // Handle specific VALIDATION_ERROR format with 'errors' array
+        if (err.errors && Array.isArray(err.errors)) {
+          errorMsg = err.errors.map((e: any) => `${e.campo?.replace('body.', '')}: ${e.mensaje}`).join(" | ");
+        } else if (Array.isArray(err.message)) {
+          errorMsg = err.message.join(", ");
+        }
+
+        throw new Error(errorMsg || "Error al enviar la inscripción. Verifica tus datos.");
       }
 
       setIsSuccess(true);
@@ -306,7 +315,10 @@ export function BeneficiosForm() {
             <input
               type="tel"
               placeholder="Ej: +595912345678"
-              {...register("celular", { required: "El celular es obligatorio" })}
+              {...register("celular", { 
+                required: "El celular es obligatorio",
+                pattern: { value: /^\+?\d{8,15}$/, message: "Formato inválido (Ej: +595912345678 o 0912345678)" }
+              })}
               className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
             />
           </div>
