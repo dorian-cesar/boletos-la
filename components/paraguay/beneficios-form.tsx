@@ -11,6 +11,7 @@ interface Convenio {
   id: number;
   nombre: string;
   inscripcion: boolean;
+  imagenes?: string[];
   fecha_inicio_inscripcion?: string;
   fecha_fin_inscripcion?: string;
 }
@@ -32,16 +33,22 @@ export function BeneficiosForm() {
   const [isLoadingConvenios, setIsLoadingConvenios] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [imagenBase64, setImagenBase64] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
+  const [imagenesState, setImagenesState] = useState<{ [key: string]: { base64: string; fileName: string } }>({});
 
   const {
     register,
     handleSubmit,
     control,
+    watch,
     formState: { errors },
     reset,
   } = useForm<FormData>();
+
+  const selectedConvenioId = watch("convenio_id");
+  const selectedConvenio = convenios.find(c => c.id.toString() === selectedConvenioId);
+  const requiredImages = selectedConvenio?.imagenes && selectedConvenio.imagenes.length > 0 
+    ? selectedConvenio.imagenes 
+    : ["Foto del Carnet/Documento (Frente)"];
 
   useEffect(() => {
     async function fetchConvenios() {
@@ -80,7 +87,7 @@ export function BeneficiosForm() {
     fetchConvenios();
   }, []);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, imageKey: string) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -89,34 +96,44 @@ export function BeneficiosForm() {
       return;
     }
 
-    setFileName(file.name);
     const reader = new FileReader();
     reader.onloadend = () => {
-      setImagenBase64(reader.result as string);
+      setImagenesState(prev => ({
+        ...prev,
+        [imageKey]: {
+          base64: reader.result as string,
+          fileName: file.name
+        }
+      }));
     };
     reader.readAsDataURL(file);
   };
 
   const onSubmit = async (data: FormData) => {
-    if (!imagenBase64) {
-      toast.error("Por favor adjunta una imagen de tu documento de identidad");
-      return;
+    for (const imgLabel of requiredImages) {
+      if (!imagenesState[imgLabel]?.base64) {
+        toast.error(`Por favor adjunta una imagen para: ${imgLabel}`);
+        return;
+      }
     }
 
     setIsSubmitting(true);
     try {
+      const imagenes: Record<string, string> = {};
+      for (const imgLabel of requiredImages) {
+        if (imagenesState[imgLabel]?.base64) {
+          imagenes[imgLabel] = imagenesState[imgLabel].base64;
+        }
+      }
+
       const payload = {
         rut: data.rut,
-        nombre: data.nombre,
-        apellido_paterno: data.apellido_paterno,
-        apellido_materno: data.apellido_materno,
-        email: data.email,
-        celular: data.celular,
+        nombre: [data.nombre, data.apellido_paterno, data.apellido_materno].filter(Boolean).join(" "),
+        correo: data.email,
+        telefono: data.celular,
+        direccion: data.region,
         convenio_id: Number(data.convenio_id),
-        campos_dinamicos: {
-          imagen_carnet_frente: imagenBase64,
-          region: data.region,
-        },
+        imagenes,
       };
 
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_CONVENIOS_URL || "https://backend-convenios-py.dev-wit.com/api";
@@ -147,8 +164,7 @@ export function BeneficiosForm() {
 
       setIsSuccess(true);
       reset();
-      setImagenBase64(null);
-      setFileName(null);
+      setImagenesState({});
       toast.success("¡Inscripción completada exitosamente!");
       
     } catch (error: any) {
@@ -355,40 +371,46 @@ export function BeneficiosForm() {
           {errors.region && <p className="text-red-500 text-sm">{errors.region.message}</p>}
         </div>
 
-        {/* Carga de Documento */}
-        <div className="md:col-span-2 space-y-2 mt-2">
-          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
-            Foto del Carnet/Documento (Frente) *
-          </label>
-          <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 dark:border-slate-700 border-dashed rounded-xl hover:border-primary dark:hover:border-primary transition-colors cursor-pointer relative bg-slate-50 dark:bg-slate-900/30">
-            <div className="space-y-1 text-center">
-              <UploadCloud className="mx-auto h-12 w-12 text-slate-400" />
-              <div className="flex text-sm text-slate-600 dark:text-slate-400 justify-center">
-                <label
-                  htmlFor="file-upload"
-                  className="relative cursor-pointer rounded-md font-medium text-primary hover:text-primary/80 focus-within:outline-none"
-                >
-                  <span>Sube un archivo</span>
-                  <input id="file-upload" type="file" accept="image/*" className="sr-only" onChange={handleFileChange} />
-                </label>
-                <p className="pl-1">o arrastra y suelta</p>
-              </div>
-              <p className="text-xs text-slate-500 dark:text-slate-500">
-                PNG, JPG, GIF hasta 5MB
-              </p>
-              {fileName && (
-                <div className="mt-4 p-2 bg-primary/10 text-primary font-medium text-sm rounded-lg">
-                  Archivo seleccionado: {fileName}
+        {/* Carga de Documentos Dinámicos */}
+        <div className="md:col-span-2 space-y-6 mt-2">
+          {requiredImages.map((imgLabel, idx) => (
+            <div key={idx} className="space-y-2">
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                {imgLabel} *
+              </label>
+              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 dark:border-slate-700 border-dashed rounded-xl hover:border-primary dark:hover:border-primary transition-colors cursor-pointer relative bg-slate-50 dark:bg-slate-900/30">
+                <div className="space-y-1 text-center">
+                  <UploadCloud className="mx-auto h-12 w-12 text-slate-400" />
+                  <div className="flex text-sm text-slate-600 dark:text-slate-400 justify-center">
+                    <label className="relative cursor-pointer rounded-md font-medium text-primary hover:text-primary/80 focus-within:outline-none">
+                      <span>Sube un archivo</span>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        className="sr-only" 
+                        onChange={(e) => handleFileChange(e, imgLabel)} 
+                      />
+                    </label>
+                    <p className="pl-1">o arrastra y suelta</p>
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-500">
+                    PNG, JPG, GIF hasta 5MB
+                  </p>
+                  {imagenesState[imgLabel]?.fileName && (
+                    <div className="mt-4 p-2 bg-primary/10 text-primary font-medium text-sm rounded-lg">
+                      Archivo seleccionado: {imagenesState[imgLabel].fileName}
+                    </div>
+                  )}
                 </div>
-              )}
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={(e) => handleFileChange(e, imgLabel)}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+              </div>
             </div>
-            <input 
-              type="file" 
-              accept="image/*" 
-              onChange={handleFileChange}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            />
-          </div>
+          ))}
         </div>
 
       </div>
