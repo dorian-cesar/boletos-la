@@ -14,6 +14,8 @@ interface Convenio {
   imagenes?: string[];
   fecha_inicio_inscripcion?: string;
   fecha_fin_inscripcion?: string;
+  endpoint?: string;
+  beneficio_endpoint_validacion?: string;
 }
 
 interface FormData {
@@ -57,9 +59,13 @@ export function BeneficiosForm() {
         
         if (response.ok) {
           const data = await response.json();
-          // Solo mostrar los que tienen inscripción habilitada
+          // Solo mostrar los que tienen inscripción habilitada y son del club de beneficios (validación externa)
           const activeConvenios = (data?.rows || data || []).filter((c: Convenio) => {
             if (!c.inscripcion) return false;
+            if (c.endpoint !== "/api/integraciones/beneficiarios/validar" && c.beneficio_endpoint_validacion !== "/api/integraciones/beneficiarios/validar") {
+              return false;
+            }
+            
             const now = new Date();
             const start = c.fecha_inicio_inscripcion ? new Date(c.fecha_inicio_inscripcion) : null;
             const end = c.fecha_fin_inscripcion ? new Date(c.fecha_fin_inscripcion) : null;

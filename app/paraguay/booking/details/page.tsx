@@ -60,7 +60,13 @@ export default function DetailsPage() {
       fetch("/api/convenios?beneficio=true")
         .then((res) => res.json())
         .then((data) => {
-          if (data.rows) setBenefits(data.rows);
+          if (data.rows) {
+            const filtered = data.rows.filter((b: any) => 
+              b.endpoint === "/api/integraciones/beneficiarios/validar" ||
+              b.beneficio_endpoint_validacion === "/api/integraciones/beneficiarios/validar"
+            );
+            setBenefits(filtered);
+          }
         })
         .catch(console.error);
     }
