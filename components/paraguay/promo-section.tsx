@@ -88,18 +88,26 @@ export async function PromoSection() {
             )}
 
             {/* Columna Derecha - Links (40%) */}
-            <div className={`w-full ${promo.imagen ? 'lg:w-2/5' : 'lg:w-full'} flex flex-col items-center justify-center text-center space-y-12`}>
+            <div className={`w-full ${promo.imagen ? 'lg:w-2/5' : 'lg:w-full'} flex flex-col items-center justify-center text-center space-y-4 md:space-y-6`}>
               
-              {(promo.link || promo.texto) && (
+              {promo.link && (
                 <div className="w-full px-2 text-center">
                   <a 
-                    href={promo.link || "/paraguay/bases-promocion"}
-                    target={(promo.link || "").startsWith("http") && !(promo.link || "").includes("boletos.la") ? "_blank" : "_self"}
-                    rel={(promo.link || "").startsWith("http") && !(promo.link || "").includes("boletos.la") ? "noopener noreferrer" : undefined}
-                    className="text-base md:text-lg text-primary dark:text-secondary font-medium hover:underline"
+                    href={promo.link}
+                    target={promo.link.startsWith("http") && !promo.link.includes("boletos.la") ? "_blank" : "_self"}
+                    rel={promo.link.startsWith("http") && !promo.link.includes("boletos.la") ? "noopener noreferrer" : undefined}
+                    className="text-base md:text-lg font-semibold text-primary dark:text-secondary break-all hover:underline"
                   >
-                    {promo.texto || "Ver bases y condiciones"}
+                    {promo.link}
                   </a>
+                </div>
+              )}
+
+              {promo.texto && (
+                <div className="w-full px-2 text-center">
+                  <p className="text-sm md:text-base text-slate-600 dark:text-slate-300 font-medium">
+                    {promo.texto}
+                  </p>
                 </div>
               )}
             </div>
