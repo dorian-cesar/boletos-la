@@ -90,27 +90,16 @@ export async function PromoSection() {
             {/* Columna Derecha - Links (40%) */}
             <div className={`w-full ${promo.imagen ? 'lg:w-2/5' : 'lg:w-full'} flex flex-col items-center justify-center text-center space-y-12`}>
               
-              {promo.link && (
-                <div className="w-full px-2">
+              {(promo.link || promo.texto) && (
+                <div className="w-full px-2 text-center">
                   <a 
-                    href={promo.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-base md:text-lg font-semibold text-primary dark:text-secondary break-all hover:underline"
+                    href={promo.link || "/paraguay/bases-promocion"}
+                    target={(promo.link || "").startsWith("http") && !(promo.link || "").includes("boletos.la") ? "_blank" : "_self"}
+                    rel={(promo.link || "").startsWith("http") && !(promo.link || "").includes("boletos.la") ? "noopener noreferrer" : undefined}
+                    className="text-base md:text-lg text-primary dark:text-secondary font-medium hover:underline"
                   >
-                    {promo.link}
+                    {promo.texto || "Ver bases y condiciones"}
                   </a>
-                </div>
-              )}
-
-              {promo.texto && promo.contexto_enriquecido && (
-                <div className="w-full text-center">
-                  <Link 
-                    href="/paraguay/bases-promocion"
-                    className="inline-block px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
-                  >
-                    {promo.texto}
-                  </Link>
                 </div>
               )}
             </div>
