@@ -53,14 +53,7 @@ export function BeneficiosForm() {
   useEffect(() => {
     async function fetchConvenios() {
       try {
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_CONVENIOS_URL || "https://backend-convenios-py.dev-wit.com/api";
-        const apiKey = process.env.NEXT_PUBLIC_CONVENIOS_API_KEY || "";
-        
-        const response = await fetch(`${backendUrl}/convenios?beneficio=true`, {
-          headers: {
-            "x-api-key": apiKey,
-          },
-        });
+        const response = await fetch('/api/convenios?beneficio=true');
         
         if (response.ok) {
           const data = await response.json();

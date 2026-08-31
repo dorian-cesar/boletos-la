@@ -28,6 +28,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function DetailsPage() {
   const router = useRouter();
@@ -40,6 +47,24 @@ export default function DetailsPage() {
   const [isApplyingDiscount, setIsApplyingDiscount] = useState(false);
   const [discountError, setDiscountError] = useState<string | null>(null);
   const [discountSuccess, setDiscountSuccess] = useState<string | null>(null);
+
+  const [hasBenefit, setHasBenefit] = useState(false);
+  const [benefits, setBenefits] = useState<any[]>([]);
+  const [selectedBenefitId, setSelectedBenefitId] = useState<string>("");
+  const [benefitRut, setBenefitRut] = useState("");
+  const [isApplyingBenefit, setIsApplyingBenefit] = useState(false);
+  const [benefitError, setBenefitError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (hasBenefit && benefits.length === 0) {
+      fetch("/api/convenios?beneficio=true")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.rows) setBenefits(data.rows);
+        })
+        .catch(console.error);
+    }
+  }, [hasBenefit]);
 
   const {
     tripType,
@@ -180,6 +205,70 @@ export default function DetailsPage() {
     setDiscountInput("");
     setDiscountSuccess(null);
     setHasDiscount(false);
+  };
+
+  const handleApplyBenefit = async () => {
+    if (!selectedBenefitId || !benefitRut.trim()) return;
+    setIsApplyingBenefit(true);
+    setBenefitError(null);
+    setDiscountSuccess(null);
+    setDiscountError(null);
+
+    try {
+      const res = await fetch("/api/beneficiarios/validar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rut: benefitRut.trim(), convenio_id: parseInt(selectedBenefitId) })
+      });
+      const data = await res.json();
+      
+      if (!res.ok || data.error) {
+        let msg = "Error al validar el beneficio";
+        if (data.errors && data.errors.length > 0) {
+           msg = data.errors[0].mensaje;
+        } else if (data.mensaje) {
+           msg = data.mensaje;
+        } else if (data.message) {
+           msg = data.message;
+        } else if (data.error) {
+           msg = data.error;
+        }
+        setBenefitError(msg);
+        return;
+      }
+
+      if (data.afiliado === false) {
+        setBenefitError(data.mensaje || "El documento no está registrado para este beneficio.");
+        return;
+      }
+
+      const selectedBenefit = benefits.find(b => b.id === parseInt(selectedBenefitId));
+      const percentage = selectedBenefit ? parseFloat(selectedBenefit.valor_descuento || "0") : 0;
+      
+      if (percentage > 0 && percentage <= 100) {
+        setDiscount(
+          "BENEFICIO",
+          percentage,
+          selectedBenefit?.empresa_nombre,
+          selectedBenefit?.nombre,
+          selectedBenefit?.cargo_por_servicio,
+          selectedBenefit?.valor_cargo_servicio
+        );
+      } else {
+        setBenefitError("El beneficio no tiene un porcentaje válido asociado.");
+      }
+    } catch (e: any) {
+      setBenefitError("Error de conexión al validar el beneficio.");
+    } finally {
+      setIsApplyingBenefit(false);
+    }
+  };
+
+  const handleRemoveBenefit = () => {
+    setDiscount(null, null, null, null);
+    setBenefitRut("");
+    setSelectedBenefitId("");
+    setHasBenefit(false);
   };
 
   const handleContinue = async () => {
@@ -490,6 +579,105 @@ export default function DetailsPage() {
                       <p className="text-sm text-destructive font-medium flex items-center gap-1.5">
                         <AlertCircle className="h-4 w-4" />
                         {discountError}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </Card>
+
+              {/* Beneficios Activos */}
+              <Card className="p-4 md:p-6 bg-white dark:bg-white/5 backdrop-blur-sm border-slate-200 dark:border-white/20 animate-fade-in shadow-sm mt-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <UserCheck className="h-5 w-5 text-primary" />
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                    Aplicar Beneficio Activo
+                  </h3>
+                </div>
+
+                <label className="flex items-center gap-2 cursor-pointer mb-4">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 text-primary rounded border-slate-300 focus:ring-primary"
+                    checked={hasBenefit || !!(discountCode && discountCode === "BENEFICIO" && !hasDiscount)}
+                    onChange={(e) => {
+                      if (!e.target.checked && discountCode) {
+                        handleRemoveBenefit();
+                      }
+                      setHasBenefit(e.target.checked);
+                    }}
+                  />
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Soy parte del Club de Beneficios
+                  </span>
+                </label>
+
+                {(hasBenefit || (discountCode && discountCode === "BENEFICIO" && !hasDiscount)) && (
+                  <div className="space-y-4 pt-2 border-t border-black/5 dark:border-white/10 animate-fade-in">
+                    {!discountPercentage ? (
+                      <div className="flex flex-col gap-3">
+                        <Select
+                          value={selectedBenefitId}
+                          onValueChange={setSelectedBenefitId}
+                        >
+                          <SelectTrigger className="w-full bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/20 text-slate-900 dark:text-white h-11">
+                            <SelectValue placeholder="Selecciona tu beneficio" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white dark:bg-[#1a2332] border-slate-200 dark:border-white/10">
+                            {benefits.map(b => (
+                              <SelectItem key={b.id} value={b.id.toString()}>
+                                {b.nombre}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="Nro. Documento (RUT/CI)"
+                            value={benefitRut}
+                            onChange={(e) => setBenefitRut(e.target.value)}
+                            className="bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/20"
+                          />
+                          <Button
+                            onClick={handleApplyBenefit}
+                            disabled={!benefitRut.trim() || !selectedBenefitId || isApplyingBenefit}
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground min-w-[100px]"
+                          >
+                            {isApplyingBenefit ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              "Validar"
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 rounded-lg">
+                        <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
+                          <Check className="h-5 w-5" />
+                          <div>
+                            <p className="font-medium text-sm">
+                              {discountSuccess || `¡Beneficio de ${discountPercentage}% aplicado!`}
+                            </p>
+                            <p className="text-xs opacity-80">
+                              Documento: {benefitRut}
+                            </p>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleRemoveBenefit}
+                          className="text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
+                        >
+                          Quitar
+                        </Button>
+                      </div>
+                    )}
+
+                    {benefitError && (
+                      <p className="text-sm text-destructive font-medium flex items-center gap-1.5">
+                        <AlertCircle className="h-4 w-4" />
+                        {benefitError}
                       </p>
                     )}
                   </div>
