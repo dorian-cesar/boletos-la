@@ -22,7 +22,7 @@ async function getActivePromociones(): Promise<Promocion[]> {
       headers: {
         'x-api-key': apiKey,
       },
-      next: { revalidate: 60 },
+      cache: 'no-store',
     });
     
     if (!res.ok) {

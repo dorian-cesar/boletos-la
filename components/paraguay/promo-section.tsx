@@ -20,7 +20,7 @@ async function getActivePromociones(): Promise<Promocion[]> {
       headers: {
         'x-api-key': apiKey,
       },
-      next: { revalidate: 60 },
+      cache: 'no-store',
     });
     
     if (!res.ok) {
@@ -54,8 +54,8 @@ export async function PromoSection() {
         <div className="absolute bottom-0 right-1/4 w-[350px] h-[350px] bg-secondary/10 rounded-full blur-[120px]" />
       </div>
 
-      <div className="w-full relative z-10">
-        <div className="w-full shadow-md bg-white/80 dark:bg-[#0f1419]/70 backdrop-blur-md flex flex-col gap-8 md:gap-12">
+      <div className="container mx-auto px-4 md:px-6 relative z-10 py-12 md:py-16">
+        <div className="w-full shadow-lg rounded-3xl bg-white/80 dark:bg-[#0f1419]/70 backdrop-blur-md flex flex-col gap-8 md:gap-12 overflow-hidden border border-slate-200 dark:border-white/10">
           
           {/* Header Centrado - Título y Subtítulo */}
           {(promo.titulo || promo.subtitulo) && (
