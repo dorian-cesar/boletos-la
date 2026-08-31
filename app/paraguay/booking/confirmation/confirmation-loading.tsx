@@ -465,6 +465,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
 
                   if (!trackedPurchaseRef.current) {
                     trackedPurchaseRef.current = true;
+                    const orderId = shopProcessId || processId || bookingReference || rawData?.data?.hash || rawData?.hash || undefined;
                     trackPurchase({
                       value:
                         totalPrice && totalPrice > 0
@@ -477,6 +478,7 @@ export default function ConfirmationLoading({ hash, onReady }: Props) {
                       content_ids: selectedOutboundTrip?.id
                         ? [selectedOutboundTrip.id]
                         : ["pasaje-paraguay"],
+                      order_id: orderId,
                     });
                   }
 
