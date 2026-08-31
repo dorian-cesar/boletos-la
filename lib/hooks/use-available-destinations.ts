@@ -24,7 +24,9 @@ export function useAvailableDestinations(originId: string | null, date: string |
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`/api/gds/delta/available-destinations?originId=${originId}&date=${date}`);
+        const dateObj = new Date(date);
+        const formattedDate = !isNaN(dateObj.getTime()) ? dateObj.toISOString().slice(0, 10) : date;
+        const res = await fetch(`/api/gds/delta/available-destinations?originId=${originId}&date=${formattedDate}`);
         
         if (!res.ok) {
           throw new Error("Error fetching destinations");
