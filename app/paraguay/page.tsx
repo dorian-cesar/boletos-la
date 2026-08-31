@@ -18,9 +18,9 @@ export default function ParaguayPage() {
       <BookingResetter />
       <ParaguayHeader />
       <ParaguayHeroSection />
+      <PromoSection />
       <FeaturesSection />
       <DestinationsSection />
-      <PromoSection />
       <ParaguayFooter />
     </main>
   );
