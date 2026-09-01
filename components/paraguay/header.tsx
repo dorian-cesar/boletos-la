@@ -29,6 +29,7 @@ export function ParaguayHeader() {
         if (response.ok) {
           const data = await response.json();
           const hasActive = (data?.rows || data || []).some((c: any) => {
+            if (c.status !== "ACTIVO") return false;
             if (!c.inscripcion) return false;
             const now = new Date();
             const start = c.fecha_inicio_inscripcion ? new Date(c.fecha_inicio_inscripcion) : null;

@@ -62,8 +62,10 @@ export default function DetailsPage() {
         .then((data) => {
           if (data.rows) {
             const filtered = data.rows.filter((b: any) => 
-              b.endpoint === "/api/integraciones/beneficiarios/validar" ||
-              b.beneficio_endpoint_validacion === "/api/integraciones/beneficiarios/validar"
+              b.status === "ACTIVO" && (
+                b.endpoint === "/api/integraciones/beneficiarios/validar" ||
+                b.beneficio_endpoint_validacion === "/api/integraciones/beneficiarios/validar"
+              )
             );
             setBenefits(filtered);
           }

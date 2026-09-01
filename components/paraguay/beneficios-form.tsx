@@ -61,6 +61,7 @@ export function BeneficiosForm() {
           const data = await response.json();
           // Solo mostrar los que tienen inscripción habilitada y son del club de beneficios (validación externa)
           const activeConvenios = (data?.rows || data || []).filter((c: Convenio) => {
+            if (c.status !== "ACTIVO") return false;
             if (!c.inscripcion) return false;
             if (c.endpoint !== "/api/integraciones/beneficiarios/validar" && c.beneficio_endpoint_validacion !== "/api/integraciones/beneficiarios/validar") {
               return false;

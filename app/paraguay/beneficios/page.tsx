@@ -29,6 +29,7 @@ export default async function BeneficiosPage() {
       const data = await res.json();
       const rows = data?.rows || data || [];
       const activeConvenios = rows.filter((c: any) => {
+        if (c.status !== "ACTIVO") return false;
         if (!c.inscripcion) return false;
         if (c.endpoint !== "/api/integraciones/beneficiarios/validar" && c.beneficio_endpoint_validacion !== "/api/integraciones/beneficiarios/validar") {
           return false;
