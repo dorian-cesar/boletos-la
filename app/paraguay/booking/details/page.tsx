@@ -507,7 +507,7 @@ export default function DetailsPage() {
               )}
 
               {/* Descuentos */}
-              <Card className="p-4 md:p-6 bg-white dark:bg-white/5 backdrop-blur-sm border-slate-200 dark:border-white/20 animate-fade-in shadow-sm">
+              <Card className="p-4 md:p-6 bg-white dark:bg-white/5 dark:backdrop-blur-sm border-slate-200 dark:border-white/20 animate-fade-in shadow-sm">
                 <div className="flex items-center gap-2 mb-4">
                   <Tag className="h-5 w-5 text-secondary" />
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white">
@@ -592,7 +592,7 @@ export default function DetailsPage() {
               </Card>
 
               {/* Beneficios Activos */}
-              <Card className="p-4 md:p-6 bg-white dark:bg-white/5 backdrop-blur-sm border-slate-200 dark:border-white/20 animate-fade-in shadow-sm mt-6">
+              <Card className="p-4 md:p-6 bg-white dark:bg-white/5 dark:backdrop-blur-sm border-slate-200 dark:border-white/20 animate-fade-in shadow-sm mt-6">
                 <div className="flex items-center gap-2 mb-4">
                   <UserCheck className="h-5 w-5 text-primary" />
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white">
@@ -701,7 +701,7 @@ export default function DetailsPage() {
 
             {/* Summary Sidebar */}
             <div className="lg:col-span-1 lg:sticky lg:top-24 self-start z-20">
-              <Card className="p-4 md:p-6 animate-slide-in-right bg-white dark:bg-white/5 backdrop-blur-sm border-slate-200 dark:border-white/20 shadow-sm">
+              <Card className="p-4 md:p-6 animate-slide-in-right bg-white dark:bg-white/5 dark:backdrop-blur-sm border-slate-200 dark:border-white/20 shadow-sm">
                 <div className="flex items-center justify-between gap-2 mb-4 md:mb-6">
                   <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">
                     Resumen de Reserva
@@ -889,7 +889,7 @@ export default function DetailsPage() {
             <Button
               variant="outline"
               onClick={handleGoBackToSeats}
-              className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20"
+              className="border-slate-200 dark:border-white/20 text-slate-900 dark:text-white bg-slate-50 dark:bg-white/10 hover:bg-slate-100 dark:hover:bg-black/20"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Volver a seleccionar asientos

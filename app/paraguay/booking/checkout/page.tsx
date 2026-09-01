@@ -399,7 +399,7 @@ export default function CheckoutPage() {
           <div className="max-w-4xl mx-auto flex flex-col gap-6 lg:gap-8">
             {/* Unified Resumen de Compra & Payment Section */}
             <Card
-              className="p-4 sm:p-6 animate-fade-in bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-white/20 w-full"
+              className="p-4 sm:p-6 animate-fade-in bg-white dark:bg-white/5 dark:backdrop-blur-sm border-slate-200 shadow-sm dark:border-white/20 w-full"
               style={{ animationDelay: `${totalPassengers * 150}ms` }}
             >
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
@@ -416,7 +416,7 @@ export default function CheckoutPage() {
 
               <div className="flex flex-col gap-6">
                 {/* Trips Summary */}
-                <div className="space-y-6 bg-black/5 dark:bg-white/5 p-4 rounded-xl border border-black/10 dark:border-white/10">
+                <div className="space-y-6 bg-white dark:bg-white/5 border-slate-200 p-4 rounded-xl border border-black/10 dark:border-white/10">
                   {/* Outbound Trip */}
                   <div className="pb-6 border-b border-black/10 dark:border-white/20">
                     <p className="text-sm font-medium text-primary mb-4 text-center">
@@ -461,7 +461,7 @@ export default function CheckoutPage() {
                           );
                         })()}
                       </div>
-                      <div className="shrink-0 w-28 h-16 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/20 rounded-xl shadow-sm flex items-center justify-center px-3 py-2">
+                      <div className="shrink-0 w-28 h-16 bg-white dark:bg-white/5 border-slate-200 border border-black/10 dark:border-white/20 rounded-xl shadow-sm flex items-center justify-center px-3 py-2">
                         <Image
                           src="/logos/logo-bancard-blanco.png"
                           alt="Bancard"
@@ -861,7 +861,7 @@ export default function CheckoutPage() {
               <Button
                 variant="outline"
                 onClick={handleGoBackToSeats}
-                className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20 h-12 px-6"
+                className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-slate-50 dark:bg-white/10 border-slate-200 hover:bg-black/20 h-12 px-6"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Volver a seleccionar asientos

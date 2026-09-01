@@ -239,17 +239,23 @@ export function BeneficiosForm() {
           )}
         </div>
 
-        {/* RUT */}
+        {/* RUC */}
         <div className="space-y-2">
           <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
-            Documento de Identidad (RUT/CI) *
+            Documento de Identidad (RUC/CI) *
           </label>
           <div className="relative">
             <User className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
             <input
               type="text"
-              placeholder="Ej: 1234567-8"
-              {...register("rut", { required: "El documento es obligatorio" })}
+              placeholder="Ej: 1234567-8 o 1234567"
+              {...register("rut", { 
+                required: "El documento es obligatorio",
+                pattern: {
+                  value: /^[0-9]+(?:-[0-9A-Za-z])?$/,
+                  message: "Formato inválido. Ingrese solo números o números y guion de RUC (Ej: 1234567 o 1234567-8)"
+                }
+              })}
               className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
             />
           </div>

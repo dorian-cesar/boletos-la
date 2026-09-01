@@ -418,7 +418,7 @@ function ServicesPageContent() {
                       <Card
                         key={trip.id}
                         className={cn(
-                          "overflow-hidden transition-all duration-500 animate-fade-in hover:shadow-lg bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-white/20",
+                          "overflow-hidden transition-all duration-500 animate-fade-in hover:shadow-lg bg-white dark:bg-white/5 dark:backdrop-blur-sm border-slate-200 dark:border-white/20",
                           selectedOutboundTrip?.id === trip.id ||
                             selectedReturnTrip?.id === trip.id
                             ? "ring-2 ring-primary"
@@ -591,7 +591,7 @@ function ServicesPageContent() {
                                     <Badge
                                       key={amenity}
                                       variant="secondary"
-                                      className="flex items-center gap-1.5 bg-black/10 dark:bg-white/10 text-slate-900 dark:text-white"
+                                      className="flex items-center gap-1.5 bg-slate-50 dark:bg-white/10 text-slate-900 dark:text-white"
                                     >
                                       {Icon && <Icon className="h-3.5 w-3.5" />}
                                       {amenity}
@@ -616,7 +616,7 @@ function ServicesPageContent() {
                       onClick={() => {
                         router.push("/paraguay");
                       }}
-                      className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20"
+                      className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-slate-50 dark:bg-white/10 hover:bg-black/20"
                     >
                       <ArrowLeft className="h-4 w-4" />
                       Volver a buscar servicios
@@ -633,7 +633,7 @@ function ServicesPageContent() {
                         setShowingReturn(false);
                         setSelectedOutboundTrip(null);
                       }}
-                      className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20"
+                      className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-slate-50 dark:bg-white/10 hover:bg-black/20"
                     >
                       <ArrowLeft className="h-4 w-4" />
                       Volver a seleccionar ida

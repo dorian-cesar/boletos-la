@@ -999,7 +999,7 @@ export default function ConfirmationPageContent({
             {/* Trip Details */}
             <div className="lg:col-span-2 space-y-6">
               {/* Outbound Trip */}
-              <Card className="p-6 animate-fade-in bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-white/20">
+              <Card className="p-6 animate-fade-in bg-white dark:bg-white/5 dark:backdrop-blur-sm border-slate-200 shadow-sm dark:border-white/20">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center border border-primary/30">
                     <MapPin className="h-4 w-4 text-primary" />
@@ -1022,7 +1022,7 @@ export default function ConfirmationPageContent({
                       </div>
                       <div className="flex-1 flex items-center">
                         <div className="w-full h-0.5 bg-black/20 dark:bg-white/20 relative">
-                          <Bus className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-primary bg-black/5 dark:bg-white/5" />
+                          <Bus className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-primary bg-white dark:bg-[#1a2332]" />
                         </div>
                       </div>
                       <div className="text-right">
@@ -1093,7 +1093,7 @@ export default function ConfirmationPageContent({
               {/* Return Trip */}
               {tripType === "round-trip" && selectedReturnTrip && (
                 <Card
-                  className="p-6 animate-fade-in bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-white/20"
+                  className="p-6 animate-fade-in bg-white dark:bg-white/5 dark:backdrop-blur-sm border-slate-200 shadow-sm dark:border-white/20"
                   style={{ animationDelay: "0.2s" }}
                 >
                   <div className="flex items-center gap-2 mb-4">
@@ -1118,7 +1118,7 @@ export default function ConfirmationPageContent({
                         </div>
                         <div className="flex-1 flex items-center">
                           <div className="w-full h-0.5 bg-black/20 dark:bg-white/20 relative">
-                            <Bus className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-secondary bg-black/5 dark:bg-white/5" />
+                            <Bus className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-secondary bg-white dark:bg-[#1a2332]" />
                           </div>
                         </div>
                         <div className="text-right">
@@ -1191,7 +1191,7 @@ export default function ConfirmationPageContent({
 
               {/* Passengers */}
               <Card
-                className="p-6 animate-fade-in bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-white/20"
+                className="p-6 animate-fade-in bg-white dark:bg-white/5 dark:backdrop-blur-sm border-slate-200 shadow-sm dark:border-white/20"
                 style={{ animationDelay: "0.3s" }}
               >
                 <h3 className="font-bold text-lg mb-4 text-slate-900 dark:text-white">
@@ -1280,7 +1280,7 @@ export default function ConfirmationPageContent({
 
               {/* Payment Summary */}
               <Card
-                className="p-6 animate-fade-in bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-white/20"
+                className="p-6 animate-fade-in bg-white dark:bg-white/5 dark:backdrop-blur-sm border-slate-200 shadow-sm dark:border-white/20"
                 style={{ animationDelay: "0.4s" }}
               >
                 <h3 className="font-bold text-lg mb-4 text-slate-900 dark:text-white">
@@ -1330,7 +1330,7 @@ export default function ConfirmationPageContent({
 
             {/* Actions Sidebar */}
             <div className="lg:col-span-1 lg:sticky lg:top-24 self-start z-20">
-              <Card className="p-6 animate-slide-in-right bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-white/20">
+              <Card className="p-6 animate-slide-in-right bg-white dark:bg-white/5 dark:backdrop-blur-sm border-slate-200 shadow-sm dark:border-white/20">
                 <h3 className="text-xl font-bold mb-6 text-slate-900 dark:text-white">
                   Tu Boleto Electrónico
                 </h3>

@@ -224,7 +224,7 @@ export default function SeatsPage() {
                 {/* Trip Info Card */}
                 <div className="animate-fade-in">
                   {/* Vista Desktop (Original restaurada) */}
-                  <Card className="hidden sm:block p-4 md:p-6 mb-6 bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-white/20 overflow-hidden w-full">
+                  <Card className="hidden sm:block p-4 md:p-6 mb-6 bg-white dark:bg-white/5 dark:backdrop-blur-sm border-slate-200 dark:border-white/20 overflow-hidden w-full shadow-sm">
                     <div className="flex flex-row items-center justify-between w-full mb-3 pb-2 border-b border-black/10 dark:border-white/10">
                       <div className="flex items-center gap-2 min-w-0 flex-1">
                         {companyLogo ? (
@@ -317,7 +317,7 @@ export default function SeatsPage() {
                   </Card>
 
                   {/* Vista Mobile (Optimización nueva) */}
-                  <Card className="sm:hidden p-4 mb-6 bg-black/5 dark:bg-white/5 backdrop-blur-md border-black/10 dark:border-white/20 overflow-hidden w-full relative">
+                  <Card className="sm:hidden p-4 mb-6 bg-white dark:bg-white/5 dark:backdrop-blur-md border-slate-200 dark:border-white/20 overflow-hidden w-full relative shadow-sm">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
                     <div className="flex items-center justify-between gap-4 mb-6 relative z-10">
                       <div className="flex items-center gap-3 min-w-0">
@@ -441,7 +441,7 @@ export default function SeatsPage() {
 
               {/* Summary Sidebar */}
               <div className="lg:col-span-1 lg:sticky lg:top-24 self-start z-20">
-                <Card className="p-4 md:p-6 animate-slide-in-right bg-black/5 dark:bg-white/5 backdrop-blur-sm border-black/10 dark:border-white/20">
+                <Card className="p-4 md:p-6 animate-slide-in-right bg-white dark:bg-white/5 dark:backdrop-blur-sm border-slate-200 dark:border-white/20 shadow-sm">
                   <div className="flex items-center justify-between gap-2 mb-4 md:mb-6">
                     <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">
                       Resumen de Reserva
@@ -666,7 +666,7 @@ export default function SeatsPage() {
                 onClick={() => {
                   router.push("/paraguay/booking/services");
                 }}
-                className="border-black/10 dark:border-white/20 text-slate-900 dark:text-white bg-black/10 dark:bg-white/10 hover:bg-black/20"
+                className="border-slate-200 dark:border-white/20 text-slate-900 dark:text-white bg-slate-50 dark:bg-white/10 hover:bg-slate-100 dark:hover:bg-black/20"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Volver a seleccionar servicio
