@@ -761,43 +761,7 @@ export function PassengerForm({
                 />
               </FieldWrapper>
 
-              {/* Ocupación */}
-              <FieldWrapper
-                id={`occupation-${passengerNumber}`}
-                label="Ocupación / Profesión"
-                error={null}
-                hasValue={!!passenger.occupation}
-              >
-                <Input
-                  id={`occupation-${passengerNumber}`}
-                  placeholder="Ej. Empleado"
-                  value={localData.occupation}
-                  onChange={(e) =>
-                    handleLocalChange("occupation", e.target.value)
-                  }
-                  onBlur={(e) => handleLocalBlur("occupation", e.target.value)}
-                  className="h-11 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/40 w-full"
-                />
-              </FieldWrapper>
 
-              {/* Fecha de Nacimiento */}
-              <FieldWrapper
-                id={`birthDate-${passengerNumber}`}
-                label="Fecha de Nacimiento"
-                error={null}
-                hasValue={!!passenger.birthDate}
-              >
-                <Input
-                  id={`birthDate-${passengerNumber}`}
-                  type="date"
-                  value={localData.birthDate}
-                  onChange={(e) =>
-                    handleLocalChange("birthDate", e.target.value)
-                  }
-                  onBlur={(e) => handleLocalBlur("birthDate", e.target.value)}
-                  className="h-11 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/40 w-full max-w-full overflow-hidden [color-scheme:dark]"
-                />
-              </FieldWrapper>
 
               {/* Sexo */}
               <FieldWrapper

@@ -1,6 +1,8 @@
 import { MetadataRoute } from 'next';
 import { getPasajesRoutes } from '@/lib/pasajes-urls';
 
+export const revalidate = 86400; // Regeneración automática cada 24 horas
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://boletos.la';
   const now = new Date();

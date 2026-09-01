@@ -32,6 +32,7 @@ export const metadata: Metadata = {
 
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
+import WebviewWarning from "@/components/webview-warning";
 
 export default function RootLayout({
   children,
@@ -41,6 +42,7 @@ export default function RootLayout({
   return (
     <html lang="es" className="scroll-smooth" suppressHydrationWarning>
       <body className={`${inter.variable} antialiased`} suppressHydrationWarning>
+        <WebviewWarning />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
