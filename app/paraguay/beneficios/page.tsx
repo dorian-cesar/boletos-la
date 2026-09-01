@@ -2,13 +2,56 @@ import { ParaguayHeader } from "@/components/paraguay/header";
 import { ParaguayFooter } from "@/components/paraguay/footer";
 import { BeneficiosForm } from "@/components/paraguay/beneficios-form";
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Inscríbete en Beneficios Exclusivos | Boletos.la",
   description: "Formulario de inscripción a convenios y beneficios de Boletos.la",
 };
 
-export default function BeneficiosPage() {
+export const dynamic = 'force-dynamic'; // Desactiva el caché para reflejar cambios del mantenedor en tiempo real
+
+export default async function BeneficiosPage() {
+  let hasActiveConvenios = false;
+  try {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_CONVENIOS_URL || "https://backend-convenios-py.dev-wit.com/api";
+    const apiKey = process.env.NEXT_PUBLIC_CONVENIOS_API_KEY || "";
+    
+    // Si no está expuesta en el servidor la variable NEXT_PUBLIC, intentamos usar una interna
+    const resolvedApiKey = apiKey || process.env.CONVENIOS_API_KEY || "";
+    
+    const res = await fetch(`${backendUrl}/convenios?beneficio=true`, {
+      headers: { "x-api-key": resolvedApiKey },
+      cache: 'no-store'
+    });
+    
+    if (res.ok) {
+      const data = await res.json();
+      const rows = data?.rows || data || [];
+      const activeConvenios = rows.filter((c: any) => {
+        if (!c.inscripcion) return false;
+        if (c.endpoint !== "/api/integraciones/beneficiarios/validar" && c.beneficio_endpoint_validacion !== "/api/integraciones/beneficiarios/validar") {
+          return false;
+        }
+        const now = new Date();
+        const start = c.fecha_inicio_inscripcion ? new Date(c.fecha_inicio_inscripcion) : null;
+        const end = c.fecha_fin_inscripcion ? new Date(c.fecha_fin_inscripcion) : null;
+        
+        if (start && now < start) return false;
+        if (end && now > end) return false;
+        return true;
+      });
+      hasActiveConvenios = activeConvenios.length > 0;
+    }
+  } catch (error) {
+    console.error("Error validando convenios en servidor:", error);
+  }
+
+  // Si no hay convenios activos con inscripción, redireccionamos a la home
+  if (!hasActiveConvenios) {
+    redirect("/paraguay");
+  }
+
   return (
     <main className="min-h-screen flex flex-col bg-slate-50 dark:bg-[#0f1419] overflow-x-hidden">
       <ParaguayHeader />

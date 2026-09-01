@@ -23,6 +23,7 @@ export function ParaguayHeader() {
         
         const response = await fetch(`${backendUrl}/convenios?beneficio=true`, {
           headers: { "x-api-key": apiKey },
+          cache: 'no-store'
         });
         
         if (response.ok) {
