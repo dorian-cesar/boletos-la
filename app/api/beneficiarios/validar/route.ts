@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { rut, convenio_id } = body;
+    const { rut, convenio_id, endpointUrl } = body;
 
     if (!rut || !convenio_id) {
       return NextResponse.json(
@@ -23,7 +23,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const res = await fetch(`${backendUrl}/integraciones/beneficiarios/validar`, {
+    const path = endpointUrl || "/integraciones/beneficiarios/validar";
+    const cleanPath = path.startsWith("/") ? path : `/${path}`;
+
+    const res = await fetch(`${backendUrl}${cleanPath}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

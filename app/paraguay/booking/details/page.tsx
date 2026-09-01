@@ -50,29 +50,34 @@ export default function DetailsPage() {
 
   const [hasBenefit, setHasBenefit] = useState(false);
   const [benefits, setBenefits] = useState<any[]>([]);
+  const [isLoadingBenefits, setIsLoadingBenefits] = useState(false);
+  const [hasFetchedBenefits, setHasFetchedBenefits] = useState(false);
   const [selectedBenefitId, setSelectedBenefitId] = useState<string>("");
   const [benefitRut, setBenefitRut] = useState("");
   const [isApplyingBenefit, setIsApplyingBenefit] = useState(false);
   const [benefitError, setBenefitError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (hasBenefit && benefits.length === 0) {
-      fetch("/api/convenios?beneficio=true")
+    if (hasBenefit && !hasFetchedBenefits) {
+      setIsLoadingBenefits(true);
+      fetch("/api/convenios?beneficio=true&tipo_not=CODIGO_DESCUENTO")
         .then((res) => res.json())
         .then((data) => {
           if (data.rows) {
-            const filtered = data.rows.filter((b: any) => 
-              b.status === "ACTIVO" && (
-                b.endpoint === "/api/integraciones/beneficiarios/validar" ||
-                b.beneficio_endpoint_validacion === "/api/integraciones/beneficiarios/validar"
-              )
-            );
+            const filtered = data.rows.filter((b: any) => b.status === "ACTIVO");
             setBenefits(filtered);
           }
+          setHasFetchedBenefits(true);
         })
-        .catch(console.error);
+        .catch((err) => {
+          console.error("Error al obtener beneficios:", err);
+          setHasFetchedBenefits(true);
+        })
+        .finally(() => {
+          setIsLoadingBenefits(false);
+        });
     }
-  }, [hasBenefit]);
+  }, [hasBenefit, hasFetchedBenefits]);
 
   const {
     tripType,
@@ -217,16 +222,23 @@ export default function DetailsPage() {
 
   const handleApplyBenefit = async () => {
     if (!selectedBenefitId || !benefitRut.trim()) return;
+    const selectedBenefit = benefits.find(b => b.id.toString() === selectedBenefitId);
+    
     setIsApplyingBenefit(true);
     setBenefitError(null);
     setDiscountSuccess(null);
     setDiscountError(null);
 
     try {
+      const endpoint = selectedBenefit?.endpoint || "/integraciones/beneficiarios/validar";
       const res = await fetch("/api/beneficiarios/validar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rut: benefitRut.trim(), convenio_id: parseInt(selectedBenefitId) })
+        body: JSON.stringify({ 
+          rut: benefitRut.trim(), 
+          convenio_id: parseInt(selectedBenefitId),
+          endpointUrl: endpoint
+        })
       });
       const data = await res.json();
       
@@ -250,7 +262,6 @@ export default function DetailsPage() {
         return;
       }
 
-      const selectedBenefit = benefits.find(b => b.id === parseInt(selectedBenefitId));
       const percentage = selectedBenefit ? parseFloat(selectedBenefit.valor_descuento || "0") : 0;
       
       if (percentage > 0 && percentage <= 100) {
@@ -623,40 +634,59 @@ export default function DetailsPage() {
                   <div className="space-y-4 pt-2 border-t border-black/5 dark:border-white/10 animate-fade-in">
                     {!discountPercentage ? (
                       <div className="flex flex-col gap-3">
-                        <Select
-                          value={selectedBenefitId}
-                          onValueChange={setSelectedBenefitId}
-                        >
-                          <SelectTrigger className="w-full bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/20 text-slate-900 dark:text-white h-11">
-                            <SelectValue placeholder="Selecciona tu beneficio" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-[#1a2332] border-slate-200 dark:border-white/10">
-                            {benefits.map(b => (
-                              <SelectItem key={b.id} value={b.id.toString()}>
-                                {b.nombre}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <div className="flex gap-2">
-                          <Input
-                            placeholder="Nro. Documento (RUT/CI)"
-                            value={benefitRut}
-                            onChange={(e) => setBenefitRut(e.target.value)}
-                            className="bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/20"
-                          />
-                          <Button
-                            onClick={handleApplyBenefit}
-                            disabled={!benefitRut.trim() || !selectedBenefitId || isApplyingBenefit}
-                            className="bg-primary hover:bg-primary/90 text-primary-foreground min-w-[100px]"
-                          >
-                            {isApplyingBenefit ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              "Validar"
-                            )}
-                          </Button>
-                        </div>
+                        {isLoadingBenefits ? (
+                          <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 py-3">
+                            <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                            <span>Cargando beneficios disponibles...</span>
+                          </div>
+                        ) : benefits.length === 0 && hasFetchedBenefits ? (
+                          <div className="p-3.5 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-lg text-amber-800 dark:text-amber-300 text-sm flex items-start gap-2.5">
+                            <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                            <div>
+                              <p className="font-semibold text-xs sm:text-sm">No hay beneficios activos disponibles</p>
+                              <p className="text-xs text-amber-700/80 dark:text-amber-300/80 mt-0.5">
+                                En este momento no existen convenios o beneficios activos habilitados para selección.
+                              </p>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <Select
+                              value={selectedBenefitId}
+                              onValueChange={setSelectedBenefitId}
+                            >
+                              <SelectTrigger className="w-full bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/20 text-slate-900 dark:text-white h-11">
+                                <SelectValue placeholder="Selecciona tu beneficio" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-white dark:bg-[#1a2332] border-slate-200 dark:border-white/10">
+                                {benefits.map(b => (
+                                  <SelectItem key={b.id} value={b.id.toString()}>
+                                    {b.nombre}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <div className="flex gap-2">
+                              <Input
+                                placeholder="Nro. Documento (RUT/CI)"
+                                value={benefitRut}
+                                onChange={(e) => setBenefitRut(e.target.value)}
+                                className="bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/20"
+                              />
+                              <Button
+                                onClick={handleApplyBenefit}
+                                disabled={!benefitRut.trim() || !selectedBenefitId || isApplyingBenefit}
+                                className="bg-primary hover:bg-primary/90 text-primary-foreground min-w-[100px]"
+                              >
+                                {isApplyingBenefit ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  "Validar"
+                                )}
+                              </Button>
+                            </div>
+                          </>
+                        )}
                       </div>
                     ) : (
                       <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 rounded-lg">

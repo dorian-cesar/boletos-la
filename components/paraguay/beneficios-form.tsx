@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 interface Convenio {
   id: number;
   nombre: string;
+  status?: string;
   inscripcion: boolean;
   imagenes?: string[];
   fecha_inicio_inscripcion?: string;
