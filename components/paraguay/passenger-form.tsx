@@ -75,6 +75,65 @@ function validateName(name: string): boolean {
   return name.trim().length >= 2;
 }
 
+function maskPhone(value: string): string {
+  const digits = value.replace(/\D/g, "");
+  if (!digits) return "";
+  
+  // Asumir formato paraguayo si empieza con 09
+  if (digits.startsWith("09")) {
+    if (digits.length <= 4) return digits;
+    if (digits.length <= 7) return `${digits.slice(0, 4)} ${digits.slice(4)}`;
+    return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7, 10)}`;
+  }
+  
+  // Otro formato
+  return digits;
+}
+
+function calculateRUCDV(rucBase: string): number {
+  let k = 2;
+  let total = 0;
+  for (let i = rucBase.length - 1; i >= 0; i--) {
+    const charCode = rucBase.charCodeAt(i);
+    const value = (charCode >= 48 && charCode <= 57) ? charCode - 48 : charCode;
+    total += value * k;
+    k++;
+    if (k > 11) k = 2;
+  }
+  const resto = total % 11;
+  return resto > 1 ? 11 - resto : 0;
+}
+
+function validateDocument(docType: string, docNumber: string): string | null {
+  if (!docNumber) return null;
+  
+  if (docType === "R") {
+    if (!docNumber.includes("-")) {
+      return "Falta guión y dígito verificador (Ej: 1234567-8)";
+    }
+    const parts = docNumber.split("-");
+    if (parts.length !== 2 || parts[1].length !== 1) {
+      return "Formato de RUC inválido";
+    }
+    const base = parts[0];
+    const dv = parseInt(parts[1], 10);
+    if (isNaN(dv)) return "Dígito verificador inválido";
+    
+    const calculatedDv = calculateRUCDV(base);
+    if (calculatedDv !== dv) {
+      return `DV incorrecto (debería ser ${calculatedDv})`;
+    }
+  } else if (docType === "C") {
+    if (!/^\d+$/.test(docNumber)) {
+      return "La Cédula debe contener solo números";
+    }
+    if (docNumber.length < 5 || docNumber.length > 10) {
+      return "Longitud de Cédula inválida";
+    }
+  }
+  return null;
+}
+
 /** El GDS a veces devuelve un objeto pasajero "vacío" cuando no existe.
  *  Se detecta por HD_ID=="0" o por nombres con el marcador XML de espacio vacío. */
 function isEmptyPassenger(p: Record<string, string>): boolean {
@@ -198,7 +257,11 @@ export function PassengerForm({
   if (!passenger) return null;
 
   const handleLocalChange = (field: keyof typeof localData, value: string) => {
-    setLocalData((prev) => ({ ...prev, [field]: value }));
+    let finalValue = value;
+    if (field === "phone") {
+      finalValue = maskPhone(value);
+    }
+    setLocalData((prev) => ({ ...prev, [field]: finalValue }));
   };
 
   const handleLocalBlur = (field: keyof typeof localData, value: string) => {
@@ -364,7 +427,7 @@ export function PassengerForm({
               sanitizeGdsValue(p.PasNom || p.name || p.firstName),
             ),
             lastName: toTitleCase(sanitizeGdsValue(p.PasApe || p.lastName)),
-            phone: sanitizeGdsValue(p.Telefono || p.phone),
+            phone: maskPhone(sanitizeGdsValue(p.Telefono || p.phone)),
             docNumber: sanitizeGdsValue(p.DocNro || p.docNumber) || docNumber,
             occupation: sanitizeGdsValue(p.Ocupacion || p.occupation),
             birthDate: formattedBirthDate,
@@ -448,7 +511,10 @@ export function PassengerForm({
     validateName(passenger.firstName) &&
     validateName(passenger.lastName) &&
     validateEmail(passenger.email) &&
-    validatePhone(passenger.phone);
+    validatePhone(passenger.phone) &&
+    !validateDocument(passenger.docType?.codigo || docType, passenger.documentNumber);
+
+  const searchDocError = validateDocument(docType, docNumber);
 
   const showFields = searchStatus !== "idle";
 
@@ -544,13 +610,16 @@ export function PassengerForm({
               placeholder="N° de documento"
               value={docNumber}
               onChange={(e) => {
-                setDocNumber(e.target.value);
+                setDocNumber(e.target.value.toUpperCase());
                 setSearchStatus("idle");
               }}
               onKeyDown={(e) => {
-                if (e.key === "Enter") handleSearch();
+                if (e.key === "Enter" && !searchDocError) handleSearch();
               }}
-              className="h-11 pr-10 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/40 w-full"
+              className={cn(
+                "h-11 pr-10 bg-black/10 dark:bg-white/10 border-black/15 dark:border-white/30 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-white/40 w-full",
+                searchDocError && docNumber.length > 3 && "border-destructive focus-visible:ring-destructive"
+              )}
               disabled={isSearching}
             />
             {docNumber && (
@@ -569,14 +638,21 @@ export function PassengerForm({
                 <X className="h-4 w-4" />
               </button>
             )}
+            
+            {searchDocError && docNumber.length > 3 && (
+              <p className="absolute -bottom-5 left-1 text-[10px] text-destructive font-medium flex items-center gap-1 animate-fade-in whitespace-nowrap">
+                <AlertCircle className="h-3 w-3 shrink-0" />
+                {searchDocError}
+              </p>
+            )}
           </div>
 
           {/* Buscar button */}
           <Button
             type="button"
             onClick={handleSearch}
-            disabled={!docNumber.trim() || isSearching}
-            className="h-11 px-6 bg-primary hover:bg-primary/90 text-white shadow-sm w-full sm:w-auto sm:shrink-0 font-medium"
+            disabled={!docNumber.trim() || !!searchDocError || isSearching}
+            className="h-11 px-6 bg-primary hover:bg-primary/90 text-white shadow-sm w-full sm:w-auto sm:shrink-0 font-medium disabled:opacity-50"
           >
             {isSearching ? (
               <Loader2 className="h-4 w-4 animate-spin" />
