@@ -721,6 +721,53 @@ export default function CheckoutPage() {
                       "Completa los datos"
                     )}
                   </Button>
+
+                  {/* Trust Badges - Arquitectura de Confianza (CRO) */}
+                  <div className="mt-6 flex flex-col sm:flex-row flex-wrap sm:items-start justify-between gap-4 pt-4 border-t border-slate-200 dark:border-white/10">
+                    <div className="flex items-start gap-3 sm:w-[calc(50%-0.5rem)]">
+                      <div className="bg-green-100 dark:bg-green-900/30 p-1.5 rounded-full shrink-0">
+                        <Shield className="h-4 w-4 text-green-600 dark:text-green-400" />
+                      </div>
+                      <div className="text-sm">
+                        <p className="font-semibold text-slate-900 dark:text-white leading-tight">Distribuidor Autorizado</p>
+                        <p className="text-slate-600 dark:text-white/70 text-xs mt-0.5">Asientos directos de NSA, La Santaniana y La Sampedrana.</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start gap-3 sm:w-[calc(50%-0.5rem)]">
+                      <div className="bg-blue-100 dark:bg-blue-900/30 p-1.5 rounded-full shrink-0">
+                        <CheckCircle2 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <div className="text-sm">
+                        <p className="font-semibold text-slate-900 dark:text-white leading-tight">Garantía de Asiento</p>
+                        <p className="text-slate-600 dark:text-white/70 text-xs mt-0.5">Emisión automática e instantánea en el sistema de la empresa.</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3 sm:w-[calc(50%-0.5rem)]">
+                      <div className="bg-slate-100 dark:bg-slate-800 p-1.5 rounded-full shrink-0">
+                        <Lock className="h-4 w-4 text-slate-700 dark:text-slate-300" />
+                      </div>
+                      <div className="text-sm">
+                        <p className="font-semibold text-slate-900 dark:text-white leading-tight">Pago 100% Seguro</p>
+                        <p className="text-slate-600 dark:text-white/70 text-xs mt-0.5">
+                          Cifrado SSL vía <span className="font-medium">Bancard / vPOS</span>.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3 sm:w-[calc(50%-0.5rem)]">
+                      <div className="bg-purple-100 dark:bg-purple-900/30 p-1.5 rounded-full shrink-0">
+                        <Wallet className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                      </div>
+                      <div className="text-sm">
+                        <p className="font-semibold text-slate-900 dark:text-white leading-tight">QR y Tarjetas</p>
+                        <p className="text-slate-600 dark:text-white/70 text-xs mt-0.5">
+                          Aceptamos <span className="font-medium">QR Zimple</span>, Débito y Crédito.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </Card>
