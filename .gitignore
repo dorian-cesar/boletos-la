@@ -13,3 +13,7 @@ node_modules/
 .env
 view.html
 view.json
+
+# Documents
+*.pdf
+INFORME_EJECUTIVO_360_BOLETOS_LA.pdf
