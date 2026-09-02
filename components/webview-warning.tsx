@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { isAppWebView, getSystemBrowserUrl } from "@/lib/webview-detector";
-import { AlertTriangle, ExternalLink } from "lucide-react";
+import { ShieldAlert, ExternalLink, MoreVertical } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function WebviewWarning() {
   const [isWebview, setIsWebview] = useState(false);
@@ -15,41 +16,55 @@ export default function WebviewWarning() {
       if (intentUrl) {
         setAndroidIntentUrl(intentUrl);
       }
+      
+      // Bloquear scroll
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+      };
     }
   }, []);
 
   if (!isWebview) return null;
 
   return (
-    <div className="fixed top-0 left-0 w-full z-50 bg-amber-100/95 dark:bg-amber-900/95 backdrop-blur border-b border-amber-200 dark:border-amber-700 p-3 sm:p-4 shadow-md flex flex-col sm:flex-row items-center gap-3 sm:gap-4 justify-between transition-all">
-      <div className="flex items-start sm:items-center gap-3">
-        <div className="bg-amber-200 dark:bg-amber-800 p-2 rounded-full shrink-0 mt-0.5 sm:mt-0">
-          <AlertTriangle className="h-5 w-5 text-amber-700 dark:text-amber-200" />
-        </div>
-        <div className="flex-1">
-          <p className="text-amber-900 dark:text-amber-50 font-medium text-sm sm:text-base leading-tight">
-            Estás usando el navegador interno de una red social.
-          </p>
-          <p className="text-amber-800 dark:text-amber-200/80 text-xs sm:text-sm mt-0.5">
-            Para que tu pago se procese correctamente, abre esta página en el navegador de tu dispositivo.
-          </p>
-        </div>
+    <div className="fixed inset-0 z-[99999] bg-white dark:bg-[#0f172a] flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-300">
+      <div className="bg-amber-100 dark:bg-amber-900/30 p-4 rounded-full mb-6">
+        <ShieldAlert className="h-12 w-12 text-amber-600 dark:text-amber-500" />
       </div>
-      <div className="w-full sm:w-auto shrink-0 flex gap-2">
-        {androidIntentUrl ? (
-          <a
-            href={androidIntentUrl}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm"
-          >
-            <ExternalLink className="h-4 w-4" />
-            Abrir en Chrome
+      
+      <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-4">
+        Navegador No Compatible
+      </h2>
+      
+      <p className="text-slate-600 dark:text-slate-300 mb-8 max-w-sm text-base sm:text-lg leading-relaxed">
+        Estás usando el navegador interno de una red social. Por motivos de seguridad bancaria (3D Secure), 
+        <strong> debes abrir esta página en tu navegador principal </strong> 
+        para procesar tu pago correctamente.
+      </p>
+
+      {androidIntentUrl ? (
+        <Button asChild size="lg" className="w-full max-w-xs font-semibold h-14 text-base shadow-lg hover:shadow-xl transition-all">
+          <a href={androidIntentUrl}>
+            <ExternalLink className="mr-2 h-5 w-5" />
+            Abrir en Google Chrome
           </a>
-        ) : (
-          <div className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-amber-200 dark:bg-amber-800 text-amber-900 dark:text-amber-100 px-4 py-2 rounded-lg text-sm font-medium border border-amber-300 dark:border-amber-700">
-            Toca los 3 puntos (⋮) y elige "Abrir en el navegador"
+        </Button>
+      ) : (
+        <div className="bg-slate-100 dark:bg-slate-800 p-6 rounded-2xl w-full max-w-sm border border-slate-200 dark:border-slate-700 shadow-sm text-left">
+          <p className="text-sm text-slate-700 dark:text-slate-300 font-semibold mb-4 text-center">
+            Sigue estos pasos para continuar:
+          </p>
+          <div className="flex items-center gap-4 bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
+            <div className="bg-slate-100 dark:bg-slate-800 p-2 rounded-lg shrink-0">
+              <MoreVertical className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+            </div>
+            <p className="text-sm text-slate-600 dark:text-slate-300">
+              Toca el menú superior de opciones y selecciona <strong className="text-slate-900 dark:text-white">"Abrir en el navegador"</strong> o <strong className="text-slate-900 dark:text-white">"Open in Browser"</strong>
+            </p>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
