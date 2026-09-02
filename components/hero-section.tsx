@@ -51,25 +51,25 @@ export function HeroSection({ country }: HeroSectionProps) {
   };
 
   const normalizedCountry = country?.toLowerCase() || "latam";
-  
+
   // Use carousel images if available, otherwise fallback to the single hero image
-  const backgroundImages = imagesByCountry[normalizedCountry] && imagesByCountry[normalizedCountry].length > 0 
-    ? imagesByCountry[normalizedCountry] 
+  const backgroundImages = imagesByCountry[normalizedCountry] && imagesByCountry[normalizedCountry].length > 0
+    ? imagesByCountry[normalizedCountry]
     : [
-        normalizedCountry === "argentina" ? "/images/hero-argentina.webp" :
+      normalizedCountry === "argentina" ? "/images/hero-argentina.webp" :
         normalizedCountry === "brasil" ? "/images/hero-brasil.webp" :
-        normalizedCountry === "chile" ? "/images/hero-chile.webp" :
-        normalizedCountry === "colombia" ? "/images/hero-colombia.webp" :
-        normalizedCountry === "paraguay" ? "/images/hero-paraguay.webp" : "/images/hero.jpg"
-      ];
+          normalizedCountry === "chile" ? "/images/hero-chile.webp" :
+            normalizedCountry === "colombia" ? "/images/hero-colombia.webp" :
+              normalizedCountry === "paraguay" ? "/images/hero-paraguay.webp" : "/images/hero.jpg"
+    ];
 
   useEffect(() => {
     if (backgroundImages.length <= 1) return;
-    
+
     const timer = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % backgroundImages.length);
     }, 8000); // 8 segundos por imagen para que sea menos abrupto
-    
+
     return () => clearInterval(timer);
   }, [backgroundImages.length]);
 
@@ -133,7 +133,7 @@ export function HeroSection({ country }: HeroSectionProps) {
       {/* Background Image(s) with fading effect */}
       <div className="absolute inset-0 bg-[#0f1419]">
         {backgroundImages.map((src, index) => (
-          <div 
+          <div
             key={index}
             className={cn(
               "absolute inset-0 transition-opacity duration-1000 ease-in-out",
@@ -188,10 +188,10 @@ export function HeroSection({ country }: HeroSectionProps) {
                   locale={normalizedCountry === "brasil" ? "pt" : "es"}
                   currency={
                     normalizedCountry === "brasil" ? "BRL" :
-                    normalizedCountry === "argentina" ? "ARS" :
-                    normalizedCountry === "colombia" ? "COP" :
-                    normalizedCountry === "chile" ? "CLP" :
-                    normalizedCountry === "paraguay" ? "PYG" : "USD"
+                      normalizedCountry === "argentina" ? "ARS" :
+                        normalizedCountry === "colombia" ? "COP" :
+                          normalizedCountry === "chile" ? "CLP" :
+                            normalizedCountry === "paraguay" ? "PYG" : "USD"
                   }
                   defaults={currentDefaults}
                   layout="vertical"

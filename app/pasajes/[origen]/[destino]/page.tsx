@@ -100,9 +100,44 @@ export default async function PasajesRoutePage({ params }: PageProps) {
     'offers': {
       '@type': 'AggregateOffer',
       'priceCurrency': 'PYG',
+      'lowPrice': 20000,
+      'highPrice': 180000,
+      'offerCount': 5,
       'availability': 'https://schema.org/InStock',
       'url': `https://boletos.la/pasajes/${origen}/${destino}`
     }
+  };
+
+  // Esquema JSON-LD para FAQ (Preguntas Frecuentes)
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    'mainEntity': [
+      {
+        '@type': 'Question',
+        'name': `¿Cuánto cuesta el pasaje de ${origenTitle} a ${destinoTitle}?`,
+        'acceptedAnswer': {
+          '@type': 'Answer',
+          'text': `Los precios varían según la empresa y el servicio, pero puedes encontrar pasajes desde Gs. 20.000.`
+        }
+      },
+      {
+        '@type': 'Question',
+        'name': `¿Qué empresas de transporte operan la ruta ${origenTitle} a ${destinoTitle}?`,
+        'acceptedAnswer': {
+          '@type': 'Answer',
+          'text': `En boletos.la puedes encontrar pasajes de las mejores empresas como La Santaniana, La Santaniana Argentina, La Sampedrana, entre otras.`
+        }
+      },
+      {
+        '@type': 'Question',
+        'name': `¿Cómo comprar pasajes de bus de ${origenTitle} a ${destinoTitle} online?`,
+        'acceptedAnswer': {
+          '@type': 'Answer',
+          'text': `Puedes comprar de forma rápida y segura a través de nuestra plataforma, eligiendo fecha, asiento y pagando con el método que prefieras.`
+        }
+      }
+    ]
   };
 
   return (
@@ -117,6 +152,10 @@ export default async function PasajesRoutePage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
 
       <div>
         <ParaguayHeader />
@@ -124,7 +163,7 @@ export default async function PasajesRoutePage({ params }: PageProps) {
         {/* Hero Section para la Ruta */}
         <section className="relative pt-32 pb-20 bg-gradient-to-b from-blue-900 via-indigo-900 to-slate-900 text-slate-900 dark:text-white overflow-hidden">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-30" />
-          
+
           <div className="container mx-auto px-4 relative z-10">
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm text-blue-200 mb-6" aria-label="Breadcrumb">
