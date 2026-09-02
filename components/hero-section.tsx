@@ -128,8 +128,6 @@ export function HeroSection({ country }: HeroSectionProps) {
   const currentDefaults = widgetDefaults[normalizedCountry] || widgetDefaults.latam;
   const currentButtonText = buttonTexts[normalizedCountry] || buttonTexts.latam;
 
-  if (!mounted) return null;
-
   return (
     <section className="relative min-h-[calc(125vh-72px)] flex items-center justify-center overflow-hidden py-12 lg:py-20">
       {/* Background Image(s) with fading effect */}
@@ -183,21 +181,23 @@ export function HeroSection({ country }: HeroSectionProps) {
 
           {/* Right Column: White Card Container for the Search Widget */}
           <div className="lg:col-span-6 flex justify-end w-full">
-            <div className="bg-white rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.15)] overflow-visible p-5 w-full max-w-2xl border border-gray-100/50">
-              <DistributionWidget
-                partnerNumber="830754"
-                locale={normalizedCountry === "brasil" ? "pt" : "es"}
-                currency={
-                  normalizedCountry === "brasil" ? "BRL" :
-                  normalizedCountry === "argentina" ? "ARS" :
-                  normalizedCountry === "colombia" ? "COP" :
-                  normalizedCountry === "chile" ? "CLP" :
-                  normalizedCountry === "paraguay" ? "PYG" : "USD"
-                }
-                defaults={currentDefaults}
-                layout="vertical"
-                buttonText={currentButtonText}
-              />
+            <div className="bg-white rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.15)] overflow-visible p-5 w-full max-w-2xl border border-gray-100/50 min-h-[300px]">
+              {mounted && (
+                <DistributionWidget
+                  partnerNumber="830754"
+                  locale={normalizedCountry === "brasil" ? "pt" : "es"}
+                  currency={
+                    normalizedCountry === "brasil" ? "BRL" :
+                    normalizedCountry === "argentina" ? "ARS" :
+                    normalizedCountry === "colombia" ? "COP" :
+                    normalizedCountry === "chile" ? "CLP" :
+                    normalizedCountry === "paraguay" ? "PYG" : "USD"
+                  }
+                  defaults={currentDefaults}
+                  layout="vertical"
+                  buttonText={currentButtonText}
+                />
+              )}
             </div>
           </div>
         </div>
