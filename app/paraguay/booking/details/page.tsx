@@ -96,6 +96,7 @@ export default function DetailsPage() {
     destinationTitle,
     discountCode,
     discountPercentage,
+    discountConvenio,
     serviceCharge,
     dynamicServiceCharge,
     appliedServiceChargeAmount,
@@ -124,6 +125,13 @@ export default function DetailsPage() {
       router.push("/paraguay");
     }
   }, [mounted, selectedSeats, router]);
+
+  const isDiscountCodeApplied = Boolean(
+    discountCode && discountCode !== "BENEFICIO" && discountPercentage
+  );
+  const isBenefitApplied = Boolean(
+    discountCode === "BENEFICIO" && discountPercentage
+  );
 
   // Validar que los pasajeros de IDA estén completos
   const arePassengersComplete =
@@ -202,6 +210,11 @@ export default function DetailsPage() {
         setDiscountSuccess(
           `¡Descuento de ${percentage}% aplicado! ${data.nombre ? `(${data.nombre})` : ""}`,
         );
+        // Limpiar estado de beneficio si existía
+        setHasBenefit(false);
+        setBenefitRut("");
+        setSelectedBenefitId("");
+        setBenefitError(null);
       } else {
         throw new Error("El código no tiene un porcentaje válido asociado");
       }
@@ -217,6 +230,7 @@ export default function DetailsPage() {
     setDiscount(null, null, null, null);
     setDiscountInput("");
     setDiscountSuccess(null);
+    setDiscountError(null);
     setHasDiscount(false);
   };
 
@@ -273,6 +287,11 @@ export default function DetailsPage() {
           selectedBenefit?.cargo_por_servicio,
           selectedBenefit?.valor_cargo_servicio
         );
+        // Limpiar estado de código de descuento si existía
+        setHasDiscount(false);
+        setDiscountInput("");
+        setDiscountSuccess(null);
+        setDiscountError(null);
       } else {
         setBenefitError("El beneficio no tiene un porcentaje válido asociado.");
       }
@@ -287,6 +306,7 @@ export default function DetailsPage() {
     setDiscount(null, null, null, null);
     setBenefitRut("");
     setSelectedBenefitId("");
+    setBenefitError(null);
     setHasBenefit(false);
   };
 
@@ -532,9 +552,9 @@ export default function DetailsPage() {
                   <input
                     type="checkbox"
                     className="w-4 h-4 text-primary rounded border-slate-300 focus:ring-primary"
-                    checked={hasDiscount || !!discountCode}
+                    checked={hasDiscount || isDiscountCodeApplied}
                     onChange={(e) => {
-                      if (!e.target.checked && discountCode) {
+                      if (!e.target.checked && isDiscountCodeApplied) {
                         handleRemoveDiscount();
                       }
                       setHasDiscount(e.target.checked);
@@ -545,9 +565,9 @@ export default function DetailsPage() {
                   </span>
                 </label>
 
-                {(hasDiscount || discountCode) && (
+                {(hasDiscount || isDiscountCodeApplied) && (
                   <div className="space-y-4 pt-2 border-t border-black/5 dark:border-white/10 animate-fade-in">
-                    {!discountPercentage ? (
+                    {!isDiscountCodeApplied ? (
                       <div className="flex gap-2">
                         <Input
                           placeholder="Ingresá tu código"
@@ -576,7 +596,9 @@ export default function DetailsPage() {
                           <div>
                             <p className="font-medium text-sm">
                               {discountSuccess ||
-                                `¡Descuento de ${discountPercentage}% aplicado!`}
+                                (discountConvenio
+                                  ? `¡Descuento de ${discountPercentage}% aplicado! (${discountConvenio})`
+                                  : `¡Descuento de ${discountPercentage}% aplicado!`)}
                             </p>
                             <p className="text-xs opacity-80">
                               Código: {discountCode}
@@ -617,9 +639,9 @@ export default function DetailsPage() {
                   <input
                     type="checkbox"
                     className="w-4 h-4 text-primary rounded border-slate-300 focus:ring-primary"
-                    checked={hasBenefit || !!(discountCode && discountCode === "BENEFICIO" && !hasDiscount)}
+                    checked={hasBenefit || isBenefitApplied}
                     onChange={(e) => {
-                      if (!e.target.checked && discountCode) {
+                      if (!e.target.checked && isBenefitApplied) {
                         handleRemoveBenefit();
                       }
                       setHasBenefit(e.target.checked);
@@ -630,9 +652,9 @@ export default function DetailsPage() {
                   </span>
                 </label>
 
-                {(hasBenefit || (discountCode && discountCode === "BENEFICIO" && !hasDiscount)) && (
+                {(hasBenefit || isBenefitApplied) && (
                   <div className="space-y-4 pt-2 border-t border-black/5 dark:border-white/10 animate-fade-in">
-                    {!discountPercentage ? (
+                    {!isBenefitApplied ? (
                       <div className="flex flex-col gap-3">
                         {isLoadingBenefits ? (
                           <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 py-3">
@@ -694,11 +716,15 @@ export default function DetailsPage() {
                           <Check className="h-5 w-5" />
                           <div>
                             <p className="font-medium text-sm">
-                              {discountSuccess || `¡Beneficio de ${discountPercentage}% aplicado!`}
+                              {discountConvenio
+                                ? `¡Beneficio de ${discountPercentage}% aplicado! (${discountConvenio})`
+                                : `¡Beneficio de ${discountPercentage}% aplicado!`}
                             </p>
-                            <p className="text-xs opacity-80">
-                              Documento: {benefitRut}
-                            </p>
+                            {benefitRut && (
+                              <p className="text-xs opacity-80">
+                                Documento: {benefitRut}
+                              </p>
+                            )}
                           </div>
                         </div>
                         <Button
