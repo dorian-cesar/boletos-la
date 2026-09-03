@@ -62,6 +62,7 @@ export default function CheckoutPage() {
     "tarjeta" | "bancard" | null
   >("bancard");
   const [iframeProcessId, setIframeProcessId] = useState<string | null>(null);
+  const [isVisaDebito, setIsVisaDebito] = useState(false);
 
   const {
     tripType,
@@ -172,7 +173,7 @@ export default function CheckoutPage() {
             `${primaryPassenger?.firstName} ${primaryPassenger?.lastName}`.toUpperCase(),
           client_email: primaryPassenger?.email || "fallback",
           total_items: totalPassengers,
-          preauthorization: false, // Siempre sin preautorización
+          preauthorization: isVisaDebito,
         }),
       });
 
@@ -693,6 +694,17 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="mt-4">
+                  <div className="flex items-center gap-6 mb-4">
+                    <label className="flex items-center gap-2 cursor-pointer text-sm font-medium text-slate-700 dark:text-slate-300">
+                      <input 
+                        type="checkbox" 
+                        checked={isVisaDebito} 
+                        onChange={(e) => setIsVisaDebito(e.target.checked)} 
+                        className="w-4 h-4 text-secondary border-slate-300 rounded focus:ring-secondary accent-secondary"
+                      />
+                      Pago con tarjeta Visa Débito
+                    </label>
+                  </div>
                   <Button
                     onClick={handlePayment}
                     disabled={
