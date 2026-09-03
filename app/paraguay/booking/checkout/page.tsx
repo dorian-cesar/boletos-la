@@ -480,10 +480,10 @@ export default function CheckoutPage() {
                         <span className="text-slate-900 dark:text-white truncate text-right">
                           {departureDate
                             ? format(
-                                parse(departureDate, "yyyy-MM-dd", new Date()),
-                                "dd MMM yyyy",
-                                { locale: es },
-                              )
+                              parse(departureDate, "yyyy-MM-dd", new Date()),
+                              "dd MMM yyyy",
+                              { locale: es },
+                            )
                             : ""}
                         </span>
                       </p>
@@ -567,10 +567,10 @@ export default function CheckoutPage() {
                           <span className="text-slate-900 dark:text-white truncate text-right">
                             {returnDate
                               ? format(
-                                  parse(returnDate, "yyyy-MM-dd", new Date()),
-                                  "dd MMM yyyy",
-                                  { locale: es },
-                                )
+                                parse(returnDate, "yyyy-MM-dd", new Date()),
+                                "dd MMM yyyy",
+                                { locale: es },
+                              )
                               : ""}
                           </span>
                         </p>
@@ -696,10 +696,10 @@ export default function CheckoutPage() {
                 <div className="mt-4">
                   <div className="flex items-center gap-6 mb-4">
                     <label className="flex items-center gap-2 cursor-pointer text-sm font-medium text-slate-700 dark:text-slate-300">
-                      <input 
-                        type="checkbox" 
-                        checked={isVisaDebito} 
-                        onChange={(e) => setIsVisaDebito(e.target.checked)} 
+                      <input
+                        type="checkbox"
+                        checked={isVisaDebito}
+                        onChange={(e) => setIsVisaDebito(e.target.checked)}
                         className="w-4 h-4 text-secondary border-slate-300 rounded focus:ring-secondary accent-secondary"
                       />
                       Pago con tarjeta Visa Débito
@@ -742,10 +742,10 @@ export default function CheckoutPage() {
                       </div>
                       <div className="text-sm">
                         <p className="font-semibold text-slate-900 dark:text-white leading-tight">Distribuidor Autorizado</p>
-                        <p className="text-slate-600 dark:text-white/70 text-xs mt-0.5">Asientos directos de NSA, La Santaniana y La Sampedrana.</p>
+                        <p className="text-slate-600 dark:text-white/70 text-xs mt-0.5">Asientos directos de La Santaniana y La Sampedrana.</p>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-start gap-3 sm:w-[calc(50%-0.5rem)]">
                       <div className="bg-blue-100 dark:bg-blue-900/30 p-1.5 rounded-full shrink-0">
                         <CheckCircle2 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
